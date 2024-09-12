@@ -2,7 +2,8 @@
 
 ## Problem
 
-Let's start small. Recently someone told me an interesting small mathematical problem that I happened to knew from my youth:
+Let's start small. Recently someone told me an interesting small mathematical
+problem that I happened to knew from my youth:
 
 > A bat and a ball cost in total $1.1. The bat costs $1 more than the ball. How
 > much costs the ball?
@@ -11,15 +12,19 @@ Pause for a moment and try to give an answer.
 
 ## Solution
 
-My first impulse (before the recollections of the past kicked in) was that the ball should cost $0.1 or 10 cents. It's the only logical solution, right? Or maybe not? Let's summon primary school math to the rescue and settle this once and for all. From the task description we know that:
+My first impulse (before the recollections of the past kicked in) was that the
+ball should cost $0.1 or 10 cents. It's the only logical solution, right? Or
+maybe not? Let's summon primary school math to the rescue and settle this once
+and for all. From the task description we know that:
 
 $bat + ball = 1.1$
 $bat - ball = 1$
 
-Therefore, we can rewrite the second expression (move `- ball` to the other side and change mathematical operation to the opposite) we get:
-$bat = 1 + ball$
+Therefore, we can rewrite the second expression (move `- ball` to the other side
+and change mathematical operation to the opposite) we get: $bat = 1 + ball$
 
-Finally, by substituting `bat` from equation 1 with `bat` (`bat = 1 + ball`) from equation 2 we get.
+Finally, by substituting `bat` from equation 1 with `bat` (`bat = 1 + ball`)
+from equation 2 we get.
 
 $1 + ball + ball = 1.1$
 
@@ -37,8 +42,11 @@ $ball = 0.05$
 
 So it turns out that, counter-intuitively, the ball costs $0.05 or 5 cents.
 
-That's all very interesting, but what any of this got to do with Julia?
-Well we can solve this and more complicated equations with it. For that purpose we will use matrices and their multiplications as explained in [this ](https://www.youtube.com/watch?v=Awcj447pYuk) and [that](https://www.youtube.com/watch?v=AUqeb9Z3y3k) Khan Academy's video.
+That's all very interesting, but what any of this got to do with Julia?  Well we
+can solve this and more complicated equations with it. For that purpose we will
+use matrices and their multiplications as explained in [this
+](https://www.youtube.com/watch?v=Awcj447pYuk) and
+[that](https://www.youtube.com/watch?v=AUqeb9Z3y3k) Khan Academy's video.
 
 ```julia
 variables = [
@@ -50,7 +58,8 @@ prices = [1.1, 1] # equation 1 (= 1.1), equation 2 (= 1)
 (variables, prices)
 ```
 
-now, in line with the videos we multiply the matrix `variables` by the inverse of `prices` using `\` operator
+now, in line with the videos we multiply the matrix `variables` by the inverse
+of `prices` using `\` operator
 
 ```julia
 result = variables \ prices
@@ -59,7 +68,10 @@ round.(result, digits=4)
 
 Here we see the prices of `bat` (1.05) and `ball` (0.05) calculated by Julia.
 
-Now, if you're new to matrix algebra, then this may look like an unnecessary hassle and some obscure alchemy. In that case you may consider using [Symbolics.jl](https://github.com/JuliaSymbolics/Symbolics.jl) package with a bit friendlier and more human readable syntax.
+Now, if you're new to matrix algebra, then this may look like an unnecessary
+hassle and some obscure alchemy. In that case you may consider using
+[Symbolics.jl](https://github.com/JuliaSymbolics/Symbolics.jl) package with a
+bit friendlier and more human readable syntax.
 
 ```julia
 import Symbolics as Sym
@@ -72,4 +84,13 @@ result = Sym.symbolic_linear_solve(
 round.(result, digits=4)
 ```
 
-First, we declare variables (`Sym.@variables`) that we will use in our equations (customarily those are `x`, `y`, `z`, etc.), here `bat` and `ball`. Next we use `Sym.symbolic_linear_solve` function to get the solution. It takes 2 arguments (separated by coma): equation(s) and variable(s) we are looking for. Since we got a set of 2 equations we place them in square braces separated by comma. Inside the equations we use previously defined (`Sym.@variables`) variables (`bat` and `ball`) and `~` instead of `=` known from mathematics. Next, we send the variable(s) we are looking for. The number of variables should be equal the number of equations in the first argument, and if it is greater than 1 then we place them between square braces and separate them with comas.
+First, we declare variables (`Sym.@variables`) that we will use in our equations
+(customarily those are `x`, `y`, `z`, etc.), here `bat` and `ball`. Next we use
+`Sym.symbolic_linear_solve` function to get the solution. It takes 2 arguments
+(separated by coma): equation(s) and variable(s) we are looking for. Since we
+got a set of 2 equations we place them in square braces separated by comma.
+Inside the equations we use previously defined (`Sym.@variables`) variables
+(`bat` and `ball`) and `~` instead of `=` known from mathematics. Next, we send
+the variable(s) we are looking for. The number of variables should be equal the
+number of equations in the first argument, and if it is greater than 1 then we
+place them between square braces and separate them with comas.
