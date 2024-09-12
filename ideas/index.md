@@ -30,7 +30,7 @@ For now, the book does not have a companion PDF file (probably I will add it lat
 
 The template for this book can be found *here*(TODO) and the code snippets for the chapters are available *there*(TODO).
 
-The book is available under [Creative Commons
+The book is available freely under [Creative Commons
 Attribution-NonCommercial-ShareAlike 4.0
 International](http://creativecommons.org/licenses/by-nc-sa/4.0/) license. It
 was written by a Julia enthusiast for any curious readers, however, it comes
