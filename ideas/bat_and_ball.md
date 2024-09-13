@@ -1,5 +1,7 @@
 # Bat and Ball
 
+Latest update (local time): Thu 12 Sep 2024
+
 ## Problem
 
 Let's start small. Recently someone told me an interesting small mathematical

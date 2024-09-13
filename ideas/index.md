@@ -8,7 +8,7 @@ Start date: <2024-09-11 Wed>
 
 End date: Work in Progress
 
-Latest update (local time): <2024-09-12 Thu> 18:40
+Latest update (local time): Thu 12 Sep 2024
 
 ```jl
 include("./src/data.jl")
@@ -20,15 +20,16 @@ Julia". If anyone asked the full title is "Build *s*uper *h*elpful and
 *i*nteresting *t*hings with Julia", but the shorter version fits better on a
 page. Anyway, they say that in order to learn any programming language you need
 to build a lot of sh**, ekhm, stuff with it. Therefore, the book will contain a
-set of exercises (and exemplary solutions) for problems that, for whatever
-reason, I found interesting.
+set of exercises for problems that, for whatever reason, I found interesting.
 
 This book was generated using [Books.jl](https://github.com/JuliaBooks/Books.jl)
 starting with [BookTemplate](https://github.com/JuliaBooks/BookTemplate).
 
-For now, the book does not have a companion PDF file (probably I will add it later).
+For now, the book does not have a companion PDF file (probably I will add it
+later).
 
-The template for this book can be found *here*(TODO) and the code snippets for the chapters are available *there*(TODO).
+The template for this book can be found *here*(TODO) and the code snippets for
+the chapters are available *there*(TODO).
 
 The book is available freely under [Creative Commons
 Attribution-NonCommercial-ShareAlike 4.0
