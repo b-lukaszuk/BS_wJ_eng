@@ -9,21 +9,21 @@ a = [1 2 3; 4 5 6]
 b = [7 8; 9 10; 11 12]
 
 # Khan Academy examples
-c = [0 3 5; 5 5 2]
+c = [-1 3 5; 5 5 2]
 d = [3 4; 3 -2; 4 -2]
 
 function getDotProduct(row::Vector{Int}, col::Vector{Int})
     @assert length(row) == length(col)
-    map(*, row, col) |> sum
+    return map(*, row, col) |> sum
 end
 
 function multiply(m1::Matrix{Int}, m2::Matrix{Int})::Matrix{Int}
-    nRows1, nCols1 = size(m1)
-    nRows2, nCols2 = size(m2)
-    @assert  nCols1 == nRows2
-    result::Matrix{Int} = zeros(nRows1, nCols2)
-    for r in 1:nRows1
-        for c in 1:nCols2
+    nRowsMat1, nColsMat1 = size(m1)
+    nRowsMat2, nColsMat2 = size(m2)
+    @assert  nColsMat1 == nRowsMat2
+    result::Matrix{Int} = zeros(nRowsMat1, nColsMat2)
+    for r in 1:nRowsMat1
+        for c in 1:nColsMat2
             result[r, c] = getDotProduct(m1[r,:], m2[:, c])
         end
     end

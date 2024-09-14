@@ -55,15 +55,15 @@ $ball = 0.05$ {#eq:batball4}
 
 So it turns out that, counter-intuitively, the ball costs $0.05 or 5 cents.
 
-That's all very interesting, but what any of this got to do with Julia?  Well we
+That's all very interesting, but what any of this got to do with Julia? Well we
 can solve this and more complicated equations with it. For that purpose we will
 use matrices and their multiplications as explained in
 [this](https://www.youtube.com/watch?v=AUqeb9Z3y3k) Khan Academy's video.
 
 ```julia
 variables = [
-    1 1; # 1 bat + 1 ball
-    1 -1 # 1 bat - 1 ball
+	1 1; # 1 bat + 1 ball
+	1 -1 # 1 bat - 1 ball
 ]
 ```
 
@@ -85,7 +85,7 @@ All that's left to do, is to multiply the inverse (`inv`) of the matrix
 ```julia
 result = inv(variables) * prices
 # or, shortcut
-# result = variables \ prices
+result = variables \ prices
 round.(result, digits=4)
 ```
 
@@ -104,11 +104,11 @@ import Symbolics as Sym
 
 Sym.@variables bat ball
 result = Sym.symbolic_linear_solve(
-    [
-        bat + ball ~ 1.1,
-        bat - ball ~ 1
-    ],
-    [bat, ball]
+	[
+		bat + ball ~ 1.1,
+		bat - ball ~ 1
+	],
+	[bat, ball]
 );
 round.(result, digits=4)
 ```

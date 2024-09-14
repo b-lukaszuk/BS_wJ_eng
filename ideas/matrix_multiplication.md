@@ -70,8 +70,8 @@ map(x -> x + 10, [1, 2, 3])
 ```
 
 Here we used a vector (`[1, 2, 3]`) and applied an anonymous function to each of
-its elements.  The function accepts one argument (`x`) and returns (`->`) it
-after adding 10 (`x + 10`).  Interestingly, we may apply a function that accepts
+its elements. The function accepts one argument (`x`) and returns (`->`) it
+after adding 10 (`x + 10`). Interestingly, we may apply a function that accepts
 two arguments and applies this function to parallel element of two vectors, like
 so
 
