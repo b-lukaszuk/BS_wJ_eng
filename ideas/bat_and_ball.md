@@ -14,9 +14,8 @@ Pause for a moment and try to give an answer.
 
 ## Solution
 
-My first impulse (before the recollections of the past kicked in) was that the
-ball should cost $0.1 or 10 cents. It's the only logical solution, right? Or
-maybe not?
+My first impulse was that the ball should cost $0.1 or 10 cents. It's the only
+logical solution, right? Or maybe not?
 
 Surprisingly, it turns out that this simple problem trips up a lot of people (if
 you were not one of them, congrats!).
@@ -28,14 +27,15 @@ $bat + ball = 1.1$ {#eq:batball1}
 
 $bat - ball = 1$ {#eq:batball2}
 
-Therefore, we can rewrite the @eq:batball2 expression (move `- ball` to the
-other side and change mathematical operation to the opposite) and get: $bat =
-1 + ball$
+Therefore, we can rewrite the @eq:batball2 (move `- ball` to the
+other side and change mathematical operation to the opposite) to get:
 
-Finally, by substituting `bat` from @eq:baball1 with `bat` from @eq:batball2
+$bat = 1 + ball$ {#eq:batball3}
+
+Finally, by substituting `bat` from @eq:baball1 with `bat` from @eq:batball3
 (`bat = 1 + ball`) we get.
 
-$1 + ball + ball = 1.1$ {#eq:batball3}
+$1 + ball + ball = 1.1$
 
 which we can simplify to
 
@@ -51,7 +51,7 @@ $ball = 0.1 / 2$
 
 to finally get:
 
-$ball = 0.05$ {#eq:batball4}
+$ball = 0.05$
 
 So it turns out that, counter-intuitively, the ball costs $0.05 or 5 cents.
 
@@ -115,16 +115,16 @@ round.(result, digits=4)
 
 First, we declare variables (`Sym.@variables`) that we will use in our equations
 (customarily those are `x`, `y`, `z`, etc.), here we opted for more human
-readable `bat` and `ball`. Next we use `Sym.symbolic_linear_solve` function to
+readable `bat` and `ball` names. Next we use `symbolic_linear_solve` function to
 get the solution (the calculation process may take a second or two). It takes 2
 arguments (separated by coma): 1) equation(s) and 2) variable(s) for which we
 want to solve our equation. Since we got a set of 2 equations we place them in
 square brackets separated by comma. Inside the equations we use previously
 defined (`Sym.@variables`) variables (`bat` and `ball`) and `~` instead of `=`
-known from mathematics. Next, we send the variable(s) we are looking for. The
-number of variables should be equal the number of equations in the first
-argument, and if it is greater than 1 then we place them between square braces
-and separate them with comas. And that's it.
+known from mathematics. Next, we send the variable(s) we are looking for (`[bat,
+ball]`). The number of variables should be equal to the number of equations in
+the first argument, and if it is greater than 1 then we place them between
+square braces and separate them with comas. And that's it.
 
 Pretty neat trick. Worth to know if your math is rusty (like mine is) and you
 want to confirm your pen and paper results.

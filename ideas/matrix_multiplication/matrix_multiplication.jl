@@ -13,14 +13,14 @@ c = [-1 3 5; 5 5 2]
 d = [3 4; 3 -2; 4 -2]
 
 function getDotProduct(row::Vector{Int}, col::Vector{Int})
-    @assert length(row) == length(col)
+    @assert length(row) == length(col) "row & col must be of equal length"
     return map(*, row, col) |> sum
 end
 
 function multiply(m1::Matrix{Int}, m2::Matrix{Int})::Matrix{Int}
     nRowsMat1, nColsMat1 = size(m1)
     nRowsMat2, nColsMat2 = size(m2)
-    @assert  nColsMat1 == nRowsMat2
+    @assert  nColsMat1 == nRowsMat2 "the matrices are incompatible"
     result::Matrix{Int} = zeros(nRowsMat1, nColsMat2)
     for r in 1:nRowsMat1
         for c in 1:nColsMat2

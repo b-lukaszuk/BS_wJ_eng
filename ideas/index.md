@@ -8,19 +8,20 @@ Start date: <2024-09-11 Wed>
 
 End date: Work in Progress
 
-Latest update (local time): Thu 12 Sep 2024
+Latest update (local time): Sat 14 Sep 2024
 
 ```jl
 include("./src/data.jl")
 getTimeStamp()
 ```
 
-Hello there. This is an open source/access book entitled: "Build SH*T with
-Julia". If anyone asked the full title is "Build *s*uper *h*elpful and
-*i*nteresting *t*hings with Julia", but the shorter version fits better on a
+Hello there. This is an open source/access book entitled: "Build SH.T with
+Julia". If anyone asked the full title is "Build **s**uper **h**elpful and
+**i**nteresting **t**hings with Julia", but the shorter version fits better on a
 page. Anyway, they say that in order to learn any programming language you need
-to build a lot of sh**, ekhm, stuff with it. Therefore, the book will contain a
-set of exercises for problems that, for whatever reason, I found interesting.
+to ~~build sh..~~ write a lot of different programs with it. Therefore,
+the book will contain a set of exercises for problems that, for whatever reason,
+I found interesting.
 
 This book was generated using [Books.jl](https://github.com/JuliaBooks/Books.jl)
 starting with [BookTemplate](https://github.com/JuliaBooks/BookTemplate).
