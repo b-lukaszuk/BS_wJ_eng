@@ -1,6 +1,6 @@
 # Bat and Ball
 
-Latest update (local time): Sat 14 Sep 2024
+Latest update (local time): Sun 15 Sep 2024
 
 ## Problem
 
@@ -60,11 +60,14 @@ can solve this and more complicated equations with it. For that purpose we will
 use matrices and their multiplications as explained in
 [this](https://www.youtube.com/watch?v=AUqeb9Z3y3k) Khan Academy's video.
 
-```julia
+```jl
+s = """
 variables = [
 	1 1; # 1 bat + 1 ball
 	1 -1 # 1 bat - 1 ball
 ]
+"""
+sco(s)
 ```
 
 First we set the `variables` matrix where row 1 represents the left side of
@@ -75,18 +78,24 @@ contains the number of `bat`s in each equation, whereas column 2 the number of
 And now for the right sides of the equations, we will place them in the `prices`
 vector.
 
-```julia
+```jl
+s = """
 prices = [1.1, 1.0]
+"""
+sco(s)
 ```
 
 All that's left to do, is to multiply the inverse (`inv`) of the matrix
 `variables` by the `prices`.
 
-```julia
+```jl
+s = """
 result = inv(variables) * prices
 # or, shortcut
 result = variables \ prices
 round.(result, digits=4)
+"""
+sco(s)
 ```
 
 Here we see the prices of `bat` (1.05) and `ball` (0.05) calculated by Julia.
@@ -99,7 +108,8 @@ hassle and some obscure alchemy. In that case you may consider using
 [Symbolics.jl](https://github.com/JuliaSymbolics/Symbolics.jl), a package with a
 bit friendlier and more human readable syntax.
 
-```julia
+```jl
+s = """
 import Symbolics as Sym
 
 Sym.@variables bat ball
@@ -111,6 +121,8 @@ result = Sym.symbolic_linear_solve(
 	[bat, ball]
 );
 round.(result, digits=4)
+"""
+sco(s)
 ```
 
 First, we declare variables (`Sym.@variables`) that we will use in our equations
