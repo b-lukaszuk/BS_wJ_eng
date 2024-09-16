@@ -1,4 +1,5 @@
 import CairoMakie as Cmk
+import Symbolics as Sym
 
 struct Sphere
     radius::Float64
@@ -8,19 +9,23 @@ function getVolume(s::Sphere)::Float64
     return (4/3) * pi * s.radius^3
 end
 
-function getArea(s::Sphere)::Float64
+function getSurfaceArea(s::Sphere)::Float64
     return 4 * pi * s.radius^2
 end
+
+# fraction - 4/3, p - π, r3 - r^3, v - volume
+Sym.@variables fraction p r3 v
+Sym.symbolic_linear_solve(fraction * p * r3 ~ v, r3)
 
 function getSphere(volume::Float64)::Sphere
     radius::Float64 = cbrt(volume / pi / (4/3))
     return Sphere(radius)
 end
 
-# bile emulsifies, breakes big lipid droplets into small droplets
+# bile breakes big lipid droplets into small droplets
 bigS = Sphere(10) # 10 um
 bigV = getVolume(bigS)
-bigA = getArea(bigS)
+bigA = getSurfaceArea(bigS)
 
 areas = [bigA]
 volumes = [bigV]
@@ -30,7 +35,7 @@ numsOfDroplets = collect(4:4:12)
 for nDrops in numsOfDroplets
     smallS = getSphere(bigV / nDrops)
     smallV = getVolume(smallS)
-    smallA = getArea(smallS)
+    smallA = getSurfaceArea(smallS)
     sumSmallAs = smallA * nDrops
     sumSmallVs = smallV * nDrops
     push!(areas, sumSmallAs)
@@ -38,11 +43,11 @@ for nDrops in numsOfDroplets
     push!(radii, smallS.radius)
 end
 
+prepend!(numsOfDroplets, 1)
+
 round.(volumes, digits=2) # check that total volumes of lipids are the same
 round.(radii, digits=2) # check that radii of lipid droplets gets smaller
 round.(areas, digits=2) # check the total surface area of lipid droplets
-
-prepend!(numsOfDroplets, 1)
 
 fig = Cmk.Figure();
 Cmk.scatter(fig[1, 1], numsOfDroplets, areas,

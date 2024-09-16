@@ -1,28 +1,28 @@
-# Bile
+# Bile {#sec:bile}
 
-Latest update (local time): Sun 15 Sep 2024
+Latest update (local time): Mon 16 Sep 2024
 
-## Problem
+## Problem {#sec:bile_problem}
 
-There are different types of nutrients to be found in food but they can be
-broadly divided into three categories, sugars (carbohydrates), proteins and fats
-(lipids). Your liver produces [bile](https://en.wikipedia.org/wiki/Bile) that is
-stored in gallbladder and released to duodenum (part of small intestine). As far
-as I remember my biology classes bile facilitates digestion by breaking large
-lipid (fat) droplets into smaller. Thanks to that it increases the surface area
+There are different types of nutrients to be found in food, but they can be
+roughly divided into: sugars (carbohydrates), proteins and fats (lipids). Your
+liver produces [bile](https://en.wikipedia.org/wiki/Bile) that is stored in
+gallbladder and released to duodenum (part of small intestine). As far as I
+remember my biology classes bile facilitates digestion by breaking large lipid
+(fat) droplets into smaller. Thanks to that it increases the total surface area
 in contact with digestive enzymes (lipases). So much for the theory, but I
-always wondered if it's true.
+always wondered if that's true.
 
 Use Julia to demonstrate that total surface area of a few small lipid droplets
-is really greater than the surface area of one big droplet. Of course, the big
+is actually greater than the surface area of one big droplet. Of course, the big
 droplet and small droplets should contain the same volume of lipids.
 
-## Solution
+## Solution {#sec:bile_solution}
 
 To me the shape that resembles the droplet the most is
-[sphere](https://en.wikipedia.org/wiki/Sphere).  It also got well defined
-formulas for surface and volume (see the link above), so this is what we will
-use in our solution.
+[sphere](https://en.wikipedia.org/wiki/Sphere). Luckily, it also got well
+defined formulas for surface area and volume (see the link above), so this is
+what we will use in our solution.
 
 ```jl
 s = """
@@ -36,7 +36,7 @@ function getVolume(s::Sphere)::Float64
 end
 
 # formula from Wikipedia
-function getArea(s::Sphere)::Float64
+function getSurfaceArea(s::Sphere)::Float64
     return 4 * pi * s.radius^2
 end
 """
@@ -49,33 +49,33 @@ Now, let's define a big lipid droplet with a radius of, let's say, 10 [μm].
 s = """
 bigS = Sphere(10) # 10 um
 bigV = getVolume(bigS)
-bigA = getArea(bigS)
+bigA = getSurfaceArea(bigS)
 
 bigV
 """
 sco(s)
 ```
 
-In the next step we will split this big drop into a few smaller ones. Splitting
-the volume is easy, we just divide `bigV` by `n` droplets. However, we need a
-way to determine the size (`radius`) of each small droplet. Let's try to
-transform the formula for sphere volume.
+In the next step we will split this big drop into a few smaller ones of equal
+sizes. Splitting the volume is easy, we just divide `bigV` by `n` droplets.
+However, we need a way to determine the size (`radius`) of each small droplet.
+Let's try to transform the formula for sphere volume.
 
 $v = \frac{4}{3} * \pi * r^3 $ {#eq:sphere1}
 
-If a = b, then b = a, so we swap sides
+If a = b, then b = a, so we may swap sides.
 
 $\frac{4}{3} * \pi * r^3 = v$ {#eq:sphere2}
 
 The multiplication is commutative (the order does not matter), i.e. 2 * 3 * 4 is
 the same as 4 * 3 * 2, therefore we can rearrange elements on the left side of
-@eq:sphere2.
+@eq:sphere2 to:
 
 $r^3 * \pi * \frac{4}{3} = v$ {#eq:sphere3}
 
-Now, on by one we can more \*$\pi$ and \*$frac{4}{3}\ to the right side of
-@eq:sphere3 with the opposite mathematical operation (division instead of
-multiplication) to get.
+Now, one by one we can move \*$\pi$ and \*$\frac{4}{3}$ to the right side of
+@eq:sphere3. Of course, we change the mathematical operation to the opposite
+(division instead of multiplication) and get:
 
 $r^3 = v / \pi / \frac{4}{3}$ {#eq:sphere4}
 
@@ -83,9 +83,30 @@ All that's left to do is to move exponentiation ($x^3$) to the right side of
 @eq:sphere4 while changing it to the opposite mathematical operation
 ($\sqrt[3]{x}$).
 
-$r = \sqrt[3]{v / \pi / \frac{4}{3}}$ {#eq:sphere4}
+$r = \sqrt[3]{v / \pi / \frac{4}{3}}$ {#eq:sphere5}
 
-All that's left to do is to translate it into Julia code.
+Now, you might wanted to quickly verify the solution using
+`Symbolic.symbolic_linear_solve` we met in @sec:bat_and_ball_solution.
+Unfortunately, we cannot use `r^3` (`r` to the 3rd power) as an argument, since
+then it wouldn't be a linear equation (here the maximum power is 1) required by
+`_linear_solve`. Instead of using other, more complicated solver, we will keep
+things simple and apply a little trick:
+
+```jl
+s = """
+# fraction - 4/3, p - π, r3 - r^3, v - volume
+Sym.@variables fraction p r3 v
+Sym.symbolic_linear_solve(fraction * p * r3 ~ v, r3)
+"""
+sco(s)
+```
+
+So, according to `Sym.symbolic_linear_solve` $r^3 = v / (\frac{4}{3} * \pi)$,
+which is actually the same as @eq:sphere4 above (since 18 / 2 / 3 == 18 / (2 *
+3)). Ergo, also @eq:sphere5 is correct.
+
+Once, we confimed the formula in @eq:sphere5, all that's left to do is to
+translate it into Julia code.
 
 ```jl
 s = """
@@ -121,7 +142,7 @@ numsOfDroplets = collect(4:4:12)
 for nDrops in numsOfDroplets
     smallS = getSphere(bigV / nDrops)
     smallV = getVolume(smallS)
-    smallA = getArea(smallS)
+    smallA = getSurfaceArea(smallS)
     sumSmallAs = smallA * nDrops
     sumSmallVs = smallV * nDrops
     push!(areas, sumSmallAs)
@@ -137,12 +158,12 @@ sc(s)
 We begin by initializing vectors that will hold the `areas`, `volumes`, and
 `radii` of our lipid droplets. Then we define the number of droplets that we
 want to split our big droplet in (`numsOfDroplets`). For each of those (`for
-nDrops`) we determine the radius (`smallS = getSphere`), volume (`smallV`) and
-surface area (`smallA`) of a single small droplet as well as total area
-(`sumSmallAs`) and total volume (`sumSmallVs`) of `nDrops`.  We add the total
-area, total volume and radius of a single droplet to the `areas`, `volumes`, and
-`radii` vectors, respectively. In the end we `prepend` 1 to the `numOfDroplets`,
-since we started with one big droplet (`bigS`).
+nDrops in numsOfDroplets`) we determine the radius (`smallS = getSphere`),
+volume (`smallV`) and surface area (`smallA`) of a single small droplet as well
+as total area (`sumSmallAs`) and total volume (`sumSmallVs`) of `nDrops`. We
+add the total area, total volume and radius of a single droplet to the `areas`,
+`volumes`, and `radii` vectors, respectively. In the end we `prepend` 1 to the
+`numOfDroplets`, since we started with one big droplet (`bigS`).
 
 Now, we can either examine the vectors (`areas`, `volumes`, `radii`,
 `numOfDroplets`) one by one, or do one better and present it on the graph with
