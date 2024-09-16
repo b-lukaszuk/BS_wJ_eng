@@ -1,8 +1,8 @@
-# Bat and Ball
+# Bat and Ball {#sec:bat_and_ball}
 
 Latest update (local time): Sun 15 Sep 2024
 
-## Problem
+## Problem {#sec:bat_and_ball_problem}
 
 Let's start small. Recently someone told me an interesting small mathematical
 problem that I happened to knew from my youth:
@@ -12,7 +12,7 @@ problem that I happened to knew from my youth:
 
 Pause for a moment and try to give an answer.
 
-## Solution
+## Solution {#sec:bat_and_ball_solution}
 
 My first impulse was that the ball should cost $0.1 or 10 cents. It's the only
 logical solution, right? Or maybe not?

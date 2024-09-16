@@ -1,8 +1,8 @@
-# Matrix Multiplication
+# Matrix Multiplication {#sec:mat_multip}
 
 Latest update (local time): Sun 15 Sep 2024
 
-## Problem
+## Problem {#sec:mat_multip_problem}
 
 In Julia a
 [matrix](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_variables.html#sec:julia_arrays)
@@ -50,7 +50,7 @@ sco(s)
 Compare it against Julia's built-in `*` operator (on some matrices of your
 choice) to ensure its correct functioning.
 
-## Solution
+## Solution {#sec:mat_multip_solution}
 
 It appears that in order to multiply two matrices we need to multiply each
 element in a row from a matrix by each element in a column of another
