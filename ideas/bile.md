@@ -56,10 +56,11 @@ bigV
 sco(s)
 ```
 
-In the next step we will split this big drop into a few smaller ones of equal
+In the next step we will split this big droplet into a few smaller ones of equal
 sizes. Splitting the volume is easy, we just divide `bigV` by `n` droplets.
 However, we need a way to determine the size (`radius`) of each small droplet.
-Let's try to transform the formula for sphere volume.
+Let's try to transform the formula for sphere volume and see if we can get
+radius from that.
 
 $v = \frac{4}{3} * \pi * r^3 $ {#eq:sphere1}
 
@@ -89,8 +90,8 @@ Now, you might wanted to quickly verify the solution using
 `Symbolic.symbolic_linear_solve` we met in @sec:bat_and_ball_solution.
 Unfortunately, we cannot use `r^3` (`r` to the 3rd power) as an argument, since
 then it wouldn't be a linear equation (here the maximum power is 1) required by
-`_linear_solve`. Instead of using other, more complicated solver, we will keep
-things simple and apply a little trick:
+`_linear_solve`. We could have used other, more complicated solver, but instead
+we will keep things simple and apply a little trick:
 
 ```jl
 s = """
@@ -103,10 +104,11 @@ sco(s)
 
 So, according to `Sym.symbolic_linear_solve` $r^3 = v / (\frac{4}{3} * \pi)$,
 which is actually the same as @eq:sphere4 above (since 18 / 2 / 3 == 18 / (2 *
-3)). Ergo, also @eq:sphere5 is correct.
+3)). Ergo, we may be fairly certain we correctly solved @eq:sphere4 and
+therefore @eq:sphere5.
 
-Once, we confimed the formula in @eq:sphere5, all that's left to do is to
-translate it into Julia code.
+Once, we confimed the validity of formula in @eq:sphere5, all that's left to do
+is to translate it into Julia code.
 
 ```jl
 s = """
@@ -118,8 +120,8 @@ end
 sc(s)
 ```
 
-Let's test does it work. Let's say we divide `bigS` (actually its volume:
-`bigV`) into 4 smaller drops of the same total volume.
+Time to test how it works. Let's say we divide `bigS` (actually its volume:
+`bigV`) into 4 smaller drops of total volume equal `bigV`.
 
 ```jl
 s = """
@@ -129,8 +131,8 @@ round(getVolume(smallS)*4, digits=2) == round(bigV, digits=2)
 sco(s)
 ```
 
-Once we got that working, it's time to evaluate the total area of different size
-droplets.
+Once we got that working, we evaluate the total area of the droplets of
+different size.
 
 ```jl
 s = """
@@ -157,7 +159,7 @@ sc(s)
 
 We begin by initializing vectors that will hold the `areas`, `volumes`, and
 `radii` of our lipid droplets. Then we define the number of droplets that we
-want to split our big droplet in (`numsOfDroplets`). For each of those (`for
+want to split our big droplet into (`numsOfDroplets`). For each of those (`for
 nDrops in numsOfDroplets`) we determine the radius (`smallS = getSphere`),
 volume (`smallV`) and surface area (`smallA`) of a single small droplet as well
 as total area (`sumSmallAs`) and total volume (`sumSmallVs`) of `nDrops`. We
@@ -166,7 +168,7 @@ add the total area, total volume and radius of a single droplet to the `areas`,
 `numOfDroplets`, since we started with one big droplet (`bigS`).
 
 Now, we can either examine the vectors (`areas`, `volumes`, `radii`,
-`numOfDroplets`) one by one, or do one better and present it on the graph with
+`numOfDroplets`) one by one, or do one better and present them on a graph with
 e.g. CairoMakie (I'm not going to explain the code below, for reference see [my
 previous book](https://b-lukaszuk.github.io/RJ_BS_eng/) or [CairoMakie
 tutorial](https://docs.makie.org/stable/tutorials/getting-started)).
@@ -199,5 +201,7 @@ sc(s)
 
 Behold.
 
-![Bile. Splitting a big lipid droplet on a few smaller and the effect it has on their total surface area.](./images/bile.png){#fig:bile}
+![Bile. Splitting a big lipid droplet into a few smaller one and the effect it has on their total surface area.](./images/bile.png){#fig:bile}
 
+So it turns out that what they taught me in the school about bile all those
+years ago is actually true. Nice.
