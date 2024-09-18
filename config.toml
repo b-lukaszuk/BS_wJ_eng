@@ -1,0 +1,17 @@
+[projects]
+
+  [projects.default]
+  contents = [
+    "about",
+  ]
+
+  # Full URL, required for the sitemap and robots.txt.
+  online_url = "https://b-lukaszuk.github.io/BS_wJ_eng/"
+
+  # Extra directories to be copied.
+  extra_directories = ["images"]
+
+  # Port used by serve()
+  port = 8004
+
+  output_filename = "BS_wJ_eng"
