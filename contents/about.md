@@ -1,26 +1,31 @@
 # About {#sec:about}
 
-Hi, I'm Bart and this is my first 'experimental' book entitled (for now):
+Hi, I'm Bart and this is my second 'experimental' book entitled (for now):
 
-"Romeo and Julia, where Romeo is Basic Statistics"
+"Build SH\*T with Julia".
 
-In this book I will explore some basic statistics (the way I see it) with
-[Julia](https://julialang.org/). Actually, I wrote the book for myself from the
-past. Too bad the past me won't be able to read it. Nevertheless, I hope it is
-gonna be of some value to someone that resembles me from the old
-days. Additionally, I wrote it to solidify my own knowledge of statistics and
-Julia, after all they say we best teach that of what we learn :) Still, the book
-may contain some errors so don't believe everything you read here.
+The book will contain a set of exercises for problems that, for whatever reason,
+I found interesting. The tasks will be accompanied by exemplary solutions in
+[Julia](https://julialang.org/). Still, I recommend you try to solve the tasks
+yourself before checking checking the **code snippets**(TODO link).
 
-Who am I (not)? I'm not a statistician, a mathematician, or a computer
-scientist, but a biologist by education. Nowadays, I'm a programming
-enthusiast. To be honest, statistics was not my favorite subject when I was at
-college. I didn't quite get it then, I got it somewhat better now. Hopefully
-this will make the book easier to digest, although possibly somewhat biased
-towards biology.
+For practical reasons, I will assume that book to be read by curious readers
+of non-mathematical (i.e. resembling mine) background. Therefore, I expect that
+the reader has already mastered the language basics and now are on a lookout for
+a way to hone their newly acquired skills. To that end, I'll imagine you have
+read [my previous open-access
+book](https://b-lukaszuk.github.io/RJ_BS_eng/). I'll do this not not because it
+is the best source there is (which it is), but because of the DRY, i.e. don't
+repeat yourself, principle (I'm going to apply similar writing conventions
+without delving too much into previously mentioned topics).
 
-Oh yeah, I almost forgot, I'm not an English native speaker (keep that in mind
-while reading this book). Still, despite all the book's (and mine) flaws, I hope
-it will be useful to someone (it is available under [Creative Commons
-Attribution-NonCommercial-ShareAlike 4.0
-International](http://creativecommons.org/licenses/by-nc-sa/4.0/) license).
+If, for any reason, you would prefer something else than that book, then feel
+free to visit, e.g. Adam Wysokinski's the [Big Book of
+Julia](https://adamwysokinski.codeberg.page/bbj/) and choose a resource of your
+liking for a start.
+
+Just like previously, I'll try to keep the book possibly simple (clarity over
+cleverness and performance) and correct. Still, I'm only human, so watch out for
+possible errors and bugs. Anyway, I hope the book will satisfy your appetite, it is
+available freely under [Creative Commons Attribution-NonCommercial-ShareAlike
+4.0 International](http://creativecommons.org/licenses/by-nc-sa/4.0/) license.
