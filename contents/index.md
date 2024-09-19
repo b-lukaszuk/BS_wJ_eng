@@ -4,7 +4,9 @@
 This file is not included in the PDF.
 ```
 
-Book writing status: Completed (December 2023, small changes possible).
+Start date: Wed, 2024-09-11
+
+Book writing status: Work in Progress
 
 Latest update (local time):
 
@@ -13,22 +15,24 @@ include("./src/data.jl")
 getTimeStamp()
 ```
 
-Hello there. This is an open source/access book entitled: "Romeo and Julia,
-where Romeo is Basic Statistics". So I guess it's gonna be about a programming
-language named [Julia](https://julialang.org/) and its usage for basic
-statistics.
+Hello there. This is an open source/access book entitled: "Build SH\*T with
+Julia". If anyone asked the full title is "Build **s**uper **h**elpful and
+**i**nteresting **t**hings with Julia", but the shorter version fits better on a
+page. Anyway, they say that in order to learn any programming language you need
+to ~~build sh..~~ write a lot of different programs with it. Therefore,
+the book will contain a set of exercises for problems that, for whatever reason,
+I found interesting.
 
 This book was generated using [Books.jl](https://github.com/JuliaBooks/Books.jl)
 starting with [BookTemplate](https://github.com/JuliaBooks/BookTemplate).
 
-The book is also available as [**PDF**](/RJ_BS_eng.pdf).
+For now, the book does not have a companion PDF file (probably I will add it
+later).
 
-The template for this book can be found
-[here](https://github.com/b-lukaszuk/RJ_BS_eng) and the code snippets for the
-chapters are available
-[there](https://github.com/b-lukaszuk/RJ_BS_eng/tree/main/code_snippets).
+The template for this book can be found *here*(TODO link) and the code snippets
+for the chapters are available *there*(TODO link).
 
-The book is available under [Creative Commons
+The book is available freely under [Creative Commons
 Attribution-NonCommercial-ShareAlike 4.0
 International](http://creativecommons.org/licenses/by-nc-sa/4.0/) license. It
 was written by a Julia enthusiast for any curious readers, however, it comes
