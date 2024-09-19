@@ -10,7 +10,9 @@ Build SH*T with Julia
 
 ## Book writing status
 
-In Progress.
+Start date: Wed, 2024-09-11
+
+Work in Progress.
 
 ## Running book locally
 
