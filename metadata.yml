@@ -1,5 +1,5 @@
 ---
-title: "Romeo and Julia, where Romeo is Basic Statistics"
+title: "Build SH*T with Julia"
 subtitle: ""
 author:
   - Bartlomiej Lukaszuk
@@ -17,6 +17,6 @@ titlepage-top: >
   \end{tabular}
 
 titlepage-bottom: >
-  \url{https://b-lukaszuk.github.io/RJ_BS_eng/}
+  \url{https://b-lukaszuk.github.io/BS_wJ_eng/}
 
 ---
