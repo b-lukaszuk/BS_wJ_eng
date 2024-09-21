@@ -8,8 +8,6 @@ html-license: <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-
 tex-license: Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International
 pdf-footer: ""
 
-# bibliography: files/bibliography.bib
-
 # Only used in PDF.
 titlepage-top: >
   \begin{tabular}{l}

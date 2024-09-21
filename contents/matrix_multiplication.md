@@ -1,6 +1,12 @@
 # Matrix Multiplication {#sec:mat_multip}
 
-Latest update (local time): Sun 15 Sep 2024
+In this chapter we will not need any external libraries. Of course if you really
+need one, then you're an adult, don't let me stop you, go and get it.
+
+You may compare you own solution with the one in the text (with explanations) of
+with [the code
+snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/matrix_multiplication)
+(without explanations).
 
 ## Problem {#sec:mat_multip_problem}
 
@@ -18,14 +24,18 @@ A
 sco(s)
 ```
 
-In mathematics by convention you denote matrices with a single capital
-letter. However, since I'm not a mathematician then I'll use the, easier to
-fingers, lowercase names here.
+In mathematics by convention you denote matrices with a single capital letter.
+However, since I'm not a mathematician then I'll use the, easier to fingers,
+lowercase names here.
+
+Matrices are quite useful in mathematics and e.g in
+computer programs rendering graphics (chances are you used them without
+realizing it).
 
 Anyway, here is the task. Read about matrix multiplication, e.g. on [Math is
 Fun](https://www.mathsisfun.com/algebra/matrix-multiplying.html) or watch a
-[Khan Academy's video](https://www.youtube.com/watch?v=OMA2Mwo0aZg) on it and
-write a function with the following signature
+[Khan Academy's video](https://www.youtube.com/watch?v=OMA2Mwo0aZg) on the topic
+and write a function with the following signature
 
 ```
 multiply(m1::Matrix{Int}, m2::Matrix{Int})::Int
@@ -33,9 +43,12 @@ multiply(m1::Matrix{Int}, m2::Matrix{Int})::Int
 
 that for
 
-```
+```jl
+s = """
 a = [1 2 3; 4 5 6]
 b = [7 8; 9 10; 11 12]
+"""
+sc(s)
 ```
 
 Should return the following matrix
@@ -68,7 +81,7 @@ sc(s)
 ```
 
 First, we place a simple assumption check with the
-[@assert](https://docs.julialang.org/en/v1/base/base/#Base.@assert). Then we
+[assert](https://docs.julialang.org/en/v1/base/base/#Base.@assert). Then we
 multiply each element of `row` by each element of `col` with `map`. `Map`
 applies a function (its first argument) to every element of a collection (its
 second argument), like so.
@@ -83,9 +96,11 @@ sco(s)
 
 Here we used a vector (`[1, 2, 3]`) and applied an anonymous function to each of
 its elements. The function accepts one argument (`x`), adds 10 to it (`x + 10`)
-and returns (`->`) that value. Interestingly, we may apply a function that
-accepts two arguments and applies this function to parallel elements of two
-vectors, like so
+and returns (`->`) that value. And since `x` will become every element of the
+vector `[1, 2, 3]` then in effect all elements will be multiplied by 10 and
+collected into a new vector (the old vector is not changed). Interestingly, we
+may also use a function that accepts two arguments and apply this function to
+parallel elements of two vectors, like so
 
 ```jl
 s = """
@@ -115,9 +130,9 @@ s = """
 sco(s)
 ```
 
-Anyway, once we got the products vector we send it (`|>`) to `sum`.
+Anyway, once we got the products vector we send it (`|>`) as an input to `sum`.
 
-Ok, time for multiplication itself.
+OK, time for multiplication itself.
 
 ```jl
 s = """
@@ -138,12 +153,12 @@ sc(s)
 ```
 
 The above is a translation of the algorithm from the links provided in the task
-description earlier on.  First we start by getting our matrices dimensions, and
-performing a their compatibility check with `@assert`. Then we initialize an
-empty matrix (`result`) with the appropriate dimensions (0s are placeholders for
-its cells).  Finally, we get the dot products of every row (`for r`) in `m1` by
-every column (`for c`) in `m2` and place them to the appropriate cells in the
-`result` matrix.
+description earlier on. First we get our matrices dimensions, and perform a
+compatibility check with `@assert`. Then we initialize an empty matrix
+(`result`) with the appropriate dimensions (we use `zeros` so 0s are the
+placeholders stored in its cells). Finally, we get the dot products of every row
+(`for r`) in `m1` by every column (`for c`) in `m2` and place them to the
+appropriate cells in the `result` matrix.
 
 Now, let's give it a swing.
 
