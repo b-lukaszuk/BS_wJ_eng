@@ -23,37 +23,37 @@ you were not one of them, congrats!).
 Let's summon primary school math to the rescue and settle this once
 and for all. From the task description we know that:
 
-$bat + ball = 1.1$ {#eq:batball1}
+$$ bat + ball = 1.1 $$ {#eq:batball1}
 
-$bat - ball = 1$ {#eq:batball2}
+$$ bat - ball = 1 $$ {#eq:batball2}
 
 Therefore, we can rewrite the @eq:batball2 (move `- ball` to the
 other side and change mathematical operation to the opposite) to get:
 
-$bat = 1 + ball$ {#eq:batball3}
+$$ bat = 1 + ball $$ {#eq:batball3}
 
-Finally, by substituting `bat` from @eq:baball1 with `bat` from @eq:batball3
+Finally, by substituting `bat` from @eq:batball1 with `bat` from @eq:batball3
 (`bat = 1 + ball`) we get.
 
-$1 + ball + ball = 1.1$
+$$ 1 + ball + ball = 1.1 $$
 
 which we can simplify to
 
-$1 + 2*ball = 1.1$
+$$ 1 + 2*ball = 1.1 $$
 
-$2*ball + 1 = 1.1$
+$$ 2*ball + 1 = 1.1 $$
 
-$2*ball = 1.1 - 1$
+$$ 2*ball = 1.1 - 1 $$
 
-$2*ball = 0.1$
+$$ 2*ball = 0.1 $$
 
-$ball = 0.1 / 2$
+$$ ball = 0.1 / 2 $$
 
 to finally get:
 
-$ball = 0.05$
+$$ ball = 0.05 $$
 
-So it turns out that, counter-intuitively, the ball costs $0.05 or 5 cents.
+So it turns out that, counter-intuitively, the ball costs \$0.05 or 5 cents.
 
 That's all very interesting, but what any of this got to do with Julia? Well we
 can solve this and more complicated equations with it. For that purpose we will
@@ -92,7 +92,7 @@ All that's left to do, is to multiply the inverse (`inv`) of the matrix
 s = """
 result = inv(variables) * prices
 # or, shortcut
-result = variables \ prices
+result = variables \\ prices
 round.(result, digits=4)
 """
 sco(s)
