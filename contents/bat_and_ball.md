@@ -1,6 +1,18 @@
 # Bat and Ball {#sec:bat_and_ball}
 
-Latest update (local time): Sun 15 Sep 2024
+In this chapter may or may not use the following external libraries.
+
+```jl
+s2 = """
+import Symbolics as Sym
+"""
+sco(s2)
+```
+
+You may also compare you own solution with the one in the text (with
+explanations) of with [the code
+snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/bat_and_ball)
+(without explanations).
 
 ## Problem {#sec:bat_and_ball_problem}
 
