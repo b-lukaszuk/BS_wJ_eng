@@ -6,7 +6,7 @@ In this chapter may or may not use the following external libraries.
 s2 = """
 import Symbolics as Sym
 """
-sco(s2)
+sc(s2)
 ```
 
 You may also compare you own solution with the one in the text (with
@@ -16,7 +16,7 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/bat_an
 
 ## Problem {#sec:bat_and_ball_problem}
 
-Let's start small. Recently someone told me an interesting small mathematical
+Let's start small. Recently, someone told me an interesting small mathematical
 problem that I happened to knew from my youth:
 
 > A bat and a ball cost in total $1.1. The bat costs $1 more than the ball. How
@@ -27,7 +27,7 @@ Pause for a moment and try to give an answer.
 ## Solution {#sec:bat_and_ball_solution}
 
 My first impulse was that the ball should cost $0.1 or 10 cents. It's the only
-logical solution, right? Or maybe not?
+logical solution, right?
 
 Surprisingly, it turns out that this simple problem trips up a lot of people (if
 you were not one of them, congrats!).
