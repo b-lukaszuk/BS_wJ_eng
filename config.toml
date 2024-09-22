@@ -3,7 +3,8 @@
   [projects.default]
   contents = [
     "about",
-    "matrix_multiplication"
+    "matrix_multiplication",
+    "bat_and_ball"
   ]
 
   # Full URL, required for the sitemap and robots.txt.
