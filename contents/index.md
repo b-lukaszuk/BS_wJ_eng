@@ -29,8 +29,10 @@ starting with [BookTemplate](https://github.com/JuliaBooks/BookTemplate).
 For now, the book does not have a companion PDF file (probably I will add it
 later).
 
-The template for this book can be found *here*(TODO link) and the code snippets
-for the chapters are available *there*(TODO link).
+The template for this book can be found
+[here](https://github.com/b-lukaszuk/BS_wJ_eng) and the code snippets for the
+chapters are available
+[there](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets).
 
 The book is available freely under [Creative Commons
 Attribution-NonCommercial-ShareAlike 4.0
