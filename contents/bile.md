@@ -62,34 +62,34 @@ However, we need a way to determine the size (`radius`) of each small droplet.
 Let's try to transform the formula for sphere volume and see if we can get
 radius from that.
 
-$v = \frac{4}{3} * \pi * r^3 $ {#eq:sphere1}
+$$ v = \frac{4}{3} * \pi * r^3 $$ {#eq:sphere1}
 
 If a = b, then b = a, so we may swap sides.
 
-$\frac{4}{3} * \pi * r^3 = v$ {#eq:sphere2}
+$$ \frac{4}{3} * \pi * r^3 = v $$ {#eq:sphere2}
 
 The multiplication is commutative (the order does not matter), i.e. 2 * 3 * 4 is
 the same as 4 * 3 * 2, therefore we can rearrange elements on the left side of
 @eq:sphere2 to:
 
-$r^3 * \pi * \frac{4}{3} = v$ {#eq:sphere3}
+$$ r^3 * \pi * \frac{4}{3} = v $$ {#eq:sphere3}
 
 Now, one by one we can move \*$\pi$ and \*$\frac{4}{3}$ to the right side of
 @eq:sphere3. Of course, we change the mathematical operation to the opposite
 (division instead of multiplication) and get:
 
-$r^3 = v / \pi / \frac{4}{3}$ {#eq:sphere4}
+$$ r^3 = v / \pi / \frac{4}{3} $$ {#eq:sphere4}
 
 All that's left to do is to move exponentiation ($x^3$) to the right side of
 @eq:sphere4 while changing it to the opposite mathematical operation
 ($\sqrt[3]{x}$).
 
-$r = \sqrt[3]{v / \pi / \frac{4}{3}}$ {#eq:sphere5}
+$$ r = \sqrt[3]{v / \pi / \frac{4}{3}} $$ {#eq:sphere5}
 
 Now, you might wanted to quickly verify the solution using
 `Symbolic.symbolic_linear_solve` we met in @sec:bat_and_ball_solution.
 Unfortunately, we cannot use `r^3` (`r` to the 3rd power) as an argument, since
-then it wouldn't be a linear equation (here the maximum power is 1) required by
+then it wouldn't be a linear equation (to be linear the maximum power must be equal to 1) required by
 `_linear_solve`. We could have used other, more complicated solver, but instead
 we will keep things simple and apply a little trick:
 
@@ -102,10 +102,11 @@ Sym.symbolic_linear_solve(fraction * p * r3 ~ v, r3)
 sco(s)
 ```
 
-So, according to `Sym.symbolic_linear_solve` $r^3 = v / (\frac{4}{3} * \pi)$,
-which is actually the same as @eq:sphere4 above (since 18 / 2 / 3 == 18 / (2 *
-3)). Ergo, we may be fairly certain we correctly solved @eq:sphere4 and
-therefore @eq:sphere5.
+So, instead of writing the formula as it is, we just named our variables
+`fraction`, `p`, `r3` and `v`. Anyway, according to `Sym.symbolic_linear_solve`
+$r^3 = v / (\frac{4}{3} * \pi)$, which is actually the same as @eq:sphere4 above
+(since e.g. 18 / 2 / 3 == 18 / (2 * 3)). Ergo, we may be fairly certain we
+correctly solved @eq:sphere4 and therefore @eq:sphere5.
 
 Once, we confimed the validity of formula in @eq:sphere5, all that's left to do
 is to translate it into Julia code.
@@ -120,8 +121,8 @@ end
 sc(s)
 ```
 
-Time to test how it works. Let's say we divide `bigS` (actually its volume:
-`bigV`) into 4 smaller drops of total volume equal `bigV`.
+Time to test how it works. Let's see if we can divide `bigS` (actually its
+volume: `bigV`) into 4 smaller drops of total volume equal to `bigV`.
 
 ```jl
 s = """
@@ -173,31 +174,28 @@ e.g. CairoMakie (I'm not going to explain the code below, for reference see [my
 previous book](https://b-lukaszuk.github.io/RJ_BS_eng/) or [CairoMakie
 tutorial](https://docs.makie.org/stable/tutorials/getting-started)).
 
-```jl
-s = """
+<pre>
 fig = Cmk.Figure();
 Cmk.scatter(fig[1, 1], numsOfDroplets, areas,
-            markersize=radii .* 5,
-            color="gold1", strokecolor="black",
-            axis=(;title="Lipid droplet size vs. summaric surface area",
-                  xlabel="number of lipid droplets",
-                  ylabel="total surface area [μm²]",
-                  xticks=0:13)
-            );
+    markersize=radii .* 5,
+    color="gold1", strokecolor="black",
+    axis=(; title="Lipid droplet size vs. summaric surface area",
+        xlabel="number of lipid droplets",
+        ylabel="total surface area [μm²]",
+        xticks=0:13)
+);
 Cmk.xlims!(-3, 16)
 Cmk.ylims!(800, 3000)
 Cmk.text!(fig[1, 1], numsOfDroplets, areas .- 150,
-          text=map(r -> "radius: $(round(r, digits=2)) [μm]", radii),
-          fontsize=12, align=(:center, :center)
-    )
+    text=map(r -> "radius: $(round(r, digits=2)) [μm]", radii),
+    fontsize=12, align=(:center, :center)
+)
 Cmk.text!(fig[1, 1], numsOfDroplets, areas .- 250,
-          text=map(r -> "total volume: $(round(r, digits=2)) [μm³]", volumes),
-          fontsize=12, align=(:center, :center)
-    )
+    text=map(r -> "total volume: $(round(r, digits=2)) [μm³]", volumes),
+    fontsize=12, align=(:center, :center)
+)
 fig
-"""
-sc(s)
-```
+</pre>
 
 Behold.
 
