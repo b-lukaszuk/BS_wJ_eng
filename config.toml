@@ -4,7 +4,8 @@
   contents = [
     "about",
     "matrix_multiplication",
-    "bat_and_ball"
+    "bat_and_ball",
+    "bile"
   ]
 
   # Full URL, required for the sitemap and robots.txt.
