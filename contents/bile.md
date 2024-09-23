@@ -1,6 +1,20 @@
 # Bile {#sec:bile}
 
-Latest update (local time): Mon 16 Sep 2024
+In this chapter may or may not use the following external libraries.
+
+```jl
+s2 = """
+import CairoMakie as Cmk
+import Symbolics as Sym
+"""
+sc(s2)
+```
+
+You may also compare you own solution with the one in the text (with
+explanations) of with [the code
+snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/bile)
+(without explanations).
+
 
 ## Problem {#sec:bile_problem}
 
