@@ -130,7 +130,7 @@ is to translate it into Julia code.
 s = """
 function getSphere(volume::Float64)::Sphere
     # cbrt - fn that calculates cube root of a number
-    radius::Float64 = cbrt(volume / pi / (4/3))
+    radius::Float64 = cbrt(volume / (4/3) / pi)
     return Sphere(radius)
 end
 """

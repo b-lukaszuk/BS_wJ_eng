@@ -20,7 +20,7 @@ Sym.symbolic_linear_solve(fraction * p * r3 ~ v, r3)
 # formula equivalent to the one returned by the solver above
 function getSphere(volume::Float64)::Sphere
     # cbrt - fn that calculates cube root of a number
-    radius::Float64 = cbrt(volume / pi / (4 / 3))
+    radius::Float64 = cbrt(volume / (4/3) / pi)
     return Sphere(radius)
 end
 
