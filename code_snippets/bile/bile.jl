@@ -19,6 +19,7 @@ Sym.symbolic_linear_solve(fraction * p * r3 ~ v, r3)
 
 # formula equivalent to the one returned by the solver above
 function getSphere(volume::Float64)::Sphere
+    # cbrt - fn that calculates cube root of a number
     radius::Float64 = cbrt(volume / pi / (4 / 3))
     return Sphere(radius)
 end
@@ -28,12 +29,18 @@ bigS = Sphere(10) # 10 um
 bigV = getVolume(bigS)
 bigA = getSurfaceArea(bigS)
 
+isapprox(
+    getSphere(bigV / 4) |> getVolume,
+    bigV / 4
+)
+
 areas = [bigA]
 volumes = [bigV]
 radii = [bigS.radius]
 
 numsOfDroplets = collect(4:4:12)
 for nDrops in numsOfDroplets
+    # local variables smallS, smallV, smallA, sumSmallAs, sumSmallVs
     smallS = getSphere(bigV / nDrops)
     smallV = getVolume(smallS)
     smallA = getSurfaceArea(smallS)

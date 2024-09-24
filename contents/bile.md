@@ -73,7 +73,7 @@ sco(s)
 In the next step we will split this big droplet into a few smaller ones of equal
 sizes. Splitting the volume is easy, we just divide `bigV` by `n` droplets.
 However, we need a way to determine the size (`radius`) of each small droplet.
-Let's try to transform the formula for sphere volume and see if we can get
+Let's try to transform the formula for a sphere's volume and see if we can get
 radius from that.
 
 $$ v = \frac{4}{3} * \pi * r^3 $$ {#eq:sphere1}
@@ -83,29 +83,30 @@ If a = b, then b = a, so we may swap sides.
 $$ \frac{4}{3} * \pi * r^3 = v $$ {#eq:sphere2}
 
 The multiplication is commutative (the order does not matter), i.e. 2 * 3 * 4 is
-the same as 4 * 3 * 2, therefore we can rearrange elements on the left side of
-@eq:sphere2 to:
+the same as 4 * 3 * 2 or 2 * 4 * 3, therefore we can rearrange elements on the
+left side of @eq:sphere2 to:
 
-$$ r^3 * \pi * \frac{4}{3} = v $$ {#eq:sphere3}
+$$ r^3 * \frac{4}{3} * \pi = v $$ {#eq:sphere3}
 
-Now, one by one we can move \*$\pi$ and \*$\frac{4}{3}$ to the right side of
+Now, one by one we can move \*$\frac{4}{3}$ and \*$\pi$ to the right side of
 @eq:sphere3. Of course, we change the mathematical operation to the opposite
 (division instead of multiplication) and get:
 
-$$ r^3 = v / \pi / \frac{4}{3} $$ {#eq:sphere4}
+$$ r^3 = v / \frac{4}{3} / \pi $$ {#eq:sphere4}
 
 All that's left to do is to move exponentiation ($x^3$) to the right side of
 @eq:sphere4 while changing it to the opposite mathematical operation
-($\sqrt[3]{x}$).
+(cube root, i.e. $\sqrt[3]{x}$).
 
-$$ r = \sqrt[3]{v / \pi / \frac{4}{3}} $$ {#eq:sphere5}
+$$ r = \sqrt[3]{v / \frac{4}{3} / \pi} $$ {#eq:sphere5}
 
 Now, you might wanted to quickly verify the solution using
 `Symbolic.symbolic_linear_solve` we met in @sec:bat_and_ball_solution.
-Unfortunately, we cannot use `r^3` (`r` to the 3rd power) as an argument, since
-then it wouldn't be a linear equation (to be linear the maximum power must be equal to 1) required by
-`_linear_solve`. We could have used other, more complicated solver, but instead
-we will keep things simple and apply a little trick:
+Unfortunately, we cannot use `r^3` (`r` to the 3rd power) as an argument (and
+solve for `r`), since then it wouldn't be a linear equation (to be linear the
+maximum power must be equal to 1) required by `_linear_solve`. We could have
+used other, more complicated solver, but instead we will keep things simple and
+apply a little trick:
 
 ```jl
 s = """
@@ -119,7 +120,7 @@ sco(s)
 So, instead of writing the formula as it is, we just named our variables
 `fraction`, `p`, `r3` and `v`. Anyway, according to `Sym.symbolic_linear_solve`
 $r^3 = v / (\frac{4}{3} * \pi)$, which is actually the same as @eq:sphere4 above
-(since e.g. 18 / 2 / 3 == 18 / (2 * 3)). Ergo, we may be fairly certain we
+[since e.g. 18 / 2 / 3 == 18 / (2 * 3)]. Ergo, we may be fairly certain we
 correctly solved @eq:sphere4 and therefore @eq:sphere5.
 
 Once, we confimed the validity of formula in @eq:sphere5, all that's left to do
@@ -128,6 +129,7 @@ is to translate it into Julia code.
 ```jl
 s = """
 function getSphere(volume::Float64)::Sphere
+    # cbrt - fn that calculates cube root of a number
     radius::Float64 = cbrt(volume / pi / (4/3))
     return Sphere(radius)
 end
@@ -140,8 +142,10 @@ volume: `bigV`) into 4 smaller drops of total volume equal to `bigV`.
 
 ```jl
 s = """
-smallS = getSphere(bigV/4)
-round(getVolume(smallS)*4, digits=2) == round(bigV, digits=2)
+isapprox(
+    getSphere(bigV / 4) |> getVolume,
+    bigV / 4
+)
 """
 sco(s)
 ```
@@ -157,6 +161,7 @@ radii = [bigS.radius]
 
 numsOfDroplets = collect(4:4:12)
 for nDrops in numsOfDroplets
+    # local variables smallS, smallV, smallA, sumSmallAs, sumSmallVs
     smallS = getSphere(bigV / nDrops)
     smallV = getVolume(smallS)
     smallA = getSurfaceArea(smallS)
@@ -215,5 +220,5 @@ Behold.
 
 ![Bile. Splitting a big lipid droplet into a few smaller one and the effect it has on their total surface area.](./images/bile.png){#fig:bile}
 
-So it turns out that what they taught me in the school about bile all those
-years ago is actually true. Nice.
+So it turns out that what they taught me in the school all those years ago is
+actually true. But only now I can finally see it. Nice.
