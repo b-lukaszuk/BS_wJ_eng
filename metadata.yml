@@ -17,4 +17,6 @@ titlepage-top: >
 titlepage-bottom: >
   \url{https://b-lukaszuk.github.io/BS_wJ_eng/}
 
+toc: true
+tocdepth: 0
 ---
