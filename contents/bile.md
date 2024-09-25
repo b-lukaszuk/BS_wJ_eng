@@ -10,7 +10,7 @@ import Symbolics as Sym
 sc(s2)
 ```
 
-You may also compare you own solution with the one in the text (with
+You may compare your own solution with the one in this chapter's text (with
 explanations) of with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/bile)
 (without explanations).
