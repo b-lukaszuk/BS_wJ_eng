@@ -1,4 +1,4 @@
-# DNA and mRNA, protein  {#sec:dna_rna_protein}
+# Transcription {#sec:transcription}
 
 In this chapter I will not use any external libraries. Still, once you read the
 problem description you may decide to do otherwise. In that case don't let me
@@ -6,10 +6,10 @@ stop you (you're an adult, right?) go and get it.
 
 You may compare your own solution with the one in this chapter's text (with
 explanations) of with [the code
-snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/dna_rna_protein)
+snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/transcription)
 (without explanations).
 
-## Problem {#sec:dna_rna_protein_problem}
+## Problem {#sec:transcription_problem}
 
 The genetic material of an eucariotic cell is located in its nucleus in the form
 of a nucleic acid ([DNA](https://en.wikipedia.org/wiki/DNA) to be precise). At
@@ -38,7 +38,7 @@ the nucleic acids' molecular components (nucleotide bases) called `adenine`,
 
 And here is your task. Read the data from the file:
 `dna_seq_template_strand.txt` (to be found in [the code snippets for this
-chapter](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/dna_rna_protein)).
+chapter](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/transcription)).
 The file contains a sequence of nucleotide bases of some gene. Splice its coding
 parts (aka. [exons](https://en.wikipedia.org/wiki/Exon)), which encompass the
 molecules at positions 2424-2610 and 3397-3542. Transcribe the obtained strand
@@ -46,7 +46,7 @@ to an mRNA molecule according to [the complementarity
 rule](https://en.wikipedia.org/wiki/Complementarity_(molecular_biology)#DNA_and_RNA_base_pair_complementarity)
 presented in the table above.
 
-## Solution {#sec:dna_rna_protein_solution}
+## Solution {#sec:transcription_solution}
 
 The solution
 
