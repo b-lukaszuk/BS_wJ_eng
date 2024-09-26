@@ -187,7 +187,12 @@ add the total area, total volume and radius of a single droplet to the `areas`,
 `volumes`, and `radii` vectors, respectively. In the end we `prepend` 1 to the
 `numOfDroplets`, since we started with one big droplet (`bigS`).
 
-Now, we can either examine the vectors (`areas`, `volumes`, `radii`,
+BTW. Notice that `smallS`, `smallV`, `smallA`, `sumSmallAs`, `sumSmallVs` are
+all local variables defined for the first time in the `for` loop and visible
+only inside of it. If you try to print out their values outside of the loop you
+will get an error like `ERROR: UndefVarError: 'smallS' not defined`.
+
+Anyway, now, we can either examine the vectors (`areas`, `volumes`, `radii`,
 `numOfDroplets`) one by one, or do one better and present them on a graph with
 e.g. CairoMakie (I'm not going to explain the code below, for reference see [my
 previous book](https://b-lukaszuk.github.io/RJ_BS_eng/) or [CairoMakie
