@@ -23,7 +23,7 @@ function transcribe(
     nucleotideBase::Char,
     complementarityMap::Dict{Char, Char} = dna2mrna
     )::Char
-    return get(dna2mrna, nucleotideBase, nucleotideBase)
+    return get(complementarityMap, nucleotideBase, nucleotideBase)
 end
 (
     transcribe('a'),

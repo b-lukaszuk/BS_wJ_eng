@@ -63,7 +63,7 @@ sco(s)
 
 Here we defined `filePath` to our file with
 [const](https://docs.julialang.org/en/v1/base/base/#const) keyword, to signify
-that we do not plan to change the value for as long as the program runs.  Next,
+that we do not plan to change the value for as long as the program runs. Next,
 we checked its size with
 [filesize](https://docs.julialang.org/en/v1/base/file/#Base.filesize) to see it
 is equal to `jl filesize(filePath)` bytes. This is slightly more than
@@ -87,7 +87,6 @@ computer to print the subsequent characters from a new line. We need to splice
 sequence at positions 2424-2610 and 3397-3542 so let's get rid of those extra
 characters to make the counting easier.
 
-
 ```jl
 s = """
 dna = replace(dna, " " => "", "\n" => "")
@@ -98,10 +97,10 @@ sco(s)
 
 This couldn't be simpler, we just use `replace` and `itIs => shouldBe` syntax.
 The spaces (`" "`) are replaced with nothing (`""`, empty string) and newlines
-(`"\n"`) with nothing (`""`, empty string) as well. Efectively this removed them
-from our `dna` string.
+(`"\n"`) with nothing (`""`, empty string) as well. Effectively this removed
+them from our `dna` string.
 
-String splicing is easily done with indexing and string concatenation opeartor
+String splicing is easily done with indexing and string concatenation operator
 (`*`) like so.
 
 ```jl
@@ -136,7 +135,7 @@ function transcribe(
     nucleotideBase::Char,
     complementarityMap::Dict{Char, Char} = dna2mrna
     )::Char
-    return get(dna2mrna, nucleotideBase, nucleotideBase)
+    return get(complementarityMap, nucleotideBase, nucleotideBase)
 end
 
 (
