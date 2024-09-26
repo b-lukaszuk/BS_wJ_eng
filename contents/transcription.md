@@ -53,8 +53,8 @@ your file manager or Julia
 
 ```jl
 s = """
-# in 'code_snippets' folder use: "./transcription/dna_seq_template_strand.txt"
-# in 'transcription' folder use: "./dna_seq_template_strand.txt"
+#in 'code_snippets' folder use "./transcription/dna_seq_template_strand.txt"
+#in 'transcription' folder use "./dna_seq_template_strand.txt"
 const filePath = "./code_snippets/transcription/dna_seq_template_strand.txt"
 filesize(filePath)
 """
