@@ -178,7 +178,7 @@ Instead of the above two functions we could have just written
 
 ```jl
 s = """
-mrna = map(base -> get(dna2mrna, base, base), dnaExonsOnly)
+mRna = map(base -> get(dna2mrna, base, base), dnaExonsOnly)
 (
 	dnaExonsOnly[1:10],
 	mRna[1:10]

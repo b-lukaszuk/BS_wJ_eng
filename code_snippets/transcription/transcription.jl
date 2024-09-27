@@ -42,7 +42,7 @@ mRna = transcribe(dnaExonsOnly)
 )
 
 # or shortly
-mrna = map(base -> get(dna2mrna, base, base), dnaExonsOnly)
+mRna = map(base -> get(dna2mrna, base, base), dnaExonsOnly)
 (
     dnaExonsOnly[1:10],
     mRna[1:10]
