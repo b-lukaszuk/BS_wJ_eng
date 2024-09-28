@@ -1,14 +1,16 @@
 filePath = "./dna_seq_template_strand.txt"
 filesize(filePath)
 
-dna = read(filePath, String)
-dna[1:80]
+mRna = open(filePath) do file
+    read(file, String)
+end
+mRna[1:75]
 
 dna = replace(dna, " " => "", "\n" => "")
-dna[1:80]
+dna[1:75]
 
 dnaExonsOnly = dna[2424:2610] * dna[3397:3542]
-dnaExonsOnly[1:80]
+dnaExonsOnly[1:75]
 
 # https://en.wikipedia.org/wiki/Complementarity_(molecular_biology)
 # DNA template strand to mRNA

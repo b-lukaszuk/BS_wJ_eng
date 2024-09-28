@@ -71,7 +71,9 @@ as a one long `String`.
 
 ```jl
 s = """
-dna = read(filePath, String)
+dna = open(filePath) file
+	read(file, String)
+end
 dna[1:75]
 """
 replace(sco(s), Regex("\ncggtcccac") => "\\\\ncggtcccac")
