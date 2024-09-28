@@ -71,7 +71,7 @@ as a one long `String`.
 
 ```jl
 s = """
-dna = open(filePath) file
+dna = open(filePath) do file
 	read(file, String)
 end
 dna[1:75]
