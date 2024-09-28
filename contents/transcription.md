@@ -55,22 +55,19 @@ your file manager or Julia
 s = """
 #in 'code_snippets' folder use "./transcription/dna_seq_template_strand.txt"
 #in 'transcription' folder use "./dna_seq_template_strand.txt"
-const filePath = "./code_snippets/transcription/dna_seq_template_strand.txt"
+filePath = "./code_snippets/transcription/dna_seq_template_strand.txt"
 filesize(filePath)
 """
 sco(s)
 ```
 
-Here we defined `filePath` to our file with
-[const](https://docs.julialang.org/en/v1/base/base/#const) keyword, to signify
-that we do not plan to change the value for as long as the program runs. Next,
-we checked its size with
+Here we defined `filePath` to our file. Next, we checked its size with
 [filesize](https://docs.julialang.org/en/v1/base/file/#Base.filesize) to see it
 is equal to `jl filesize(filePath)` bytes. This is slightly more than
  `jl round(Int, filesize(filePath) / 1024)` kilobytes (KiB). Such a small file
- can be easily swallowed by
- [read](https://docs.julialang.org/en/v1/base/io-network/#Base.read) and
- returned as a one long `String`.
+can be easily swallowed by
+[read](https://docs.julialang.org/en/v1/base/io-network/#Base.read) and returned
+as a one long `String`.
 
 ```jl
 s = """

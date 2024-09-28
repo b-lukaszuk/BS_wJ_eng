@@ -1,4 +1,4 @@
-const filePath = "./dna_seq_template_strand.txt"
+filePath = "./dna_seq_template_strand.txt"
 filesize(filePath)
 
 dna = read(filePath, String)

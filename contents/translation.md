@@ -79,8 +79,16 @@ sc(s)
 
 So as a final touch rewrie the aminoacid sequence using the one-letter
 abbreviations above. As a result you should obtain the following sequence:
-"MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEALYLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGA
-GSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN".
+
+```jl
+s = """
+# AA - aminoacids
+expectedAAseq = "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL" *
+	"YLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGA" *
+	"GSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN"
+"""
+sc(s)
+```
 
 ## Solution {#sec:translation_solution}
 
