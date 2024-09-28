@@ -72,7 +72,7 @@ as a one long `String`.
 ```jl
 s = """
 dna = read(filePath, String)
-dna[1:80]
+dna[1:75]
 """
 replace(sco(s), Regex("\ncggtcccac") => "\\\\ncggtcccac")
 ```
@@ -87,9 +87,9 @@ characters to make the counting easier.
 ```jl
 s = """
 dna = replace(dna, " " => "", "\n" => "")
-dna[1:80]
+dna[1:75]
 """
-sco(s)
+replace(sco(s), Regex("\n\" => ") => "\\n\" => \"")
 ```
 
 This couldn't be simpler, we just use `replace` and `itIs => shouldBe` syntax.
@@ -103,7 +103,7 @@ String splicing is easily done with indexing and string concatenation operator
 ```jl
 s = """
 dnaExonsOnly = dna[2424:2610] * dna[3397:3542]
-dnaExonsOnly[1:80]
+dnaExonsOnly[1:75]
 """
 sco(s)
 ```
