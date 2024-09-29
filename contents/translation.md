@@ -28,7 +28,7 @@ code](https://en.wikipedia.org/wiki/DNA_and_RNA_codon_tables#Translation_table_1
 finish the protein synthesis once you encounter a stop codon (`UAA`, `UAG`,
 `UGA`).
 
-Since rewriting the wikipedia's table from the link above is mundane and boring,
+Since rewriting the Wikipedia's table from the link above is mundane and boring,
 then I paste the genetic code below in Julia's dictionary format.
 
 ```jl
@@ -77,7 +77,7 @@ aa2iupac = Dict(
 sc(s)
 ```
 
-So as a final touch rewrie the amino acid sequence using the one-letter
+So as a final touch rewrite the amino acid sequence using the one-letter
 abbreviations above. As a result you should obtain the following sequence:
 
 ```jl
@@ -202,7 +202,7 @@ protein == expectedAAseq
 sco(s)
 ```
 
-Congratulations, you have successfully synthetised pre-pro-insulin. It could be
+Congratulations, you have successfully synthesized pre-pro-insulin. It could be
 only a matter of time before you achieve something greater still.
 
 Anyway, both @sec:transcription and @sec:translation were inspired by the
@@ -210,4 +210,3 @@ lecture of [this ResearchGate
 entry](https://www.researchgate.net/publication/16952023_Sequence_of_human_insulin_gene)
 based on which the DNA sequence was obtained (`dna_seq_template_strand.txt` from
 @sec:transcription).
-

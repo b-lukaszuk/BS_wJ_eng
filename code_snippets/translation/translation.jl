@@ -62,22 +62,20 @@ end
 
 function translate(mRnaSeq::String)::String
     len::Int = length(mRnaSeq)
-    @assert length(mRnaSeq) % 3 == 0 "the number of bases is not multiple of 3"
+    @assert len % 3 == 0 "the number of bases is not multiple of 3"
     aas::Vector{String} = fill("", Int(len/3))
-    counter::Int = 0
+    aaInd::Int = 0
     for i in 1:3:len
-        counter += 1
-        codon = mRnaSeq[i:(i+2)]
-        aa = getAA(codon)
+        aaInd += 1
+        codon = mRnaSeq[i:(i+2)] # variable local to for loop
+        aa = getAA(codon) # variable local to for loop
         if aa == "Stop"
             break
         end
-        aas[counter] = aa
+        aas[aaInd] = aa
     end
     return join(aas)
 end
 
 protein = translate(mRna)
-any(protein .== "???")
-
 expectedAAseq == protein
