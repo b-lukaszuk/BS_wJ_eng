@@ -60,12 +60,19 @@ function getAA(codon::String)::String
     return aaIUPAC
 end
 
+function getCodon(
+    span::UnitRange{Int}, mRnaSeq::String = mRna)::String
+    return mRnaSeq[span]
+end
+
+function getRange(first::Int, finalLen::Int = 3)::UnitRange{Int}
+    return first:(first+finalLen-1) # () are optional
+end
+
 function translate(mRnaSeq::String)
     @assert length(mRnaSeq) % 3 == 0
-    tripletsStartInds::Vector{Int} =
-        1:3:length(mRnaSeq) |> collect
-    triplets::Vector{String} =
-        [mRnaSeq[i:(i+2)] for i in tripletsStartInds]
+    codonRanges::Vector{UnitRange{Int}} = map(getRange, 1:3:length(mRnaSeq))
+    triplets::Vector{String} = map(getCodon, codonRanges)
     aas::Vector{String} = map(getAA, triplets)
     return aas
 end
