@@ -1,4 +1,4 @@
-# codon - triplet, aa - aminoacid
+# codon - triplet, aa - amino acid
 codon2aa = Dict(
     "UUU"=> "Phe", "UUC"=> "Phe", "UUA" => "Leu",
     "UUG" => "Leu", "CUU" => "Leu", "CUC" => "Leu",
@@ -24,7 +24,7 @@ codon2aa = Dict(
     "GGG" => "Gly"
 )
 
-# aa - aminoacid,
+# aa - amino acid,
 # iupac - International Union of Pure and Applied Chemistry
 aa2iupac = Dict(
     "Ala" => "A", "Arg" => "R", "Asn" => "N",
@@ -36,7 +36,7 @@ aa2iupac = Dict(
     "Tyr" => "Y", "Val" => "V", "Stop" => "Stop"
 )
 
-# AA - aminoacids
+# AA - amino acids
 expectedAAseq = "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL" *
 	"YLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGA" *
 	"GSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN"
@@ -53,35 +53,31 @@ mRna[1:75]
 mRna = uppercase(mRna)
 mRna[1:5]
 
-# translates codon/triplet to amino-acid IUPAC
+# translates codon/triplet to amino acid IUPAC
 function getAA(codon::String)::String
     aaAbbrev::String = get(codon2aa, codon, "???")
     aaIUPAC::String = get(aa2iupac, aaAbbrev, "???")
     return aaIUPAC
 end
 
-function getCodon(
-    span::UnitRange{Int}, mRnaSeq::String = mRna)::String
-    return mRnaSeq[span]
-end
-
-function getRange(first::Int, finalLen::Int = 3)::UnitRange{Int}
-    return first:(first+finalLen-1) # () are optional
-end
-
-function translate(mRnaSeq::String)
-    @assert length(mRnaSeq) % 3 == 0
-    codonRanges::Vector{UnitRange{Int}} = map(getRange, 1:3:length(mRnaSeq))
-    triplets::Vector{String} = map(getCodon, codonRanges)
-    aas::Vector{String} = map(getAA, triplets)
-    return aas
+function translate(mRnaSeq::String)::String
+    len::Int = length(mRnaSeq)
+    @assert length(mRnaSeq) % 3 == 0 "the number of bases is not multiple of 3"
+    aas::Vector{String} = fill("", Int(len/3))
+    counter::Int = 0
+    for i in 1:3:len
+        counter += 1
+        codon = mRnaSeq[i:(i+2)]
+        aa = getAA(codon)
+        if aa == "Stop"
+            break
+        end
+        aas[counter] = aa
+    end
+    return join(aas)
 end
 
 protein = translate(mRna)
 any(protein .== "???")
-any(protein .== "Stop")
-stopInd = findfirst(aa -> aa == "Stop", protein)
-protein = protein[1:(stopInd-1)]
-protein = join(protein)
 
 expectedAAseq == protein
