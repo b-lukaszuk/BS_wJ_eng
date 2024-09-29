@@ -33,7 +33,7 @@ then I paste the genetic code below in Julia's dictionary format.
 
 ```jl
 s = """
-# codon - triplet, aa - aminoacid
+# codon - triplet, aa - amino acid
 codon2aa = Dict(
 	"UUU"=> "Phe", "UUC"=> "Phe", "UUA" => "Leu", "UUG" => "Leu",
 	"CUU" => "Leu", "CUC" => "Leu", "CUA" => "Leu", "CUG" => "Leu",
@@ -63,7 +63,7 @@ and displayed below.
 
 ```jl
 s = """
-# aa - aminoacid,
+# aa - amino acid,
 # iupac - International Union of Pure and Applied Chemistry
 aa2iupac = Dict(
     "Ala" => "A", "Arg" => "R", "Asn" => "N", "Asp" => "D",
@@ -77,12 +77,12 @@ aa2iupac = Dict(
 sc(s)
 ```
 
-So as a final touch rewrie the aminoacid sequence using the one-letter
+So as a final touch rewrie the amino acid sequence using the one-letter
 abbreviations above. As a result you should obtain the following sequence:
 
 ```jl
 s = """
-# AA - aminoacids
+# AA - amino acids
 expectedAAseq = "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL" *
 	"YLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGA" *
 	"GSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN"
@@ -92,4 +92,122 @@ sc(s)
 
 ## Solution {#sec:translation_solution}
 
-The solution goes here.
+Let's start as we did before by checking the file size.
+
+```jl
+s = """
+#in 'code_snippets' folder use "./translation/mrna_seq.txt"
+#in 'transcription' folder use "./dna_seq_template_strand.txt"
+filePath = "./code_snippets/translation/mrna_seq.txt"
+filesize(filePath)
+"""
+sco(s)
+```
+
+OK, it's less than 1 KiB. Let's read it and get a preview of the data.
+
+```jl
+s = """
+mRna = open(filePath) do file
+	read(file, String)
+end
+mRna[1:60]
+"""
+sco(s)
+```
+
+It looks good, no spaces between the letters, no newline (`\n`) characters (we
+removed them previously). The only issue here is that `codon2aa` contains codons
+(keys) in uppercase letters. All we need to do is to uppercase the letters in
+`mRna` using Julia's function of the same name.
+
+```jl
+s = """
+mRna = uppercase(mRna)
+mRna[1:5]
+"""
+sco(s)
+```
+
+OK, time to start the translation. First let's translate a triplet of nucleotide
+bases (aka codon) to an amino acid.
+
+```jl
+s = """
+# translates codon/triplet to amino acid IUPAC
+function getAA(codon::String)::String
+    @assert length(codon) == 3 "codon must contain 3 nucleotide bases"
+    aaAbbrev::String = get(codon2aa, codon, "???")
+    aaIUPAC::String = get(aa2iupac, aaAbbrev, "???")
+    return aaIUPAC
+end
+"""
+sc(s)
+```
+
+The function is rather simple. It accepts a codon (like `"AUG"`), next it
+translates a codon to an amino acid (abbreviated with 3 letters) using
+previously defined `codon2aa` dictionary. Then the 3-letter abbreviation is
+coded with a single letter recommended by IUPAC (using `aa2iupac` dictionary).
+If at any point no translation was found `"???"` is returned.
+
+Now, time for translation.
+
+```jl
+s = """
+function translate(mRnaSeq::String)::String
+    len::Int = length(mRnaSeq)
+    @assert len % 3 == 0 "the number of bases is not multiple of 3"
+    aas::Vector{String} = fill("", Int(len/3))
+    aaInd::Int = 0
+    for i in 1:3:len
+        aaInd += 1
+        codon = mRnaSeq[i:(i+2)] # variable local to for loop
+        aa = getAA(codon) # variable local to for loop
+        if aa == "Stop"
+            break
+        end
+        aas[aaInd] = aa
+    end
+    return join(aas)
+end
+"""
+sc(s)
+```
+
+We begin with some checks for the sequence. Then, we define the vector `aas`
+(`aas` - amino acids) holding our result. We initialize it with empty strings
+using `fill`. We will assign the appropriate amino acid to `aas` based on the
+`aaInd` (`aaInd` - amino acid index) which we increase with every iteration
+(`aaInd += 1`). In `for` loop we iterate over each consecutive index with which
+a triple begins (`1:3:len` will return numbers as `[1, 4, 7, 10, 13, ...]`).
+Every consecutive `codon` (3 nucleotic bases) is obtained from `mRNASeq` using
+indexing by adding `+2` to the index that starts a triple (e.g. for i = 1, the
+three bases are at positions 1:3, for i = 4, those are 4:6). The `codon` is used
+to obtain the corresponding amino acid (`aa`) with `getAA`. If the `aa` is a
+so-called stop codon, then we immediately `break` free of the loop. Otherwise,
+we insert the `aa` to the appropriate place [`aaInd`] in `aas`. In the end we
+collapse the vector of strings into one long string with `join`. It is as if we
+used `aas[1] * aas[2] * aas[3] * ...`. Notice, that e.g. `"A" * ""` is
+`"A"`. This effectively gets rid of any empty `aas` elements that remained after
+reaching `aa == "Stop"` and `break` early.
+
+Let's does it work.
+
+```jl
+s = """
+protein = translate(mRna)
+protein == expectedAAseq
+"""
+sco(s)
+```
+
+Congratulations, you have successfully synthetised pre-pro-insulin. It could be
+only a matter of time before you achieve something greater still.
+
+Anyway, both @sec:transcription and @sec:translation were inspired by the
+lecture of [this ResearchGate
+entry](https://www.researchgate.net/publication/16952023_Sequence_of_human_insulin_gene)
+based on which the DNA sequence was obtained (`dna_seq_template_strand.txt` from
+@sec:transcription).
+
