@@ -1,3 +1,5 @@
+import Base.Iterators.takewhile as takewhile
+
 # codon - triplet, aa - amino acid
 codon2aa = Dict(
     "UUU"=> "Phe", "UUC"=> "Phe", "UUA" => "Leu",
@@ -67,8 +69,8 @@ function translate(mRnaSeq::String)::String
     aaInd::Int = 0
     for i in 1:3:len
         aaInd += 1
-        codon = mRnaSeq[i:(i+2)] # variable local to for loop
-        aa = getAA(codon) # variable local to for loop
+        codon::String = mRnaSeq[i:(i+2)] # variable local to for loop
+        aa::String = getAA(codon) # variable local to for loop
         if aa == "Stop"
             break
         end
@@ -79,3 +81,16 @@ end
 
 protein = translate(mRna)
 expectedAAseq == protein
+
+# functional programming solution
+function translate2(mRnaSeq::String)::String
+    len::Int = length(mRnaSeq)
+    @assert len % 3 == 0 "the number of bases is not multiple of 3"
+    ranges::Vector{UnitRange{Int}} = map(:, 1:3:len, 3:3:len)
+    codons::Vector{String} = map(r -> mRnaSeq[r], ranges)
+    aas::Vector{String} = map(getAA, codons)
+    return takewhile(aa -> aa != "Stop", aas) |> join
+end
+
+protein2 = translate2(mRna)
+expectedAAseq == protein2

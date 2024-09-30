@@ -205,6 +205,54 @@ sco(s)
 Congratulations, you have successfully synthesized pre-pro-insulin. It could be
 only a matter of time before you achieve something greater still.
 
+The above `translate` is not the only possible solution. For instance, if you
+are a fan of [functional
+programming](https://en.wikipedia.org/wiki/Functional_programming) paradigm you
+may try something like.
+
+```jl
+s = """
+import Base.Iterators.takewhile as takewhile
+
+function translate2(mRnaSeq::String)::String
+    len::Int = length(mRnaSeq)
+    @assert len % 3 == 0 "the number of bases is not multiple of 3"
+    ranges::Vector{UnitRange{Int}} = map(:, 1:3:len, 3:3:len)
+    codons::Vector{String} = map(r -> mRnaSeq[r], ranges)
+    aas::Vector{String} = map(getAA, codons)
+    return takewhile(aa -> aa != "Stop", aas) |> join
+end
+"""
+sco(s)
+```
+
+You start with defining `ranges` that will help you get particular `codons` in
+the next step. For that purpose you take two sequences for start and end of a
+codon and glue them together with `:` function. For instance `map(:, 1:3:9,
+3:3:9)` roughly translates into `map(:, [1, 4, 7], [3, 6, 9])` which gives
+`[1:3, 4:6, 7:9]`, i.e. a vector of `UnitRange{Int}` (a range composed of `Int`s
+separated by one unit, so by 1). Next, we map over those ranges and use each one
+of them (`r`) to get (`->`) a respective codon (`mRnaSeq[r]`). Then, we map over
+the `codons` to get respective amino acids (`getAA`). Finally, we move from left
+to right through the amiono acids (`aas`) vector and take its elements (`aa`) as
+long as they are not equal `"Stop"`. Finally, we collapse the result with join
+to get one big string.
+
+```jl
+s = """
+protein2 = translate2(mRna)
+expectedAAseq == protein2
+"""
+sco(s)
+```
+
+Works as expected. The functional (`translate2`) solution is shorter, and
+consists of a series of consecutive steps. However, especially for beginner it
+may be more enigmatic. Moreover, it is a bit slower than the for loop version
+(`translate`), which should be more evident with long sequences
+(try `@btime translate(mRna ^ 20)` vs `@btime translate2(mRna ^ 20)` in the
+REPL).
+
 Anyway, both @sec:transcription and @sec:translation were inspired by the
 lecture of [this ResearchGate
 entry](https://www.researchgate.net/publication/16952023_Sequence_of_human_insulin_gene)
