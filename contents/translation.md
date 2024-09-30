@@ -205,7 +205,7 @@ sco(s)
 Congratulations, you have successfully synthesized pre-pro-insulin. It could be
 only a matter of time before you achieve something greater still.
 
-The above `translate` is not the only possible solution. For instance, if you
+The above (`translate`) is not the only possible solution. For instance, if you
 are a fan of [functional
 programming](https://en.wikipedia.org/wiki/Functional_programming) paradigm you
 may try something like.
@@ -223,20 +223,21 @@ function translate2(mRnaSeq::String)::String
     return takewhile(aa -> aa != "Stop", aas) |> join
 end
 """
-sco(s)
+sc(s)
 ```
 
-You start with defining `ranges` that will help you get particular `codons` in
+We start by defining `ranges` that will help us get particular `codons` in
 the next step. For that purpose you take two sequences for start and end of a
-codon and glue them together with `:` function. For instance `map(:, 1:3:9,
-3:3:9)` roughly translates into `map(:, [1, 4, 7], [3, 6, 9])` which gives
-`[1:3, 4:6, 7:9]`, i.e. a vector of `UnitRange{Int}` (a range composed of `Int`s
-separated by one unit, so by 1). Next, we map over those ranges and use each one
-of them (`r`) to get (`->`) a respective codon (`mRnaSeq[r]`). Then, we map over
-the `codons` to get respective amino acids (`getAA`). Finally, we move from left
-to right through the amiono acids (`aas`) vector and take its elements (`aa`) as
-long as they are not equal `"Stop"`. Finally, we collapse the result with join
-to get one big string.
+codon and glue them together with `:`. For instance `map(:, 1:3:9, 3:3:9)`
+roughly translates into `map(:, [1, 4, 7], [3, 6, 9])` which yields
+`[1:3, 4:6, 7:9]`, i.e. a vector of `UnitRange{Int}`. A `UnitRange{Int}` is a
+range composed of `Int`s separated by one unit, so by 1, like in `4:6` (`[4, 5,
+6]` after expansion) mentioned above]. Next, we map over those ranges and use
+each one of them (`r`) to get (`->`) a respective codon (`mRnaSeq[r]`). Then, we
+map over the `codons` to get respective amino acids (`getAA`). Finally, we move
+from left to right through the amiono acids (`aas`) vector and take its elements
+(`aa`) as long as they are not equal `"Stop"`. As the last step, we collapse the
+result with `join` to get one big string.
 
 ```jl
 s = """
@@ -246,12 +247,15 @@ expectedAAseq == protein2
 sco(s)
 ```
 
-Works as expected. The functional (`translate2`) solution is shorter, and
-consists of a series of consecutive steps. However, especially for beginner it
-may be more enigmatic. Moreover, it is a bit slower than the for loop version
-(`translate`), which should be more evident with long sequences
-(try `@btime translate(mRna ^ 20)` vs `@btime translate2(mRna ^ 20)` in the
-REPL).
+Works as expected. The functional solution (`translate2`) often has fewer lines
+of code. It also consists of a series of consecutive logical steps, which is
+quite nice. However, for a beginner (or someone that doesn't know this paradigm)
+it appears more enigmatic (and therefore ofputting). Moreover, in general it is
+expected to be a bit slower than the for loop version (`translate`). This
+should be more evident with long sequences [try `@btime translate(mRna ^ 20)` vs
+`@btime translate2(mRna ^ 20)` in the REPL (type it after `julia>` prompt)].
+
+> Note `^` replicates a string `n` times, e.g. `"ab" ^ 3` = `"ababab"`.
 
 Anyway, both @sec:transcription and @sec:translation were inspired by the
 lecture of [this ResearchGate
