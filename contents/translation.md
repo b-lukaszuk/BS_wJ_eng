@@ -250,12 +250,17 @@ sco(s)
 Works as expected. The functional solution (`translate2`) often has fewer lines
 of code. It also consists of a series of consecutive logical steps, which is
 quite nice. However, for a beginner (or someone that doesn't know this paradigm)
-it appears more enigmatic (and therefore ofputting). Moreover, in general it is
-expected to be a bit slower than the for loop version (`translate`). This
+it appears more enigmatic (and therefore off-putting). Moreover, in general it
+is expected to be a bit slower than the for loop version (`translate`). This
 should be more evident with long sequences [try `@btime translate(mRna ^ 20)` vs
 `@btime translate2(mRna ^ 20)` in the REPL (type it after `julia>` prompt)].
 
-> Note `^` replicates a string `n` times, e.g. `"ab" ^ 3` = `"ababab"`.
+> Note. `^` replicates a string `n` times, e.g. `"ab" ^ 3` =
+> `"ababab"`. Interestingly, although `translate(mRna^20)` and
+> `translate2(mRna^20)` receive a strand of RNA 20 times longer than `mRna` they
+> still return the same amino acid sequence as before. Test yourself and explain
+> why. This will also help you realize why `translate2` is slower than its
+> counterpart.
 
 Anyway, both @sec:transcription and @sec:translation were inspired by the
 lecture of [this ResearchGate
