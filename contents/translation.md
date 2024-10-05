@@ -9,6 +9,15 @@ explanations) of with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/translation)
 (without explanations).
 
+Personally, I used:
+
+<pre>
+import Base.Iterators.takewhile as takewhile
+import BenchmarkTools as Bt
+</pre>
+
+But those are only for the chapter's extras and not strictly necessary to solve the task.
+
 ## Problem {#sec:translation_problem}
 
 Let's start from where we left. Read the data from the file: `mrna_seq.txt` (to
@@ -108,8 +117,12 @@ OK, it's less than 1 KiB. Let's read it and get a preview of the data.
 
 ```jl
 s = """
+# type synonym, not necessary, less typing later on
+# Str instead of String
+const Str = String
+
 mRna = open(filePath) do file
-	read(file, String)
+	read(file, Str)
 end
 mRna[1:60]
 """
@@ -117,9 +130,15 @@ sco(s)
 ```
 
 It looks good, no spaces between the letters, no newline (`\n`) characters (we
-removed them previously). The only issue here is that `codon2aa` contains codons
-(keys) in uppercase letters. All we need to do is to uppercase the letters in
-`mRna` using Julia's function of the same name.
+removed them previously in @sec:transcription_solution). However, notice that we
+declared a type synonym `const Str = String` to shorten type declarations later
+on in the code. The type synonym is declared with `const` keyword, which means
+that we do not plan to change it for as long as the program runs. This type
+synonym will be also used in other chapters.
+
+The only issue with `mRna` is that `codon2aa` contains codons (keys) in
+uppercase letters. All we need to do is to uppercase the letters in `mRna` using
+Julia's function of the same name.
 
 ```jl
 s = """
@@ -135,10 +154,10 @@ bases (aka codon) to an amino acid.
 ```jl
 s = """
 # translates codon/triplet to amino acid IUPAC
-function getAA(codon::String)::String
+function getAA(codon::Str)::Str
     @assert length(codon) == 3 "codon must contain 3 nucleotide bases"
-    aaAbbrev::String = get(codon2aa, codon, "???")
-    aaIUPAC::String = get(aa2iupac, aaAbbrev, "???")
+    aaAbbrev::Str = get(codon2aa, codon, "???")
+    aaIUPAC::Str = get(aa2iupac, aaAbbrev, "???")
     return aaIUPAC
 end
 """
@@ -151,19 +170,24 @@ previously defined `codon2aa` dictionary. Then the 3-letter abbreviation is
 coded with a single letter recommended by IUPAC (using `aa2iupac` dictionary).
 If at any point no translation was found `"???"` is returned.
 
-Now, time for translation.
+Now, time for translation (Again we will declare type synonym to save us some
+typing later on).
 
 ```jl
 s = """
-function translate(mRnaSeq::String)::String
+# type synonym, not necessary, less typing later on
+# Vec{xxx} instead of Vector{xxx}, in type declarations
+const Vec = Vector
+
+function translate(mRnaSeq::Str)::Str
     len::Int = length(mRnaSeq)
     @assert len % 3 == 0 "the number of bases is not multiple of 3"
-    aas::Vector{String} = fill("", Int(len/3))
+    aas::Vec{Str} = fill("", Int(len/3))
     aaInd::Int = 0
     for i in 1:3:len
         aaInd += 1
-        codon = mRnaSeq[i:(i+2)] # variable local to for loop
-        aa = getAA(codon) # variable local to for loop
+        codon::Str = mRnaSeq[i:(i+2)] # variable local to for loop
+        aa::Str = getAA(codon) # variable local to for loop
         if aa == "Stop"
             break
         end
@@ -192,7 +216,7 @@ used `aas[1] * aas[2] * aas[3] * ...`. Notice, that e.g. `"A" * ""` is
 `"A"`. This effectively gets rid of any empty `aas` elements that remained after
 reaching `aa == "Stop"` and `break` early.
 
-Let's does it work.
+Let's see does it work.
 
 ```jl
 s = """
@@ -214,12 +238,12 @@ may try something like.
 s = """
 import Base.Iterators.takewhile as takewhile
 
-function translate2(mRnaSeq::String)::String
+function translate2(mRnaSeq::Str)::Str
     len::Int = length(mRnaSeq)
     @assert len % 3 == 0 "the number of bases is not multiple of 3"
-    ranges::Vector{UnitRange{Int}} = map(:, 1:3:len, 3:3:len)
-    codons::Vector{String} = map(r -> mRnaSeq[r], ranges)
-    aas::Vector{String} = map(getAA, codons)
+    ranges::Vec{UnitRange{Int}} = map(:, 1:3:len, 3:3:len)
+    codons::Vec{Str} = map(r -> mRnaSeq[r], ranges)
+    aas::Vec{Str} = map(getAA, codons)
     return takewhile(aa -> aa != "Stop", aas) |> join
 end
 """
@@ -252,8 +276,10 @@ of code. It also consists of a series of consecutive logical steps, which is
 quite nice. However, for a beginner (or someone that doesn't know this paradigm)
 it appears more enigmatic (and therefore off-putting). Moreover, in general it
 is expected to be a bit slower than the for loop version (`translate`). This
-should be more evident with long sequences [try `@btime translate(mRna ^ 20)` vs
-`@btime translate2(mRna ^ 20)` in the REPL (type it after `julia>` prompt)].
+should be more evident with long sequences [try
+ `BenchmarkTools.@benchmark translate(mRna ^ 20)` vs
+ `@BenchmarkTools.@benchmark translate2(mRna ^ 20)` in the REPL
+(type it after `julia>` prompt)].
 
 > Note. `^` replicates a string `n` times, e.g. `"ab" ^ 3` =
 > `"ababab"`. Interestingly, although `translate(mRna^20)` and

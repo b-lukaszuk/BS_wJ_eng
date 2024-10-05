@@ -1,4 +1,12 @@
+# needed only for functional solution (unobligatory to solve task)
 import Base.Iterators.takewhile as takewhile
+# external library, needed only for benchmark (unobligatory to solve task)
+import BenchmarkTools as Bt
+
+# type synonym, less typing later on
+# e.g. Vec{xxx} instead of Vector{xxx}
+const Str = String
+const Vec = Vector
 
 # codon - triplet, aa - amino acid
 codon2aa = Dict(
@@ -47,7 +55,7 @@ filePath = "./mrna_seq.txt"
 filesize(filePath)
 
 mRna = open(filePath) do file
-    read(file, String)
+    read(file, Str)
 end
 mRna[1:75]
 
@@ -56,21 +64,21 @@ mRna = uppercase(mRna)
 mRna[1:5]
 
 # translates codon/triplet to amino acid IUPAC
-function getAA(codon::String)::String
-    aaAbbrev::String = get(codon2aa, codon, "???")
-    aaIUPAC::String = get(aa2iupac, aaAbbrev, "???")
+function getAA(codon::Str)::Str
+    aaAbbrev::Str = get(codon2aa, codon, "???")
+    aaIUPAC::Str = get(aa2iupac, aaAbbrev, "???")
     return aaIUPAC
 end
 
-function translate(mRnaSeq::String)::String
+function translate(mRnaSeq::Str)::Str
     len::Int = length(mRnaSeq)
     @assert len % 3 == 0 "the number of bases is not multiple of 3"
-    aas::Vector{String} = fill("", Int(len/3))
+    aas::Vec{Str} = fill("", Int(len/3))
     aaInd::Int = 0
     for i in 1:3:len
         aaInd += 1
-        codon::String = mRnaSeq[i:(i+2)] # variable local to for loop
-        aa::String = getAA(codon) # variable local to for loop
+        codon::Str = mRnaSeq[i:(i+2)] # variable local to for loop
+        aa::Str = getAA(codon) # variable local to for loop
         if aa == "Stop"
             break
         end
@@ -83,14 +91,23 @@ protein = translate(mRna)
 expectedAAseq == protein
 
 # functional programming solution
-function translate2(mRnaSeq::String)::String
+function translate2(mRnaSeq::Str)::Str
     len::Int = length(mRnaSeq)
     @assert len % 3 == 0 "the number of bases is not multiple of 3"
-    ranges::Vector{UnitRange{Int}} = map(:, 1:3:len, 3:3:len)
-    codons::Vector{String} = map(r -> mRnaSeq[r], ranges)
-    aas::Vector{String} = map(getAA, codons)
+    ranges::Vec{UnitRange{Int}} = map(:, 1:3:len, 3:3:len)
+    codons::Vec{Str} = map(r -> mRnaSeq[r], ranges)
+    aas::Vec{Str} = map(getAA, codons)
     return takewhile(aa -> aa != "Stop", aas) |> join
 end
 
 protein2 = translate2(mRna)
 expectedAAseq == protein2
+
+# benchmark
+Bt.@benchmark translate(mRna)
+Bt.@benchmark translate2(mRna)
+
+# benchmark
+import BenchmarkTools as Bt
+Bt.@benchmark translate(mRna^20)
+Bt.@benchmark translate2(mRna^20)
