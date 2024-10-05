@@ -1,14 +1,12 @@
-# needed only for functional solution (unobligatory to solve task)
 import Base.Iterators.takewhile as takewhile
-# external library, needed only for benchmark (unobligatory to solve task)
-import BenchmarkTools as Bt
+import BenchmarkTools as Bt # external library
 
-# type synonym, less typing later on
+# type synonyms, less typing later on
 # e.g. Vec{xxx} instead of Vector{xxx}
 const Str = String
 const Vec = Vector
 
-# codon - triplet, aa - amino acid
+# codon - triplet of nucleotide bases, aa - amino acid
 codon2aa = Dict(
     "UUU"=> "Phe", "UUC"=> "Phe", "UUA" => "Leu",
     "UUG" => "Leu", "CUU" => "Leu", "CUC" => "Leu",
@@ -79,6 +77,7 @@ function translate(mRnaSeq::Str)::Str
         aaInd += 1
         codon::Str = mRnaSeq[i:(i+2)] # variable local to for loop
         aa::Str = getAA(codon) # variable local to for loop
+        # if block could be replaced with: aa == "Stop" && break
         if aa == "Stop"
             break
         end
@@ -108,6 +107,5 @@ Bt.@benchmark translate(mRna)
 Bt.@benchmark translate2(mRna)
 
 # benchmark
-import BenchmarkTools as Bt
 Bt.@benchmark translate(mRna^20)
 Bt.@benchmark translate2(mRna^20)

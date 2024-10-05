@@ -1,22 +1,22 @@
 # Translation {#sec:translation}
 
-In this chapter I will not use any external libraries. Still, once you read the
-problem description you may decide to do otherwise. In that case don't let me
-stop you (you're an adult, right?) go and get it.
+In this chapter I used the following libraries
 
-You may compare your own solution with the one in this chapter's text (with
-explanations) of with [the code
+```jl
+s6 = """
+import Base.Iterators.takewhile as takewhile
+import BenchmarkTools as Bt # external library
+"""
+sc(s6)
+```
+
+Those were used only for the chapter's extras and are not strictly necessary to
+solve the task.
+
+Anyway, you may compare your own solution with the one in this chapter's text
+(with explanations) of with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/translation)
 (without explanations).
-
-Personally, I used:
-
-<pre>
-import Base.Iterators.takewhile as takewhile
-import BenchmarkTools as Bt
-</pre>
-
-But those are only for the chapter's extras and not strictly necessary to solve the task.
 
 ## Problem {#sec:translation_problem}
 
@@ -42,7 +42,7 @@ then I paste the genetic code below in Julia's dictionary format.
 
 ```jl
 s = """
-# codon - triplet, aa - amino acid
+# codon - triplet of nucleotide bases, aa - amino acid
 codon2aa = Dict(
 	"UUU"=> "Phe", "UUC"=> "Phe", "UUA" => "Leu", "UUG" => "Leu",
 	"CUU" => "Leu", "CUC" => "Leu", "CUA" => "Leu", "CUG" => "Leu",
@@ -118,7 +118,8 @@ OK, it's less than 1 KiB. Let's read it and get a preview of the data.
 ```jl
 s = """
 # type synonym, not necessary, less typing later on
-# Str instead of String
+# we will be able to use Str instead of String
+# of course String will still be functional
 const Str = String
 
 mRna = open(filePath) do file
@@ -133,12 +134,12 @@ It looks good, no spaces between the letters, no newline (`\n`) characters (we
 removed them previously in @sec:transcription_solution). However, notice that we
 declared a type synonym `const Str = String` to shorten type declarations later
 on in the code. The type synonym is declared with `const` keyword, which means
-that we do not plan to change it for as long as the program runs. This type
-synonym will be also used in other chapters.
+that we do not plan to change it for as long as the program runs. From now on I
+will use this and other type synonyms throughout the book.
 
-The only issue with `mRna` is that `codon2aa` contains codons (keys) in
-uppercase letters. All we need to do is to uppercase the letters in `mRna` using
-Julia's function of the same name.
+The only issue with `mRna` is that `codon2aa` dictionary contains the codons
+(keys) in uppercase letters. All we need to do is to uppercase the letters in
+`mRna` using Julia's function of the same name.
 
 ```jl
 s = """
@@ -170,7 +171,7 @@ previously defined `codon2aa` dictionary. Then the 3-letter abbreviation is
 coded with a single letter recommended by IUPAC (using `aa2iupac` dictionary).
 If at any point no translation was found `"???"` is returned.
 
-Now, time for translation (Again we will declare type synonym to save us some
+Now, time for translation (again, we will declare type synonym to save us some
 typing later on).
 
 ```jl
@@ -201,20 +202,22 @@ sc(s)
 
 We begin with some checks for the sequence. Then, we define the vector `aas`
 (`aas` - amino acids) holding our result. We initialize it with empty strings
-using `fill`. We will assign the appropriate amino acid to `aas` based on the
-`aaInd` (`aaInd` - amino acid index) which we increase with every iteration
-(`aaInd += 1`). In `for` loop we iterate over each consecutive index with which
-a triple begins (`1:3:len` will return numbers as `[1, 4, 7, 10, 13, ...]`).
-Every consecutive `codon` (3 nucleotic bases) is obtained from `mRNASeq` using
-indexing by adding `+2` to the index that starts a triple (e.g. for i = 1, the
-three bases are at positions 1:3, for i = 4, those are 4:6). The `codon` is used
-to obtain the corresponding amino acid (`aa`) with `getAA`. If the `aa` is a
-so-called stop codon, then we immediately `break` free of the loop. Otherwise,
-we insert the `aa` to the appropriate place [`aaInd`] in `aas`. In the end we
-collapse the vector of strings into one long string with `join`. It is as if we
-used `aas[1] * aas[2] * aas[3] * ...`. Notice, that e.g. `"A" * ""` is
-`"A"`. This effectively gets rid of any empty `aas` elements that remained after
-reaching `aa == "Stop"` and `break` early.
+using `fill` function. We will assign the appropriate amino acids to `aas` based
+on the `aaInd` (`aaInd` - amino acid index) which we increase with every
+iteration (`aaInd += 1`). In `for` loop we iterate over each consecutive index
+with which a triple begins (`1:3:len` will return numbers as `[1, 4, 7, 10, 13,
+...]`).  Every consecutive `codon` (3 nucleotic bases) is obtained from
+`mRNASeq` using indexing by adding `+2` to the index that starts a triple (e.g.
+for i = 1, the three bases are at positions 1:3, for i = 4, those are 4:6,
+etc.). The `codon` is used to obtain the corresponding amino acid (`aa`) with
+`getAA`. If the `aa` is a so-called stop codon, then we immediately `break` free
+of the loop. Otherwise, we insert the `aa` to the appropriate place [`aaInd`] in
+`aas`.  In the end we collapse the vector of strings into one long string with
+`join`.  It is as if we used the string concatenation operator `*` on each
+element of `aas` like so `aas[1] * aas[2] * aas[3] * ...`. Notice, that e.g.
+`"A" * ""` or `"A" * "" * ""` is still `"A"`. This effectively gets rid of any
+empty `aas` elements that remained after reaching `aa == "Stop"` and `break`
+early.
 
 Let's see does it work.
 
@@ -256,7 +259,7 @@ codon and glue them together with `:`. For instance `map(:, 1:3:9, 3:3:9)`
 roughly translates into `map(:, [1, 4, 7], [3, 6, 9])` which yields
 `[1:3, 4:6, 7:9]`, i.e. a vector of `UnitRange{Int}`. A `UnitRange{Int}` is a
 range composed of `Int`s separated by one unit, so by 1, like in `4:6` (`[4, 5,
-6]` after expansion) mentioned above]. Next, we map over those ranges and use
+6]` after expansion) mentioned above. Next, we map over those ranges and use
 each one of them (`r`) to get (`->`) a respective codon (`mRnaSeq[r]`). Then, we
 map over the `codons` to get respective amino acids (`getAA`). Finally, we move
 from left to right through the amiono acids (`aas`) vector and take its elements
@@ -273,12 +276,12 @@ sco(s)
 
 Works as expected. The functional solution (`translate2`) often has fewer lines
 of code. It also consists of a series of consecutive logical steps, which is
-quite nice. However, for a beginner (or someone that doesn't know this paradigm)
-it appears more enigmatic (and therefore off-putting). Moreover, in general it
-is expected to be a bit slower than the for loop version (`translate`). This
-should be more evident with long sequences [try
- `BenchmarkTools.@benchmark translate(mRna ^ 20)` vs
- `@BenchmarkTools.@benchmark translate2(mRna ^ 20)` in the REPL
+quite nice. However, for a beginner (or someone that doesn't know this paradigm
+well) it appears more enigmatic (and therefore off-putting). Moreover, in
+general it is expected to be a bit slower than the more imperative for loop
+version (`translate`). This should be more evident with long sequences [try
+ `BenchmarkTools.@benchmark translate(mRna^20)` vs
+ `@BenchmarkTools.@benchmark translate2(mRna^20)` in the REPL
 (type it after `julia>` prompt)].
 
 > Note. `^` replicates a string `n` times, e.g. `"ab" ^ 3` =
