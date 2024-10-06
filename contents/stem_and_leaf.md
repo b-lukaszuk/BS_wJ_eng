@@ -11,8 +11,19 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/stem_a
 
 ## Problem {#sec:stem_and_leaf_problem}
 
-Problem description goes here.
+In statistics a useful technique used to visualize the distribution of data is
+[histogram](https://en.wikipedia.org/wiki/Histogram). A bit less popular,
+although easier to implement with text display is [stem and leaf
+plot](https://en.wikipedia.org/wiki/Stem-and-leaf_display).
 
-## Solution {#sec:mat_multip_solution}
+So here is a task for you:
+
+- read the Wikipedia's description of how the plot is constructed
+- write the function that displays stem and leaf plot for positive integers in the range 0 to 99
+- extend it to work also with the range 0 to 999
+- extend it to work also with negative numbers in the range -999 to 999
+- extend it to work also with floats
+
+## Solution {#sec:stem_and_leaf_solution}
 
 The solution goes here.
