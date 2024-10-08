@@ -19,10 +19,9 @@ plot](https://en.wikipedia.org/wiki/Stem-and-leaf_display).
 So here is a task for you:
 
 - read the Wikipedia's description of how the plot is constructed
-- write the function that displays stem and leaf plot for positive integers in the range 0 to 99
-- extend it to work also with the range 0 to 999
-- extend it to work also with negative numbers in the range -999 to 999
-- extend it to work also with floats
+- write the function that displays stem and leaf plot for positive integers in the range 0 to 99 (bigger number span doesn't look well on printout)
+- extend it to work also with the range -99 to 99
+- extend it to work also with floats in the range -99.9 to 99.9
 
 ## Solution {#sec:stem_and_leaf_solution}
 
