@@ -1,10 +1,10 @@
 filePath = "./dna_seq_template_strand.txt"
 filesize(filePath)
 
-mRna = open(filePath) do file
+dna = open(filePath) do file
     read(file, String)
 end
-mRna[1:75]
+dna[1:75]
 
 dna = replace(dna, " " => "", "\n" => "")
 dna[1:75]
