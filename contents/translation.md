@@ -268,8 +268,8 @@ well) it appears more enigmatic (and therefore off-putting). Moreover, in
 general it is expected to be a bit slower than the more imperative for loop
 version (`translate`). This should be more evident with long sequences [try
  `BenchmarkTools.@benchmark translate(mRna^20)` vs
- `@BenchmarkTools.@benchmark translate2(mRna^20)` in the REPL
-(type it after `julia>` prompt)].
+ `@BenchmarkTools.@benchmark translate2(mRna^20)` in the REPL (type it after
+`julia>` prompt)].
 
 > Note. `^` replicates a string `n` times, e.g. `"ab" ^ 3` =
 > `"ababab"`. Interestingly, although `translate(mRna^20)` and
@@ -277,6 +277,11 @@ version (`translate`). This should be more evident with long sequences [try
 > still return the same amino acid sequence as before. Test yourself and explain
 > why. This will also help you realize why `translate2` is slower than its
 > counterpart.
+
+In the said case (with `mRna^20`) the difference between $\approx 30\ [\mu s]$
+and $\approx 155\ [\mu s]$ (on my laptop) shouldn't be noticeable by a
+human. Therefore, if the performance is acceptable you may want to go with the
+functional version.
 
 Anyway, both @sec:transcription and @sec:translation were inspired by the
 lecture of [this ResearchGate

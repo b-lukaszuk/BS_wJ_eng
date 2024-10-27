@@ -66,7 +66,9 @@ Here we defined `filePath` to our file. Next, we checked its size with
 is equal to `jl filesize(filePath)` bytes. This is slightly more than
  `jl round(Int, filesize(filePath) / 1024)` kilobytes (KiB). Such a small file
 can be easily swallowed by
-[read](https://docs.julialang.org/en/v1/base/io-network/#Base.read) (the recommended way below) and returned as a one long `Str` (type alias for `String`).
+[read](https://docs.julialang.org/en/v1/base/io-network/#Base.read) (the
+recommended way below) and returned as a one long `Str` (type alias for
+`String`).
 
 ```jl
 s = """
@@ -77,6 +79,10 @@ dna[1:75]
 """
 replace(sco(s), Regex("\ncggtcccac") => "\\\\ncggtcccac")
 ```
+
+> Note. For large files you should probably read it line by line with something
+> like `for line in eachline(file) #do sth with line# end` or use a dedicated
+> library.
 
 The nucleotide bases (`a`, `c`, `t`, `g`) are grouped by 10. Moreover, notice
 the `\n` character on the right. It is a
