@@ -19,6 +19,20 @@ is the best source there is (which it is), but because of the DRY, i.e. don't
 repeat yourself, principle (I'm going to apply similar writing conventions
 without delving too much into previously mentioned topics).
 
+Additionally, throughout the book I will define a few type aliases, like:
+
+```jl
+s = """
+const Str = String
+const Vec = Vector
+"""
+sc(s)
+```
+
+This will allow for a shorter code with type declarations, e.g. `Vec{Int}`
+instead `Vector{Int}`. Notice, that the type synonyms are declared with `const`
+keyword, since we do not plan to change it for as long as the program runs.
+
 If, for any reason, you would prefer something else than that book, then feel
 free to visit, e.g. Adam Wysokinski's the [Big Book of
 Julia](https://adamwysokinski.codeberg.page/bbj/) and choose a resource of your
@@ -26,6 +40,6 @@ liking for a start.
 
 Just like previously, I'll try to keep the book possibly simple (clarity over
 cleverness and performance) and correct. Still, I'm only human, so watch out for
-possible errors and bugs. Anyway, I hope the book will satisfy your appetite, it is
-available freely under [Creative Commons Attribution-NonCommercial-ShareAlike
+possible errors and bugs. Anyway, I hope the book will satisfy your appetite, it
+is available freely under [Creative Commons Attribution-NonCommercial-ShareAlike
 4.0 International](http://creativecommons.org/licenses/by-nc-sa/4.0/) license.

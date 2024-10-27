@@ -1,8 +1,6 @@
 import Base.Iterators.takewhile as takewhile
 import BenchmarkTools as Bt # external library
 
-# type synonyms, less typing later on
-# e.g. Vec{xxx} instead of Vector{xxx}
 const Str = String
 const Vec = Vector
 
@@ -102,10 +100,10 @@ end
 protein2 = translate2(mRna)
 expectedAAseq == protein2
 
-# benchmark
+# benchmark (may take some time)
 Bt.@benchmark translate(mRna)
 Bt.@benchmark translate2(mRna)
 
-# benchmark
+# benchmark (may take some time)
 Bt.@benchmark translate(mRna^20)
 Bt.@benchmark translate2(mRna^20)

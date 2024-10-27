@@ -1,3 +1,5 @@
+const Vec = Vector
+
 # matrices are often named with a single capital letter
 # convention from mathematics
 A = [10.5 9.5; 8.5 7.5; 6.5 5.5]
@@ -12,7 +14,7 @@ b = [7 8; 9 10; 11 12]
 c = [-1 3 5; 5 5 2]
 d = [3 4; 3 -2; 4 -2]
 
-function getDotProduct(row::Vector{Int}, col::Vector{Int})
+function getDotProduct(row::Vec{Int}, col::Vec{Int})
     @assert length(row) == length(col) "row & col must be of equal length"
     return map(*, row, col) |> sum
 end

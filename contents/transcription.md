@@ -66,13 +66,12 @@ Here we defined `filePath` to our file. Next, we checked its size with
 is equal to `jl filesize(filePath)` bytes. This is slightly more than
  `jl round(Int, filesize(filePath) / 1024)` kilobytes (KiB). Such a small file
 can be easily swallowed by
-[read](https://docs.julialang.org/en/v1/base/io-network/#Base.read) and returned
-as a one long `String`.
+[read](https://docs.julialang.org/en/v1/base/io-network/#Base.read) (the recommended way below) and returned as a one long `Str` (type alias for `String`).
 
 ```jl
 s = """
 dna = open(filePath) do file
-	read(file, String)
+	read(file, Str)
 end
 dna[1:75]
 """
@@ -157,7 +156,7 @@ All that's left is to write a `transcribe` function for the whole string
 
 ```jl
 s = """
-function transcribe(dnaSeq::String)::String
+function transcribe(dnaSeq::Str)::Str
     return map(transcribe, dnaSeq)
 end
 

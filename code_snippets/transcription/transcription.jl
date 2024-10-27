@@ -1,8 +1,10 @@
+const Str = String
+
 filePath = "./dna_seq_template_strand.txt"
 filesize(filePath)
 
 dna = open(filePath) do file
-    read(file, String)
+    read(file, Str)
 end
 dna[1:75]
 
@@ -33,7 +35,7 @@ end
     transcribe('x')
 )
 
-function transcribe(dnaSeq::String)::String
+function transcribe(dnaSeq::Str)::Str
     return map(transcribe, dnaSeq) # map uses transcribe from above
 end
 

@@ -73,13 +73,18 @@ let's start with that.
 
 ```jl
 s = """
-function getDotProduct(row::Vector{Int}, col::Vector{Int})
+function getDotProduct(row::Vec{Int}, col::Vec{Int})
     @assert length(row) == length(col) "row & col must be of equal length"
     return map(*, row, col) |> sum
 end
 """
 sc(s)
 ```
+
+> Note. Thanks to the previously defined (@sec:about) type synonyms we saved
+> some typing and used `Vec{Int}` instead of `Vector{Int}`. We will use such
+> small convenience(s) throughout the book. The type synonyms are defined in
+> @sec:about and in the code snippets for each chapter.
 
 First, we place a simple assumption check with the
 [assert](https://docs.julialang.org/en/v1/base/base/#Base.@assert). Then we

@@ -117,11 +117,6 @@ OK, it's less than 1 KiB. Let's read it and get a preview of the data.
 
 ```jl
 s = """
-# type synonym, not necessary, less typing later on
-# we will be able to use Str instead of String
-# of course String will still be functional
-const Str = String
-
 mRna = open(filePath) do file
 	read(file, Str)
 end
@@ -131,11 +126,7 @@ sco(s)
 ```
 
 It looks good, no spaces between the letters, no newline (`\n`) characters (we
-removed them previously in @sec:transcription_solution). However, notice that we
-declared a type synonym `const Str = String` to shorten type declarations later
-on in the code. The type synonym is declared with `const` keyword, which means
-that we do not plan to change it for as long as the program runs. From now on I
-will use this and other type synonyms throughout the book.
+removed them previously in @sec:transcription_solution).
 
 The only issue with `mRna` is that `codon2aa` dictionary contains the codons
 (keys) in uppercase letters. All we need to do is to uppercase the letters in
@@ -176,10 +167,6 @@ typing later on).
 
 ```jl
 s = """
-# type synonym, not necessary, less typing later on
-# Vec{xxx} instead of Vector{xxx}, in type declarations
-const Vec = Vector
-
 function translate(mRnaSeq::Str)::Str
     len::Int = length(mRnaSeq)
     @assert len % 3 == 0 "the number of bases is not multiple of 3"
