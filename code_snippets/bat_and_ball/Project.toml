@@ -1,2 +1,5 @@
+[compat]
+julia = "1.10.6"
+
 [deps]
 Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
