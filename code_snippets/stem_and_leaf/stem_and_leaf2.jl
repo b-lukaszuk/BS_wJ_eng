@@ -21,8 +21,10 @@ nums4 = [44, 46, 47, 49, 63, 64, 66, 68, 68, 72, 72, 75, 76, 81, 84, 88, 106]
 nums5 = [44, 46, 47, 49, 63, 64, 66, 68, 68, 72, 72, 75, 76, 81, 84, 88, 106, 1234]
 nums6 = [44, 46, 47, -29, 63, 64, -16, 68, 68, 72, 72, 75, 76, 81, 84, 88, 106]
 nums7 = [44, 46, 47, -29, 63, 64, -16, 68, 68, 72, 72, 75, 76, 81, 84, 88, 106, -106]
+nums8 = [−23.678758, −12.45, −3.4, 4.43, 5.5, 5.678, 16.87, 24.7, 56.8]
 
 function getCounts(nums::Vec{Int})::Dict{Int, Vec{Int}}
+    @assert length(Set(nums)) > 1 "numbers musn't be the same"
     counts::Dict{Int, Vec{Int}} = Dict()
     stemUnitLen::Int = abs.(nums) |> maximum |> string |> length
     for num in nums
@@ -56,7 +58,12 @@ function getStemAndLeaf(nums::Vec{Int})::Str
     return result
 end
 
-function printStemAndLeaf(nums::Vec{Int})
+function getStemAndLeaf(nums::Vec{Float64})::Str
+    @assert all(abs.(nums) .> 1) "all numbers must be greater than abs(1)"
+	return getStemAndLeaf(round.(Int, nums))
+end
+
+function printStemAndLeaf(nums::Vec{<:Real})
     getStemAndLeaf(nums) |> print
 end
 
@@ -68,3 +75,4 @@ printStemAndLeaf(nums4)
 printStemAndLeaf(nums5)
 printStemAndLeaf(nums6)
 printStemAndLeaf(nums7)
+printStemAndLeaf(nums8)
