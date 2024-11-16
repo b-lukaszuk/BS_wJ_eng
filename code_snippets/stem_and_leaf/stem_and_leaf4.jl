@@ -32,16 +32,20 @@ function getStemAndLeaf(num::Int, stemLen::Int)::Tuple{Str, Str}
     return (stem, leaf)
 end
 
+# docs: https://docs.julialang.org/en/v1/manual/functions/#Function-composition-and-piping
+function getMaxLengthOfNum(nums::Vec{Int})::Int
+    maxLen::Int = map(length ∘ string, nums) |> maximum
+    return maxLen == 1 ? maxLen + 1 : maxLen
+end
+
 # returns Dict{Stem, [Leafs]}
 function getLeafCounts(nums::Vec{Int})::Dict{Str, Vec{Str}}
     @assert length(Set(nums)) > 1 "numbers musn't be the same"
     counts::Dict{Str, Vec{Str}} = Dict()
-    stemUnitLen::Int = map(length ∘ string, nums) |> maximum
-    stemUnitLen = stemUnitLen == 1 ? stemUnitLen + 1 : stemUnitLen
-    stem::Str = ""
-    leaf::Str = ""
+    stemLen::Int = getMaxLengthOfNum(nums)
+    stem::Str, leaf::Str = "", ""
     for num in nums
-        stem, leaf = getStemAndLeaf(num, stemUnitLen)
+        stem, leaf = getStemAndLeaf(num, stemLen)
         if haskey(counts, stem)
             counts[stem] = push!(counts[stem], leaf)
         else
@@ -70,13 +74,12 @@ function getStemAndLeafRow(num::Int,
 end
 
 function getStemAndLeafPlot(nums::Vec{Int})::Str
-    counts::Dict{Str, Vec{Str}} = getLeafCounts(nums)
+    stemLeafCounts::Dict{Str, Vec{Str}} = getLeafCounts(nums)
     result::Str = ""
-    rStart::Int, rEnd::Int = extrema(parse.(Int, keys(counts)))
-    maxLen::Int = map(length ∘ string, nums) |> maximum
-    maxLen = maxLen == 1 ? maxLen + 1 : maxLen
+    rStart::Int, rEnd::Int = extrema(parse.(Int, keys(stemLeafCounts)))
+    maxLen::Int = getMaxLengthOfNum(nums)
     for i in rStart:rEnd
-        result *=  getStemAndLeafRow(i, maxLen, counts)
+        result *=  getStemAndLeafRow(i, maxLen, stemLeafCounts)
     end
     return result
 end
