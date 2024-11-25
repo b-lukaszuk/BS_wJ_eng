@@ -200,24 +200,22 @@ tutorial](https://docs.makie.org/stable/tutorials/getting-started)).
 
 <pre>
 fig = Cmk.Figure();
-Cmk.scatter(fig[1, 1], numsOfDroplets, areas,
-    markersize=radii .* 5,
-    color="gold1", strokecolor="black",
-    axis=(; title="Lipid droplet size vs. summaric surface area",
-        xlabel="number of lipid droplets",
-        ylabel="total surface area [μm²]",
-        xticks=0:13)
-);
-Cmk.xlims!(-3, 16)
-Cmk.ylims!(800, 3000)
-Cmk.text!(fig[1, 1], numsOfDroplets, areas .- 150,
+ax = Cmk.Axis(fig[1, 1],
+              title="Lipid droplet size vs. summaric surface area",
+              xlabel="number of lipid droplets",
+              ylabel="total surface area [μm²]", xticks=0:13);
+Cmk.scatter!(ax, numsOfDroplets, areas, markersize=radii .* 5,
+             color="gold1", strokecolor="black");
+Cmk.xlims!(ax, -3, 16);
+Cmk.ylims!(ax, 800, 3000);
+Cmk.text!(ax, numsOfDroplets, areas .- 150,
     text=map(r -> "radius: $(round(r, digits=2)) [μm]", radii),
     fontsize=12, align=(:center, :center)
-)
-Cmk.text!(fig[1, 1], numsOfDroplets, areas .- 250,
+);
+Cmk.text!(ax, numsOfDroplets, areas .- 250,
     text=map(r -> "total volume: $(round(r, digits=2)) [μm³]", volumes),
     fontsize=12, align=(:center, :center)
-)
+);
 fig
 </pre>
 
