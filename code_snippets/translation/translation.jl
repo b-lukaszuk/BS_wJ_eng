@@ -101,9 +101,9 @@ protein2 = translate2(mRna)
 expectedAAseq == protein2
 
 # benchmark (may take some time)
-Bt.@benchmark translate(mRna)
-Bt.@benchmark translate2(mRna)
+Bt.@benchmark translate($mRna)
+Bt.@benchmark translate2($mRna)
 
 # benchmark (may take some time)
-Bt.@benchmark translate(mRna^20)
-Bt.@benchmark translate2(mRna^20)
+Bt.@benchmark translate($mRna^20)
+Bt.@benchmark translate2($mRna^20)

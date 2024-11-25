@@ -267,21 +267,23 @@ quite nice. However, for a beginner (or someone that doesn't know this paradigm
 well) it appears more enigmatic (and therefore off-putting). Moreover, in
 general it is expected to be a bit slower than the more imperative for loop
 version (`translate`). This should be more evident with long sequences [try
- `BenchmarkTools.@benchmark translate(mRna^20)` vs
- `@BenchmarkTools.@benchmark translate2(mRna^20)` in the REPL (type it after
+ `BenchmarkTools.@benchmark translate($mRna^20)` vs
+ `@BenchmarkTools.@benchmark translate2($mRna^20)` in the REPL (type it after
 `julia>` prompt)].
 
-> Note. `^` replicates a string `n` times, e.g. `"ab" ^ 3` =
-> `"ababab"`. Interestingly, although `translate(mRna^20)` and
+> Note. `$` (see above) is an interpolation of global variable recommended [by
+> the package](https://juliaci.github.io/BenchmarkTools.jl/stable/). On the
+> other hand, `^`, (again see above) replicates a string `n` times, e.g. `"ab" ^
+> 3` = `"ababab"`. Interestingly, although `translate(mRna^20)` and
 > `translate2(mRna^20)` receive a strand of RNA 20 times longer than `mRna` they
 > still return the same amino acid sequence as before. Test yourself and explain
 > why. This will also help you realize why `translate2` is slower than its
 > counterpart.
 
-In the said case (with `mRna^20`) the difference between $\approx 30\ [\mu s]$
-and $\approx 155\ [\mu s]$ (on my laptop) shouldn't be noticeable by a
-human. Therefore, if the performance is acceptable you may want to go with the
-functional version.
+In the said case (with `mRna^20`) the difference between $\approx 27\ [\mu s]$
+and $\approx 140\ [\mu s]$ (on my laptop) shouldn't be noticeable by a human
+($140\ [\mu s]$ is a bit more than 1/10 th of a second). Therefore, if the
+performance is acceptable you may want to go with the functional version.
 
 Anyway, both @sec:transcription and @sec:translation were inspired by the
 lecture of [this ResearchGate
