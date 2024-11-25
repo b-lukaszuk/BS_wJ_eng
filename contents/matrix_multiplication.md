@@ -166,7 +166,26 @@ placeholders stored in its cells). Finally, we get the dot products of every row
 (`for r`) in `m1` by every column (`for c`) in `m2` and place them to the
 appropriate cells in the `result` matrix.
 
-Now, let's give it a swing.
+Alternatively, if you are not a fan of nesting, you may use Julia's simplified
+nested for loop syntax. That works the same.
+
+```jl
+s = """
+function multiply(m1::Matrix{Int}, m2::Matrix{Int})::Matrix{Int}
+    nRowsMat1, nColsMat1 = size(m1)
+    nRowsMat2, nColsMat2 = size(m2)
+    @assert  nColsMat1 == nRowsMat2 "the matrices are incompatible"
+    result::Matrix{Int} = zeros(nRowsMat1, nColsMat2)
+    for r in 1:nRowsMat1, c in 1:nColsMat2
+        result[r, c] = getDotProduct(m1[r,:], m2[:, c])
+    end
+    return result
+end
+"""
+sc(s)
+```
+
+Anyway, let's give it a swing.
 
 ```jl
 s = """
