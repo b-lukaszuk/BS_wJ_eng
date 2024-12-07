@@ -1,24 +1,25 @@
 [projects]
 
-  [projects.default]
-  contents = [
+[projects.default]
+contents = [
     "about",
     "matrix_multiplication",
     "bat_and_ball",
     "bile",
+    "prime_numbers",
     "transcription",
     "translation",
     "stem_and_leaf",
     "the_end",
-  ]
+]
 
-  # Full URL, required for the sitemap and robots.txt.
-  online_url = "https://b-lukaszuk.github.io/BS_wJ_eng/"
+# Full URL, required for the sitemap and robots.txt.
+online_url = "https://b-lukaszuk.github.io/BS_wJ_eng/"
 
-  # Extra directories to be copied.
-  extra_directories = ["images"]
+# Extra directories to be copied.
+extra_directories = ["images"]
 
-  # Port used by serve()
-  port = 8004
+# Port used by serve()
+port = 8004
 
-  output_filename = "BS_wJ_eng"
+output_filename = "BS_wJ_eng"
