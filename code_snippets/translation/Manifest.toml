@@ -1,8 +1,8 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.6"
+julia_version = "1.10.7"
 manifest_format = "2.0"
-project_hash = "daf1a48695786d50a2b7ae09de292d48461db092"
+project_hash = "133fc382ff47aa507f0e8be34078da9f49844e9c"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
