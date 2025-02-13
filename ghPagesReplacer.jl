@@ -1,3 +1,7 @@
+function replaceBookTitle(htmlText::String)::String
+    return replace(htmlText, "<title>Greetings and Salutations - Build SH*T with Julia</title>" => "<title>Build SH*T with Julia</title>")
+end
+
 function replaceJuliaMono(htmlText::String)::String
     return replace(htmlText, "/JuliaMono" => "./JuliaMono")
 end
@@ -16,7 +20,7 @@ end
 
 function transformHtmlForGhPages(htmlText::String)::String
     return replaceJuliaMono(htmlText) |> replaceSrc |> replaceHref |>
-        deleteFavIcon
+        deleteFavIcon |> replaceBookTitle
 end
 
 # ".html" and "html" are two different suffixes
