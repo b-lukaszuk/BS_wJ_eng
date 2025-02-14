@@ -2,10 +2,10 @@
 
 In this chapter I will not use any external libraries. Still, once you read the
 problem description you may decide to do otherwise. In that case don't let me
-stop you (you're an adult, right?) go and get it.
+stop you (you're an adult, right?).
 
 You may compare your own solution with the one in this chapter's text (with
-explanations) of with [the code
+explanations) or with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/stem_and_leaf)
 (without explanations).
 

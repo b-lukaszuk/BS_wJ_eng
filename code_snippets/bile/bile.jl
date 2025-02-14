@@ -29,6 +29,8 @@ bigS = Sphere(10) # 10 um
 bigV = getVolume(bigS)
 bigA = getSurfaceArea(bigS)
 
+# isapprox compares variables for equality
+# accounts for possible rounding error
 isapprox(
     getSphere(bigV / 4) |> getVolume,
     bigV / 4
@@ -41,6 +43,7 @@ radii = [bigS.radius]
 numsOfDroplets = collect(4:4:12)
 for nDrops in numsOfDroplets
     # local variables smallS, smallV, smallA, sumSmallAs, sumSmallVs
+    # visible only in for loop
     smallS = getSphere(bigV / nDrops)
     smallV = getVolume(smallS)
     smallA = getSurfaceArea(smallS)
@@ -67,11 +70,11 @@ Cmk.scatter!(ax, numsOfDroplets, areas, markersize=radii .* 5,
 Cmk.xlims!(ax, -3, 16);
 Cmk.ylims!(ax, 800, 3000);
 Cmk.text!(ax, numsOfDroplets, areas .- 150,
-    text=map(r -> "radius: $(round(r, digits=2)) [μm]", radii),
+    text=map(r -> "radius = $(round(r, digits=2)) [μm]", radii),
     fontsize=12, align=(:center, :center)
 );
 Cmk.text!(ax, numsOfDroplets, areas .- 250,
-    text=map(r -> "total volume: $(round(r, digits=2)) [μm³]", volumes),
+    text=map(r -> "total volume = $(round(r, digits=2)) [μm³]", volumes),
     fontsize=12, align=(:center, :center)
 );
 fig

@@ -11,7 +11,7 @@ sc(s2)
 ```
 
 You may compare your own solution with the one in this chapter's text (with
-explanations) of with [the code
+explanations) or with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/bile)
 (without explanations).
 
@@ -23,13 +23,14 @@ roughly divided into: sugars (carbohydrates), proteins and fats (lipids). Your
 liver produces [bile](https://en.wikipedia.org/wiki/Bile) that is stored in
 gallbladder and released to duodenum (part of small intestine). As far as I
 remember my biology classes bile facilitates digestion by breaking large lipid
-(fat) droplets into smaller. Thanks to that it increases the total surface area
-in contact with digestive enzymes (lipases). So much for the theory, but I
+(fat) droplets into smaller ones. Thanks to that it increases the total surface
+area in contact with digestive enzymes (lipases). So much for the theory, but I
 always wondered if that's true.
 
-Use Julia to demonstrate that total surface area of a few small lipid droplets
-is actually greater than the surface area of one big droplet. Of course, the big
-droplet and small droplets should contain the same volume of lipids.
+Use Julia to demonstrate that the total surface area of a few small lipid
+droplets is actually greater than the surface area of one big droplet. Of
+course, the big droplet and small droplets should contain the same volume of
+lipids.
 
 ## Solution {#sec:bile_solution}
 
@@ -142,6 +143,8 @@ volume: `bigV`) into 4 smaller drops of total volume equal to `bigV`.
 
 ```jl
 s = """
+# isapprox compares variables for equality
+# accounts for possible rounding error
 isapprox(
     getSphere(bigV / 4) |> getVolume,
     bigV / 4
@@ -162,6 +165,7 @@ radii = [bigS.radius]
 numsOfDroplets = collect(4:4:12)
 for nDrops in numsOfDroplets
     # local variables smallS, smallV, smallA, sumSmallAs, sumSmallVs
+	# visible only in for loop
     smallS = getSphere(bigV / nDrops)
     smallV = getVolume(smallS)
     smallA = getSurfaceArea(smallS)
@@ -209,11 +213,11 @@ Cmk.scatter!(ax, numsOfDroplets, areas, markersize=radii .* 5,
 Cmk.xlims!(ax, -3, 16);
 Cmk.ylims!(ax, 800, 3000);
 Cmk.text!(ax, numsOfDroplets, areas .- 150,
-    text=map(r -> "radius: $(round(r, digits=2)) [μm]", radii),
+    text=map(r -> "radius = $(round(r, digits=2)) [μm]", radii),
     fontsize=12, align=(:center, :center)
 );
 Cmk.text!(ax, numsOfDroplets, areas .- 250,
-    text=map(r -> "total volume: $(round(r, digits=2)) [μm³]", volumes),
+    text=map(r -> "total volume = $(round(r, digits=2)) [μm³]", volumes),
     fontsize=12, align=(:center, :center)
 );
 fig
@@ -221,7 +225,7 @@ fig
 
 Behold.
 
-![Bile. Splitting a big lipid droplet into a few smaller one and the effect it has on their total surface area.](./images/bile.png){#fig:bile}
+![Bile. Splitting a big lipid droplet into a few smaller ones and the effect it has on their total surface area.](./images/bile.png){#fig:bile}
 
 So it turns out that what they taught me in the school all those years ago is
 actually true. But only now I can finally see it. Nice.

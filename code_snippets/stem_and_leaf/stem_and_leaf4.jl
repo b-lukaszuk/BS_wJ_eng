@@ -24,13 +24,25 @@ nums7 = [44, 46, 47, -29, 63, 64, -16, 68, 68, 72, 72, 75, 76, 81, 84, 88, 106, 
 nums8 = [−23.678758, −12.45, −3.4, 4.43, 5.5, 5.678, 16.87, 24.7, 56.8]
 
 function getStemAndLeaf(num::Int, stemLen::Int)::Tuple{Str, Str}
+    @assert stemLen > 1 "stemLen must be greater than 1"
     numStr::Str = lpad(abs(num), stemLen, "0")
-    stem, leaf = "$(numStr[1:end-1])", "$(numStr[end])"
-    stem = parse(Int, stem)
-    stem = num < 0 ? "-" * string(stem) : string(stem)
+    stem::Str = "$(numStr[1:end-1])"
+    leaf::Str = "$(numStr[end])"
+    stemTmp::Int = parse(Int, stem)
+    stem = num < 0 ? "-" * string(stemTmp) : string(stemTmp)
     stem = lpad(stem, stemLen, " ")
     return (stem, leaf)
 end
+
+# function getStemAndLeaf(num::Int, stemLen::Int)::Tuple{Str, Str}
+#     numStr::Str = lpad(abs(num), stemLen, "0")
+#     stem::Str = "$(numStr[1:end-1])"
+#     leaf::Str = "$(numStr[end])"
+#     stemTmp::Int = parse(Int, stem)
+#     stem = num < 0 ? "-" * string(stemTmp) : string(stemTmp)
+#     stem = lpad(stem, stemLen, " ")
+#     return (stem, leaf)
+# end
 
 # docs: https://docs.julialang.org/en/v1/manual/functions/#Function-composition-and-piping
 function getMaxLengthOfNum(nums::Vec{Int})::Int
@@ -85,7 +97,7 @@ function getStemAndLeafPlot(nums::Vec{Int})::Str
 end
 
 function getStemAndLeafPlot(nums::Vec{Float64})::Str
-	return getStemAndLeafPlot(round.(Int, nums))
+    return getStemAndLeafPlot(round.(Int, nums))
 end
 
 function printStemAndLeafPlot(nums::Vec{<:Real})
