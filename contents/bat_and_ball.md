@@ -10,7 +10,7 @@ sc(s2)
 ```
 
 You may compare your own solution with the one in this chapter's text (with
-explanations) of with [the code
+explanations) or with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/bat_and_ball)
 (without explanations).
 
@@ -22,7 +22,7 @@ problem that I happened to knew from my youth:
 > A bat and a ball cost in total $1.1. The bat costs $1 more than the ball. How
 > much costs the ball?
 
-Pause for a moment and try to give an answer.
+Pause for a moment and try to find the answer.
 
 ## Solution {#sec:bat_and_ball_solution}
 

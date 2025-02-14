@@ -2,10 +2,10 @@
 
 In this chapter I will not use any external libraries. Still, once you read the
 problem description you may decide to do otherwise. In that case don't let me
-stop you (you're an adult, right?) go and get it.
+stop you.
 
 You may compare your own solution with the one in this chapter's text (with
-explanations) of with [the code
+explanations) or with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/matrix_multiplication)
 (without explanations).
 
@@ -26,12 +26,12 @@ sco(s)
 ```
 
 In mathematics by convention you denote matrices with a single capital letter.
-However, since I'm not a mathematician then I'll use the, easier to fingers,
-lowercase names here.
+However, since I'm not a mathematician then I'll use the lowercase names here
+(they are easier to the fingers).
 
-Matrices are quite useful in mathematics and e.g in
-computer programs rendering graphics (chances are you used them without
-realizing it).
+Matrices are quite useful in mathematics and in everyday life, e.g statistical
+programs or programs rendering computer graphics rely on them heavily (chances
+are you used them without even being aware of it).
 
 Anyway, here is the task. Read about matrix multiplication, e.g. on [Math is
 Fun](https://www.mathsisfun.com/algebra/matrix-multiplying.html) or watch a
@@ -46,10 +46,20 @@ that for
 
 ```jl
 s = """
+# Math is Fun example
 a = [1 2 3; 4 5 6]
+"""
+sco(s)
+```
+
+and
+
+```jl
+s = """
+# Math is Fun example
 b = [7 8; 9 10; 11 12]
 """
-sc(s)
+sco(s)
 ```
 
 Should return the following matrix
@@ -61,8 +71,8 @@ s = """
 sco(s)
 ```
 
-Compare it against Julia's built-in `*` operator (on some matrices of your
-choice) to ensure its correct functioning.
+Compare `multiply` against Julia's built-in `*` operator (on some matrices of
+your choice) to ensure its correct functioning.
 
 ## Solution {#sec:mat_multip_solution}
 
@@ -115,7 +125,8 @@ map((x, y) -> x * y, [1, 2, 3], [10, 100, 1000])
 sco(s)
 ```
 
-Or since `*` is a syntactic sugar for `*(x, y)` we may simply place `*` alone.
+Here, `x` becomes every value of `[1, 2, 3]` and `y` every value of `[10, 100, 1000]` vector. 
+Given that `*` is just a syntactic sugar for `*(x, y)` we may simply place `*` alone.
 
 ```jl
 s = """
@@ -127,7 +138,7 @@ sco(s)
 Since we calculate a dot product, then as an alternative (to live up to its
 name) we could also use the [dot
 operator](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_repetition.html#sec:julia_language_dot_functions)
-syntax.
+syntax in our `getDotProduct` function.
 
 ```jl
 s = """
@@ -167,7 +178,7 @@ placeholders stored in its cells). Finally, we get the dot products of every row
 appropriate cells in the `result` matrix.
 
 Alternatively, if you are not a fan of nesting, you may use Julia's simplified
-nested for loop syntax. That works the same.
+nested for loop syntax. It works the same as the previous code snippet.
 
 ```jl
 s = """
@@ -223,4 +234,4 @@ sco(s)
 
 We can't complain. It appears that we managed to solve this task in like 15
 lines of code and without over-engineering it too much. It's all thanks to the
-Julia's nice, terse syntax.
+Julia's nice and terse syntax.
