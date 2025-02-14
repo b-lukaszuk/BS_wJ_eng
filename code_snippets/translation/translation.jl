@@ -44,8 +44,8 @@ aa2iupac = Dict(
 
 # AA - amino acids
 expectedAAseq = "MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL" *
-	"YLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGA" *
-	"GSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN"
+    "YLVCGERGFFYTPKTRREAEDLQVGQVELGGGPGA" *
+    "GSLQPLALEGSLQKRGIVEQCCTSICSLYQLENYCN"
 
 filePath = "./mrna_seq.txt"
 filesize(filePath)
@@ -68,7 +68,7 @@ end
 
 function translate(mRnaSeq::Str)::Str
     len::Int = length(mRnaSeq)
-    @assert len % 3 == 0 "the number of bases is not multiple of 3"
+    @assert len % 3 == 0 "the number of bases must be multiple of 3"
     aas::Vec{Str} = fill("", Int(len/3))
     aaInd::Int = 0
     for i in 1:3:len
@@ -105,5 +105,5 @@ Bt.@benchmark translate($mRna)
 Bt.@benchmark translate2($mRna)
 
 # benchmark (may take some time)
-Bt.@benchmark translate($mRna^20)
-Bt.@benchmark translate2($mRna^20)
+Bt.@benchmark translate($(mRna^20))
+Bt.@benchmark translate2($(mRna^20))

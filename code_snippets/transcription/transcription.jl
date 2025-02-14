@@ -23,12 +23,11 @@ dna2mrna = Dict(
     't' => 'a'
 )
 
-function transcribe(
-    nucleotideBase::Char,
-    complementarityMap::Dict{Char, Char} = dna2mrna
-    )::Char
+function transcribe(nucleotideBase::Char,
+    complementarityMap::Dict{Char, Char} = dna2mrna)::Char
     return get(complementarityMap, nucleotideBase, nucleotideBase)
 end
+
 (
     transcribe('a'),
     transcribe('g'),

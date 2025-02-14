@@ -14,7 +14,7 @@ Those were used only for the chapter's extras and are not strictly necessary to
 solve the task.
 
 Anyway, you may compare your own solution with the one in this chapter's text
-(with explanations) of with [the code
+(with explanations) or with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/translation)
 (without explanations).
 
@@ -29,10 +29,10 @@ contains the mRNA sequence we obtained previously (see
 Your task is to translate the language of nucleic acids to the language of
 proteins. To do that you will operate on triplets of nucleotide bases (also
 called codons). You start with the `AUG` triplet (the sequence starts with it)
-and replace it with a proper amino acid (proteins are build of it), in this case
-its methionine. Then you move to another triplet (there are no 'commas' in the
-genetic code) and assign the proper amino acid according to the [standard
-genetic
+and replace it with a proper amino acid (proteins are build of amino acids like
+`String`s are build of `Char`s), in this case it is methionine. Then you move to
+another triplet (there are no 'commas' in the genetic code) and assign the
+proper amino acid according to the [standard genetic
 code](https://en.wikipedia.org/wiki/DNA_and_RNA_codon_tables#Translation_table_1). You
 finish the protein synthesis once you encounter a stop codon (`UAA`, `UAG`,
 `UGA`).
@@ -162,14 +162,14 @@ previously defined `codon2aa` dictionary. Then the 3-letter abbreviation is
 coded with a single letter recommended by IUPAC (using `aa2iupac` dictionary).
 If at any point no translation was found `"???"` is returned.
 
-Now, time for translation (again, we will declare type synonym to save us some
-typing later on).
+Now, time for translation (again, we will use type synonym to save us some
+typing).
 
 ```jl
 s = """
 function translate(mRnaSeq::Str)::Str
     len::Int = length(mRnaSeq)
-    @assert len % 3 == 0 "the number of bases is not multiple of 3"
+    @assert len % 3 == 0 "the number of bases must be multiple of 3"
     aas::Vec{Str} = fill("", Int(len/3))
     aaInd::Int = 0
     for i in 1:3:len
@@ -216,8 +216,10 @@ protein == expectedAAseq
 sco(s)
 ```
 
-Congratulations, you have successfully synthesized pre-pro-insulin. It could be
-only a matter of time before you achieve something greater still.
+Congratulations! You have successfully synthesized pre-pro-insulin, a product
+transformed into a hormon that saved many a lives from diabetic coma and
+death. It could be only a matter of time before you achieve something greater
+still.
 
 The above (`translate`) is not the only possible solution. For instance, if you
 are a fan of [functional

@@ -2,10 +2,10 @@
 
 In this chapter I will not use any external libraries. Still, once you read the
 problem description you may decide to do otherwise. In that case don't let me
-stop you (you're an adult, right?) go and get it.
+stop you (you're an adult, right?).
 
 You may compare your own solution with the one in this chapter's text (with
-explanations) of with [the code
+explanations) or with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/transcription)
 (without explanations).
 
@@ -14,8 +14,8 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/transc
 The genetic material of an eucariotic cell is located in its nucleus in the form
 of a nucleic acid ([DNA](https://en.wikipedia.org/wiki/DNA) to be precise). At
 one point DNA fragments serve as matrices to produce proteins that build our
-bodies and perform some actions within it (e.g. like hormones). Such a
-transformation takes two steps called
+bodies and perform some actions within it (e.g. like hormones or enzymes). Such
+a transformation takes two steps called
 [transcription](https://en.wikipedia.org/wiki/Transcription_(biology)) and
 [translation](https://en.wikipedia.org/wiki/Translation_(biology)).
 
@@ -36,7 +36,7 @@ Here: `a`, `c`, `g`, `t`, `u` are the shortcuts (also written in uppercase) for
 the nucleic acids' molecular components (nucleotide bases) called `adenine`,
 `cytosine`, `guanine`, `thymine`, and `uracil`.
 
-And here is your task. Read the data from the file:
+This time your task is to read the data from the file:
 `dna_seq_template_strand.txt` (to be found in [the code snippets for this
 chapter](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/transcription)).
 The file contains a sequence of nucleotide bases of some gene. Splice its coding
@@ -87,9 +87,9 @@ replace(sco(s), Regex("\ncggtcccac") => "\\\\ncggtcccac")
 The nucleotide bases (`a`, `c`, `t`, `g`) are grouped by 10. Moreover, notice
 the `\n` character on the right. It is a
 [newline](https://en.wikipedia.org/wiki/Newline) character that tells the
-computer to print the subsequent characters from a new line. We need to splice
-sequence at positions 2424-2610 and 3397-3542 so let's get rid of those extra
-characters to make the counting easier.
+computer to print the subsequent characters from the beginning of a new line. We
+need to splice sequence at positions 2424-2610 and 3397-3542 so let's get rid of
+those extra characters to make the counting easier.
 
 ```jl
 s = """
@@ -131,14 +131,12 @@ dna2mrna = Dict(
 sc(s)
 ```
 
-An now the transcription itself.
+And now the transcription itself.
 
 ```jl
 s = """
-function transcribe(
-    nucleotideBase::Char,
-    complementarityMap::Dict{Char, Char} = dna2mrna
-    )::Char
+function transcribe(nucleotideBase::Char,
+    complementarityMap::Dict{Char, Char} = dna2mrna)::Char
     return get(complementarityMap, nucleotideBase, nucleotideBase)
 end
 
@@ -157,7 +155,7 @@ individual characters) called `nucleotideBase` and a default
 base to `nucleotideBase` (its second argument) or a default (its third argument,
 in this case just return `nucleotideBase`) if a match was not found.
 
-All that's left is to write a `transcribe` function for the whole string
+All that's left to do is to write a `transcribe` function for the whole string
 (`dnaExonsOnly`).
 
 ```jl
