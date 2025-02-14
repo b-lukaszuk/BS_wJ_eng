@@ -6,7 +6,7 @@ This file is not included in the PDF.
 
 Start date: Wed, 2024-09-11
 
-Book writing status: Work in Progress
+Book writing status: Work in Progress (I'm in no hurry though), expect changes
 
 Latest update (local time):
 
@@ -15,18 +15,17 @@ include("./src/data.jl")
 getTimeStamp()
 ```
 
-Hello there. This is an open source/access book entitled: "Build SH\*T with
-Julia". If anyone asked the full title is "Build **s**uper **h**elpful and
-**i**nteresting **t**hings with Julia", but the shorter version fits better on a
-page. Anyway, they say that in order to learn any programming language you need
-to ~~build sh..~~ write a lot of different programs with it. Therefore,
-the book will contain a set of exercises for problems that, for whatever reason,
-I found interesting.
+Hello there. This is an open access book entitled: "Build SH\*T with Julia". If
+anyone asked the full title is "Build **s**uper **h**elpful and **i**nteresting
+**t**hings with Julia", but it just doesn't have the same ring to it. Anyway,
+they say that in order to learn any programming language you need to ~~build
+sh..~~ write a lot of different programs with it and that's what this book is
+all about.
 
 This book was generated using [Books.jl](https://github.com/JuliaBooks/Books.jl)
 starting with [BookTemplate](https://github.com/JuliaBooks/BookTemplate).
 
-For now, the book does not have a companion PDF file (probably I will add it
+For now, the book does not have a companion PDF file (maybe I will add it
 later).
 
 The template for this book can be found
