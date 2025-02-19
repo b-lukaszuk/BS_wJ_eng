@@ -217,9 +217,8 @@ sco(s)
 ```
 
 Congratulations! You have successfully synthesized pre-pro-insulin, a product
-transformed into a hormon that saved many a lives from diabetic coma and
-death. It could be only a matter of time before you achieve something greater
-still.
+transformed into a hormon that saved many a live. It could be only a matter of
+time before you achieve something greater still.
 
 The above (`translate`) is not the only possible solution. For instance, if you
 are a fan of [functional

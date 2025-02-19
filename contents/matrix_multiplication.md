@@ -25,8 +25,8 @@ A
 sco(s)
 ```
 
-In mathematics by convention you denote matrices with a single capital letter.
-However, since I'm not a mathematician then I'll use the lowercase names here
+In mathematics by convention you denote matrices with a single capital
+letter. However, since I'm not a mathematician then I'll use the lowercase names
 (they are easier to the fingers).
 
 Matrices are quite useful in mathematics and in everyday life, e.g statistical
@@ -138,7 +138,7 @@ sco(s)
 Since we calculate a dot product, then as an alternative (to live up to its
 name) we could also use the [dot
 operator](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_repetition.html#sec:julia_language_dot_functions)
-syntax in our `getDotProduct` function.
+syntax in our `getDotProduct` function like so:
 
 ```jl
 s = """
@@ -181,7 +181,7 @@ Alternatively, if you are not a fan of nesting, you may use Julia's simplified
 nested for loop syntax. It works the same as the previous code snippet.
 
 ```jl
-s = """
+s1 = """
 function multiply(m1::Matrix{Int}, m2::Matrix{Int})::Matrix{Int}
     nRowsMat1, nColsMat1 = size(m1)
     nRowsMat2, nColsMat2 = size(m2)
@@ -193,7 +193,7 @@ function multiply(m1::Matrix{Int}, m2::Matrix{Int})::Matrix{Int}
     return result
 end
 """
-sc(s)
+sc(s1)
 ```
 
 Anyway, let's give it a swing.

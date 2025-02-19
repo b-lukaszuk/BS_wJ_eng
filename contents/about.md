@@ -15,9 +15,9 @@ non-mathematical (i.e. resembling mine) background. Moreover, I expect that the
 readers have already mastered the language basics and now are on a lookout for a
 way to hone their newly acquired skills. To that end, I'll imagine you have read
 [my previous open-access book](https://b-lukaszuk.github.io/RJ_BS_eng/). I'll do
-this not not because it is the best book there is (which it is), but because of
-the [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) (I'm
-going to apply similar writing conventions without delving too much into
+this not not because it is the best book in the world (which it is), but because
+of the [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
+(I'm going to apply similar writing conventions without delving too much into
 previously mentioned topics).
 
 Additionally, henceforth I will define a few type aliases, like:
@@ -30,9 +30,10 @@ const Vec = Vector
 sc(s)
 ```
 
-This will allow for a shorter code with type declarations, e.g. `Vec{Int}`
-instead `Vector{Int}`. Notice, that the type synonyms are declared with `const`
-keyword, since they will not change for as long as a program runs.
+This will allow for a shorter code when type declarations are used,
+e.g. `Vec{Int}` instead `Vector{Int}`. Notice, that the type synonyms are
+declared with `const` keyword, since they will not change for as long as a
+program runs.
 
 If, for any reason, this book is not to your liking then feel free to visit,
 e.g. Adam Wysokinski's the [Big Book of
