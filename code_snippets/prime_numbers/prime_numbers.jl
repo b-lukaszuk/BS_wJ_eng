@@ -16,9 +16,9 @@ function isPrime(n::Int)::Bool
     return true
 end
 
-function getPrimesV1(maxIncl::Int)::Vec{Int}
-    @assert maxIncl >= 2 "maxIncl must be >= 2"
-    return filter(isPrime, 2:maxIncl)
+function getPrimesV1(upto::Int)::Vec{Int}
+    @assert upto > 1 "upto must be > 1"
+    return filter(isPrime, 2:upto)
 end
 
 # version 2: sieve of Eratosthenes
@@ -27,17 +27,19 @@ function getXmultiples(x::Int, upto::Int)::StepRange{Int, Int}
     return (x*2):x:upto
 end
 
-function getPrimesV2(maxIncl::Int)
-    @assert maxIncl > 1 "maxIncl must be > 1"
-    maybePrimes::Vec{Bool} = ones(Bool, maxIncl)
-    nums::Vec{Int} = 1:maxIncl |> collect
+function getPrimesV2(upto::Int)
+    @assert upto > 1 "upto must be > 1"
+    maybePrimes::Vec{Bool} = ones(Bool, upto)
+    nums::Vec{Int} = 1:upto |> collect
     maybePrimes[1] = false # first prime is: 2
-    for num in 2:maxIncl
-        maybePrimes[getXmultiples(num, maxIncl)] .= false
+    for num in 2:upto
+        maybePrimes[getXmultiples(num, upto)] .= false
     end
     return nums[maybePrimes]
 end
 
+# prime numbers up to 100 from:
+# https://en.wikipedia.org/wiki/List_of_prime_numbers
 primesFromWiki = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
 getPrimesV1(100) == primesFromWiki
 getPrimesV2(100) == primesFromWiki
