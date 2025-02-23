@@ -1,6 +1,6 @@
 # Bile {#sec:bile}
 
-In this chapter may or may not use the following external libraries.
+In this chapter you may or may not use the following external libraries.
 
 ```jl
 s2 = """
@@ -138,6 +138,12 @@ end
 sc(s)
 ```
 
+> **_Note:_** If there were no function for $\sqrt[3]{x}$ you could easily
+> define it yourself with: `getCbrt(x) = x^(1/3)` (here I used a [single
+> expression
+> function](https://en.wikibooks.org/wiki/Introducing_Julia/Functions#Single_expression_functions)
+> for brevity) since $\sqrt[n]{x} = x^{1/n}$.
+
 Time to test how it works. Let's see if we can divide `bigS` (actually its
 volume: `bigV`) into 4 smaller drops of total volume equal to `bigV`.
 
@@ -158,21 +164,21 @@ different size.
 
 ```jl
 s = """
-areas = [bigA]
-volumes = [bigV]
+sumsOfAreas = [bigA]
+sumsOfVolumes = [bigV]
 radii = [bigS.radius]
 
 numsOfDroplets = collect(4:4:12)
 for nDrops in numsOfDroplets
     # local variables smallS, smallV, smallA, sumSmallAs, sumSmallVs
-	# visible only in for loop
+    # visible only in for loop
     smallS = getSphere(bigV / nDrops)
     smallV = getVolume(smallS)
     smallA = getSurfaceArea(smallS)
     sumSmallAs = smallA * nDrops
     sumSmallVs = smallV * nDrops
-    push!(areas, sumSmallAs)
-    push!(volumes, sumSmallVs)
+    push!(sumsOfAreas, sumSmallAs)
+    push!(sumsOfVolumes, sumSmallVs)
     push!(radii, smallS.radius)
 end
 
@@ -181,26 +187,27 @@ prepend!(numsOfDroplets, 1)
 sc(s)
 ```
 
-We begin by initializing vectors that will hold the `areas`, `volumes`, and
-`radii` of our lipid droplets. Then we define the number of droplets that we
-want to split our big droplet into (`numsOfDroplets`). For each of those (`for
-nDrops in numsOfDroplets`) we determine the radius (`smallS = getSphere`),
-volume (`smallV`) and surface area (`smallA`) of a single small droplet as well
-as total area (`sumSmallAs`) and total volume (`sumSmallVs`) of `nDrops`. We
-add the total area, total volume and radius of a single droplet to the `areas`,
-`volumes`, and `radii` vectors, respectively. In the end we `prepend` 1 to the
-`numOfDroplets`, since we started with one big droplet (`bigS`).
+We begin by initializing vectors that will hold the `sumsOfAreas`,
+`sumsOfvolumes`, and `radii` of our lipid droplets. Then we define the number of
+droplets that we want to split our big droplet into (`numsOfDroplets`). For each
+of those (`for nDrops in numsOfDroplets`) we determine the radius (`smallS =
+getSphere`), volume (`smallV`) and surface area (`smallA`) of a single small
+droplet as well as total area (`sumSmallAs`) and total volume (`sumSmallVs`) of
+`nDrops`. We add the total area, total volume and radius of a single droplet to
+the `sumsOfAreas`, `sumsOfVolumes`, and `radii` vectors, respectively. In the
+end we `prepend` 1 to the `numOfDroplets`, since we started with one big droplet
+(`bigS`).
 
 BTW. Notice that `smallS`, `smallV`, `smallA`, `sumSmallAs`, `sumSmallVs` are
 all local variables defined for the first time in the `for` loop and visible
 only inside of it. If you try to print out their values outside of the loop you
 will get an error like `ERROR: UndefVarError: 'smallS' not defined`.
 
-Anyway, now, we can either examine the vectors (`areas`, `volumes`, `radii`,
-`numOfDroplets`) one by one, or do one better and present them on a graph with
-e.g. CairoMakie (I'm not going to explain the code below, for reference see [my
-previous book](https://b-lukaszuk.github.io/RJ_BS_eng/) or [CairoMakie
-tutorial](https://docs.makie.org/stable/tutorials/getting-started)).
+Anyway, now, we can either examine the vectors (`sumsOfAreas`, `sumsOfVolumes`,
+`radii`, `numOfDroplets`) one by one, or do one better and present them on a
+graph with e.g. CairoMakie (I'm not going to explain the code below, for
+reference see [my previous book](https://b-lukaszuk.github.io/RJ_BS_eng/) or
+[CairoMakie tutorial](https://docs.makie.org/stable/tutorials/getting-started)).
 
 <pre>
 fig = Cmk.Figure();
@@ -208,16 +215,19 @@ ax = Cmk.Axis(fig[1, 1],
               title="Lipid droplet size vs. summaric surface area",
               xlabel="number of lipid droplets",
               ylabel="total surface area [μm²]", xticks=0:13);
-Cmk.scatter!(ax, numsOfDroplets, areas, markersize=radii .* 5,
+Cmk.scatter!(ax, numsOfDroplets, sumsOfAreas, markersize=radii .* 5,
              color="gold1", strokecolor="black");
 Cmk.xlims!(ax, -3, 16);
 Cmk.ylims!(ax, 800, 3000);
-Cmk.text!(ax, numsOfDroplets, areas .- 150,
-    text=map(r -> "radius = $(round(r, digits=2)) [μm]", radii),
+Cmk.text!(ax, numsOfDroplets, sumsOfAreas .- 150,
+    text=map(r -> "single droplet radius = $(round(r, digits=2)) [μm]",
+	         radii),
     fontsize=12, align=(:center, :center)
 );
-Cmk.text!(ax, numsOfDroplets, areas .- 250,
-    text=map(r -> "total volume = $(round(r, digits=2)) [μm³]", volumes),
+Cmk.text!(ax, numsOfDroplets, sumsOfAreas .- 250,
+    text=map((v, n) ->
+	"volume ($n droplet/s) = $(round(v, digits=2)) [μm³]",
+	sumsOfVolumes, numsOfDroplets),
     fontsize=12, align=(:center, :center)
 );
 fig

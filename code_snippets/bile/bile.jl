@@ -36,8 +36,8 @@ isapprox(
     bigV / 4
 )
 
-areas = [bigA]
-volumes = [bigV]
+sumsOfAreas = [bigA]
+sumsOfVolumes = [bigV]
 radii = [bigS.radius]
 
 numsOfDroplets = collect(4:4:12)
@@ -49,32 +49,33 @@ for nDrops in numsOfDroplets
     smallA = getSurfaceArea(smallS)
     sumSmallAs = smallA * nDrops
     sumSmallVs = smallV * nDrops
-    push!(areas, sumSmallAs)
-    push!(volumes, sumSmallVs)
+    push!(sumsOfAreas, sumSmallAs)
+    push!(sumsOfVolumes, sumSmallVs)
     push!(radii, smallS.radius)
 end
 
 prepend!(numsOfDroplets, 1)
 
-round.(volumes, digits=2) # check that total volumes of lipid droplets are the same
+round.(sumsOfVolumes, digits=2) # check that total sumsOfVolumes of lipid droplets are the same
 round.(radii, digits=2) # check that radii of lipid droplets get smaller
-round.(areas, digits=2) # check the total surface area of lipid droplets
+round.(sumsOfAreas, digits=2) # check the total surface area of lipid droplets
 
 fig = Cmk.Figure();
 ax = Cmk.Axis(fig[1, 1],
               title="Lipid droplet size vs. summaric surface area",
               xlabel="number of lipid droplets",
               ylabel="total surface area [μm²]", xticks=0:13);
-Cmk.scatter!(ax, numsOfDroplets, areas, markersize=radii .* 5,
+Cmk.scatter!(ax, numsOfDroplets, sumsOfAreas, markersize=radii .* 5,
              color="gold1", strokecolor="black");
 Cmk.xlims!(ax, -3, 16);
 Cmk.ylims!(ax, 800, 3000);
-Cmk.text!(ax, numsOfDroplets, areas .- 150,
-    text=map(r -> "radius = $(round(r, digits=2)) [μm]", radii),
+Cmk.text!(ax, numsOfDroplets, sumsOfAreas .- 150,
+    text=map(r -> "single droplet radius = $(round(r, digits=2)) [μm]", radii),
     fontsize=12, align=(:center, :center)
 );
-Cmk.text!(ax, numsOfDroplets, areas .- 250,
-    text=map(r -> "total volume = $(round(r, digits=2)) [μm³]", volumes),
+Cmk.text!(ax, numsOfDroplets, sumsOfAreas .- 250,
+          text=map((v, n) -> "volume ($n droplet/s) = $(round(Int, v)) [μm³]",
+                   sumsOfVolumes, numsOfDroplets),
     fontsize=12, align=(:center, :center)
 );
 fig
