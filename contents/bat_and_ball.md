@@ -1,6 +1,6 @@
 # Bat and Ball {#sec:bat_and_ball}
 
-In this chapter may or may not use the following external libraries.
+In this chapter you may or may not use the following external libraries.
 
 ```jl
 s2 = """
@@ -16,8 +16,8 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/bat_an
 
 ## Problem {#sec:bat_and_ball_problem}
 
-Let's start small. Recently, someone told me an interesting small mathematical
-problem that I happened to knew from my youth:
+Recently, someone told me an interesting small mathematical problem that I
+happened to knew from my youth:
 
 > A bat and a ball cost in total $1.1. The bat costs $1 more than the ball. How
 > much costs the ball?

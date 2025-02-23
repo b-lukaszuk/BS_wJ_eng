@@ -1,8 +1,7 @@
 # Stem and Leaf Plot {#sec:stem_and_leaf}
 
 In this chapter I will not use any external libraries. Still, once you read the
-problem description you may decide to do otherwise. In that case don't let me
-stop you (you're an adult, right?).
+problem description you may decide to do otherwise.
 
 You may compare your own solution with the one in this chapter's text (with
 explanations) or with [the code
