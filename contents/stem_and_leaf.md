@@ -42,4 +42,48 @@ sc(s)
 
 ## Solution {#sec:stem_and_leaf_solution}
 
-The solution goes here.
+Let's start with a function that takes a vector of integers and returns the
+number of characters in the greatest number.
+
+```jl
+s = """
+function getMaxLengthOfNum(nums::Vec{Int})::Int
+    maxLen::Int = map(length ∘ string, nums) |> maximum
+    return maxLen == 1 ? maxLen + 1 : maxLen
+end
+"""
+sc(s)
+```
+
+To that end we used a [function composition
+operator](https://docs.julialang.org/en/v1/manual/functions/#Function-composition-and-piping)
+(type `\circ` and press Tab to obtain `∘` symbol). `length ∘ string` is
+equivalent to an anonymous function `num -> length(string(num))`, i.e. a
+function that takes a number, converts it to its textual representation and
+returns the number of characters in it. We use `map` to apply the function to
+every number in a vector (`nums`) |> and return the length of the 'longest' number
+(`maximum`). If the number is composed of only 1 digit then we add 1 
+
+
+Next, we will write a function that takes a number and brakes it into two parts:
+stem and leaf.
+
+```jl
+s = """
+function getStemAndLeaf(num::Int, stemLen::Int)::Tuple{Str, Str}
+    @assert stemLen > 1 "stemLen must be greater than 1"
+    numStr::Str = lpad(abs(num), stemLen, "0")
+    stem::Str = numStr[1:end-1] |> string
+    leaf::Str = numStr[end] |> string
+    stemTmp::Int = parse(Int, stem)
+    stem = num < 0 ? "-" * string(stemTmp) : string(stemTmp)
+    stem = lpad(stem, stemLen, " ")
+    return (stem, leaf)
+end
+"""
+sc(s)
+```
+
+We begin with `lpad`. The function converts its first input (`abs(num)`) to
+string (if it isn't one already) of a given length (`stemLen`) it adds a
+specified padding (`"0"`) to the left side of the result if necessary. 
