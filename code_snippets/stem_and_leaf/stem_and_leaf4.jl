@@ -34,21 +34,12 @@ function getStemAndLeaf(num::Int, stemLen::Int)::Tuple{Str, Str}
     return (stem, leaf)
 end
 
-# function getStemAndLeaf(num::Int, stemLen::Int)::Tuple{Str, Str}
-#     numStr::Str = lpad(abs(num), stemLen, "0")
-#     stem::Str = "$(numStr[1:end-1])"
-#     leaf::Str = "$(numStr[end])"
-#     stemTmp::Int = parse(Int, stem)
-#     stem = num < 0 ? "-" * string(stemTmp) : string(stemTmp)
-#     stem = lpad(stem, stemLen, " ")
-#     return (stem, leaf)
-# end
-
 # docs: https://docs.julialang.org/en/v1/manual/functions/#Function-composition-and-piping
 function getMaxLengthOfNum(nums::Vec{Int})::Int
     maxLen::Int = map(length ∘ string, nums) |> maximum
-    return maxLen == 1 ? maxLen + 1 : maxLen
+    return max(2, maxLen)
 end
+
 
 # returns Dict{Stem, [Leafs]}
 function getLeafCounts(nums::Vec{Int})::Dict{Str, Vec{Str}}

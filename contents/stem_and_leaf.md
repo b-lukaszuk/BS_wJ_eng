@@ -49,7 +49,7 @@ number of characters in the greatest number.
 s = """
 function getMaxLengthOfNum(nums::Vec{Int})::Int
     maxLen::Int = map(length ∘ string, nums) |> maximum
-    return maxLen == 1 ? maxLen + 1 : maxLen
+    return max(2, maxLen)
 end
 """
 sc(s)
