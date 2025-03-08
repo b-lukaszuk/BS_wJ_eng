@@ -1,6 +1,6 @@
 # About {#sec:about}
 
-Hi, I'm Bart and this is my second 'experimental' book entitled (for now):
+Hi, I'm Bart and this is my second open access book entitled:
 
 "Build SH\*T with Julia".
 
