@@ -42,31 +42,64 @@ sc(s)
 
 ## Solution {#sec:stem_and_leaf_solution}
 
-Let's start with a function that takes a vector of integers and returns the
-number of characters in the greatest number.
+Let's start with a helper function that returns the number of characters that
+compose a number.
+
+```jl
+s = """
+function getNumLen(num::Int)::Int
+    return num |> string |> length
+end
+"""
+sc(s)
+```
+
+The function is quite simple, it sends (`|>`) a number (`num`) to `string`
+(converts a number to its textual representation) and redirects the result
+(`|>`) to `length`. I find this form clearer that the equivalent
+`length(string(num))` of `string(num) |> length` or `(length ∘ string)(num)`
+(`∘` is a [function composition
+operator](https://docs.julialang.org/en/v1/manual/functions/#Function-composition-and-piping)
+that you obtain by typing `\circ` and pressing Tab )
+
+Time for a test run.
+
+```jl
+s = """
+(
+	getNumLen(5),
+	getNumLen(-8),
+	getNumLen(-11),
+	getNumLen(303),
+)
+"""
+sco(s)
+```
+
+Appears to be working fine.
+
+Now let's write a function that takes a vector of integers and returns the
+number of characters in the longest of them (we will need it to determine the
+width of the stem later on).
 
 ```jl
 s = """
 function getMaxLengthOfNum(nums::Vec{Int})::Int
-    maxLen::Int = map(length ∘ string, nums) |> maximum
+    maxLen::Int = map(getNumLen, nums) |> maximum
     return max(2, maxLen)
 end
 """
 sc(s)
 ```
 
-To that end we used a [function composition
-operator](https://docs.julialang.org/en/v1/manual/functions/#Function-composition-and-piping)
-(type `\circ` and press Tab to obtain `∘` symbol). `length ∘ string` is
-equivalent to an anonymous function `num -> length(string(num))`, i.e. a
-function that takes a number, converts it to its textual representation and
-returns the number of characters in it. We use `map` to apply the function to
-every number in a vector (`nums`) |> and return the length of the 'longest' number
-(`maximum`). If the number is composed of only 1 digit then we add 1 
-
-
-Next, we will write a function that takes a number and brakes it into two parts:
-stem and leaf.
+Again, a piece of cake, we just use `map` to apply `getNumLen` to every number
+in a vector (`nums`) and get the length of the 'longest' number by sending the
+lengths (`|>`) to `maximum`. Notice, that the function doesn't return the
+expected `maxLen`.  This is because in a moment, we will write
+`getStemAndLeaf(num::Int, stemLen::Int)` that breakes a number into two parts:
+stem and leaf, which will require (for formating and pretty display) a stem to
+be at least 2 characters long, hence we end our `getMaxLengthOfNum` with
+`max(2, maxLen)`.
 
 ```jl
 s = """
@@ -86,4 +119,4 @@ sc(s)
 
 We begin with `lpad`. The function converts its first input (`abs(num)`) to
 string (if it isn't one already) of a given length (`stemLen`) it adds a
-specified padding (`"0"`) to the left side of the result if necessary. 
+specified padding (`"0"`) to the left side of the result if necessary.
