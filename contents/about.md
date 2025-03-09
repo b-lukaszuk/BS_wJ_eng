@@ -18,7 +18,7 @@ way to hone their newly acquired skills. To that end, I'll imagine you have read
 this not not because it is the best book in the world (which it is), but because
 of the [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
 (I'm going to apply similar writing conventions without delving too much into
-previously mentioned topics).
+the previously mentioned topics).
 
 Additionally, henceforth I will define a few type aliases, like:
 
@@ -37,7 +37,7 @@ program runs.
 
 If, for any reason, this book is not to your liking then feel free to visit,
 e.g. Adam Wysokinski's the [Big Book of
-Julia](https://adamwysokinski.codeberg.page/bbj/) and choose a Julia's learning
+Julia](https://adamwysokinski.codeberg.page/bbj/) and choose a learning
 resource of your liking. Alternatively you may visit [Rosetta Code
 web-page](https://rosettacode.org/wiki/Category:Solutions_by_Programming_Task)
 that contains over 1'000 programming exercises with solutions in different
