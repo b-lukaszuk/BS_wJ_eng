@@ -92,31 +92,38 @@ end
 sc(s)
 ```
 
+> Note. Instead of `map(getNumLen, nums)` above we could have just used
+> `map(length ∘ string, nums)`. This would save us some typing (no need to
+> define `getNumLen` in the first place), but made the code a bit more cryptic
+> at first read.
+
 Again, a piece of cake, we just use `map` to apply `getNumLen` to every number
 in a vector (`nums`) and get the length of the 'longest' number by sending the
 lengths (`|>`) to `maximum`. Notice, that the function doesn't return the
 expected `maxLen`.  This is because in a moment, we will write
-`getStemAndLeaf(num::Int, stemLen::Int)` that breakes a number into two parts:
-stem and leaf, which will require (for formating and pretty display) a stem to
-be at least 2 characters long, hence we end our `getMaxLengthOfNum` with
+`getStemAndLeaf(num::Int, maxLenOfNum::Int)` that brakes a number into two
+parts: stem and leaf. It will require `maxLenOfNum` to be at least 2
+characters long (so that at least one digit serves as a stem and one as a leaf),
+hence we end our `getMaxLengthOfNum` with
 `max(2, maxLen)`.
 
 ```jl
 s = """
-function getStemAndLeaf(num::Int, stemLen::Int)::Tuple{Str, Str}
-    @assert stemLen > 1 "stemLen must be greater than 1"
-    numStr::Str = lpad(abs(num), stemLen, "0")
+function getStemAndLeaf(num::Int, maxLenOfNum::Int)::Tuple{Str, Str}
+    @assert maxLenOfNum > 1 "maxLenOfNum must be greater than 1"
+    numStr::Str = lpad(abs(num), maxLenOfNum, "0")
     stem::Str = numStr[1:end-1] |> string
     leaf::Str = numStr[end] |> string
     stemTmp::Int = parse(Int, stem)
     stem = num < 0 ? "-" * string(stemTmp) : string(stemTmp)
-    stem = lpad(stem, stemLen, " ")
+    stem = lpad(stem, maxLenOfNum, " ")
     return (stem, leaf)
 end
 """
 sc(s)
 ```
 
-We begin with `lpad`. The function converts its first input (`abs(num)`) to
-string (if it isn't one already) of a given length (`stemLen`) it adds a
-specified padding (`"0"`) to the left side of the result if necessary.
+We begin with `lpad`. This function converts its first input (`abs(num)`) to
+string (if it isn't one already) of a given length (`maxLenOfNum`). It adds a
+specified padding (`"0"`) to the left side of the result (if necessary) in order
+to obtain the string with a desired number of characters.
