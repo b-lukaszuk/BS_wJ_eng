@@ -100,7 +100,7 @@ sc(s)
 Again, a piece of cake, we just use `map` to apply `getNumLen` to every number
 in a vector (`nums`) and get the length of the 'longest' number by sending the
 lengths (`|>`) to `maximum`. Notice, that the function doesn't return the
-expected `maxLen`.  This is because in a moment, we will write
+expected `maxLen`. This is because in a moment, we will write
 `getStemAndLeaf(num::Int, maxLenOfNum::Int)` that brakes a number into two
 parts: stem and leaf. It will require `maxLenOfNum` to be at least 2
 characters long (so that at least one digit serves as a stem and one as a leaf),
@@ -111,12 +111,13 @@ hence we end our `getMaxLengthOfNum` with
 s = """
 function getStemAndLeaf(num::Int, maxLenOfNum::Int)::Tuple{Str, Str}
     @assert maxLenOfNum > 1 "maxLenOfNum must be greater than 1"
+    @assert getNumLen(num) <= maxLenOfNum
     numStr::Str = lpad(abs(num), maxLenOfNum, "0")
     stem::Str = numStr[1:end-1] |> string
     leaf::Str = numStr[end] |> string
-    stemTmp::Int = parse(Int, stem)
-    stem = num < 0 ? "-" * string(stemTmp) : string(stemTmp)
-    stem = lpad(stem, maxLenOfNum, " ")
+    stem = parse(Int, stem) |> string #1
+    stem = num < 0 ? "-" * stem : stem #2
+    stem = lpad(stem, maxLenOfNum, " ") #3
     return (stem, leaf)
 end
 """
@@ -124,6 +125,26 @@ sc(s)
 ```
 
 We begin with `lpad`. This function converts its first input (`abs(num)`) to
-string (if it isn't one already) of a given length (`maxLenOfNum`). It adds a
-specified padding (`"0"`) to the left side of the result (if necessary) in order
-to obtain the string with a desired number of characters.
+string of a given length (`maxLenOfNum`). It adds a specified padding (`"0"`) to
+the left side of the result (if necessary) in order to obtain the string with a
+desired number of characters. Next, we proceed to obtain the `stem` which
+contains all the characters from `numStr`, except the last one. The `|> string`
+makes sure that the end result is `Str` (since e.g. making `stem` from `"21"`
+returns `'2'` which is of type `Char`). Similarly, we produce `leaf` by taking
+last character of `numStr`. We could end here, and it would likely work fine
+for a positive integer. However, handling broader range of inputs
+(`num` and `maxLenOfNum`) requires some further `stem` processing. Hence the
+lines designated with `#1-#3` that were added in later iterations of
+`getStemAndLeaf`.`#1` removes superfluous 0s from the left side of the string
+(e.g. `"001"` becomes `"1"` and `"00"` becomes `"0"`). `#2` adds `"-"` sign if
+the input (`num`) was negative. `#3` aligns the text (`stem`) to the right. It
+does so by adding spaces (`" "`) to the left site of `stem`. All that's left to
+do is to `return` our `stem` and `leaf` and see how it works for some exemplary
+inputs.
+
+```jl
+s = """
+[getStemAndLeaf(n, 3) for n in [-12, -3, 3, 8, 10, 145]]
+"""
+sco(s)
+```
