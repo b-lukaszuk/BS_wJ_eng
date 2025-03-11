@@ -6,7 +6,7 @@ This file is not included in the PDF.
 
 Start date: Wed, 2024-09-11
 
-Book writing status: Work in Progress, I'm in no hurry though, expect changes
+Book writing status: Work in Progress (I'm in no hurry though)
 
 Latest update (local time):
 

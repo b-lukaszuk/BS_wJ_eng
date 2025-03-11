@@ -12,7 +12,7 @@ Build SH*T with Julia
 
 Start date: Wed, 2024-09-11
 
-Work in Progress, I'm in no hurry though, expect changes.
+Work in Progress (I'm in no hurry though)
 
 ## Running book locally
 
