@@ -193,14 +193,14 @@ using `fill` function. We will assign the appropriate amino acids to `aas` based
 on the `aaInd` (`aaInd` - amino acid index) which we increase with every
 iteration (`aaInd += 1`). In `for` loop we iterate over each consecutive index
 with which a triple begins (`1:3:len` will return numbers as `[1, 4, 7, 10, 13,
-...]`).  Every consecutive `codon` (3 nucleotic bases) is obtained from
+...]`). Every consecutive `codon` (3 nucleotic bases) is obtained from
 `mRNASeq` using indexing by adding `+2` to the index that starts a triple (e.g.
 for i = 1, the three bases are at positions 1:3, for i = 4, those are 4:6,
 etc.). The `codon` is used to obtain the corresponding amino acid (`aa`) with
 `getAA`. If the `aa` is a so-called stop codon, then we immediately `break` free
 of the loop. Otherwise, we insert the `aa` to the appropriate place [`aaInd`] in
-`aas`.  In the end we collapse the vector of strings into one long string with
-`join`.  It is as if we used the string concatenation operator `*` on each
+`aas`. In the end we collapse the vector of strings into one long string with
+`join`. It is as if we used the string concatenation operator `*` on each
 element of `aas` like so `aas[1] * aas[2] * aas[3] * ...`. Notice, that e.g.
 `"A" * ""` or `"A" * "" * ""` is still `"A"`. This effectively gets rid of any
 empty `aas` elements that remained after reaching `aa == "Stop"` and `break`

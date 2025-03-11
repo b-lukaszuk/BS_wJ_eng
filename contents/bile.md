@@ -15,7 +15,6 @@ explanations) or with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/bile)
 (without explanations).
 
-
 ## Problem {#sec:bile_problem}
 
 There are different types of nutrients to be found in food, but they can be
