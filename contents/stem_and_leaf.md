@@ -66,12 +66,7 @@ Time for a test run.
 
 ```jl
 s = """
-(
-	getNumLen(5),
-	getNumLen(-8),
-	getNumLen(-11),
-	getNumLen(303),
-)
+map(getNumLen, [5, -8, -11, 303])
 """
 sco(s)
 ```
