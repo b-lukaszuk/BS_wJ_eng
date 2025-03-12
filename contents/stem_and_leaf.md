@@ -30,10 +30,13 @@ As a minimal test, make sure it works correctly on the examples from the
 
 ```jl
 s = """
+# prime numbers below 100
 stemLeafTest1 = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37,
                 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+# example from the Construction section
 stemLeafTest2 = [44, 46, 47, 49, 63, 64, 66, 68, 68, 72, 72, 75,
                 76, 81, 84, 88, 106]
+# another example from the Construction section
 stemLeafTest3 = [-23.678758, -12.45, -3.4, 4.43, 5.5, 5.678,
                 16.87, 24.7, 56.8]
 """
@@ -47,7 +50,7 @@ compose a number.
 
 ```jl
 s = """
-function getNumLen(num::Int)::Int
+function howManyChars(num::Int)::Int
     return num |> string |> length
 end
 """
@@ -60,13 +63,13 @@ The function is quite simple, it sends (`|>`) a number (`num`) to `string`
 `length(string(num))` of `string(num) |> length` or `(length ∘ string)(num)`
 (`∘` is a [function composition
 operator](https://docs.julialang.org/en/v1/manual/functions/#Function-composition-and-piping)
-that you obtain by typing `\circ` and pressing Tab )
+that you obtain by typing `\circ` and pressing Tab).
 
 Time for a test run.
 
 ```jl
 s = """
-map(getNumLen, [5, -8, -11, 303])
+map(howManyChars, [5, -8, -11, 303])
 """
 sco(s)
 ```
@@ -80,33 +83,33 @@ width of the stem later on).
 ```jl
 s = """
 function getMaxLengthOfNum(nums::Vec{Int})::Int
-    maxLen::Int = map(getNumLen, nums) |> maximum
+    maxLen::Int = map(howManyChars, nums) |> maximum
     return max(2, maxLen)
 end
 """
 sc(s)
 ```
 
-> Note. Instead of `map(getNumLen, nums)` above we could have just used
+> Note. Instead of `map(howManyChars, nums)` above we could have just used
 > `map(length ∘ string, nums)`. This would save us some typing (no need to
-> define `getNumLen` in the first place), but made the code a bit more cryptic
-> at first read.
+> define `howManyChars` in the first place), but made the code a bit more
+> cryptic at first read.
 
-Again, a piece of cake, we just use `map` to apply `getNumLen` to every number
-in a vector (`nums`) and get the length of the 'longest' number by sending the
-lengths (`|>`) to `maximum`. Notice, that the function doesn't return the
-expected `maxLen`. This is because in a moment, we will write
+Again, a piece of cake, we just use `map` to apply `howManyChars` to every
+number in a vector (`nums`) and get the length of the 'longest' number by
+sending the lengths (`|>`) to `maximum`. Notice, that the function doesn't
+return the expected `maxLen`. This is because in a moment, we will write
 `getStemAndLeaf(num::Int, maxLenOfNum::Int)` that brakes a number into two
-parts: stem and leaf. It will require `maxLenOfNum` to be at least 2
-characters long (so that at least one digit serves as a stem and one as a leaf),
-hence we end our `getMaxLengthOfNum` with
-`max(2, maxLen)`.
+parts: stem and leaf. It will require `maxLenOfNum` to be at least 2 characters
+long (so that at least one digit serves as a stem and one as a leaf), hence
+return `max(2, maxLen)`.
 
 ```jl
 s = """
 function getStemAndLeaf(num::Int, maxLenOfNum::Int)::Tuple{Str, Str}
     @assert maxLenOfNum > 1 "maxLenOfNum must be greater than 1"
-    @assert getNumLen(num) <= maxLenOfNum
+    @assert howManyChars(num) <= maxLenOfNum
+		"character count in num must be <= maxLenOfNum"
     numStr::Str = lpad(abs(num), maxLenOfNum, "0")
     stem::Str = numStr[1:end-1] |> string
     leaf::Str = numStr[end] |> string
@@ -120,16 +123,16 @@ sc(s)
 ```
 
 We begin with `lpad`. This function converts its first input (`abs(num)`) to
-string of a given length (`maxLenOfNum`). It adds a specified padding (`"0"`) to
-the left side of the result (if necessary) in order to obtain the string with a
-desired number of characters. Next, we proceed to obtain the `stem` which
-contains all the characters from `numStr`, except the last one. The `|> string`
-makes sure that the end result is `Str` (since e.g. making `stem` from `"21"`
-returns `'2'` which is of type `Char`). Similarly, we produce `leaf` by taking
-last character of `numStr`. We could end here, and it would likely work fine
-for a positive integer. However, handling broader range of inputs
-(`num` and `maxLenOfNum`) requires some further `stem` processing. Hence the
-lines designated with `#1-#3` that were added in later iterations of
+string of a given length (`maxLenOfNum`). It adds a padding (`"0"`) to the left
+side of the result (if necessary) in order to obtain the string with a desired
+number of characters. Next, we proceed to obtain the `stem` which contains all
+the characters from `numStr`, except the last one. The `|> string` makes sure
+that the end result is `Str` (since, e.g. `stem` from `"21"` would be `'2'`
+which is of type `Char`). Similarly, we produce `leaf` by taking the last
+character of `numStr`. We could stop here, and it would likely work fine for a
+positive integer. However, handling broader range of inputs (`num` and
+`maxLenOfNum`) requires some further `stem` processing. Hence the lines
+designated with `#1-#3` that were added in later iterations of
 `getStemAndLeaf`.`#1` removes superfluous 0s from the left side of the string
 (e.g. `"001"` becomes `"1"` and `"00"` becomes `"0"`). `#2` adds `"-"` sign if
 the input (`num`) was negative. `#3` aligns the text (`stem`) to the right. It
@@ -139,7 +142,7 @@ inputs.
 
 ```jl
 s = """
-[getStemAndLeaf(n, 3) for n in [-12, -3, 3, 8, 10, 145]]
+Dict(n => getStemAndLeaf(n, 3) for n in [-12, -3, 3, 8, 10, 145])
 """
 sco(s)
 ```
