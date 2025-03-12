@@ -146,3 +146,49 @@ Dict(n => getStemAndLeaf(n, 3) for n in [-12, -3, 3, 8, 10, 145])
 """
 sco(s)
 ```
+
+Time to write `getLeafCounts` a function that for a vector of numbers returns a
+mapping (`Dict`) between stems (keys) and leafs (values).
+
+```jl
+s = """
+# returns Dict{stem, [leafs]}
+function getLeafCounts(nums::Vec{Int})::Dict{Str, Vec{Str}}
+    @assert length(unique(nums)) > 1 "numbers mustn't be the same"
+    counts::Dict{Str, Vec{Str}} = Dict()
+	maxLen::Int = getMaxLengthOfNum(nums)
+    for num in nums
+		# stem, leaf - local variables within for loop
+        stem, leaf = getStemAndLeaf(num, maxLen)
+        if haskey(counts, stem)
+            counts[stem] = push!(counts[stem], leaf)
+        else
+            counts[stem] = [leaf]
+        end
+    end
+    return counts
+end
+"""
+sc(s)
+```
+
+First, we initialize an empty `Dict` (`counts`) that will hold our result. Next,
+we brake each number (`for num in nums`) into `stem` and `leaf` parts. If the
+`counts` already contains such a `stem` (`haskey(counts, stem)`), then we add
+the `leaf` to the vector of already existing leafs
+(`push!(counts[stem], leaf)`). Otherwise (`else`), we add a `leaf` as
+a 1-element vector (`[leaf`]) for a given `stem`. Finally, we return the
+`counts`.
+
+Let's see how it works.
+
+```jl
+s = """
+# prime numbers below 100
+getLeafCounts([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37,
+	41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97])
+"""
+sco(s)
+```
+
+Looks, alright. Time to pretty print the result.
