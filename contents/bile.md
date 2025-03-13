@@ -123,8 +123,8 @@ $r^3 = v / (\frac{4}{3} * \pi)$, which is actually the same as @eq:sphere4 above
 [since e.g. 18 / 2 / 3 == 18 / (2 * 3)]. Ergo, we may be fairly certain we
 correctly solved @eq:sphere4 and therefore @eq:sphere5.
 
-Once, we confimed the validity of formula in @eq:sphere5, all that's left to do
-is to translate it into Julia code.
+Once, we confimed the validity of the formula in @eq:sphere5, all that's left to
+do is to translate it into Julia code.
 
 ```jl
 s = """

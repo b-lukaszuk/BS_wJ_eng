@@ -170,7 +170,7 @@ sc(s)
 ```
 
 The above is a translation of the algorithm from the links provided in the task
-description earlier on. First we get our matrices dimensions, and perform a
+description earlier on. First we get our matrices dimensions and perform a
 compatibility check with `@assert`. Then we initialize an empty matrix
 (`result`) with the appropriate dimensions (we use `zeros` so 0s are the
 placeholders stored in its cells). Finally, we get the dot products of every row

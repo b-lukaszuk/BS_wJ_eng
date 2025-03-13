@@ -67,7 +67,7 @@ $$ ball = 0.05 $$
 
 So it turns out that, counter-intuitively, the ball costs \$0.05 or 5 cents.
 
-That's all very interesting, but what any of this got to do with Julia? Well we
+That's all very interesting, but what any of this got to do with Julia? Well, we
 can solve this and more complicated equations with it. For that purpose we will
 use matrices and their multiplications as explained in
 [this](https://www.youtube.com/watch?v=AUqeb9Z3y3k) Khan Academy's video.

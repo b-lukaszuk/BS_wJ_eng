@@ -162,8 +162,7 @@ previously defined `codon2aa` dictionary. Then the 3-letter abbreviation is
 coded with a single letter recommended by IUPAC (using `aa2iupac` dictionary).
 If at any point no translation was found `"???"` is returned.
 
-Now, time for translation (again, we will use type synonym to save us some
-typing).
+Now, time for translation.
 
 ```jl
 s = """
@@ -267,7 +266,7 @@ of code. It also consists of a series of consecutive logical steps, which is
 quite nice. However, for a beginner (or someone that doesn't know this paradigm
 well) it appears more enigmatic (and therefore off-putting). Moreover, in
 general it is expected to be a bit slower than the more imperative for loop
-version (`translate`). This should be more evident with long sequences [try
+version (`translate`). This should be evident with long sequences [try
  `BenchmarkTools.@benchmark translate($mRna^20)` vs
  `@BenchmarkTools.@benchmark translate2($mRna^20)` in the REPL (type it after
 `julia>` prompt)].

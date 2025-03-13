@@ -15,7 +15,7 @@ A prime number is an integer greater than 1 that is divisible only by 1 and
 itself. Prime numbers found practical applications, e.g. in cryptography.
 
 In this task your job is to write a function that returns all prime numbers up
-to a certain extent. You may use any computational method from [the wikipedia's
+to a certain extent. You may use any computational method from [the Wikipedia's
 page](https://en.wikipedia.org/wiki/Prime_number#Computational_methods).
 
 ## Solution {#sec:prime_numbers_solution}
@@ -91,8 +91,8 @@ Next, we will implement [the sieve of Eratosthenes
 algorithm](https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes) that finds
 primes by
 
-> ... by iteratively marking as composite (i.e., not prime) the multiples of
-> each prime, starting with the first prime number, 2.
+> ... iteratively marking as composite (i.e., not prime) the multiples of each
+> prime, starting with the first prime number, 2.
 
 (see the Wikipedia's page from the link above).
 

@@ -211,8 +211,8 @@ replace(sc(s), Regex("\"\n\"") => "\"\\n\"")
 
 We define our `row` as a string that contains the `key` and separator. If our
 `leafCounts` contains a given `key` then we append its sorted values
-concatenated together with `join` function (e.g, `["1", "1", "3"] |> join`
-becomes `"113"`). We return `row` with a newline character `\n`.
+concatenated together with `join` function (e.g., `["1", "1", "3"] |> join`
+becomes `"113"`). We return `row` with a newline character (`\n`).
 
 Time for the whole stem and leaf plot.
 
