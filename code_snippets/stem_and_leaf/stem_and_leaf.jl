@@ -1,6 +1,6 @@
+const Flt = Float64
 const Str = String
 const Vec = Vector
-const Flt = Float64
 
 # numbers for testing our stem-and-leaf plot
 # prime numbers below 100
@@ -35,7 +35,7 @@ function getStemAndLeaf(num::Int, maxLenOfNum::Int)::Tuple{Str, Str}
     return (stem, leaf)
 end
 
-# returns Dict{stem, [leafs]}
+# returns Dict{stem, [leaves]}
 function getLeafCounts(nums::Vec{Int})::Dict{Str, Vec{Str}}
     @assert length(Set(nums)) > 1 "numbers musn't be the same"
     counts::Dict{Str, Vec{Str}} = Dict()
@@ -64,15 +64,15 @@ function getStemLeafPlot(nums::Vec{Int})::Str
     leafCounts::Dict{Str, Vec{Str}} = getLeafCounts(nums)
     low::Int, high::Int = extrema(nums)
     maxLenOfNum::Int = getMaxLengthOfNum(nums)
-    testedkeys::Dict{Str, Int} = Dict()
+    testedStems::Dict{Str, Int} = Dict()
     result::Str = ""
     for num in low:1:high
-        s, _ = getStemAndLeaf(num, maxLenOfNum)
-        if haskey(testedkeys, s)
+        stem, _ = getStemAndLeaf(num, maxLenOfNum)
+        if haskey(testedStems, stem)
             continue
         end
-        testedkeys[s] = 1
-        result *= getStemLeafRow(s, leafCounts)
+        result *= getStemLeafRow(stem, leafCounts)
+        testedStems[stem] = 1
     end
     return result
 end

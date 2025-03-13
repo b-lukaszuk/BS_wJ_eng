@@ -24,6 +24,7 @@ Additionally, henceforth I will define a few type aliases, like:
 
 ```jl
 s = """
+const Flt = Float64
 const Str = String
 const Vec = Vector
 """

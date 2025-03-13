@@ -60,7 +60,7 @@ sc(s)
 The function is quite simple, it sends (`|>`) a number (`num`) to `string`
 (converts a number to its textual representation) and redirects the result
 (`|>`) to `length`. I find this form clearer that the equivalent
-`length(string(num))` of `string(num) |> length` or `(length ∘ string)(num)`
+`length(string(num))` or `string(num) |> length` or `(length ∘ string)(num)`
 (`∘` is a [function composition
 operator](https://docs.julialang.org/en/v1/manual/functions/#Function-composition-and-piping)
 that you obtain by typing `\circ` and pressing Tab).
@@ -96,13 +96,13 @@ sc(s)
 > cryptic at first read.
 
 Again, a piece of cake, we just use `map` to apply `howManyChars` to every
-number in a vector (`nums`) and get the length of the 'longest' number by
-sending the lengths (`|>`) to `maximum`. Notice, that the function doesn't
+number in a vector (`nums`) and get the length of the longest number by
+sending (`|>`) the lengths to `maximum`. Notice, that the function doesn't
 return the expected `maxLen`. This is because in a moment, we will write
 `getStemAndLeaf(num::Int, maxLenOfNum::Int)` that brakes a number into two
-parts: stem and leaf. It will require `maxLenOfNum` to be at least 2 characters
-long (so that at least one digit serves as a stem and one as a leaf), hence
-return `max(2, maxLen)`.
+parts: stem and leaf. It will require `maxLenOfNum` to be at least 2 (so that at
+least one digit serves as a stem and one as a leaf), hence return `max(2,
+maxLen)`.
 
 ```jl
 s = """
@@ -126,9 +126,9 @@ We begin with `lpad`. This function converts its first input (`abs(num)`) to
 string of a given length (`maxLenOfNum`). It adds a padding (`"0"`) to the left
 side of the result (if necessary) in order to obtain the string with a desired
 number of characters. Next, we proceed to obtain the `stem` which contains all
-the characters from `numStr`, except the last one. The `|> string` makes sure
-that the end result is `Str` (since, e.g. `stem` from `"21"` would be `'2'`
-which is of type `Char`). Similarly, we produce `leaf` by taking the last
+the characters from `numStr`, except the last one (`end-1`). The `|> string`
+makes sure that the end result is `Str` (since, e.g. `stem` from `"21"` would be
+`'2'` which is of type `Char`). Similarly, we produce `leaf` by taking the last
 character of `numStr`. We could stop here, and it would likely work fine for a
 positive integer. However, handling broader range of inputs (`num` and
 `maxLenOfNum`) requires some further `stem` processing. Hence the lines
@@ -148,11 +148,11 @@ sco(s)
 ```
 
 Time to write `getLeafCounts` a function that for a vector of numbers returns a
-mapping (`Dict`) between stems (keys) and leafs (values).
+mapping (`Dict`) between stems (keys) and leaves (values).
 
 ```jl
 s = """
-# returns Dict{stem, [leafs]}
+# returns Dict{stem, [leaves]}
 function getLeafCounts(nums::Vec{Int})::Dict{Str, Vec{Str}}
     @assert length(unique(nums)) > 1 "numbers mustn't be the same"
     counts::Dict{Str, Vec{Str}} = Dict()
@@ -175,7 +175,7 @@ sc(s)
 First, we initialize an empty `Dict` (`counts`) that will hold our result. Next,
 we brake each number (`for num in nums`) into `stem` and `leaf` parts. If the
 `counts` already contains such a `stem` (`haskey(counts, stem)`), then we add
-the `leaf` to the vector of already existing leafs
+the `leaf` to the vector of already existing leaves
 (`push!(counts[stem], leaf)`). Otherwise (`else`), we add a `leaf` as
 a 1-element vector (`[leaf`]) for a given `stem`. Finally, we return the
 `counts`.
@@ -193,7 +193,8 @@ primesLeafCounts = getLeafCounts(
 sco(s)
 ```
 
-Looks, alright. Time to pretty print the result. First, let's print a row.
+Looks, alright. Time to pretty print the result. First, let's get a formatted
+row.
 
 ```jl
 s = """
@@ -209,9 +210,9 @@ replace(sc(s), Regex("\"\n\"") => "\"\\n\"")
 ```
 
 We define our `row` as a string that contains the `key` and separator. If our
-`leafCounts` contains a given `key` then we append its sorted keys concatenated
-together with `join` function (e.g, `["1", "1", "3"] |> join` becomes
-`"113"`). We return the `row` with a newline character `\n`.
+`leafCounts` contains a given `key` then we append its sorted values
+concatenated together with `join` function (e.g, `["1", "1", "3"] |> join`
+becomes `"113"`). We return `row` with a newline character `\n`.
 
 Time for the whole stem and leaf plot.
 
@@ -237,16 +238,17 @@ end
 sc(s)
 ```
 
-We begin by defning a few initial variables. Few of them deserve a short
-explanation.  `low` and `high` are the two `extrema` (minimum and maximum) of
-our numbers (`nums`). `testedStems` will contain the keys from `leafCounts`,
-i.e. the stems from our stem-leaf plot that rows has been already printed. We
-use `for` loop to travel through all the numbers in our range (`low` to
-`high`). For each tested number (`num`) we get its `stem`.  If the `stem` was
-already printed (`haskey`) we `continue` to another `for` loop iteration.
-Otherwise, we add the row (`getStemLeafRow`) to our `result` and insert the
-`stem` among already printed (`testedStems[stem] = 1`). When we finish we return
-the whole stem-leaf-plot (`return result`).
+At the onset, we define a few variables. Some of them deserve a short
+explanation. `low` and `high` are the two `extrema` (minimum and maximum) of our
+numbers (`nums`). `testedStems` will contain the keys from `leafCounts`,
+i.e. the stems from our stem-leaf plot that rows has been already
+obtained. Next, we use `for` loop to travel through all the numbers in our range
+(`low` to `high`). For each tested number (`num`) we get its `stem`. If the
+`stem` was already obtained (`if haskey`) we `continue` to another `for` loop
+iteration. Otherwise, we add the row to our `result`
+(`result *= getStemLeafRow`) and insert the `stem` among the already visited
+(`testedStems[stem] = 1`). When we finish we return the whole stem-leaf-plot
+(`return result`).
 
 And that's it. Let's see how it works on [Wikipedia's
 examples](https://en.wikipedia.org/wiki/Stem-and-leaf_display). First, prime
@@ -269,7 +271,7 @@ getStemLeafPlot(stemLeafTest1)
 9|7
 </pre>
 
-Now, numbers from the Construction section:
+Now, the numbers from the Construction section:
 
 <pre>
 getStemLeafPlot(stemLeafTest2)
@@ -315,4 +317,4 @@ getStemLeafPlot(stemLeafTest3)
  5|7
 </pre>
 
-It appears to be working as intended.
+It appears to be working as intended so I think we can finish here.
