@@ -115,7 +115,7 @@ function getStemAndLeaf(num::Int, maxLenOfNum::Int)::Tuple{Str, Str}
     leaf::Str = numStr[end] |> string
     stem = parse(Int, stem) |> string #1
     stem = num < 0 ? "-" * stem : stem #2
-    stem = lpad(stem, maxLenOfNum, " ") #3
+    stem = lpad(stem, maxLenOfNum-1, " ") #3
     return (stem, leaf)
 end
 """
@@ -156,10 +156,10 @@ s = """
 function getLeafCounts(nums::Vec{Int})::Dict{Str, Vec{Str}}
     @assert length(unique(nums)) > 1 "numbers mustn't be the same"
     counts::Dict{Str, Vec{Str}} = Dict()
-	maxLen::Int = getMaxLengthOfNum(nums)
+    maxLenOfNum::Int = getMaxLengthOfNum(nums)
+    stem::Str, leaf::Str = "", ""
     for num in nums
-		# stem, leaf - local variables within for loop
-        stem, leaf = getStemAndLeaf(num, maxLen)
+        stem, leaf = getStemAndLeaf(num, maxLenOfNum)
         if haskey(counts, stem)
             counts[stem] = push!(counts[stem], leaf)
         else
@@ -185,10 +185,81 @@ Let's see how it works.
 ```jl
 s = """
 # prime numbers below 100
-getLeafCounts([2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37,
-	41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97])
+primesLeafCounts = getLeafCounts(
+	[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47,
+		53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+)
 """
 sco(s)
 ```
 
-Looks, alright. Time to pretty print the result.
+Looks, alright. Time to pretty print the result. First, let's print a row.
+
+```jl
+s = """
+function getStemLeafRow(key::Str, leafCounts::Dict{Str, Vec{Str}})::Str
+    row::Str = ""
+    if haskey(leafCounts, key)
+        row *= key * " | "
+        row *= sort(leafCounts[key]) |> join
+        return row * "\n"
+    else
+        return row
+    end
+end
+"""
+replace(sc(s), Regex("\"\n\"") => "\"\\n\"")
+```
+
+We define our `row` as an empty string. If our `leafCounts` contains a given
+`key` then we add it to the row (`row *= key`) followed bythe pipe charater with
+a space (`" | "`). Next, we append the sorted keys, that we concatenate together
+with the `join` function (e.g, `["1", "1", "3"] |> join` becomes `"113"`). We
+return the `row` with a newline character `\n`. If there is no such key in
+`leafCounts` (`else` branch) we return `row` which is still an empty
+string.
+
+Now we need a way to sort the keys in our leafCounts (returned by
+`getLeafCounts`) and combine the rows together. A key may be any integer as a
+string including "-0" (negative) zero. Luckily, `sort` functions accepts a
+keyword argument `lt` which is just a function that accepts two compared values
+(`v1` and `v2`) and returns true if its first argument is smaller than the
+second (`lt` stands for less than). We will use it for our advantage
+
+```jl
+s = """
+function lt_for_keys(key1::Str, key2::Str)::Bool
+    n1::Int, n2::Int = parse.(Int, (key1, key2))
+    if n1 == n2 == 0
+        return contains(key1, "-") ? true : false
+    else
+        return n1 < n2
+    end
+end
+"""
+sc(s)
+```
+
+The function is straightforward, we change the keys from their string form to
+integers (`n1` and `n2`). If both keys are 0 (`n1 == n2 == 0`) we return `true`
+if `key1` is negative zero (`contains(key1, "-")`) and `false` otherwise. When
+either `n1` or `n2` are different from 0 (`else` branch) we decide if `n1` is
+smaller by comparing mathematically the two numbers (`n1 < n2`).
+
+Time for the whole stem and leaf plot.
+
+```jl
+s = """
+function getStemLeafPlot(nums::Vec{Int})::Str
+    leafCounts::Dict{Str, Vec{Str}} = getLeafCounts(nums)
+    ks::Vec{Str} = keys(leafCounts) |> collect
+    sort!(ks, lt=lt_for_keys)
+	return [getStemLeafRow(k, leafCounts) for k in ks] |> join
+end
+"""
+sc(s)
+```
+
+And that's it. Let's see how it works on [Wikipedia's
+examples](https://en.wikipedia.org/wiki/Stem-and-leaf_display).  First, prime
+numbers below 100.
