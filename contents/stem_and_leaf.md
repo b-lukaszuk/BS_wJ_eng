@@ -198,53 +198,20 @@ Looks, alright. Time to pretty print the result. First, let's print a row.
 ```jl
 s = """
 function getStemLeafRow(key::Str, leafCounts::Dict{Str, Vec{Str}})::Str
-    row::Str = ""
+    row::Str = key * "|"
     if haskey(leafCounts, key)
-        row *= key * " | "
         row *= sort(leafCounts[key]) |> join
-        return row * "\n"
-    else
-        return row
     end
+    return row * "\n"
 end
 """
 replace(sc(s), Regex("\"\n\"") => "\"\\n\"")
 ```
 
-We define our `row` as an empty string. If our `leafCounts` contains a given
-`key` then we add it to the row (`row *= key`) followed bythe pipe charater with
-a space (`" | "`). Next, we append the sorted keys, that we concatenate together
-with the `join` function (e.g, `["1", "1", "3"] |> join` becomes `"113"`). We
-return the `row` with a newline character `\n`. If there is no such key in
-`leafCounts` (`else` branch) we return `row` which is still an empty
-string.
-
-Now we need a way to sort the keys in our leafCounts (returned by
-`getLeafCounts`) and combine the rows together. A key may be any integer as a
-string including "-0" (negative) zero. Luckily, `sort` functions accepts a
-keyword argument `lt` which is just a function that accepts two compared values
-(`v1` and `v2`) and returns true if its first argument is smaller than the
-second (`lt` stands for less than). We will use it for our advantage
-
-```jl
-s = """
-function lt_for_keys(key1::Str, key2::Str)::Bool
-    n1::Int, n2::Int = parse.(Int, (key1, key2))
-    if n1 == n2 == 0
-        return contains(key1, "-") ? true : false
-    else
-        return n1 < n2
-    end
-end
-"""
-sc(s)
-```
-
-The function is straightforward, we change the keys from their string form to
-integers (`n1` and `n2`). If both keys are 0 (`n1 == n2 == 0`) we return `true`
-if `key1` is negative zero (`contains(key1, "-")`) and `false` otherwise. When
-either `n1` or `n2` are different from 0 (`else` branch) we decide if `n1` is
-smaller by comparing mathematically the two numbers (`n1 < n2`).
+We define our `row` as a string that contains the `key` and separator. If our
+`leafCounts` contains a given `key` then we append its sorted keys concatenated
+together with `join` function (e.g, `["1", "1", "3"] |> join` becomes
+`"113"`). We return the `row` with a newline character `\n`.
 
 Time for the whole stem and leaf plot.
 
@@ -252,14 +219,100 @@ Time for the whole stem and leaf plot.
 s = """
 function getStemLeafPlot(nums::Vec{Int})::Str
     leafCounts::Dict{Str, Vec{Str}} = getLeafCounts(nums)
-    ks::Vec{Str} = keys(leafCounts) |> collect
-    sort!(ks, lt=lt_for_keys)
-	return [getStemLeafRow(k, leafCounts) for k in ks] |> join
+    low::Int, high::Int = extrema(nums)
+    maxLenOfNum::Int = getMaxLengthOfNum(nums)
+    testedStems::Dict{Str, Int} = Dict()
+    result::Str = ""
+    for num in low:1:high
+        stem, _ = getStemAndLeaf(num, maxLenOfNum)
+        if haskey(testedStems, stem)
+            continue
+        end
+        result *= getStemLeafRow(stem, leafCounts)
+        testedStems[stem] = 1
+    end
+    return result
 end
 """
 sc(s)
 ```
 
+We begin by defning a few initial variables. Few of them deserve a short
+explanation.  `low` and `high` are the two `extrema` (minimum and maximum) of
+our numbers (`nums`). `testedStems` will contain the keys from `leafCounts`,
+i.e. the stems from our stem-leaf plot that rows has been already printed. We
+use `for` loop to travel through all the numbers in our range (`low` to
+`high`). For each tested number (`num`) we get its `stem`.  If the `stem` was
+already printed (`haskey`) we `continue` to another `for` loop iteration.
+Otherwise, we add the row (`getStemLeafRow`) to our `result` and insert the
+`stem` among already printed (`testedStems[stem] = 1`). When we finish we return
+the whole stem-leaf-plot (`return result`).
+
 And that's it. Let's see how it works on [Wikipedia's
-examples](https://en.wikipedia.org/wiki/Stem-and-leaf_display).  First, prime
-numbers below 100.
+examples](https://en.wikipedia.org/wiki/Stem-and-leaf_display). First, prime
+numbers below 100:
+
+<pre>
+getStemLeafPlot(stemLeafTest1)
+</pre>
+
+<pre>
+0|2357
+1|1379
+2|39
+3|17
+4|137
+5|39
+6|17
+7|139
+8|39
+9|7
+</pre>
+
+Now, numbers from the Construction section:
+
+<pre>
+getStemLeafPlot(stemLeafTest2)
+</pre>
+
+<pre>
+ 4|4679
+ 5|
+ 6|34688
+ 7|2256
+ 8|148
+ 9|
+10|6
+</pre>
+
+All that's left to do is to adjust our function for the example with floats.
+
+```jl
+s = """
+function getStemLeafPlot(nums::Vec{Flt})::Str
+    ints::Vec{Int} = round.(Int, nums)
+    return getStemLeafPlot(ints)
+end
+"""
+sc(s)
+```
+
+And voila:
+
+<pre>
+getStemLeafPlot(stemLeafTest3)
+</pre>
+
+<pre>
+-2|4
+-1|2
+-0|3
+ 0|466
+ 1|7
+ 2|5
+ 3|
+ 4|
+ 5|7
+</pre>
+
+It appears to be working as intended.
