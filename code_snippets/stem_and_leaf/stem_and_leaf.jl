@@ -1,5 +1,6 @@
 const Str = String
 const Vec = Vector
+const Flt = Float64
 
 # numbers for testing our stem-and-leaf plot
 # prime numbers below 100
@@ -52,30 +53,44 @@ function getLeafCounts(nums::Vec{Int})::Dict{Str, Vec{Str}}
 end
 
 function getStemLeafRow(key::Str, leafCounts::Dict{Str, Vec{Str}})::Str
-    row::Str = ""
+    row::Str = key * "|"
     if haskey(leafCounts, key)
-        row *= key * "|"
         row *= sort(leafCounts[key]) |> join
-        return row * "\n"
     end
-    return row
-end
-
-function lt_for_keys(key1::Str, key2::Str)::Bool
-    n1::Int, n2::Int = parse.(Int, (key1, key2))
-    if n1 == n2 == 0
-        return contains(key1, "-") ? true : false
-    end
-    return n1 < n2
+    return row * "\n"
 end
 
 function getStemLeafPlot(nums::Vec{Int})::Str
     leafCounts::Dict{Str, Vec{Str}} = getLeafCounts(nums)
-    ks::Vec{Str} = keys(leafCounts) |> collect
-    sort!(ks, lt=lt_for_keys)
-    return [getStemLeafRow(k, leafCounts) for k in ks] |> join
+    low::Int, high::Int = extrema(nums)
+    maxLenOfNum::Int = getMaxLengthOfNum(nums)
+    testedkeys::Dict{Str, Int} = Dict()
+    result::Str = ""
+    for num in low:1:high
+        s, _ = getStemAndLeaf(num, maxLenOfNum)
+        if haskey(testedkeys, s)
+            continue
+        end
+        testedkeys[s] = 1
+        result *= getStemLeafRow(s, leafCounts)
+    end
+    return result
 end
 
-# testing
+# testing with ints
 getStemLeafPlot(stemLeafTest1) |> print
 getStemLeafPlot(stemLeafTest2) |> print
+
+function getStemLeafPlot(nums::Vec{Flt})::Str
+    ints::Vec{Int} = round.(Int, nums)
+    return getStemLeafPlot(ints)
+end
+
+# testing with floats
+getStemLeafPlot(stemLeafTest3) |> print
+
+# more testing
+-10:1:10 |> collect |> getStemLeafPlot |> print
+# compare with Fig12 from: https://b-lukaszuk.github.io/RJ_BS_eng/compare_contin_data_one_samp_ttest.html
+[504, 477, 484, 476, 519, 481, 453, 485, 487, 501] |>
+    getStemLeafPlot |> print
