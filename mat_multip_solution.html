@@ -62,22 +62,25 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./bat_and_ball.html"><b>3</b> Bat and Ball</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_problem.html"><b>3.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_solution.html"><b>3.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./bile.html"><b>4</b> Bile</a></li>
-<li><a class="menu-level-2" href="./bile_problem.html"><b>4.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./bile_solution.html"><b>4.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./prime_numbers.html"><b>5</b> Prime Numbers</a></li>
-<li><a class="menu-level-2" href="./prime_numbers_problem.html"><b>5.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./prime_numbers_solution.html"><b>5.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./transcription.html"><b>6</b> Transcription</a></li>
-<li><a class="menu-level-2" href="./transcription_problem.html"><b>6.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./transcription_solution.html"><b>6.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./translation.html"><b>7</b> Translation</a></li>
-<li><a class="menu-level-2" href="./translation_problem.html"><b>7.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./translation_solution.html"><b>7.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./stem_and_leaf.html"><b>8</b> Stem and Leaf Plot</a></li>
-<li><a class="menu-level-2" href="./stem_and_leaf_problem.html"><b>8.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./stem_and_leaf_solution.html"><b>8.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./the-end.html"><b>9</b> The end</a></li>
+<li><a class="menu-level-1" href="./toothpaste.html"><b>4</b> Toothpaste</a></li>
+<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>4.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>4.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./bile.html"><b>5</b> Bile</a></li>
+<li><a class="menu-level-2" href="./bile_problem.html"><b>5.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./bile_solution.html"><b>5.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./prime_numbers.html"><b>6</b> Prime Numbers</a></li>
+<li><a class="menu-level-2" href="./prime_numbers_problem.html"><b>6.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./prime_numbers_solution.html"><b>6.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./transcription.html"><b>7</b> Transcription</a></li>
+<li><a class="menu-level-2" href="./transcription_problem.html"><b>7.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./transcription_solution.html"><b>7.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./translation.html"><b>8</b> Translation</a></li>
+<li><a class="menu-level-2" href="./translation_problem.html"><b>8.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./translation_solution.html"><b>8.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./stem_and_leaf.html"><b>9</b> Stem and Leaf Plot</a></li>
+<li><a class="menu-level-2" href="./stem_and_leaf_problem.html"><b>9.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./stem_and_leaf_solution.html"><b>9.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./the-end.html"><b>10</b> The end</a></li>
 </div>
 </aside>
 
@@ -118,7 +121,7 @@ map(x -&gt; x + 10, [1, 2, 3])</code></pre>
     end
     return result
 end</code></pre>
-<p>The above is a translation of the algorithm from the links provided in the task description earlier on. First we get our matrices dimensions, and perform a compatibility check with <code>@assert</code>. Then we initialize an empty matrix (<code>result</code>) with the appropriate dimensions (we use <code>zeros</code> so 0s are the placeholders stored in its cells). Finally, we get the dot products of every row (<code>for r</code>) in <code>m1</code> by every column (<code>for c</code>) in <code>m2</code> and place them to the appropriate cells in the <code>result</code> matrix.</p>
+<p>The above is a translation of the algorithm from the links provided in the task description earlier on. First we get our matrices dimensions and perform a compatibility check with <code>@assert</code>. Then we initialize an empty matrix (<code>result</code>) with the appropriate dimensions (we use <code>zeros</code> so 0s are the placeholders stored in its cells). Finally, we get the dot products of every row (<code>for r</code>) in <code>m1</code> by every column (<code>for c</code>) in <code>m2</code> and place them to the appropriate cells in the <code>result</code> matrix.</p>
 <p>Alternatively, if you are not a fan of nesting, you may use Julia’s simplified nested for loop syntax. It works the same as the previous code snippet.</p>
 <pre class="language-julia"><code>function multiply(m1::Matrix{Int}, m2::Matrix{Int})::Matrix{Int}
     nRowsMat1, nColsMat1 = size(m1)

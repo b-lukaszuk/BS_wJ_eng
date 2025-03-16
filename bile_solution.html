@@ -62,27 +62,30 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./bat_and_ball.html"><b>3</b> Bat and Ball</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_problem.html"><b>3.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_solution.html"><b>3.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./bile.html"><b>4</b> Bile</a></li>
-<li><a class="menu-level-2" href="./bile_problem.html"><b>4.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./bile_solution.html"><b>4.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./prime_numbers.html"><b>5</b> Prime Numbers</a></li>
-<li><a class="menu-level-2" href="./prime_numbers_problem.html"><b>5.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./prime_numbers_solution.html"><b>5.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./transcription.html"><b>6</b> Transcription</a></li>
-<li><a class="menu-level-2" href="./transcription_problem.html"><b>6.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./transcription_solution.html"><b>6.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./translation.html"><b>7</b> Translation</a></li>
-<li><a class="menu-level-2" href="./translation_problem.html"><b>7.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./translation_solution.html"><b>7.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./stem_and_leaf.html"><b>8</b> Stem and Leaf Plot</a></li>
-<li><a class="menu-level-2" href="./stem_and_leaf_problem.html"><b>8.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./stem_and_leaf_solution.html"><b>8.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./the-end.html"><b>9</b> The end</a></li>
+<li><a class="menu-level-1" href="./toothpaste.html"><b>4</b> Toothpaste</a></li>
+<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>4.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>4.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./bile.html"><b>5</b> Bile</a></li>
+<li><a class="menu-level-2" href="./bile_problem.html"><b>5.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./bile_solution.html"><b>5.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./prime_numbers.html"><b>6</b> Prime Numbers</a></li>
+<li><a class="menu-level-2" href="./prime_numbers_problem.html"><b>6.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./prime_numbers_solution.html"><b>6.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./transcription.html"><b>7</b> Transcription</a></li>
+<li><a class="menu-level-2" href="./transcription_problem.html"><b>7.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./transcription_solution.html"><b>7.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./translation.html"><b>8</b> Translation</a></li>
+<li><a class="menu-level-2" href="./translation_problem.html"><b>8.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./translation_solution.html"><b>8.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./stem_and_leaf.html"><b>9</b> Stem and Leaf Plot</a></li>
+<li><a class="menu-level-2" href="./stem_and_leaf_problem.html"><b>9.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./stem_and_leaf_solution.html"><b>9.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./the-end.html"><b>10</b> The end</a></li>
 </div>
 </aside>
 
 <div class="books-content">
-<h2 data-number="4.2" id="sec:bile_solution"><span class="header-section-number">4.2</span> Solution</h2>
+<h2 data-number="5.2" id="sec:bile_solution"><span class="header-section-number">5.2</span> Solution</h2>
 <p>To me the shape that resembles the droplet the most is <a href="https://en.wikipedia.org/wiki/Sphere">sphere</a>. Luckily, it also got well defined formulas for surface area and volume (see the link above), so this is what we will use in our solution.</p>
 <pre class="language-julia"><code>struct Sphere
     radius::Float64
@@ -120,7 +123,7 @@ Sym.@variables fraction p r3 v
 Sym.symbolic_linear_solve(fraction * p * r3 ~ v, r3)</code></pre>
 <p>v / (fraction*p)</p>
 <p>So, instead of writing the formula as it is, we just named our variables <code>fraction</code>, <code>p</code>, <code>r3</code> and <code>v</code>. Anyway, according to <code>Sym.symbolic_linear_solve</code> <span class="math inline">\(r^3 = v / (\frac{4}{3} * \pi)\)</span>, which is actually the same as Equation <a href="#eq:sphere4">7</a> above [since e.g. 18 / 2 / 3 == 18 / (2 * 3)]. Ergo, we may be fairly certain we correctly solved Equation <a href="#eq:sphere4">7</a> and therefore Equation <a href="#eq:sphere5">8</a>.</p>
-<p>Once, we confimed the validity of formula in Equation <a href="#eq:sphere5">8</a>, all that’s left to do is to translate it into Julia code.</p>
+<p>Once, we confimed the validity of the formula in Equation <a href="#eq:sphere5">8</a>, all that’s left to do is to translate it into Julia code.</p>
 <pre class="language-julia"><code>function getSphere(volume::Float64)::Sphere
     # cbrt - fn that calculates cube root of a number
     radius::Float64 = cbrt(volume / (4/3) / pi)
@@ -193,9 +196,9 @@ fig
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-2" href="./bile_problem.html"><b>4.1</b> Problem</a> <kbd>←</kbd>
+        <a class="menu-level-2" href="./bile_problem.html"><b>5.1</b> Problem</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-1" href="./prime_numbers.html"><b>5</b> Prime Numbers</a>
+            <kbd>→</kbd> <a class="menu-level-1" href="./prime_numbers.html"><b>6</b> Prime Numbers</a>
         </span>
     </p>
 </div>
