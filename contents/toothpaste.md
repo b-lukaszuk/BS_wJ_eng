@@ -34,4 +34,135 @@ squeezing less toothpaste (shorter strip) on the toothbrush.
 
 ## Solution {#sec:toothpaste_solution}
 
-The solution goes here.
+First, let me define some abbreviations to use in the code later on.
+
+<pre>
+const Vec = Vector
+const Flt = Float64
+</pre>
+
+Now, based on my own observations I would say that a
+[cylinder](https://en.wikipedia.org/wiki/Cylinder) is a good approximation of
+the toothpaste that is squezed out of the tube. Time to define some helper
+functions that will help us to evaluate the amount of toothpaste on a
+toothbrush.
+
+```jl
+s = """
+struct Cylinder
+    radius::Int
+    height::Int
+end
+
+function getVolume(c::Cylinder)::Flt
+    return c.height * pi * c.radius^2
+end
+"""
+sc(s)
+```
+
+We will skip the detailed explanations, as the above are just translations of
+the Wikipedia's formulas into Julia's code.
+
+Now, in order to answer how much the sales will increase we need to estimate the
+increase in toothpaste usage when the radius and height of our cylinder changes.
+
+```jl
+s = """
+function getRatios(cylinders::Vec{Cylinder},
+                   radiusChange::Int, heightChange::Int)::Vec{Flt}
+    ratios::Vec{Flt} = []
+    for cyl1 in cylinders
+        # newRadius, newHeight, cyl2, vol1, vol2 - local variables
+		# visible only in the for loop
+        newRadius = cyl1.radius + radiusChange
+        newHeight = cyl1.height + heightChange
+        cyl2 = Cylinder(newRadius, newHeight)
+        vol1 = getVolume(cyl1)
+        vol2 = getVolume(cyl2)
+        push!(ratios, round(vol2/vol1, digits=2))
+    end
+    return ratios
+end
+"""
+sc(s)
+```
+
+To that end we defined the `getRatios` function that accepts a vector of
+`cylinders` and the number by which we change their radiuses (`radiusChange`)
+and heights (`heightChange`). `for` each cylinder (`cyl1`) in the initial
+`cylinders` we create its counterpart `cyl2` with the applied size changes.
+Next, we obtain the volumes (`vol1` and `vol2`) for the two cylinders. All
+that's left to do is to `push` the volume ratio (`vol2/vol1`) into the vector of
+results (`ratios`) and to `return` it from the function.
+
+Time to test some scenarios.
+
+### Scenario 1
+
+We increase the radius of the hole. We assume the change is small we that the
+customers wouldn't notice (the height remains constant).
+
+```jl
+s = """
+# radius and height in millimeters
+# radius+1, height = const
+getRatios(Cylinder.(1:5, 5), 1, 0) .* 100
+"""
+sco(s)
+```
+
+> **_Note:_** `Cylinder.(1:5, 5)` creates a vector of `Cylinder`s with different
+> radii (1:5) and the same height (5). Moreover, we multiplied (`.*`) the
+> obtained vector of ratios by 100 in order to obtain the change expressed in %.
+
+The data demonstrates that the smaller the initial hole the greater the increase
+in toothpaste consumption and therefore the expected sales growth (here in the
+range of +300% to +44%).
+
+### Scenario 2
+
+We increase the radius of the hole, and observe what happens with the
+consumption of our product if the customers try to squeeze less toothpaste by
+the very same amount that we increased our radius.
+
+```jl
+s = """
+# radius and height in millimeters
+# radius+1, height-1
+getRatios(Cylinder.(1:5, 5), 1, -1) .* 100
+"""
+sco(s)
+```
+
+Again, we observe a significant growth (although smaller than in the previous
+scenario) in toothpaste consumption and expected sales (here in the range of
++220% to +15%).
+
+### Scenario 3
+
+We increase the radius of the hole, and observe what happens with the
+consumption of our product if the customers try to squeeze less toothpaste (they
+decrease the length of the strip by two units, when the change in the radius is
+by one unit).
+
+```jl
+s = """
+# radius and height in millimeters
+# radius+1, height-2
+getRatios(Cylinder.(1:5, 5), 1, -2) .* 100
+"""
+sco(s)
+```
+
+This time, the result is inconclusive, because in the two last cases the
+customers actually use less of our product, and therefore the sales are expected
+to drop.
+
+### Conclusions
+
+In summary, we see that increasing the radius of the whole in toothpaste is
+an effective strategy to increase the sales of our product. However, we should
+restrain ourselves and not overdo it, since if the customers notice they may
+squeeze shorter toothpaste strips which may undermine our efforts (or even
+backfire on us).
