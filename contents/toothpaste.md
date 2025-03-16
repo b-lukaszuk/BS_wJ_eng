@@ -20,6 +20,13 @@ person with no track record. However, after a year the management saw no other
 option, but to accept the offer. After all the legal details were set, the guy
 spoke only one sentence: "Make the hole bigger".
 
+> **_Note:_** $100'000 may not sound like a tone of money today, but if you
+> update it for an inflation rate of let's say 3.6% you will get roughly
+> $1'000'000. Example calculations: 100'000*(1.036^65) $\approx$ 996'000'000. In
+> that case 65 is the number of years between 1960 and 2025, whereas 1.036 is
+> how much more money you must spend every year on the same product due to the
+> assumed inflation).
+
 Try to figure out does making the hole bigger actually moves the sales up by
 $\geq$ 50%. Test different scenarios, e.g. different initial hole size, and
 see what would have happened if the customers tried to counteract this idea by
