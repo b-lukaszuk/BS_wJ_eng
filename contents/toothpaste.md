@@ -44,7 +44,7 @@ const Flt = Float64
 Now, based on my own observations I would say that a
 [cylinder](https://en.wikipedia.org/wiki/Cylinder) is a good approximation of
 the toothpaste that is squezed out of the tube. Time to define some helper
-functions that will help us to evaluate the amount of toothpaste on a
+functions that will help us to evaluate the amount of a toothpaste on a
 toothbrush.
 
 ```jl
@@ -65,7 +65,8 @@ We will skip the detailed explanations, as the above are just translations of
 the Wikipedia's formulas into Julia's code.
 
 Now, in order to answer how much the sales will increase we need to estimate the
-increase in toothpaste usage when the radius and height of our cylinder changes.
+increase in our toothpaste's usage when the radius and height of our cylinder
+changes.
 
 ```jl
 s = """
@@ -100,7 +101,7 @@ Time to test some scenarios.
 
 ### Scenario 1
 
-We increase the radius of the hole. We assume the change is small we that the
+We increase the radius of the hole. We assume the change is so small that the
 customers wouldn't notice (the height remains constant).
 
 ```jl
@@ -117,14 +118,14 @@ sco(s)
 > obtained vector of ratios by 100 in order to obtain the change expressed in %.
 
 The data demonstrates that the smaller the initial hole the greater the increase
-in toothpaste consumption and therefore the expected sales growth (here in the
-range of +300% to +44%).
+in our toothpaste consumption and therefore the expected sales growth (here in
+the range of +300% to +44%).
 
 ### Scenario 2
 
 We increase the radius of the hole, and observe what happens with the
-consumption of our product if the customers try to squeeze less toothpaste by
-the very same amount that we increased our radius.
+consumption of our product if the customers try to squeeze less (shorter strip)
+of our toothpaste by the very same amount that we increased our radius.
 
 ```jl
 s = """
@@ -142,9 +143,9 @@ scenario) in toothpaste consumption and expected sales (here in the range of
 ### Scenario 3
 
 We increase the radius of the hole, and observe what happens with the
-consumption of our product if the customers try to squeeze less toothpaste (they
-decrease the length of the strip by two units, when the change in the radius is
-by one unit).
+consumption of our product if the customers try to squeeze less of our
+toothpaste (they decrease the length of the strip by two units, when we changed
+the radius by one unit).
 
 ```jl
 s = """
@@ -155,13 +156,13 @@ getRatios(Cylinder.(1:5, 5), 1, -2) .* 100
 sco(s)
 ```
 
-This time, the result is inconclusive, because in the two last cases the
+This time the result is inconclusive, because in the two last cases the
 customers actually use less of our product, and therefore the sales are expected
 to drop.
 
 ### Conclusions
 
-In summary, we see that increasing the radius of the whole in toothpaste is
+In summary, we see that increasing the radius of the whole in a toothpaste is
 an effective strategy to increase the sales of our product. However, we should
 restrain ourselves and not overdo it, since if the customers notice they may
 squeeze shorter toothpaste strips which may undermine our efforts (or even
