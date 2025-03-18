@@ -5,6 +5,7 @@ In this chapter you may or may not use the following external libraries.
 ```jl
 s2 = """
 import CairoMakie as Cmk
+import Random as Rnd
 """
 sc(s2)
 ```
@@ -27,7 +28,7 @@ logo of [JuliaStats](https://juliastats.org/) that you may find
 
 The logo is composed of three disks build of points (scatter-plot) of three
 colors, red, green and purple. So let's start small and try to replicate it by
-placing the points on a graph in correct locations.
+placing the points (only three for now) on a graph in their correct locations.
 
 ```jl
 s = """
@@ -44,10 +45,14 @@ end
 sc(s)
 ```
 
-The function if pretty simple. First we defined the locations of the points
-with respect to the x- (`centersXs`) and y-axis (`centersYs`), as well as their
-colors. Next we added the points (`scatter!`) to the axis object (`ax`) attached
-to the figure object (`fig`).
+> **_Note:_** `CairoMakie` uses `Colors.jl`, the list of available color names
+> is to be found
+> [here](https://juliagraphics.github.io/Colors.jl/stable/namedcolors/)
+
+The function is pretty simple. First, we defined the locations (based on guess
+and later try and error) of the points with respect to the x- (`centersXs`) and
+y-axis (`centersYs`), as well as their colors. Next we added the points
+(`scatter!`) to the axis object (`ax`) attached to the figure object (`fig`).
 
 Time to take a look.
 
@@ -57,7 +62,7 @@ drawLogo()
 
 ![Replicating JuliaStats logo. Attempt 1.](./images/logo1.png){#fig:logo1}
 
-So far, so good. Now instead of a 1 big point we will need a few thousand
+So far, so good. Now instead of a one big point we will need a few thousand
 smaller points (let's say `markersize=10`) concentrated around the center of a
 given group. Moreover, the points should be partially transparent [to that end
 we will use `alpha` keyword argument (`alpha=0` - fully transparent, `alpha=1` -
@@ -65,10 +70,10 @@ fully opaque)]. One more thing, the points need to be randomly scattered, but
 with a greater density closer to the group's center. This last issue will be
 solved by obtaining random numbers from [the normal
 distribution](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_normal_distribution.html)
-with mean = 0 and the standard deviation = 1. This is what `randn` function will
-do. Thanks to this a roughly 68% of the numbers will be in the range -1 to 1,
-95% in the range -2 to 2, and 99.7% in the range -3 to 3 (greater density around
-the mean). Behold.
+with the mean equal 0 and the standard deviation equal 1. This is what `randn`
+function will do. Thanks to this roughly 68% of the numbers will be in the
+range -1 to 1, 95% in the range -2 to 2, and 99.7% in the range -3 to 3 (greater
+density around the mean). Behold.
 
 ```jl
 s1 = """
