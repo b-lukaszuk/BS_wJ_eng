@@ -71,22 +71,25 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./prime_numbers.html"><b>6</b> Prime Numbers</a></li>
 <li><a class="menu-level-2" href="./prime_numbers_problem.html"><b>6.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./prime_numbers_solution.html"><b>6.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./transcription.html"><b>7</b> Transcription</a></li>
-<li><a class="menu-level-2" href="./transcription_problem.html"><b>7.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./transcription_solution.html"><b>7.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./translation.html"><b>8</b> Translation</a></li>
-<li><a class="menu-level-2" href="./translation_problem.html"><b>8.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./translation_solution.html"><b>8.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./stem_and_leaf.html"><b>9</b> Stem and Leaf Plot</a></li>
-<li><a class="menu-level-2" href="./stem_and_leaf_problem.html"><b>9.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./stem_and_leaf_solution.html"><b>9.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./the-end.html"><b>10</b> The end</a></li>
+<li><a class="menu-level-1" href="./logo.html"><b>7</b> Logo</a></li>
+<li><a class="menu-level-2" href="./logo_problem.html"><b>7.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./logo_solution.html"><b>7.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./transcription.html"><b>8</b> Transcription</a></li>
+<li><a class="menu-level-2" href="./transcription_problem.html"><b>8.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./transcription_solution.html"><b>8.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./translation.html"><b>9</b> Translation</a></li>
+<li><a class="menu-level-2" href="./translation_problem.html"><b>9.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./translation_solution.html"><b>9.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./stem_and_leaf.html"><b>10</b> Stem and Leaf Plot</a></li>
+<li><a class="menu-level-2" href="./stem_and_leaf_problem.html"><b>10.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./stem_and_leaf_solution.html"><b>10.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./the-end.html"><b>11</b> The end</a></li>
 </div>
 </aside>
 
 <div class="books-content">
-<h2 data-number="8.1" id="sec:translation_problem"><span class="header-section-number">8.1</span> Problem</h2>
-<p>Let’s start from where we left. Read the data from the file: <code>mrna_seq.txt</code> (to be found in <a href="https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/translation">the code snippets for this chapter</a>). It contains the mRNA sequence we obtained previously (see Section <a href="./transcription_solution.html#sec:transcription_solution">7.2</a>).</p>
+<h2 data-number="9.1" id="sec:translation_problem"><span class="header-section-number">9.1</span> Problem</h2>
+<p>Let’s start from where we left. Read the data from the file: <code>mrna_seq.txt</code> (to be found in <a href="https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/translation">the code snippets for this chapter</a>). It contains the mRNA sequence we obtained previously (see Section <a href="./transcription_solution.html#sec:transcription_solution">8.2</a>).</p>
 <p>Your task is to translate the language of nucleic acids to the language of proteins. To do that you will operate on triplets of nucleotide bases (also called codons). You start with the <code>AUG</code> triplet (the sequence starts with it) and replace it with a proper amino acid (proteins are build of amino acids like <code>String</code>s are build of <code>Char</code>s), in this case it is methionine. Then you move to another triplet (there are no ‘commas’ in the genetic code) and assign the proper amino acid according to the <a href="https://en.wikipedia.org/wiki/DNA_and_RNA_codon_tables#Translation_table_1">standard genetic code</a>. You finish the protein synthesis once you encounter a stop codon (<code>UAA</code>, <code>UAG</code>, <code>UGA</code>).</p>
 <p>Since rewriting the Wikipedia’s table from the link above is mundane and boring, then I paste the genetic code below in Julia’s dictionary format.</p>
 <pre class="language-julia"><code># codon - triplet of nucleotide bases, aa - amino acid
@@ -128,9 +131,9 @@ expectedAAseq = &quot;MALWMRLLPLLALLALWGPDPAAAFVNQHLCGSHLVEAL&quot; *
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./translation.html"><b>8</b> Translation</a> <kbd>←</kbd>
+        <a class="menu-level-1" href="./translation.html"><b>9</b> Translation</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./translation_solution.html"><b>8.2</b> Solution</a>
+            <kbd>→</kbd> <a class="menu-level-2" href="./translation_solution.html"><b>9.2</b> Solution</a>
         </span>
     </p>
 </div>
