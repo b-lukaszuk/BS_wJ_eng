@@ -27,7 +27,7 @@ logo of [JuliaStats](https://juliastats.org/) that you may find
 ## Solution {#sec:logo_solution}
 
 The logo is composed of three disks build of points (scatter-plot) of three
-colors, red, green and purple. So let's start small and try to replicate it by
+colors: red, green and purple. So let's start small and try to replicate it by
 placing the points (only three for now) on a graph in their correct locations.
 
 ```jl
@@ -47,7 +47,7 @@ sc(s)
 
 > **_Note:_** `CairoMakie` uses `Colors.jl`, the list of available color names
 > is to be found
-> [here](https://juliagraphics.github.io/Colors.jl/stable/namedcolors/)
+> [here](https://juliagraphics.github.io/Colors.jl/stable/namedcolors/).
 
 The function is pretty simple. First, we defined the locations (based on guess
 and later try and error) of the points with respect to the x- (`centersXs`) and
@@ -105,12 +105,12 @@ drawLogo()
 
 ![Replicating JuliaStats logo. Attempt 2.](./images/logo2.png){#fig:logo2}
 
-Nice. `CairoMakie` nicely centered the plot, so we don't need to do this
-ourselves manually.
+We're almost there. Notice, that `CairoMakie` nicely centered the plot, so we
+don't need to do this ourselves manually.
 
-Our work is almost done. All that's left to do is to remove the unnecessary
-elements from the picture. A brief look into the documentation of the package
-indicates that [hidedecorations and
+Anyway, all that's left to do is to remove the unnecessary elements from the
+picture. A brief look into the documentation of the package indicates that
+[hidedecorations and
 hidespines](https://docs.makie.org/v0.21/reference/blocks/axis#Hiding-Axis-spines-and-decorations)
 should do the trick.
 

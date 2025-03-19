@@ -36,13 +36,11 @@ function getStemAndLeaf(num::Int, maxLenOfNum::Int)::Tuple{Str, Str}
 end
 
 # returns Dict{stem, [leaves]}
-function getLeafCounts(nums::Vec{Int})::Dict{Str, Vec{Str}}
-    @assert length(Set(nums)) > 1 "numbers musn't be the same"
+function getLeafCounts(nums::Vec{Int}, maxLenOfNum::Int)::Dict{Str, Vec{Str}}
+    @assert length(unique(nums)) > 1 "numbers musn't be the same"
     counts::Dict{Str, Vec{Str}} = Dict()
-    maxLenOfNum::Int = getMaxLengthOfNum(nums)
-    stem::Str, leaf::Str = "", ""
     for num in nums
-        stem, leaf = getStemAndLeaf(num, maxLenOfNum)
+        stem, leaf = getStemAndLeaf(num, maxLenOfNum) # for's local vars
         if haskey(counts, stem)
             counts[stem] = push!(counts[stem], leaf)
         else
@@ -61,10 +59,10 @@ function getStemLeafRow(key::Str, leafCounts::Dict{Str, Vec{Str}})::Str
 end
 
 function getStemLeafPlot(nums::Vec{Int})::Str
-    leafCounts::Dict{Str, Vec{Str}} = getLeafCounts(nums)
-    low::Int, high::Int = extrema(nums)
     maxLenOfNum::Int = getMaxLengthOfNum(nums)
-    testedStems::Dict{Str, Int} = Dict()
+    leafCounts::Dict{Str, Vec{Str}} = getLeafCounts(nums, maxLenOfNum)
+    low::Int, high::Int = extrema(nums)
+    testedStems::Dict{Str, Bool} = Dict()
     result::Str = ""
     for num in low:1:high
         stem, _ = getStemAndLeaf(num, maxLenOfNum)
@@ -72,7 +70,7 @@ function getStemLeafPlot(nums::Vec{Int})::Str
             continue
         end
         result *= getStemLeafRow(stem, leafCounts)
-        testedStems[stem] = 1
+        testedStems[stem] = true
     end
     return result
 end

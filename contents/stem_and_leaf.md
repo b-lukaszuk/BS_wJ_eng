@@ -153,13 +153,12 @@ mapping (`Dict`) between stems (keys) and leaves (values).
 ```jl
 s = """
 # returns Dict{stem, [leaves]}
-function getLeafCounts(nums::Vec{Int})::Dict{Str, Vec{Str}}
-    @assert length(unique(nums)) > 1 "numbers mustn't be the same"
+function getLeafCounts(nums::Vec{Int},
+	maxLenOfNum::Int)::Dict{Str, Vec{Str}}
+    @assert length(unique(nums)) > 1 "numbers musn't be the same"
     counts::Dict{Str, Vec{Str}} = Dict()
-    maxLenOfNum::Int = getMaxLengthOfNum(nums)
-    stem::Str, leaf::Str = "", ""
     for num in nums
-        stem, leaf = getStemAndLeaf(num, maxLenOfNum)
+        stem, leaf = getStemAndLeaf(num, maxLenOfNum) # for's local vars
         if haskey(counts, stem)
             counts[stem] = push!(counts[stem], leaf)
         else
@@ -174,11 +173,10 @@ sc(s)
 
 First, we initialize an empty `Dict` (`counts`) that will hold our result. Next,
 we brake each number (`for num in nums`) into `stem` and `leaf` parts. If the
-`counts` already contains such a `stem` (`haskey(counts, stem)`), then we add
-the `leaf` to the vector of already existing leaves
-(`push!(counts[stem], leaf)`). Otherwise (`else`), we add a `leaf` as
-a 1-element vector (`[leaf`]) for a given `stem`. Finally, we return the
-`counts`.
+`counts` the already contains such a `stem` (`haskey(counts, stem)`), then we
+add the `leaf` to the vector of already existing leaves (`push!(counts[stem],
+leaf)`). Otherwise (`else`), we add a `leaf` as a 1-element vector (`[leaf`])
+for a given `stem`. Finally, we return the `counts`.
 
 Let's see how it works.
 
@@ -187,7 +185,8 @@ s = """
 # prime numbers below 100
 primesLeafCounts = getLeafCounts(
 	[2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47,
-		53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+		53, 59, 61, 67, 71, 73, 79, 83, 89, 97],
+	2
 )
 """
 sco(s)
@@ -219,10 +218,10 @@ Time for the whole stem and leaf plot.
 ```jl
 s = """
 function getStemLeafPlot(nums::Vec{Int})::Str
-    leafCounts::Dict{Str, Vec{Str}} = getLeafCounts(nums)
-    low::Int, high::Int = extrema(nums)
     maxLenOfNum::Int = getMaxLengthOfNum(nums)
-    testedStems::Dict{Str, Int} = Dict()
+    leafCounts::Dict{Str, Vec{Str}} = getLeafCounts(nums, maxLenOfNum)
+    low::Int, high::Int = extrema(nums)
+    testedStems::Dict{Str, Bool} = Dict()
     result::Str = ""
     for num in low:1:high
         stem, _ = getStemAndLeaf(num, maxLenOfNum)
@@ -230,7 +229,7 @@ function getStemLeafPlot(nums::Vec{Int})::Str
             continue
         end
         result *= getStemLeafRow(stem, leafCounts)
-        testedStems[stem] = 1
+        testedStems[stem] = true
     end
     return result
 end
@@ -247,7 +246,7 @@ obtained. Next, we use `for` loop to travel through all the numbers in our range
 `stem` was already obtained (`if haskey`) we `continue` to another `for` loop
 iteration. Otherwise, we add the row to our `result`
 (`result *= getStemLeafRow`) and insert the `stem` among the already visited
-(`testedStems[stem] = 1`). When we finish we return the whole stem-leaf-plot
+(`testedStems[stem] = true`). When we finish we return the whole stem-leaf-plot
 (`return result`).
 
 And that's it. Let's see how it works on [Wikipedia's
