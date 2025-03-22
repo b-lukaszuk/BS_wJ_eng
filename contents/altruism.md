@@ -1,7 +1,13 @@
 # Altruism {#sec:altruism}
 
-In this chapter I will not use any external libraries. Still, once you read the
-problem description you may decide to do otherwise.
+In this chapter you may or may not use the following external libraries.
+
+```jl
+s2 = """
+import Random as Rnd
+"""
+sc(s2)
+```
 
 You may compare your own solution with the one in this chapter's text (with
 explanations) or with [the code
@@ -11,9 +17,9 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/altrui
 ## Problem {#sec:altruism_problem}
 
 The following problem was inspired by the lecture of a Richard Dawkins' book and
-his considerations about altruism. Alas, it's been like 15-20 years since I read
-it (I don't even remember its title) and the book was borrowed. Shortly, if I
-mess things up, the fault is mine.
+his considerations about altruism. Alas, I borrowed the book and it's been
+like 15-20 years since I read it, so I don't even remember its title. Shortly,
+if I mess things up, the fault is mine.
 
 Anyway, there is this interesting problem called [the prisoner's
 dilemma](https://en.wikipedia.org/wiki/Prisoner%27s_dilemma). Imagine two
@@ -58,7 +64,8 @@ monkeys in the group:
 
 - three good:
   + naive - it always cooperates
-  + unforgiving - if you betray it three times, it will never trust you again
+  + unforgiving - if you betray it more than three times, it will never trust
+    you again
   + paybacker - first it cooperates, then it replays its partner's last move
 - three evil:
   + unfriendly - got a bad mood at random and may betray with the probability of
@@ -72,6 +79,9 @@ Test which monkey ends on top if every animal interacts a random number of times
 
 Does it make a difference, if you replace the unforgiving monkey with a gullible
 one (it cooperates at random 80% of the times)?
+
+> **_Note:_** You don't need to strictly adhere to the above task
+> description, feel free to adjust it to your level/liking.
 
 ## Solution {#sec:altruism_solution}
 
