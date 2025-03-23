@@ -55,9 +55,9 @@ when:
 - both monkeys refuse to help each other, each looses 1 survival point
 
 To make it more realistic assume that the monkeys are neighbors that will
-interact with each other a few hundred of times in their lives, and catch a tick
-just as many times. Does this new situation makes a difference, is it worth the
-while to be altruistic?
+interact with each other a few hundred times in their lives (but they don't know
+exactly how long), and get a tick just as many times. Does this new situation
+makes a difference, is it worth the while to be altruistic?
 
 Let's use Julia to answer that question. To that end we assume there are 6
 monkeys in the group:
@@ -85,8 +85,11 @@ one (it cooperates at random 80% of the times)?
 
 ## Solution {#sec:altruism_solution}
 
-Let the games begin. First, let's define our choices of players (i.e. monkeys)
-and possible moves (i.e. choices) they make by using Julia's
+Since this is a game theory problem, then we're going to use game terminology in
+my solution. Ready. Let the games begin.
+
+First, let's define all the possible values for players (i.e. monkeys)
+and moves (i.e. choices) by using Julia's
 [enums](https://docs.julialang.org/en/v1/base/base/#Base.Enums.Enum).
 
 ```jl
@@ -102,8 +105,8 @@ to use one of the six informative and mnemonic names (`naive unforgiving
 paybacker unfriendly abusive egoist`). The same goes for `Choice` our players
 will make (`cooperate` and `betray`). Note, however, that in this last case the
 `Choices` are followed by the number code. We didn't have to do that since by
-default the enums are internally stored as consecutive inters that start
-at 0. Still, we did it to emphasize that we plan to use this property of our new
+default the enums are internally stored as consecutive integers that start
+at 0. Still, we did it to emphasize our plan to use this property of our new
 type in the near future.
 
 We did this because per problem description `unforgiving` monkey always betrays
@@ -125,24 +128,27 @@ end
 sc(s)
 ```
 
-We start by importing the `+` function from the `Base` package and make the
+We start by importing the `+` function from `Base` package and make the
 versions of it (aka methods) that know how to handle our `Choice` enum. Simply,
-if we add to `Choices` together, we add the underlying integers (`Int(c1) +
-Int(c2)`) and when we add an integer (`n`) to a `Choice` then again we add the
-integer to the `Choice`'s integer representation (`n + Int(c)`). Thanks to this
-little trick, we will be able to count the total of betrayals in a vector of
-`Choice`s with the build in `sum` function (it relies on `+`)
+if we add two `Choices` (`c1` and `c2`) together, we add the underlying integers
+(`Int(c1) + Int(c2)`) and when we add an integer (`n`) to a `Choice` then again
+we add the integer to the `Choice`'s integer representation (`n + Int(c)`).
+Thanks to this little trick, we will be able to count the total of
+betrayals in a vector of `Choice`s with the build in `sum` function (it relies
+on `+`)
 
 > **_Note:_** Do not overuse this technique. In general, you should redefine the
 > built in `Base` functions (like `+`) only on the types that you have defined
 > yourself.
 
-Time to write a function that will return the Player's move. According to
-problem description all it needs to do that correctly is the `Player` and its
-opponents previous moves.
+Time to write a function that will return the Player's move. According to the
+problem description all it needs know to do its job correctly is the `Player`'s
+type and its opponents previous moves.
 
 ```jl
 s = """
+import Random as Rnd
+
 function getMove(p::Player, opponentMoves::Vec{Choice})::Choice
     prob::Flt = Rnd.rand() # random float in range [0.0-1.0)
     if p == naive
@@ -171,10 +177,11 @@ the code is pretty simple if you are familiar with [the decision making in
 Julia](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_decision_making.html). One
 point to notice is that here we used the `init=0` keyword argument in `sum`.
 This is a default value from which we start counting the total, and it makes
-sure that an empty vector returns `0` instead of an error.
+sure that an empty vector (`sum(opponentMoves, init=0)`) returns `0` instead of
+an error.
 
-Time to award our players with survival points per an interaction and their
-choices.
+Time to award our players with survival points per a round (interaction) and
+their choices.
 
 ```jl
 s = """
@@ -198,8 +205,8 @@ default goes in an ascending order from left to right (`cooperate` < `betray`
 per `@enum Choice cooperate betray`) which we used to our advantage here.
 
 Time to write a function that takes two players as an argument and runs a random
-number of games (50:30 interactions) between them. Once it finished it returns
-the survival points each player obtained.
+number of games (50:300 interactions) between them. In the end it returns the
+survival points each player obtained.
 
 ```jl
 s = """
@@ -226,18 +233,16 @@ sc(s)
 We begin by defining and initializing variables to store:
 
 1) total number of points obtained by each player (`pts1`, `pts2`)
-2) the number of points obtained by the players per single interaction in the
-`for` loop (`pt1`, `pt2`)
+2) the number of points obtained by the players per single interaction (`pt1`, `pt2`)
 3) all the moves made by the players during their interactions (`mvs1`, `mvs2`)
-4) the moves made by each player per single interaction in the `for` loop
-(`mvs1`, `mvs2`)
-5) the number of interactions (rounds) between the players
+4) the moves made by each player per single interaction (`mv1`, `mv2`)
+5) the number of interactions (rounds) between the players (`nRounds`)
 
 We update the above mentioned variables after every round/interaction took place
 (in the `for` loop). Finally, we return the number of points obtained by each
 player.
 
-Time to set things in motion and make the players play with each other.
+Time to set things into motion and make all the players play with each other.
 
 ```jl
 s = """
@@ -283,10 +288,10 @@ playGame()
 sco(s)
 ```
 
-And so, first three competitors (monkeys) are `unforgiving` followed by `egoist`
-and `paybacker`. Run the simulation a couple of times and see the results. In
-general the good players (monkeys) win the podium with the evil ones in 2:1
-ratio.
+First three competitors (monkeys) are: `unforgiving` followed by `egoist`
+and `paybacker`. Run the simulation a couple of times (with different `seed`s)
+and see the results. In general the good players (monkeys) win the podium with
+the evil ones in 2:1 (sometimes even 3:0) ratio.
 
 Interestingly, if we replace the `unforgiving` with `gullible` (it cooperates at
 random 80% of the times) we get something different entirely.
@@ -298,16 +303,15 @@ playGame()
 
 <pre>
 Dict{Player, Int64} with 6 entries:
-  paybacker  => 470
-  gullible   => 386
-  unfriendly => 538
-  abusive    => 378
-  naive      => 240
-  egoist     => 899
+ paybacker => 470
+ gullible => 386
+ unfriendly => 538
+ abusive => 378
+ naive => 240
+ egoist => 899
 </pre>
 
-The ratio seem to be reversed, The evil players (monkeys) win the podium with
-the good ones in 2:1 ratio. So I guess:
-
-> The only thing necessary for the triumph of evil is for good men to do
-> nothing,
+The ratio seems to be reversed, The evil players (monkeys) win the podium with
+the good ones in 2:1 ratio. So I guess: "The only thing necessary for evil to
+triumph in the world is that [good men do
+nothing](https://en.wikipedia.org/?title=The_only_thing_necessary_for_evil_to_triumph_in_the_world_is_that_good_men_do_nothing&redirect=no)"
