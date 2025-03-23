@@ -83,7 +83,10 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./stem_and_leaf.html"><b>10</b> Stem and Leaf Plot</a></li>
 <li><a class="menu-level-2" href="./stem_and_leaf_problem.html"><b>10.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./stem_and_leaf_solution.html"><b>10.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./the-end.html"><b>11</b> The end</a></li>
+<li><a class="menu-level-1" href="./altruism.html"><b>11</b> Altruism</a></li>
+<li><a class="menu-level-2" href="./altruism_problem.html"><b>11.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./altruism_solution.html"><b>11.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./the-end.html"><b>12</b> The end</a></li>
 </div>
 </aside>
 
@@ -130,13 +133,12 @@ end</code></pre>
   3 =&gt; (&quot; 0&quot;, &quot;3&quot;)</code></pre>
 <p>Time to write <code>getLeafCounts</code> a function that for a vector of numbers returns a mapping (<code>Dict</code>) between stems (keys) and leaves (values).</p>
 <pre class="language-julia"><code># returns Dict{stem, [leaves]}
-function getLeafCounts(nums::Vec{Int})::Dict{Str, Vec{Str}}
-    @assert length(unique(nums)) &gt; 1 &quot;numbers mustn&#39;t be the same&quot;
+function getLeafCounts(nums::Vec{Int},
+    maxLenOfNum::Int)::Dict{Str, Vec{Str}}
+    @assert length(unique(nums)) &gt; 1 &quot;numbers musn&#39;t be the same&quot;
     counts::Dict{Str, Vec{Str}} = Dict()
-    maxLenOfNum::Int = getMaxLengthOfNum(nums)
-    stem::Str, leaf::Str = &quot;&quot;, &quot;&quot;
     for num in nums
-        stem, leaf = getStemAndLeaf(num, maxLenOfNum)
+        stem, leaf = getStemAndLeaf(num, maxLenOfNum) # for&#39;s local vars
         if haskey(counts, stem)
             counts[stem] = push!(counts[stem], leaf)
         else
@@ -145,12 +147,13 @@ function getLeafCounts(nums::Vec{Int})::Dict{Str, Vec{Str}}
     end
     return counts
 end</code></pre>
-<p>First, we initialize an empty <code>Dict</code> (<code>counts</code>) that will hold our result. Next, we brake each number (<code>for num in nums</code>) into <code>stem</code> and <code>leaf</code> parts. If the <code>counts</code> already contains such a <code>stem</code> (<code>haskey(counts, stem)</code>), then we add the <code>leaf</code> to the vector of already existing leaves (<code>push!(counts[stem], leaf)</code>). Otherwise (<code>else</code>), we add a <code>leaf</code> as a 1-element vector (<code>[leaf</code>]) for a given <code>stem</code>. Finally, we return the <code>counts</code>.</p>
+<p>First, we initialize an empty <code>Dict</code> (<code>counts</code>) that will hold our result. Next, we brake each number (<code>for num in nums</code>) into <code>stem</code> and <code>leaf</code> parts. If the <code>counts</code> the already contains such a <code>stem</code> (<code>haskey(counts, stem)</code>), then we add the <code>leaf</code> to the vector of already existing leaves (<code>push!(counts[stem], leaf)</code>). Otherwise (<code>else</code>), we add a <code>leaf</code> as a 1-element vector (<code>[leaf</code>]) for a given <code>stem</code>. Finally, we return the <code>counts</code>.</p>
 <p>Let’s see how it works.</p>
 <pre class="language-julia"><code># prime numbers below 100
 primesLeafCounts = getLeafCounts(
     [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47,
-        53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
+        53, 59, 61, 67, 71, 73, 79, 83, 89, 97],
+    2
 )</code></pre>
 <pre class="output"><code>Dict{String, Vector{String}} with 10 entries:
   &quot;8&quot; =&gt; [&quot;3&quot;, &quot;9&quot;]
@@ -174,10 +177,10 @@ end</code></pre>
 <p>We define our <code>row</code> as a string that contains the <code>key</code> and separator. If our <code>leafCounts</code> contains a given <code>key</code> then we append its sorted values concatenated together with <code>join</code> function (e.g., <code>["1", "1", "3"] |&gt; join</code> becomes <code>"113"</code>). We return <code>row</code> with a newline character (<code>\n</code>).</p>
 <p>Time for the whole stem and leaf plot.</p>
 <pre class="language-julia"><code>function getStemLeafPlot(nums::Vec{Int})::Str
-    leafCounts::Dict{Str, Vec{Str}} = getLeafCounts(nums)
-    low::Int, high::Int = extrema(nums)
     maxLenOfNum::Int = getMaxLengthOfNum(nums)
-    testedStems::Dict{Str, Int} = Dict()
+    leafCounts::Dict{Str, Vec{Str}} = getLeafCounts(nums, maxLenOfNum)
+    low::Int, high::Int = extrema(nums)
+    testedStems::Dict{Str, Bool} = Dict()
     result::Str = &quot;&quot;
     for num in low:1:high
         stem, _ = getStemAndLeaf(num, maxLenOfNum)
@@ -185,11 +188,11 @@ end</code></pre>
             continue
         end
         result *= getStemLeafRow(stem, leafCounts)
-        testedStems[stem] = 1
+        testedStems[stem] = true
     end
     return result
 end</code></pre>
-<p>At the onset, we define a few variables. Some of them deserve a short explanation. <code>low</code> and <code>high</code> are the two <code>extrema</code> (minimum and maximum) of our numbers (<code>nums</code>). <code>testedStems</code> will contain the keys from <code>leafCounts</code>, i.e. the stems from our stem-leaf plot that rows has been already obtained. Next, we use <code>for</code> loop to travel through all the numbers in our range (<code>low</code> to <code>high</code>). For each tested number (<code>num</code>) we get its <code>stem</code>. If the <code>stem</code> was already obtained (<code>if haskey</code>) we <code>continue</code> to another <code>for</code> loop iteration. Otherwise, we add the row to our <code>result</code> (<code>result *= getStemLeafRow</code>) and insert the <code>stem</code> among the already visited (<code>testedStems[stem] = 1</code>). When we finish we return the whole stem-leaf-plot (<code>return result</code>).</p>
+<p>At the onset, we define a few variables. Some of them deserve a short explanation. <code>low</code> and <code>high</code> are the two <code>extrema</code> (minimum and maximum) of our numbers (<code>nums</code>). <code>testedStems</code> will contain the keys from <code>leafCounts</code>, i.e. the stems from our stem-leaf plot that rows has been already obtained. Next, we use <code>for</code> loop to travel through all the numbers in our range (<code>low</code> to <code>high</code>). For each tested number (<code>num</code>) we get its <code>stem</code>. If the <code>stem</code> was already obtained (<code>if haskey</code>) we <code>continue</code> to another <code>for</code> loop iteration. Otherwise, we add the row to our <code>result</code> (<code>result *= getStemLeafRow</code>) and insert the <code>stem</code> among the already visited (<code>testedStems[stem] = true</code>). When we finish we return the whole stem-leaf-plot (<code>return result</code>).</p>
 <p>And that’s it. Let’s see how it works on <a href="https://en.wikipedia.org/wiki/Stem-and-leaf_display">Wikipedia’s examples</a>. First, prime numbers below 100:</p>
 <pre>
 getStemLeafPlot(stemLeafTest1)
@@ -246,7 +249,7 @@ getStemLeafPlot(stemLeafTest3)
     <p id="nav-prev" style="text-align: left;">
         <a class="menu-level-2" href="./stem_and_leaf_problem.html"><b>10.1</b> Problem</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-             
+            <kbd>→</kbd> <a class="menu-level-1" href="./altruism.html"><b>11</b> Altruism</a>
         </span>
     </p>
 </div>

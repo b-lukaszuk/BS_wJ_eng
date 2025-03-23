@@ -83,14 +83,19 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./stem_and_leaf.html"><b>10</b> Stem and Leaf Plot</a></li>
 <li><a class="menu-level-2" href="./stem_and_leaf_problem.html"><b>10.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./stem_and_leaf_solution.html"><b>10.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./the-end.html"><b>11</b> The end</a></li>
+<li><a class="menu-level-1" href="./altruism.html"><b>11</b> Altruism</a></li>
+<li><a class="menu-level-2" href="./altruism_problem.html"><b>11.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./altruism_solution.html"><b>11.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./the-end.html"><b>12</b> The end</a></li>
 </div>
 </aside>
 
 <div class="books-content">
 <h2 data-number="7.2" id="sec:logo_solution"><span class="header-section-number">7.2</span> Solution</h2>
-<p>The logo is composed of three disks build of points (scatter-plot) of three colors, red, green and purple. So let’s start small and try to replicate it by placing the points (only three for now) on a graph in their correct locations.</p>
-<pre class="language-julia"><code>function drawLogo()::Cmk.Figure
+<p>The logo is composed of three disks build of points (scatter-plot) of three colors: red, green and purple. So let’s start small and try to replicate it by placing the points (only three for now) on a graph in their correct locations.</p>
+<pre class="language-julia"><code>import CairoMakie as Cmk
+
+function drawLogo()::Cmk.Figure
     centersXs::Vec{Flt} = [1, 5.5, 10]
     centersYs::Vec{Flt} = [1, 6, 1]
     colors::Vec{Str} = [&quot;red&quot;, &quot;green&quot;, &quot;purple&quot;]
@@ -100,7 +105,7 @@ Mousetrap.bind('l', click_next);
     return fig
 end</code></pre>
 <blockquote>
-<p><strong><em>Note:</em></strong> <code>CairoMakie</code> uses <code>Colors.jl</code>, the list of available color names is to be found <a href="https://juliagraphics.github.io/Colors.jl/stable/namedcolors/">here</a></p>
+<p><strong><em>Note:</em></strong> <code>CairoMakie</code> uses <code>Colors.jl</code>, the list of available color names is to be found <a href="https://juliagraphics.github.io/Colors.jl/stable/namedcolors/">here</a>.</p>
 </blockquote>
 <p>The function is pretty simple. First, we defined the locations (based on guess and later try and error) of the points with respect to the x- (<code>centersXs</code>) and y-axis (<code>centersYs</code>), as well as their colors. Next we added the points (<code>scatter!</code>) to the axis object (<code>ax</code>) attached to the figure object (<code>fig</code>).</p>
 <p>Time to take a look.</p>
@@ -112,7 +117,9 @@ drawLogo()
 <figcaption aria-hidden="true">Figure 2: Replicating JuliaStats logo. Attempt 1.</figcaption>
 </figure>
 <p>So far, so good. Now instead of a one big point we will need a few thousand smaller points (let’s say <code>markersize=10</code>) concentrated around the center of a given group. Moreover, the points should be partially transparent [to that end we will use <code>alpha</code> keyword argument (<code>alpha=0</code> - fully transparent, <code>alpha=1</code> - fully opaque)]. One more thing, the points need to be randomly scattered, but with a greater density closer to the group’s center. This last issue will be solved by obtaining random numbers from <a href="https://b-lukaszuk.github.io/RJ_BS_eng/statistics_normal_distribution.html">the normal distribution</a> with the mean equal 0 and the standard deviation equal 1. This is what <code>randn</code> function will do. Thanks to this roughly 68% of the numbers will be in the range -1 to 1, 95% in the range -2 to 2, and 99.7% in the range -3 to 3 (greater density around the mean). Behold.</p>
-<pre class="language-julia"><code>function drawLogo()::Cmk.Figure
+<pre class="language-julia"><code>import Random as Rnd
+
+function drawLogo()::Cmk.Figure
     centersXs::Vec{Flt} = [1, 5.5, 10]
     centersYs::Vec{Flt} = [1, 6, 1]
     colors::Vec{Str} = [&quot;red&quot;, &quot;green&quot;, &quot;purple&quot;]
@@ -136,8 +143,8 @@ drawLogo()
 <img src="./images/logo2.png" alt="Figure 3: Replicating JuliaStats logo. Attempt 2." />
 <figcaption aria-hidden="true">Figure 3: Replicating JuliaStats logo. Attempt 2.</figcaption>
 </figure>
-<p>Nice. <code>CairoMakie</code> nicely centered the plot, so we don’t need to do this ourselves manually.</p>
-<p>Our work is almost done. All that’s left to do is to remove the unnecessary elements from the picture. A brief look into the documentation of the package indicates that <a href="https://docs.makie.org/v0.21/reference/blocks/axis#Hiding-Axis-spines-and-decorations">hidedecorations and hidespines</a> should do the trick.</p>
+<p>We’re almost there. Notice, that <code>CairoMakie</code> nicely centered the plot, so we don’t need to do this ourselves manually.</p>
+<p>Anyway, all that’s left to do is to remove the unnecessary elements from the picture. A brief look into the documentation of the package indicates that <a href="https://docs.makie.org/v0.21/reference/blocks/axis#Hiding-Axis-spines-and-decorations">hidedecorations and hidespines</a> should do the trick.</p>
 <pre class="language-julia"><code>function drawLogo()::Cmk.Figure
     centersXs::Vec{Flt} = [1, 5.5, 10]
     centersYs::Vec{Flt} = [1, 6, 1]

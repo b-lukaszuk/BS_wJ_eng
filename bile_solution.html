@@ -83,7 +83,10 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./stem_and_leaf.html"><b>10</b> Stem and Leaf Plot</a></li>
 <li><a class="menu-level-2" href="./stem_and_leaf_problem.html"><b>10.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./stem_and_leaf_solution.html"><b>10.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./the-end.html"><b>11</b> The end</a></li>
+<li><a class="menu-level-1" href="./altruism.html"><b>11</b> Altruism</a></li>
+<li><a class="menu-level-2" href="./altruism_problem.html"><b>11.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./altruism_solution.html"><b>11.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./the-end.html"><b>12</b> The end</a></li>
 </div>
 </aside>
 
@@ -121,7 +124,9 @@ bigV</code></pre>
 <p>All that’s left to do is to move exponentiation (<span class="math inline">\(x^3\)</span>) to the right side of Equation <a href="#eq:sphere4">7</a> while changing it to the opposite mathematical operation (cube root, i.e. <span class="math inline">\(\sqrt[3]{x}\)</span>).</p>
 <p><span id="eq:sphere5"><span class="math display">\[ r = \sqrt[3]{v / \frac{4}{3} / \pi} \qquad{(8)}\]</span></span></p>
 <p>Now, you might wanted to quickly verify the solution using <code>Symbolic.symbolic_linear_solve</code> we met in Section <a href="./bat_and_ball_solution.html#sec:bat_and_ball_solution">3.2</a>. Unfortunately, we cannot use <code>r^3</code> (<code>r</code> to the 3rd power) as an argument (and solve for <code>r</code>), since then it wouldn’t be a linear equation (to be linear the maximum power must be equal to 1) required by <code>_linear_solve</code>. We could have used other, more complicated solver, but instead we will keep things simple and apply a little trick:</p>
-<pre class="language-julia"><code># fraction - 4/3, p - π, r3 - r^3, v - volume
+<pre class="language-julia"><code>import Symbolics as Sym
+
+# fraction - 4/3, p - π, r3 - r^3, v - volume
 Sym.@variables fraction p r3 v
 Sym.symbolic_linear_solve(fraction * p * r3 ~ v, r3)</code></pre>
 <p>v / (fraction*p)</p>
@@ -167,6 +172,8 @@ prepend!(numsOfDroplets, 1)</code></pre>
 <p>BTW. Notice that <code>smallS</code>, <code>smallV</code>, <code>smallA</code>, <code>sumSmallAs</code>, <code>sumSmallVs</code> are all local variables defined for the first time in the <code>for</code> loop and visible only inside of it. If you try to print out their values outside of the loop you will get an error like <code>ERROR: UndefVarError: 'smallS' not defined</code>.</p>
 <p>Anyway, now, we can either examine the vectors (<code>sumsOfAreas</code>, <code>sumsOfVolumes</code>, <code>radii</code>, <code>numOfDroplets</code>) one by one, or do one better and present them on a graph with e.g. CairoMakie (I’m not going to explain the code below, for reference see <a href="https://b-lukaszuk.github.io/RJ_BS_eng/">my previous book</a> or <a href="https://docs.makie.org/stable/tutorials/getting-started">CairoMakie tutorial</a>).</p>
 <pre>
+import CairoMakie as Cmk
+
 fig = Cmk.Figure();
 ax = Cmk.Axis(fig[1, 1],
               title="Lipid droplet size vs. summaric surface area",
