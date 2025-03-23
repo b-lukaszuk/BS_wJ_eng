@@ -92,7 +92,7 @@ Mousetrap.bind('l', click_next);
 
 <div class="books-content">
 <h2 data-number="11.2" id="sec:altruism_solution"><span class="header-section-number">11.2</span> Solution</h2>
-<p>Since this is a game theory problem, then we’re going to use game terminology in my solution. Ready. Let the games begin.</p>
+<p>Since this is a game theory problem, then we’re going to use game terminology in the solution. Ready. Let the games begin.</p>
 <p>First, let’s define all the possible values for players (i.e. monkeys) and moves (i.e. choices) by using Julia’s <a href="https://docs.julialang.org/en/v1/base/base/#Base.Enums.Enum">enums</a>.</p>
 <pre class="language-julia"><code>@enum Player naive unforgiving paybacker unfriendly abusive egoist
 @enum Choice cooperate=0 betray=1</code></pre>
@@ -123,7 +123,7 @@ function getMove(p::Player, opponentMoves::Vec{Choice})::Choice
     elseif p == paybacker
         return isempty(opponentMoves) ? cooperate : opponentMoves[end]
     elseif p == unfriendly
-        return prob &lt;= 0.3 ? betray : cooperate
+        return prob &lt;= 0.6 ? betray : cooperate
     elseif p == abusive
         return prob &lt;= 0.8 ? betray : cooperate
     else # egoist player
@@ -192,28 +192,28 @@ end</code></pre>
 <pre class="language-julia"><code>Rnd.seed!(401) # needed to make it reproducible
 playGame()</code></pre>
 <pre class="output"><code>Dict{Player, Int64} with 6 entries:
-  paybacker =&gt; 596
-  unforgiving =&gt; 797
-  unfriendly =&gt; -130
-  abusive =&gt; 102
-  naive =&gt; 304
-  egoist =&gt; 639</code></pre>
-<p>First three competitors (monkeys) are: <code>unforgiving</code> followed by <code>egoist</code> and <code>paybacker</code>. Run the simulation a couple of times (with different <code>seed</code>s) and see the results. In general the good players (monkeys) win the podium with the evil ones in 2:1 (sometimes even 3:0) ratio.</p>
-<p>Interestingly, if we replace the <code>unforgiving</code> with <code>gullible</code> (it cooperates at random 80% of the times) we get something different entirely.</p>
+  paybacker =&gt; 464
+  unforgiving =&gt; 490
+  unfriendly =&gt; -26
+  abusive =&gt; 2
+  naive =&gt; 68
+  egoist =&gt; 323</code></pre>
+<p>First three competitors (monkeys) are: <code>unforgiving</code> followed by <code>paybacker</code> and <code>egoist</code>. Run the simulation a couple of times (with different <code>seed</code>s) and see the results. In general the good players (monkeys) win the podium with the evil ones in 2:1 ratio.</p>
+<p>Interestingly, if we replace the <code>unforgiving</code> with <code>gullible</code> (it cooperates at random 80% of the times) we get something entirely different.</p>
 <pre>
 Rnd.seed!(401) # needed to make it reproducible
 playGame()
 </pre>
 <pre>
 Dict{Player, Int64} with 6 entries:
- paybacker => 470
- gullible => 386
- unfriendly => 538
- abusive => 378
- naive => 240
- egoist => 899
+  paybacker  => 338
+  gullible   => 78
+  unfriendly => 646
+  abusive    => 278
+  naive      => 4
+  egoist     => 583
 </pre>
-<p>The ratio seems to be reversed, The evil players (monkeys) win the podium with the good ones in 2:1 ratio. So I guess: “The only thing necessary for evil to triumph in the world is that <a href="https://en.wikipedia.org/?title=The_only_thing_necessary_for_evil_to_triumph_in_the_world_is_that_good_men_do_nothing&amp;redirect=no">good men do nothing</a>”</p>
+<p>The situation seems to be reversed, The evil players (monkeys) win the podium with the good ones in 2:1 ratio. So I guess: “The only thing necessary for evil to triumph in the world is that <a href="https://en.wikipedia.org/?title=The_only_thing_necessary_for_evil_to_triumph_in_the_world_is_that_good_men_do_nothing&amp;redirect=no">good men do nothing</a>”</p>
 
 
 <div class="bottom-nav">
