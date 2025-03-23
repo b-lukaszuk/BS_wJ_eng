@@ -86,7 +86,7 @@ one (it cooperates at random 80% of the times)?
 ## Solution {#sec:altruism_solution}
 
 Since this is a game theory problem, then we're going to use game terminology in
-my solution. Ready. Let the games begin.
+the solution. Ready. Let the games begin.
 
 First, let's define all the possible values for players (i.e. monkeys)
 and moves (i.e. choices) by using Julia's
@@ -294,7 +294,7 @@ and see the results. In general the good players (monkeys) win the podium with
 the evil ones in 2:1 (sometimes even 3:0) ratio.
 
 Interestingly, if we replace the `unforgiving` with `gullible` (it cooperates at
-random 80% of the times) we get something different entirely.
+random 80% of the times) we get something entirely different.
 
 <pre>
 Rnd.seed!(401) # needed to make it reproducible
@@ -311,7 +311,7 @@ Dict{Player, Int64} with 6 entries:
  egoist => 899
 </pre>
 
-The ratio seems to be reversed, The evil players (monkeys) win the podium with
-the good ones in 2:1 ratio. So I guess: "The only thing necessary for evil to
-triumph in the world is that [good men do
+The situation seems to be reversed, The evil players (monkeys) win the podium
+with the good ones in 2:1 ratio. So I guess: "The only thing necessary for evil
+to triumph in the world is that [good men do
 nothing](https://en.wikipedia.org/?title=The_only_thing_necessary_for_evil_to_triumph_in_the_world_is_that_good_men_do_nothing&redirect=no)"
