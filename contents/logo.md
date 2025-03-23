@@ -32,6 +32,8 @@ placing the points (only three for now) on a graph in their correct locations.
 
 ```jl
 s = """
+import CairoMakie as Cmk
+
 function drawLogo()::Cmk.Figure
     centersXs::Vec{Flt} = [1, 5.5, 10]
     centersYs::Vec{Flt} = [1, 6, 1]
@@ -77,6 +79,8 @@ density around the mean). Behold.
 
 ```jl
 s1 = """
+import Random as Rnd
+
 function drawLogo()::Cmk.Figure
     centersXs::Vec{Flt} = [1, 5.5, 10]
     centersYs::Vec{Flt} = [1, 6, 1]

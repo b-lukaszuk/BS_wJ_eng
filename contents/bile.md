@@ -110,6 +110,8 @@ apply a little trick:
 
 ```jl
 s = """
+import Symbolics as Sym
+
 # fraction - 4/3, p - π, r3 - r^3, v - volume
 Sym.@variables fraction p r3 v
 Sym.symbolic_linear_solve(fraction * p * r3 ~ v, r3)
@@ -209,6 +211,8 @@ reference see [my previous book](https://b-lukaszuk.github.io/RJ_BS_eng/) or
 [CairoMakie tutorial](https://docs.makie.org/stable/tutorials/getting-started)).
 
 <pre>
+import CairoMakie as Cmk
+
 fig = Cmk.Figure();
 ax = Cmk.Axis(fig[1, 1],
               title="Lipid droplet size vs. summaric surface area",
