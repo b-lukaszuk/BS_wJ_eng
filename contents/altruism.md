@@ -69,7 +69,7 @@ monkeys in the group:
   + paybacker - first it cooperates, then it replays its partner's last move
 - three evil:
   + unfriendly - got a bad mood at random and may betray with the probability of
-    30% (p = 0.3)
+    60% (p = 0.6)
   + abusive - got a bad mood at random and may betray with the probability of
     80% (p = 0.8)
   + egoist - always betrays its partner
@@ -158,7 +158,7 @@ function getMove(p::Player, opponentMoves::Vec{Choice})::Choice
     elseif p == paybacker
         return isempty(opponentMoves) ? cooperate : opponentMoves[end]
     elseif p == unfriendly
-        return prob <= 0.3 ? betray : cooperate
+        return prob <= 0.6 ? betray : cooperate
     elseif p == abusive
         return prob <= 0.8 ? betray : cooperate
     else # egoist player
@@ -288,10 +288,10 @@ playGame()
 sco(s)
 ```
 
-First three competitors (monkeys) are: `unforgiving` followed by `egoist`
-and `paybacker`. Run the simulation a couple of times (with different `seed`s)
-and see the results. In general the good players (monkeys) win the podium with
-the evil ones in 2:1 (sometimes even 3:0) ratio.
+First three competitors (monkeys) are: `unforgiving` followed by `paybacker` and
+`egoist`. Run the simulation a couple of times (with different `seed`s) and see
+the results. In general the good players (monkeys) win the podium with the evil
+ones in 2:1 ratio.
 
 Interestingly, if we replace the `unforgiving` with `gullible` (it cooperates at
 random 80% of the times) we get something entirely different.
@@ -303,12 +303,12 @@ playGame()
 
 <pre>
 Dict{Player, Int64} with 6 entries:
- paybacker => 470
- gullible => 386
- unfriendly => 538
- abusive => 378
- naive => 240
- egoist => 899
+  paybacker  => 338
+  gullible   => 78
+  unfriendly => 646
+  abusive    => 278
+  naive      => 4
+  egoist     => 583
 </pre>
 
 The situation seems to be reversed, The evil players (monkeys) win the podium

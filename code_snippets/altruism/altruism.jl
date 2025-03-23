@@ -24,7 +24,7 @@ function getMove(p::Player, opponentMoves::Vec{Choice})::Choice
     elseif p == paybacker
         return isempty(opponentMoves) ? cooperate : opponentMoves[end]
     elseif p == unfriendly
-        return prob <= 0.3 ? betray : cooperate
+        return prob <= 0.6 ? betray : cooperate
     elseif p == abusive
         return prob <= 0.8 ? betray : cooperate
     else # egoist player
@@ -80,8 +80,8 @@ end
 
 # Test1
 Rnd.seed!(303)
-playGame() # 1 - unforgiving, 2 - paybacker, 3 - naive
-# good/bad = 3/0
+playGame() # 1 - unforgiving, 2 - paybacker, 3 - egoist
+# good/bad = 2/1
 
 # Test2
 Rnd.seed!(310)
@@ -90,7 +90,7 @@ playGame() # 1 - unforgiving, 2 - paybacker, 3 - naive
 
 # Test3
 Rnd.seed!(401)
-playGame() # 1 - unforgiving, 2 - egoist, 3 - paybacker
+playGame() # 1 - unforgiving, 2 - paybacker, 3 - egoist
 # good/bad = 2/1
 
 
@@ -109,7 +109,7 @@ function getMove(p::Player, opponentMoves::Vec{Choice})::Choice
     elseif p == paybacker
         return isempty(opponentMoves) ? cooperate : opponentMoves[end]
     elseif p == unfriendly
-        return prob <= 0.3 ? betray : cooperate
+        return prob <= 0.6 ? betray : cooperate
     elseif p == abusive
         return prob <= 0.8 ? betray : cooperate
     else # egoist player
@@ -140,9 +140,9 @@ end
 Rnd.seed!(303)
 playGame()
 # previous results:
-# 1 - unforgiving, 2 - paybacker, 3 - naive (good/bad = 3/0)
+# 1 - unforgiving, 2 - paybacker, 3 - egoist (good/bad = 2/1)
 # current results:
-# 1 - unfriendly, 2 - paybacker, 3 - egoist (good/bad = 1/2)
+# 1 - unfriendly, 2 - egoist, 3 - paybacker (good/bad = 1/2)
 
 # Test5
 Rnd.seed!(310)
@@ -150,12 +150,12 @@ playGame()
 # previous results:
 # 1 - unforgiving, 2 - paybacker, 3 - naive (good/bad = 3/0)
 # current results:
-# 1 - abusive, 2 - egoist, 3 - gullible (good/bad = 1/2)
+# 1 - abusive, 2 - unfriendly, 3 - egoist (good/bad = 0/3)
 
 # Test6
 Rnd.seed!(401)
 playGame()
 # previous results:
-# 1 - unforgiving, 2 - egoist, 3 - paybacker (good/bad = 2/1)
+# 1 - unforgiving, 2 - paybacker, 3 - egoist (good/bad = 2/1)
 # current results:
-# 1 - egoist, 2 - unfriendly, 3 - paybacker (good/bad = 1/2)
+# 1 - unfriendly, 2 - egoist, 3 - paybacker (good/bad = 1/2)
