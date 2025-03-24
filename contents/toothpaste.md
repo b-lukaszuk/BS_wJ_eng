@@ -36,10 +36,10 @@ squeezing less toothpaste (shorter strip) on the toothbrush.
 
 First, let me define some abbreviations to use in the code later on.
 
-<pre>
+```
 const Vec = Vector
 const Flt = Float64
-</pre>
+```
 
 Now, based on my own observations I would say that a
 [cylinder](https://en.wikipedia.org/wiki/Cylinder) is a good approximation of

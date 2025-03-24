@@ -58,9 +58,9 @@ y-axis (`centersYs`), as well as their colors. Next we added the points
 
 Time to take a look.
 
-<pre>
+```
 drawLogo()
-</pre>
+```
 
 ![Replicating JuliaStats logo. Attempt 1.](./images/logo1.png){#fig:logo1}
 
@@ -102,10 +102,10 @@ sc(s1)
 
 Let's test it.
 
-<pre>
+```
 Rnd.seed!(303) # needed to make it reproducible
 drawLogo()
-</pre>
+```
 
 ![Replicating JuliaStats logo. Attempt 2.](./images/logo2.png){#fig:logo2}
 
@@ -143,10 +143,10 @@ sc(s2)
 
 And voila.
 
-<pre>
+```
 Rnd.seed!(303) # needed to make it reproducible
 drawLogo()
-</pre>
+```
 
 ![Replicating JuliaStats logo. Attempt 3.](./images/logo3.png){#fig:logo3}
 

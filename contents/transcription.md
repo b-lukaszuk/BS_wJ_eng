@@ -23,14 +23,14 @@ During the first process, DNA's double helix is unwind and one of the strands
 (called template strand) is rewritten to mRNA (hence transcription) according to
 the table presented below.
 
-<pre>
+```
  DNA | mRNA
 -----+------
  'c' | 'g'
  'g' | 'c',
  'a' | 'u',
  't' | 'a'
-</pre>
+```
 
 Here: `a`, `c`, `g`, `t`, `u` are the shortcuts (also written in uppercase) for
 the nucleic acids' molecular components (nucleotide bases) called `adenine`,

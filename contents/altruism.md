@@ -296,12 +296,12 @@ ones in 2:1 ratio.
 Interestingly, if we replace the `unforgiving` with `gullible` (it cooperates at
 random 80% of the times) we get something entirely different.
 
-<pre>
+```
 Rnd.seed!(401) # needed to make it reproducible
 playGame()
-</pre>
+```
 
-<pre>
+```
 Dict{Player, Int64} with 6 entries:
   paybacker  => 338
   gullible   => 78
@@ -309,7 +309,7 @@ Dict{Player, Int64} with 6 entries:
   abusive    => 278
   naive      => 4
   egoist     => 583
-</pre>
+```
 
 The situation seems to be reversed, The evil players (monkeys) win the podium
 with the good ones in 2:1 ratio. So I guess: "The only thing necessary for evil

@@ -19,12 +19,12 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/bile)
 
 There are different types of nutrients to be found in food, but they can be
 roughly divided into: sugars (carbohydrates), proteins and fats (lipids). Your
-liver produces [bile](https://en.wikipedia.org/wiki/Bile) that is stored in
-gallbladder and released to duodenum (part of small intestine). As far as I
-remember my biology classes bile facilitates digestion by breaking large lipid
-(fat) droplets into smaller ones. Thanks to that it increases the total surface
-area in contact with digestive enzymes (lipases). So much for the theory, but I
-always wondered if that's true.
+liver produces [bile](https://en.wikipedia.org/wiki/Bile) that is stored in the
+gallbladder and released to the duodenum (part of the small intestine). As far
+as I remember my biology classes bile facilitates digestion by breaking large
+lipid (fat) droplets into smaller ones. Thanks to that it increases the total
+surface area in contact with digestive enzymes (lipases). So much for the
+theory, but I always wondered if that's true.
 
 Use Julia to demonstrate that the total surface area of a few small lipid
 droplets is actually greater than the surface area of one big droplet. Of
@@ -210,7 +210,7 @@ graph with e.g. CairoMakie (I'm not going to explain the code below, for
 reference see [my previous book](https://b-lukaszuk.github.io/RJ_BS_eng/) or
 [CairoMakie tutorial](https://docs.makie.org/stable/tutorials/getting-started)).
 
-<pre>
+```
 import CairoMakie as Cmk
 
 fig = Cmk.Figure();
@@ -234,7 +234,7 @@ Cmk.text!(ax, numsOfDroplets, sumsOfAreas .- 250,
     fontsize=12, align=(:center, :center)
 );
 fig
-</pre>
+```
 
 Behold.
 

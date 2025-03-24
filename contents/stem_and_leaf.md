@@ -253,11 +253,11 @@ And that's it. Let's see how it works on [Wikipedia's
 examples](https://en.wikipedia.org/wiki/Stem-and-leaf_display). First, prime
 numbers below 100:
 
-<pre>
+```
 getStemLeafPlot(stemLeafTest1)
-</pre>
+```
 
-<pre>
+```
 0|2357
 1|1379
 2|39
@@ -268,15 +268,15 @@ getStemLeafPlot(stemLeafTest1)
 7|139
 8|39
 9|7
-</pre>
+```
 
 Now, the numbers from the Construction section:
 
-<pre>
+```
 getStemLeafPlot(stemLeafTest2)
-</pre>
+```
 
-<pre>
+```
  4|4679
  5|
  6|34688
@@ -284,7 +284,7 @@ getStemLeafPlot(stemLeafTest2)
  8|148
  9|
 10|6
-</pre>
+```
 
 All that's left to do is to adjust our function for the example with floats.
 
@@ -300,11 +300,11 @@ sc(s)
 
 And voila:
 
-<pre>
+```
 getStemLeafPlot(stemLeafTest3)
-</pre>
+```
 
-<pre>
+```
 -2|4
 -1|2
 -0|3
@@ -314,6 +314,6 @@ getStemLeafPlot(stemLeafTest3)
  3|
  4|
  5|7
-</pre>
+```
 
 It appears to be working as intended so I think we can finish here.
