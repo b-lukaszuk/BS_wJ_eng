@@ -4,7 +4,7 @@ import Base: +
 const Flt = Float64
 const Vec = Vector
 
-@enum Player naive unforgiving paybacker unfriendly abusive egoist
+@enum Player naive gullible unforgiving paybacker unfriendly abusive egoist
 @enum Choice cooperate=0 betray=1
 
 function +(c1::Choice, c2::Choice)::Int
@@ -21,6 +21,8 @@ function getMove(p::Player, opponentMoves::Vec{Choice})::Choice
         return cooperate
     elseif p == unforgiving
         return sum(opponentMoves, init=0) > 3 ? betray : cooperate
+    elseif p == gullible
+        return prob <= 0.8 ? cooperate : betray
     elseif p == paybacker
         return isempty(opponentMoves) ? cooperate : opponentMoves[end]
     elseif p == unfriendly
@@ -61,9 +63,7 @@ function playRoundsGetPts(p1::Player, p2::Player)::Tuple{Int, Int}
     return (pts1, pts2)
 end
 
-function playGame()::Dict{Player, Int}
-    players::Vec{Player} = [
-        naive, unforgiving, paybacker, unfriendly, abusive, egoist]
+function playGame(players::Vec{Player})::Dict{Player, Int}
     playersPts::Dict{Player, Int} = Dict(p => 0 for p in players)
     alreadyPlayed::Dict{Player, Bool} = Dict()
     for player1 in players, player2 in players
@@ -80,17 +80,20 @@ end
 
 # Test1
 Rnd.seed!(303)
-playGame() # 1 - unforgiving, 2 - paybacker, 3 - egoist
+playGame([naive, unforgiving, paybacker, unfriendly, abusive, egoist])
+# 1 - unforgiving, 2 - paybacker, 3 - egoist
 # good/bad = 2/1
 
 # Test2
 Rnd.seed!(310)
-playGame() # 1 - unforgiving, 2 - paybacker, 3 - naive
+playGame([naive, unforgiving, paybacker, unfriendly, abusive, egoist])
+# 1 - unforgiving, 2 - paybacker, 3 - naive
 # good/bad = 3/0
 
 # Test3
 Rnd.seed!(401)
-playGame() # 1 - unforgiving, 2 - paybacker, 3 - egoist
+playGame([naive, unforgiving, paybacker, unfriendly, abusive, egoist])
+# 1 - unforgiving, 2 - paybacker, 3 - egoist
 # good/bad = 2/1
 
 
@@ -98,47 +101,10 @@ playGame() # 1 - unforgiving, 2 - paybacker, 3 - egoist
 # replace unforgiving with gullible (prob of cooperate ~80%)
 # and observe how the results change
 ###
-@enum Player naive gullible paybacker unfriendly abusive egoist
-
-function getMove(p::Player, opponentMoves::Vec{Choice})::Choice
-    prob::Flt = Rnd.rand()
-    if p == naive
-        return cooperate
-    elseif p == gullible
-        return prob <= 0.8 ? cooperate : betray
-    elseif p == paybacker
-        return isempty(opponentMoves) ? cooperate : opponentMoves[end]
-    elseif p == unfriendly
-        return prob <= 0.6 ? betray : cooperate
-    elseif p == abusive
-        return prob <= 0.8 ? betray : cooperate
-    else # egoist player
-        return betray
-    end
-end
-
-function playGame()::Dict{Player, Int}
-    players::Vec{Player} = [
-        naive, gullible, paybacker, unfriendly, abusive, egoist]
-    playersPts::Dict{Player, Int} = Dict(p => 0 for p in players)
-    alreadyPlayed::Dict{Player, Bool} = Dict()
-    for player1 in players
-        for player2 in players
-            if player1 == player2 || haskey(alreadyPlayed, player2)
-                continue
-            end
-            pts1, pts2 = playRoundsGetPts(player1, player2)
-            playersPts[player1] += pts1
-            playersPts[player2] += pts2
-            alreadyPlayed[player1] = true
-        end
-    end
-    return playersPts
-end
 
 # Test4
 Rnd.seed!(303)
-playGame()
+playGame([naive, gullible, paybacker, unfriendly, abusive, egoist])
 # previous results:
 # 1 - unforgiving, 2 - paybacker, 3 - egoist (good/bad = 2/1)
 # current results:
@@ -146,7 +112,7 @@ playGame()
 
 # Test5
 Rnd.seed!(310)
-playGame()
+playGame([naive, gullible, paybacker, unfriendly, abusive, egoist])
 # previous results:
 # 1 - unforgiving, 2 - paybacker, 3 - naive (good/bad = 3/0)
 # current results:
@@ -154,7 +120,7 @@ playGame()
 
 # Test6
 Rnd.seed!(401)
-playGame()
+playGame([naive, gullible, paybacker, unfriendly, abusive, egoist])
 # previous results:
 # 1 - unforgiving, 2 - paybacker, 3 - egoist (good/bad = 2/1)
 # current results:

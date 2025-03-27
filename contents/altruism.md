@@ -94,20 +94,20 @@ and moves (i.e. choices) by using Julia's
 
 ```jl
 s = """
-@enum Player naive unforgiving paybacker unfriendly abusive egoist
+@enum Player naive gullible unforgiving paybacker unfriendly abusive egoist
 @enum Choice cooperate=0 betray=1
 """
 sc(s)
 ```
 
 Now, whenever we use `Player` in our code (as a variable type) we will be able
-to use one of the six informative and mnemonic names (`naive unforgiving
-paybacker unfriendly abusive egoist`). The same goes for `Choice` our players
-will make (`cooperate` and `betray`). Note, however, that in this last case the
-`Choices` are followed by the number code. We didn't have to do that since by
-default the enums are internally stored as consecutive integers that start
-at 0. Still, we did it to emphasize our plan to use this property of our new
-type in the near future.
+to use one of the six informative and mnemonic names (`naive gullible
+unforgiving paybacker unfriendly abusive egoist`). The same goes for `Choice`
+our players will make (`cooperate` and `betray`). Note, however, that in this
+last case the `Choices` are followed by the number code. We didn't have to do
+that since by default the enums are internally stored as consecutive integers
+that start at 0. Still, we did it to emphasize our plan to use this property of
+our new type in the near future.
 
 We did this because per problem description `unforgiving` monkey always betrays
 its partner when it was itself betrayed more than three times in the past. To
@@ -155,6 +155,8 @@ function getMove(p::Player, opponentMoves::Vec{Choice})::Choice
         return cooperate
     elseif p == unforgiving
         return sum(opponentMoves, init=0) > 3 ? betray : cooperate
+    elseif p == gullible
+        return prob <= 0.8 ? cooperate : betray
     elseif p == paybacker
         return isempty(opponentMoves) ? cooperate : opponentMoves[end]
     elseif p == unfriendly
@@ -174,8 +176,8 @@ statement](https://en.wikipedia.org/wiki/Switch_statement) known from other
 programming languages. If you really must have it, then consider using
 [Match.jl](https://github.com/JuliaServices/Match.jl) as a replacement. Anyway,
 the code is pretty simple if you are familiar with [the decision making in
-Julia](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_decision_making.html). One
-point to notice is that here we used the `init=0` keyword argument in `sum`.
+Julia](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_decision_making.html).
+One point to notice is that here we used the `init=0` keyword argument in `sum`.
 This is a default value from which we start counting the total, and it makes
 sure that an empty vector (`sum(opponentMoves, init=0)`) returns `0` instead of
 an error.
@@ -246,14 +248,12 @@ Time to set things into motion and make all the players play with each other.
 
 ```jl
 s = """
-function playGame()::Dict{Player, Int}
-    players::Vec{Player} = [
-        naive, unforgiving, paybacker, unfriendly, abusive, egoist]
+function playGame(players::Vec{Player})::Dict{Player, Int}
     playersPts::Dict{Player, Int} = Dict(p => 0 for p in players)
     alreadyPlayed::Dict{Player, Bool} = Dict()
     for player1 in players, player2 in players
-		if player1 == player2 || haskey(alreadyPlayed, player2)
-			continue
+        if player1 == player2 || haskey(alreadyPlayed, player2)
+            continue
         end
         pts1, pts2 = playRoundsGetPts(player1, player2)
         playersPts[player1] += pts1
@@ -266,12 +266,12 @@ end
 sc(s)
 ```
 
-Again, we start by initializing the necessary variables: list of players
-(`players`), the result (`playersPts`) and players that already played in our
-game (`alreadyPlayed`). Next, we use Julia's simplified nested for loop syntax
-(that we met in @sec:mat_multip_solution) to make all players play with each
-other. We prevent the player playing with themselves (`player1 == player2`). We
-also stop the players from playing with each other two times. Without
+Again, we start by initializing the necessary variables: the result
+(`playersPts`) and players that already played in our game
+(`alreadyPlayed`). Next, we use Julia's simplified nested for loop syntax (that
+we met in @sec:mat_multip_solution) to make all players play with each other. We
+prevent the player playing with themselves (`player1 == player2`). We also stop
+the players from playing with each other two times. Without
 `haskey(alreadyPlayed, player2)`, e.g. `naive` would play with `egoist` twice
 [once as `player1` (`naive` vs `egoist`), the other time as `player2` (`egoist`
 vs `naive`)]. We update the points scored by each player after every pairing
@@ -283,7 +283,7 @@ Let's see how it works.
 ```jl
 s = """
 Rnd.seed!(401) # needed to make it reproducible
-playGame()
+playGame([naive, unforgiving, paybacker, unfriendly, abusive, egoist])
 """
 sco(s)
 ```
@@ -296,19 +296,12 @@ ones in 2:1 ratio.
 Interestingly, if we replace the `unforgiving` with `gullible` (it cooperates at
 random 80% of the times) we get something entirely different.
 
-```
+```jl
+s = """
 Rnd.seed!(401) # needed to make it reproducible
-playGame()
-```
-
-```
-Dict{Player, Int64} with 6 entries:
-  paybacker  => 338
-  gullible   => 78
-  unfriendly => 646
-  abusive    => 278
-  naive      => 4
-  egoist     => 583
+playGame([naive, gullible, paybacker, unfriendly, abusive, egoist])
+"""
+sco(s)
 ```
 
 The situation seems to be reversed, The evil players (monkeys) win the podium
