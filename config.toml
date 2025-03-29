@@ -13,6 +13,7 @@ contents = [
     "translation",
     "stem_and_leaf",
     "altruism",
+    "shift",
     "the_end",
 ]
 
