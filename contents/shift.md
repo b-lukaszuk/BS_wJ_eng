@@ -35,8 +35,99 @@ give us "LWNKC :)"
 
 Anyway, here is a task for you. Use a [frequency
 analysis](https://en.wikipedia.org/wiki/Letter_frequency) to figure out the
-shift (rotation) used to code the message found in `trarfvf.txt`.
+shift (rotation) used to code the message found in `trarfvf.txt` (~31 KiB).
 
 ## Solution {#sec:shift_solution}
 
-The solution goes here.
+Let's approach the problem step by step.
+
+First let's read the file's contents (`open` and `read`, compare with
+@sec:transcription_solution), `uppercase` all the characters (compare with
+@sec:translation_solution) and preserve only letters (`filter`).
+
+```jl
+s = """
+# the file is roughly 31 KiB
+# if necessary adjust the filePath
+codedTxt = open("./code_snippets/shift/trarfvf.txt") do file
+    read(file, Str)
+end
+
+codedTxt = uppercase(codedTxt)
+
+function isUppercaseLetter(c::Char)::Bool
+    return c in 'A':'Z'
+end
+
+codedTxt = filter(isUppercaseLetter, codedTxt)
+first(codedTxt, 20)
+"""
+sco(s)
+```
+
+Time to get the letter counts and frequencies
+
+```jl
+s = """
+function getCounts(s::Str)::Dict{Char,Int}
+    counts::Dict{Char, Int} = Dict()
+    for char in s
+        if haskey(counts, char)
+            counts[char] = counts[char] + 1
+        else
+            counts[char] = 1
+        end
+    end
+    return counts
+end
+
+function getFreqs(counts::Dict{Char, Int})::Dict{Char,Float64}
+    total::Int = sum(values(counts))
+    return Dict(k => v/total for (k, v) in counts)
+end
+
+function getFreqs(s::Str)::Dict{Char,Float64}
+    return s |> getCounts |> getFreqs
+end
+"""
+sc(s)
+```
+
+The code is rather simple. Moreover it is quite similar to `getCounts` and
+`getProbs` that I explained in detail [in my previous
+book](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_prob_theor_practice.html)
+so give it a sneak peak if you need a more thorough explanation (I apply DRY
+principle here).
+
+According to [this Wikipedia's
+page](https://en.wikipedia.org/wiki/Letter_frequency) the letter that occurs
+most often in English is `E` (frequency: 0.127 or 12.7%, compare with [this
+discussion](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_probability_definition.html)).
+Time to see which letter is the most frequent in our encoded text.
+
+```jl
+s = """
+codedLetFreqs = getFreqs(codedTxt)
+[k => v for (k, v) in codedLetFreqs if v > 0.12]
+"""
+sco(s)
+```
+
+And the winner is `R`. Now, we can use the fact that in the metal insides of a
+computer letters are represented as numbers (see,
+[e.g. here](https://en.wikipedia.org/wiki/ASCII)). We can use this to our
+advantage and quickly obtain the shift.
+
+```jl
+s = """
+'R' - 'E' # ASCII: 82 - 69
+"""
+sco(s)
+```
+
+And so it turns out, that our encrypted message was coded with a shift cipher
+with the rotation of 13. If we were even more stubborn, we could display both
+the frequencies on a graph like @fig:letterFrequency (we do not expect the fit
+to be perfect).
+
+![Frequency analysis of an encrypted text.](./images/letterFreqency.png){#fig:letterFrequency}
