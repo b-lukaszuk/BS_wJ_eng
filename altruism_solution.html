@@ -86,7 +86,10 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./altruism.html"><b>11</b> Altruism</a></li>
 <li><a class="menu-level-2" href="./altruism_problem.html"><b>11.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./altruism_solution.html"><b>11.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./the-end.html"><b>12</b> The end</a></li>
+<li><a class="menu-level-1" href="./shift.html"><b>12</b> Shift</a></li>
+<li><a class="menu-level-2" href="./shift_problem.html"><b>12.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./shift_solution.html"><b>12.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./the-end.html"><b>13</b> The end</a></li>
 </div>
 </aside>
 
@@ -94,9 +97,9 @@ Mousetrap.bind('l', click_next);
 <h2 data-number="11.2" id="sec:altruism_solution"><span class="header-section-number">11.2</span> Solution</h2>
 <p>Since this is a game theory problem, then we’re going to use game terminology in the solution. Ready. Let the games begin.</p>
 <p>First, let’s define all the possible values for players (i.e. monkeys) and moves (i.e. choices) by using Julia’s <a href="https://docs.julialang.org/en/v1/base/base/#Base.Enums.Enum">enums</a>.</p>
-<pre class="language-julia"><code>@enum Player naive unforgiving paybacker unfriendly abusive egoist
+<pre class="language-julia"><code>@enum Player naive gullible unforgiving paybacker unfriendly abusive egoist
 @enum Choice cooperate=0 betray=1</code></pre>
-<p>Now, whenever we use <code>Player</code> in our code (as a variable type) we will be able to use one of the six informative and mnemonic names (<code>naive unforgiving paybacker unfriendly abusive egoist</code>). The same goes for <code>Choice</code> our players will make (<code>cooperate</code> and <code>betray</code>). Note, however, that in this last case the <code>Choices</code> are followed by the number code. We didn’t have to do that since by default the enums are internally stored as consecutive integers that start at 0. Still, we did it to emphasize our plan to use this property of our new type in the near future.</p>
+<p>Now, whenever we use <code>Player</code> in our code (as a variable type) we will be able to use one of the six informative and mnemonic names (<code>naive gullible unforgiving paybacker unfriendly abusive egoist</code>). The same goes for <code>Choice</code> our players will make (<code>cooperate</code> and <code>betray</code>). Note, however, that in this last case the <code>Choices</code> are followed by the number code. We didn’t have to do that since by default the enums are internally stored as consecutive integers that start at 0. Still, we did it to emphasize our plan to use this property of our new type in the near future.</p>
 <p>We did this because per problem description <code>unforgiving</code> monkey always betrays its partner when it was itself betrayed more than three times in the past. To that end we will need to count the betrayals.</p>
 <pre class="language-julia"><code>import Base: +
 
@@ -120,6 +123,8 @@ function getMove(p::Player, opponentMoves::Vec{Choice})::Choice
         return cooperate
     elseif p == unforgiving
         return sum(opponentMoves, init=0) &gt; 3 ? betray : cooperate
+    elseif p == gullible
+        return prob &lt;= 0.8 ? cooperate : betray
     elseif p == paybacker
         return isempty(opponentMoves) ? cooperate : opponentMoves[end]
     elseif p == unfriendly
@@ -171,9 +176,7 @@ end</code></pre>
 </ol>
 <p>We update the above mentioned variables after every round/interaction took place (in the <code>for</code> loop). Finally, we return the number of points obtained by each player.</p>
 <p>Time to set things into motion and make all the players play with each other.</p>
-<pre class="language-julia"><code>function playGame()::Dict{Player, Int}
-    players::Vec{Player} = [
-        naive, unforgiving, paybacker, unfriendly, abusive, egoist]
+<pre class="language-julia"><code>function playGame(players::Vec{Player})::Dict{Player, Int}
     playersPts::Dict{Player, Int} = Dict(p =&gt; 0 for p in players)
     alreadyPlayed::Dict{Player, Bool} = Dict()
     for player1 in players, player2 in players
@@ -187,32 +190,28 @@ end</code></pre>
     end
     return playersPts
 end</code></pre>
-<p>Again, we start by initializing the necessary variables: list of players (<code>players</code>), the result (<code>playersPts</code>) and players that already played in our game (<code>alreadyPlayed</code>). Next, we use Julia’s simplified nested for loop syntax (that we met in Section <a href="./mat_multip_solution.html#sec:mat_multip_solution">2.2</a>) to make all players play with each other. We prevent the player playing with themselves (<code>player1 == player2</code>). We also stop the players from playing with each other two times. Without <code>haskey(alreadyPlayed, player2)</code>, e.g. <code>naive</code> would play with <code>egoist</code> twice [once as <code>player1</code> (<code>naive</code> vs <code>egoist</code>), the other time as <code>player2</code> (<code>egoist</code> vs <code>naive</code>)]. We update the points scored by each player after every pairing (<code>playerPts[player1] += pts1</code>, <code>playerPts[player2] += pts2</code>) and return them as a result (<code>return playersPts</code>).</p>
+<p>Again, we start by initializing the necessary variables: the result (<code>playersPts</code>) and players that already played in our game (<code>alreadyPlayed</code>). Next, we use Julia’s simplified nested for loop syntax (that we met in Section <a href="./mat_multip_solution.html#sec:mat_multip_solution">2.2</a>) to make all players play with each other. We prevent the player playing with themselves (<code>player1 == player2</code>). We also stop the players from playing with each other two times. Without <code>haskey(alreadyPlayed, player2)</code>, e.g. <code>naive</code> would play with <code>egoist</code> twice [once as <code>player1</code> (<code>naive</code> vs <code>egoist</code>), the other time as <code>player2</code> (<code>egoist</code> vs <code>naive</code>)]. We update the points scored by each player after every pairing (<code>playerPts[player1] += pts1</code>, <code>playerPts[player2] += pts2</code>) and return them as a result (<code>return playersPts</code>).</p>
 <p>Let’s see how it works.</p>
 <pre class="language-julia"><code>Rnd.seed!(401) # needed to make it reproducible
-playGame()</code></pre>
+playGame([naive, unforgiving, paybacker, unfriendly, abusive, egoist])</code></pre>
 <pre class="output"><code>Dict{Player, Int64} with 6 entries:
-  paybacker =&gt; 464
   unforgiving =&gt; 490
+  paybacker =&gt; 464
+  egoist =&gt; 323
   unfriendly =&gt; -26
-  abusive =&gt; 2
   naive =&gt; 68
-  egoist =&gt; 323</code></pre>
+  abusive =&gt; 2</code></pre>
 <p>First three competitors (monkeys) are: <code>unforgiving</code> followed by <code>paybacker</code> and <code>egoist</code>. Run the simulation a couple of times (with different <code>seed</code>s) and see the results. In general the good players (monkeys) win the podium with the evil ones in 2:1 ratio.</p>
 <p>Interestingly, if we replace the <code>unforgiving</code> with <code>gullible</code> (it cooperates at random 80% of the times) we get something entirely different.</p>
-<pre>
-Rnd.seed!(401) # needed to make it reproducible
-playGame()
-</pre>
-<pre>
-Dict{Player, Int64} with 6 entries:
-  paybacker  => 338
-  gullible   => 78
-  unfriendly => 646
-  abusive    => 278
-  naive      => 4
-  egoist     => 583
-</pre>
+<pre class="language-julia"><code>Rnd.seed!(401) # needed to make it reproducible
+playGame([naive, gullible, paybacker, unfriendly, abusive, egoist])</code></pre>
+<pre class="output"><code>Dict{Player, Int64} with 6 entries:
+  gullible =&gt; 78
+  paybacker =&gt; 338
+  egoist =&gt; 583
+  unfriendly =&gt; 646
+  naive =&gt; 4
+  abusive =&gt; 278</code></pre>
 <p>The situation seems to be reversed, The evil players (monkeys) win the podium with the good ones in 2:1 ratio. So I guess: “The only thing necessary for evil to triumph in the world is that <a href="https://en.wikipedia.org/?title=The_only_thing_necessary_for_evil_to_triumph_in_the_world_is_that_good_men_do_nothing&amp;redirect=no">good men do nothing</a>”</p>
 
 
@@ -220,7 +219,7 @@ Dict{Player, Int64} with 6 entries:
     <p id="nav-prev" style="text-align: left;">
         <a class="menu-level-2" href="./altruism_problem.html"><b>11.1</b> Problem</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-             
+            <kbd>→</kbd> <a class="menu-level-1" href="./shift.html"><b>12</b> Shift</a>
         </span>
     </p>
 </div>

@@ -86,7 +86,10 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./altruism.html"><b>11</b> Altruism</a></li>
 <li><a class="menu-level-2" href="./altruism_problem.html"><b>11.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./altruism_solution.html"><b>11.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./the-end.html"><b>12</b> The end</a></li>
+<li><a class="menu-level-1" href="./shift.html"><b>12</b> Shift</a></li>
+<li><a class="menu-level-2" href="./shift_problem.html"><b>12.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./shift_solution.html"><b>12.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./the-end.html"><b>13</b> The end</a></li>
 </div>
 </aside>
 
@@ -194,11 +197,8 @@ end</code></pre>
 end</code></pre>
 <p>At the onset, we define a few variables. Some of them deserve a short explanation. <code>low</code> and <code>high</code> are the two <code>extrema</code> (minimum and maximum) of our numbers (<code>nums</code>). <code>testedStems</code> will contain the keys from <code>leafCounts</code>, i.e. the stems from our stem-leaf plot that rows has been already obtained. Next, we use <code>for</code> loop to travel through all the numbers in our range (<code>low</code> to <code>high</code>). For each tested number (<code>num</code>) we get its <code>stem</code>. If the <code>stem</code> was already obtained (<code>if haskey</code>) we <code>continue</code> to another <code>for</code> loop iteration. Otherwise, we add the row to our <code>result</code> (<code>result *= getStemLeafRow</code>) and insert the <code>stem</code> among the already visited (<code>testedStems[stem] = true</code>). When we finish we return the whole stem-leaf-plot (<code>return result</code>).</p>
 <p>And that’s it. Let’s see how it works on <a href="https://en.wikipedia.org/wiki/Stem-and-leaf_display">Wikipedia’s examples</a>. First, prime numbers below 100:</p>
-<pre>
-getStemLeafPlot(stemLeafTest1)
-</pre>
-<pre>
-0|2357
+<pre><code>getStemLeafPlot(stemLeafTest1)</code></pre>
+<pre><code>0|2357
 1|1379
 2|39
 3|17
@@ -207,32 +207,24 @@ getStemLeafPlot(stemLeafTest1)
 6|17
 7|139
 8|39
-9|7
-</pre>
+9|7</code></pre>
 <p>Now, the numbers from the Construction section:</p>
-<pre>
-getStemLeafPlot(stemLeafTest2)
-</pre>
-<pre>
- 4|4679
+<pre><code>getStemLeafPlot(stemLeafTest2)</code></pre>
+<pre><code> 4|4679
  5|
  6|34688
  7|2256
  8|148
  9|
-10|6
-</pre>
+10|6</code></pre>
 <p>All that’s left to do is to adjust our function for the example with floats.</p>
 <pre class="language-julia"><code>function getStemLeafPlot(nums::Vec{Flt})::Str
     ints::Vec{Int} = round.(Int, nums)
     return getStemLeafPlot(ints)
 end</code></pre>
 <p>And voila:</p>
-<pre>
-getStemLeafPlot(stemLeafTest3)
-</pre>
-<pre>
--2|4
+<pre><code>getStemLeafPlot(stemLeafTest3)</code></pre>
+<pre><code>-2|4
 -1|2
 -0|3
  0|466
@@ -240,8 +232,7 @@ getStemLeafPlot(stemLeafTest3)
  2|5
  3|
  4|
- 5|7
-</pre>
+ 5|7</code></pre>
 <p>It appears to be working as intended so I think we can finish here.</p>
 
 

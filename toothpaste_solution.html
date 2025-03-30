@@ -86,17 +86,18 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./altruism.html"><b>11</b> Altruism</a></li>
 <li><a class="menu-level-2" href="./altruism_problem.html"><b>11.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./altruism_solution.html"><b>11.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./the-end.html"><b>12</b> The end</a></li>
+<li><a class="menu-level-1" href="./shift.html"><b>12</b> Shift</a></li>
+<li><a class="menu-level-2" href="./shift_problem.html"><b>12.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./shift_solution.html"><b>12.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./the-end.html"><b>13</b> The end</a></li>
 </div>
 </aside>
 
 <div class="books-content">
 <h2 data-number="4.2" id="sec:toothpaste_solution"><span class="header-section-number">4.2</span> Solution</h2>
 <p>First, let me define some abbreviations to use in the code later on.</p>
-<pre>
-const Vec = Vector
-const Flt = Float64
-</pre>
+<pre><code>const Vec = Vector
+const Flt = Float64</code></pre>
 <p>Now, based on my own observations I would say that a <a href="https://en.wikipedia.org/wiki/Cylinder">cylinder</a> is a good approximation of the toothpaste that is squezed out of the tube. Time to define some helper functions that will help us to evaluate the amount of a toothpaste on a toothbrush.</p>
 <pre class="language-julia"><code>struct Cylinder
     radius::Int

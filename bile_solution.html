@@ -86,7 +86,10 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./altruism.html"><b>11</b> Altruism</a></li>
 <li><a class="menu-level-2" href="./altruism_problem.html"><b>11.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./altruism_solution.html"><b>11.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./the-end.html"><b>12</b> The end</a></li>
+<li><a class="menu-level-1" href="./shift.html"><b>12</b> Shift</a></li>
+<li><a class="menu-level-2" href="./shift_problem.html"><b>12.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./shift_solution.html"><b>12.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./the-end.html"><b>13</b> The end</a></li>
 </div>
 </aside>
 
@@ -171,31 +174,29 @@ prepend!(numsOfDroplets, 1)</code></pre>
 <p>We begin by initializing vectors that will hold the <code>sumsOfAreas</code>, <code>sumsOfvolumes</code>, and <code>radii</code> of our lipid droplets. Then we define the number of droplets that we want to split our big droplet into (<code>numsOfDroplets</code>). For each of those (<code>for nDrops in numsOfDroplets</code>) we determine the radius (<code>smallS = getSphere</code>), volume (<code>smallV</code>) and surface area (<code>smallA</code>) of a single small droplet as well as total area (<code>sumSmallAs</code>) and total volume (<code>sumSmallVs</code>) of <code>nDrops</code>. We add the total area, total volume and radius of a single droplet to the <code>sumsOfAreas</code>, <code>sumsOfVolumes</code>, and <code>radii</code> vectors, respectively. In the end we <code>prepend</code> 1 to the <code>numOfDroplets</code>, since we started with one big droplet (<code>bigS</code>).</p>
 <p>BTW. Notice that <code>smallS</code>, <code>smallV</code>, <code>smallA</code>, <code>sumSmallAs</code>, <code>sumSmallVs</code> are all local variables defined for the first time in the <code>for</code> loop and visible only inside of it. If you try to print out their values outside of the loop you will get an error like <code>ERROR: UndefVarError: 'smallS' not defined</code>.</p>
 <p>Anyway, now, we can either examine the vectors (<code>sumsOfAreas</code>, <code>sumsOfVolumes</code>, <code>radii</code>, <code>numOfDroplets</code>) one by one, or do one better and present them on a graph with e.g. CairoMakie (I’m not going to explain the code below, for reference see <a href="https://b-lukaszuk.github.io/RJ_BS_eng/">my previous book</a> or <a href="https://docs.makie.org/stable/tutorials/getting-started">CairoMakie tutorial</a>).</p>
-<pre>
-import CairoMakie as Cmk
+<pre><code>import CairoMakie as Cmk
 
 fig = Cmk.Figure();
 ax = Cmk.Axis(fig[1, 1],
-              title="Lipid droplet size vs. summaric surface area",
-              xlabel="number of lipid droplets",
-              ylabel="total surface area [μm²]", xticks=0:13);
+              title=&quot;Lipid droplet size vs. summaric surface area&quot;,
+              xlabel=&quot;number of lipid droplets&quot;,
+              ylabel=&quot;total surface area [μm²]&quot;, xticks=0:13);
 Cmk.scatter!(ax, numsOfDroplets, sumsOfAreas, markersize=radii .* 5,
-             color="gold1", strokecolor="black");
+             color=&quot;gold1&quot;, strokecolor=&quot;black&quot;);
 Cmk.xlims!(ax, -3, 16);
 Cmk.ylims!(ax, 800, 3000);
 Cmk.text!(ax, numsOfDroplets, sumsOfAreas .- 150,
-    text=map(r -> "single droplet radius = $(round(r, digits=2)) [μm]",
+    text=map(r -&gt; &quot;single droplet radius = $(round(r, digits=2)) [μm]&quot;,
              radii),
     fontsize=12, align=(:center, :center)
 );
 Cmk.text!(ax, numsOfDroplets, sumsOfAreas .- 250,
-    text=map((v, n) ->
-    "volume ($n droplet/s) = $(round(v, digits=2)) [μm³]",
+    text=map((v, n) -&gt;
+    &quot;volume ($n droplet/s) = $(round(v, digits=2)) [μm³]&quot;,
     sumsOfVolumes, numsOfDroplets),
     fontsize=12, align=(:center, :center)
 );
-fig
-</pre>
+fig</code></pre>
 <p>Behold.</p>
 <figure id="fig:bile">
 <img src="./images/bile.png" alt="Figure 1: Bile. Splitting a big lipid droplet into a few smaller ones and the effect it has on their total surface area." />

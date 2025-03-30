@@ -86,7 +86,10 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./altruism.html"><b>11</b> Altruism</a></li>
 <li><a class="menu-level-2" href="./altruism_problem.html"><b>11.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./altruism_solution.html"><b>11.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./the-end.html"><b>12</b> The end</a></li>
+<li><a class="menu-level-1" href="./shift.html"><b>12</b> Shift</a></li>
+<li><a class="menu-level-2" href="./shift_problem.html"><b>12.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./shift_solution.html"><b>12.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./the-end.html"><b>13</b> The end</a></li>
 </div>
 </aside>
 
@@ -109,9 +112,7 @@ end</code></pre>
 </blockquote>
 <p>The function is pretty simple. First, we defined the locations (based on guess and later try and error) of the points with respect to the x- (<code>centersXs</code>) and y-axis (<code>centersYs</code>), as well as their colors. Next we added the points (<code>scatter!</code>) to the axis object (<code>ax</code>) attached to the figure object (<code>fig</code>).</p>
 <p>Time to take a look.</p>
-<pre>
-drawLogo()
-</pre>
+<pre><code>drawLogo()</code></pre>
 <figure id="fig:logo1">
 <img src="./images/logo1.png" alt="Figure 2: Replicating JuliaStats logo. Attempt 1." />
 <figcaption aria-hidden="true">Figure 2: Replicating JuliaStats logo. Attempt 1.</figcaption>
@@ -135,10 +136,8 @@ function drawLogo()::Cmk.Figure
     return fig
 end</code></pre>
 <p>Let’s test it.</p>
-<pre>
-Rnd.seed!(303) # needed to make it reproducible
-drawLogo()
-</pre>
+<pre><code>Rnd.seed!(303) # needed to make it reproducible
+drawLogo()</code></pre>
 <figure id="fig:logo2">
 <img src="./images/logo2.png" alt="Figure 3: Replicating JuliaStats logo. Attempt 2." />
 <figcaption aria-hidden="true">Figure 3: Replicating JuliaStats logo. Attempt 2.</figcaption>
@@ -163,10 +162,8 @@ drawLogo()
     return fig
 end</code></pre>
 <p>And voila.</p>
-<pre>
-Rnd.seed!(303) # needed to make it reproducible
-drawLogo()
-</pre>
+<pre><code>Rnd.seed!(303) # needed to make it reproducible
+drawLogo()</code></pre>
 <figure id="fig:logo3">
 <img src="./images/logo3.png" alt="Figure 4: Replicating JuliaStats logo. Attempt 3." />
 <figcaption aria-hidden="true">Figure 4: Replicating JuliaStats logo. Attempt 3.</figcaption>

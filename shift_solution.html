@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Problem - Build SH*T with Julia</title>
+  <title>Solution - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -94,50 +94,65 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="11.1" id="sec:altruism_problem"><span class="header-section-number">11.1</span> Problem</h2>
-<p>The following problem was inspired by the lecture of a Richard Dawkins’ book and his considerations about altruism. Alas, I borrowed the book and it’s been like 15-20 years since I read it, so I don’t even remember its title. Shortly, if I mess things up, the fault is mine.</p>
-<p>Anyway, there is this interesting game theory problem called <a href="https://en.wikipedia.org/wiki/Prisoner%27s_dilemma">the prisoner’s dilemma</a>. Imagine two accomplices being interrogated by the police for the crime they committed. The investigators separate them and try to convince them to testify against each other (good cop, bad cop isn’t it):</p>
-<ul>
-<li>if both of them remain silent, there is enough evidence to sentence them for one year each</li>
-<li>if both of them incriminate each other, each of them faces the sentence of two years in prison</li>
-<li>if one of them tells on the other (but the other remains silent), then the informer is free to go and the other person serves three years sentence</li>
-</ul>
-<p>Imagine, that you are one of the two. Pause for a moment and think which is the best option for you (use pure logic, not emotions, it is guaranteed that nobody will know what you did).</p>
-<p>If you stay silent you will be punished for sure, if you betray then you may walk away free. That being said, the betrayal is often considered to be the optimal strategy.</p>
-<p>You could say that was a no-brainer, but the problem is deeper than you may think. Imagine there are two monkeys each got a <a href="https://en.wikipedia.org/wiki/Tick">tick</a> on their back that they cannot remove themselves. A tick decreases survival of an animal (it spreads diseases), so does the removal of the tick (less time to find food). Therefore assume that, when:</p>
-<ul>
-<li>one monkey betrays the other, the winner gets 3 survival points, the looser gets -2 points</li>
-<li>both monkeys cooperate they get +2 survival points each</li>
-<li>both monkeys refuse to help each other, each looses 1 survival point</li>
-</ul>
-<p>To make it more realistic assume that the monkeys are neighbors that will interact with each other a few hundred times in their lives (but they don’t know exactly how long), and get a tick just as many times. Does this new situation makes a difference, is it worth the while to be altruistic?</p>
-<p>Let’s use Julia to answer that question. To that end we assume there are 6 monkeys in the group:</p>
-<ul>
-<li>three good:
-<ul>
-<li>naive - it always cooperates</li>
-<li>unforgiving - if you betray it more than three times, it will never trust you again</li>
-<li>paybacker - first it cooperates, then it replays its partner’s last move</li>
-</ul></li>
-<li>three evil:
-<ul>
-<li>unfriendly - got a bad mood at random and may betray with the probability of 60% (p = 0.6)</li>
-<li>abusive - got a bad mood at random and may betray with the probability of 80% (p = 0.8)</li>
-<li>egoist - always betrays its partner</li>
-</ul></li>
-</ul>
-<p>Test which monkey ends on top if every animal interacts a random number of times (let’s say 50 to 300 times) with all the other animals.</p>
-<p>Does it make a difference, if you replace the unforgiving monkey with a gullible one (it cooperates at random 80% of the times)?</p>
-<blockquote>
-<p><strong><em>Note:</em></strong> You don’t need to strictly adhere to the above task description, feel free to adjust it to your level/liking.</p>
-</blockquote>
+<h2 data-number="12.2" id="sec:shift_solution"><span class="header-section-number">12.2</span> Solution</h2>
+<p>Let’s approach the problem step by step.</p>
+<p>First let’s read the file’s contents (<code>open</code> and <code>read</code>, compare with Section <a href="./transcription_solution.html#sec:transcription_solution">8.2</a>), <code>uppercase</code> all the characters (compare with Section <a href="./translation_solution.html#sec:translation_solution">9.2</a>) and preserve only letters (<code>filter</code>).</p>
+<pre class="language-julia"><code># the file is roughly 31 KiB
+# if necessary adjust the filePath
+codedTxt = open(&quot;./code_snippets/shift/trarfvf.txt&quot;) do file
+    read(file, Str)
+end
+
+codedTxt = uppercase(codedTxt)
+
+function isUppercaseLetter(c::Char)::Bool
+    return c in &#39;A&#39;:&#39;Z&#39;
+end
+
+codedTxt = filter(isUppercaseLetter, codedTxt)
+first(codedTxt, 20)</code></pre>
+<p>VAGURORTVAAVATTBQPER</p>
+<p>Time to get the letter counts and frequencies</p>
+<pre class="language-julia"><code>function getCounts(s::Str)::Dict{Char,Int}
+    counts::Dict{Char, Int} = Dict()
+    for char in s
+        if haskey(counts, char)
+            counts[char] = counts[char] + 1
+        else
+            counts[char] = 1
+        end
+    end
+    return counts
+end
+
+function getFreqs(counts::Dict{Char, Int})::Dict{Char,Float64}
+    total::Int = sum(values(counts))
+    return Dict(k =&gt; v/total for (k, v) in counts)
+end
+
+function getFreqs(s::Str)::Dict{Char,Float64}
+    return s |&gt; getCounts |&gt; getFreqs
+end</code></pre>
+<p>The code is rather simple. Moreover it is quite similar to <code>getCounts</code> and <code>getProbs</code> that I explained in detail <a href="https://b-lukaszuk.github.io/RJ_BS_eng/statistics_prob_theor_practice.html">in my previous book</a> so give it a sneak peak if you need a more thorough explanation (I apply DRY principle here).</p>
+<p>According to <a href="https://en.wikipedia.org/wiki/Letter_frequency">this Wikipedia’s page</a> the letter that occurs most often in English is <code>E</code> (frequency: 0.127 or 12.7%, compare with <a href="https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_probability_definition.html">this discussion</a>). Time to see which letter is the most frequent in our encoded text.</p>
+<pre class="language-julia"><code>codedLetFreqs = getFreqs(codedTxt)
+[k =&gt; v for (k, v) in codedLetFreqs if v &gt; 0.12]</code></pre>
+<pre class="output"><code>&#39;R&#39; =&gt; 0.13374233128834356</code></pre>
+<p>And the winner is <code>R</code>. Now, we can use the fact that in the metal insides of a computer letters are represented as numbers (see, <a href="https://en.wikipedia.org/wiki/ASCII">e.g. here</a>). We can use this to our advantage and quickly obtain the shift.</p>
+<pre class="language-julia"><code>&#39;R&#39; - &#39;E&#39; # ASCII: 82 - 69</code></pre>
+<p>13</p>
+<p>And so it turns out, that our encrypted message was coded with a shift cipher with the rotation of 13. If we were even more stubborn, we could display both the frequencies on a graph like Figure <a href="#fig:letterFrequency">6</a> (we do not expect the fit to be perfect).</p>
+<figure id="fig:letterFrequency">
+<img src="./images/letterFreqency.png" alt="Figure 6: Frequency analysis of an encrypted text." />
+<figcaption aria-hidden="true">Figure 6: Frequency analysis of an encrypted text.</figcaption>
+</figure>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./altruism.html"><b>11</b> Altruism</a> <kbd>←</kbd>
+        <a class="menu-level-2" href="./shift_problem.html"><b>12.1</b> Problem</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./altruism_solution.html"><b>11.2</b> Solution</a>
+             
         </span>
     </p>
 </div>
