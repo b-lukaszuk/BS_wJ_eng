@@ -44,22 +44,22 @@ function drawCodingDiscs()::Cmk.Figure
     rotations::Vec{Flt} = LinRange(2pi, 0, 27)[1:end-1]
     rot::Int = 2
     shifts::Vec{Str} = "+" .* string.([rot:25..., 0:(rot-1)...])
-    tick = Polygon(
+    tick::Polygon = Polygon(
         Point2f[(-0.09, 0.5), (+0.09, 0.5), (0.18, 1.1), (-0.18, 1.1)],
         [Point2f[(-0.07, 0.53), (+0.07, 0.53), (0.14, 1.06), (-0.14, 1.06)]]
     )
-    fig = Cmk.Figure(size=(600, 600))
-    ax = Cmk.Axis(fig[1, 1])
-    Cmk.pie!(ax, 100, color=:gold, alpha=0.3, strokewidth=0, radius=1)
+    fig::Cmk.Figure = Cmk.Figure(size=(600, 600))
+    ax::Cmk.Axis = Cmk.Axis(fig[1, 1])
+    Cmk.pie!(ax, [100], color=:gold, strokewidth=0, radius=1)
     Cmk.text!(ax, getXsAndYs(0.85)...,
               text=split(alphabet, ""), align=(:center, :center),
               rotation=rotations)
-    Cmk.pie!(ax, 100, color=:lightyellow, strokewidth=0, radius=0.75)
+    Cmk.pie!(ax, [100], color=:lightyellow, strokewidth=0, radius=0.75)
     Cmk.text!(ax, getXsAndYs(0.65)...,
               text=split(getRotatedAlphabet(alphabet, 2), ""),
               align=(:center, :center), rotation=rotations)
     Cmk.poly!(ax, tick, color=:crimson)
-    Cmk.pie!(ax, 100, color=:grey, alpha=0.5, strokewidth=0, radius=0.025)
+    Cmk.pie!(ax, [100], color=:lightgrey, strokewidth=0, radius=0.025)
     Cmk.text!(ax, getXsAndYs(0.58)..., text=shifts, color=:grey,
               align=(:center, :center), rotation=rotations, fontsize=12)
     Cmk.hidedecorations!(ax);

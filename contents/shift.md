@@ -24,11 +24,11 @@ contains the alphabet shifted by 2
 characters](./images/codingDiscs.png){#fig:codingDiscs}
 
 To that end you cut two discs out of paper with all the characters from the
-alphabet on them. You shift the inner disk by a certain number of fields (+2
-under A in @fig:codingDiscs). In order to encode a letter you move the red tick
-around the circle to that character (in the outer circle). Next you read the
-encoded letter in the inner circle (as pointed by the tick). If a letter or a
-symbol from the original text is not in the disk you just retype it as it is.
+alphabet on them. You shift the inner disk by a certain number of fields (+2 in
+@fig:codingDiscs). In order to encode a letter you move the red tick around to
+that character (in the outer circle). Next you read the encoded letter in the
+inner circle (as pointed by the tick). If a letter or a symbol from the original
+text is not in the disk you just retype it as it is.
 
 This way, coding the phrase "JULIA :)" with shift +2 from @fig:codingDiscs would
 give us "LWNKC :)"
@@ -65,7 +65,7 @@ first(codedTxt, 20)
 sco(s)
 ```
 
-Time to get the letter counts and frequencies
+Time to get the letter counts and frequencies.
 
 ```jl
 s = """
@@ -94,7 +94,7 @@ sc(s)
 ```
 
 The code is rather simple. Moreover it is quite similar to `getCounts` and
-`getProbs` that I explained in detail [in my previous
+`getProbs` that I discussed it in detail [in my previous
 book](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_prob_theor_practice.html)
 so give it a sneak peak if you need a more thorough explanation (I apply DRY
 principle here).
@@ -113,8 +113,8 @@ codedLetFreqs = getFreqs(codedTxt)
 sco(s)
 ```
 
-And the winner is `R`. Now, we can use the fact that in the metal insides of a
-computer letters are represented as numbers (see,
+And the winner is `R`. In the metal insides of a computer letters are
+represented as numbers (see,
 [e.g. here](https://en.wikipedia.org/wiki/ASCII)). We can use this to our
 advantage and quickly obtain the shift.
 
