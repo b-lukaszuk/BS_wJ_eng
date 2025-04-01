@@ -101,17 +101,15 @@ sc(s)
 ```
 
 Now, whenever we use `Player` in our code (as a variable type) we will be able
-to use one of the six informative and mnemonic names (`naive gullible
+to use one of the seven informative and mnemonic names (`naive gullible
 unforgiving paybacker unfriendly abusive egoist`). The same goes for `Choice`
 our players will make (`cooperate` and `betray`). Note, however, that in this
 last case the `Choices` are followed by the number code. We didn't have to do
 that since by default the enums are internally stored as consecutive integers
 that start at 0. Still, we did it to emphasize our plan to use this property of
-our new type in the near future.
-
-We did this because per problem description `unforgiving` monkey always betrays
-its partner when it was itself betrayed more than three times in the past. To
-that end we will need to count the betrayals.
+our new type in the near future. Namely, per problem description `unforgiving`
+monkey always betrays its partner when it was itself betrayed more than three
+times in the past. To that end we will need to count the betrayals.
 
 ```jl
 s = """
@@ -179,8 +177,7 @@ the code is pretty simple if you are familiar with [the decision making in
 Julia](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_decision_making.html).
 One point to notice is that here we used the `init=0` keyword argument in `sum`.
 This is a default value from which we start counting the total, and it makes
-sure that an empty vector (`sum(opponentMoves, init=0)`) returns `0` instead of
-an error.
+sure that an empty vector (`opponentMoves`) returns `0` instead of an error.
 
 Time to award our players with survival points per a round (interaction) and
 their choices.
