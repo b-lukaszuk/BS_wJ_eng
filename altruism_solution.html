@@ -89,7 +89,10 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./shift.html"><b>12</b> Shift</a></li>
 <li><a class="menu-level-2" href="./shift_problem.html"><b>12.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./shift_solution.html"><b>12.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./the-end.html"><b>13</b> The end</a></li>
+<li><a class="menu-level-1" href="./caesar.html"><b>13</b> Caesar</a></li>
+<li><a class="menu-level-2" href="./caesar_problem.html"><b>13.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./caesar_solution.html"><b>13.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./the-end.html"><b>14</b> The end</a></li>
 </div>
 </aside>
 
@@ -99,8 +102,7 @@ Mousetrap.bind('l', click_next);
 <p>First, let’s define all the possible values for players (i.e. monkeys) and moves (i.e. choices) by using Julia’s <a href="https://docs.julialang.org/en/v1/base/base/#Base.Enums.Enum">enums</a>.</p>
 <pre class="language-julia"><code>@enum Player naive gullible unforgiving paybacker unfriendly abusive egoist
 @enum Choice cooperate=0 betray=1</code></pre>
-<p>Now, whenever we use <code>Player</code> in our code (as a variable type) we will be able to use one of the six informative and mnemonic names (<code>naive gullible unforgiving paybacker unfriendly abusive egoist</code>). The same goes for <code>Choice</code> our players will make (<code>cooperate</code> and <code>betray</code>). Note, however, that in this last case the <code>Choices</code> are followed by the number code. We didn’t have to do that since by default the enums are internally stored as consecutive integers that start at 0. Still, we did it to emphasize our plan to use this property of our new type in the near future.</p>
-<p>We did this because per problem description <code>unforgiving</code> monkey always betrays its partner when it was itself betrayed more than three times in the past. To that end we will need to count the betrayals.</p>
+<p>Now, whenever we use <code>Player</code> in our code (as a variable type) we will be able to use one of the seven informative and mnemonic names (<code>naive gullible unforgiving paybacker unfriendly abusive egoist</code>). The same goes for <code>Choice</code> our players will make (<code>cooperate</code> and <code>betray</code>). Note, however, that in this last case the <code>Choices</code> are followed by the number code. We didn’t have to do that since by default the enums are internally stored as consecutive integers that start at 0. Still, we did it to emphasize our plan to use this property of our new type in the near future. Namely, per problem description <code>unforgiving</code> monkey always betrays its partner when it was itself betrayed more than three times in the past. To that end we will need to count the betrayals.</p>
 <pre class="language-julia"><code>import Base: +
 
 function +(c1::Choice, c2::Choice)::Int
@@ -135,7 +137,7 @@ function getMove(p::Player, opponentMoves::Vec{Choice})::Choice
         return betray
     end
 end</code></pre>
-<p>The function is a bit cumbersome to type because Julia does not have <a href="https://en.wikipedia.org/wiki/Switch_statement">a switch statement</a> known from other programming languages. If you really must have it, then consider using <a href="https://github.com/JuliaServices/Match.jl">Match.jl</a> as a replacement. Anyway, the code is pretty simple if you are familiar with <a href="https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_decision_making.html">the decision making in Julia</a>. One point to notice is that here we used the <code>init=0</code> keyword argument in <code>sum</code>. This is a default value from which we start counting the total, and it makes sure that an empty vector (<code>sum(opponentMoves, init=0)</code>) returns <code>0</code> instead of an error.</p>
+<p>The function is a bit cumbersome to type because Julia does not have <a href="https://en.wikipedia.org/wiki/Switch_statement">a switch statement</a> known from other programming languages. If you really must have it, then consider using <a href="https://github.com/JuliaServices/Match.jl">Match.jl</a> as a replacement. Anyway, the code is pretty simple if you are familiar with <a href="https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_decision_making.html">the decision making in Julia</a>. One point to notice is that here we used the <code>init=0</code> keyword argument in <code>sum</code>. This is a default value from which we start counting the total, and it makes sure that an empty vector (<code>opponentMoves</code>) returns <code>0</code> instead of an error.</p>
 <p>Time to award our players with survival points per a round (interaction) and their choices.</p>
 <pre class="language-julia"><code>function getPts(c1::Choice, c2::Choice)::Tuple{Int, Int}
     if c1 == c2 == cooperate

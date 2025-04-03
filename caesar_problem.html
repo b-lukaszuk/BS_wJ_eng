@@ -97,32 +97,16 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="10.1" id="sec:stem_and_leaf_problem"><span class="header-section-number">10.1</span> Problem</h2>
-<p>In statistics a useful technique used to visualize the distribution of data is <a href="https://en.wikipedia.org/wiki/Histogram">histogram</a>. A bit less popular, although easier to implement with text display is <a href="https://en.wikipedia.org/wiki/Stem-and-leaf_display">stem and leaf plot</a>.</p>
-<p>So here is a task for you:</p>
-<ul>
-<li>read the Wikipedia’s description of how the plot is constructed</li>
-<li>write the function that displays stem and leaf plot for positive integers (e.g. in the range 0 to 110, since wider number span doesn’t look well on printout)</li>
-<li>extend it to work also with the range -110 to 110</li>
-<li>extend it to work also with floats in the range -110.9 to 110.9</li>
-</ul>
-<p>As a minimal test, make sure it works correctly on the examples from the <a href="https://en.wikipedia.org/wiki/Stem-and-leaf_display">Wikipedia’s web page</a>, i.e</p>
-<pre class="language-julia"><code># prime numbers below 100
-stemLeafTest1 = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37,
-                41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
-# example from the Construction section
-stemLeafTest2 = [44, 46, 47, 49, 63, 64, 66, 68, 68, 72, 72, 75,
-                76, 81, 84, 88, 106]
-# another example from the Construction section
-stemLeafTest3 = [-23.678758, -12.45, -3.4, 4.43, 5.5, 5.678,
-                16.87, 24.7, 56.8]</code></pre>
+<h2 data-number="13.1" id="sec:caesar_problem"><span class="header-section-number">13.1</span> Problem</h2>
+<p>We finished the previous chapter (see Section <a href="./shift_solution.html#sec:shift_solution">12.2</a>) by stating that the file <code>trarfvf.txt</code> contains a text coded with a substitution cipher with the shift (rotation) of 13 characters. This turns out to be the famous <a href="https://en.wikipedia.org/wiki/Caesar_cipher">Caesar cipher</a> used by the famous Roman emperor in antiquity (breaking the cipher without a computer program and sufficient amount of text is not an easy task).</p>
+<p>So here is a job for you, write a computer program that can code and decode a textual message with a substitution cipher of any shift. Use it to decrypt the message contained in <code>trarfvf.txt</code> (~31 KiB). Feel free to decipher the file name (<code>trarfvf</code>) itself as well.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./stem_and_leaf.html"><b>10</b> Stem and Leaf Plot</a> <kbd>←</kbd>
+        <a class="menu-level-1" href="./caesar.html"><b>13</b> Caesar</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./stem_and_leaf_solution.html"><b>10.2</b> Solution</a>
+            <kbd>→</kbd> <a class="menu-level-2" href="./caesar_solution.html"><b>13.2</b> Solution</a>
         </span>
     </p>
 </div>
