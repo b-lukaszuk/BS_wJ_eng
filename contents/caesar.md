@@ -46,16 +46,17 @@ sc(s)
 First we create an alphabet made of `'a'` to `'z'` letters with the desired
 casing (`upper`) using a
 [StepRange](https://docs.julialang.org/en/v1/base/collections/#Base.StepRange)
-(`'a':'z'` or `'A':'Z'` that we `join` into a string). Next, we use [modulo
+(`'a':'z'` or `'A':'Z'`) that we `join` into a string. Next, we use [modulo
 operator](https://docs.julialang.org/en/v1/base/math/#Base.rem) (`%` - returns
 reminder of a division) to get the desired rotation (`rot`). This allows us to
-gracefully handle the overflow of `rotBy` [e.g. when `rotBy` is 27 and
+gracefully handle the overflow of `rotBy` [e.g. when `rotBy` is 28 and
 `length(alphabet)` is 26 we get `28 % 26`i.e. `2` (full circle turn + shift by 2
 fields)]. Then we create the rotated alphabet (`rotAlphabet`) starting at
-`(rot+1)` and appending the beginning of the normal `alphabet`. Finally, if
-`rotBy` is negative (`rotBy < 0`, decoding the message) we return `rotAlphabet`
-and `alphabet` to be used as outer and inner disc in @fig:codingDiscs2,
-otherwise `alphabet` lands in the oter ring.
+`(rot+1)` and appending (`*`) the beginning of the normal `alphabet`. Finally,
+if `rotBy` is negative (`rotBy < 0`, decrypting the message) we return
+`rotAlphabet` and `alphabet` to be used as outer and inner disc in
+@fig:codingDiscs2, respectively. Otherwise `alphabet` lands in the outer ring
+and 'rotAlphabet' in the inner one.
 
 Time for a simple test.
 
@@ -67,7 +68,7 @@ sco(s)
 ```
 
 Appears to be working as intended. Now, even a greatest journey begins with a
-first step.  Therefore in order to encode any text we need to be able to encode
+first step. Therefore, in order to encode any text we need to be able to encode
 a single character.
 
 
@@ -83,13 +84,13 @@ sco(s)
 ```
 
 We begin by obtaining `outerDisc` and `innerDisc` with `getAlphabets` that we
-just created. Next, we search for the index (`ind`) of the character to endode
+just created. Next, we search for the index (`ind`) of the character to encode
 (`c`) in the `outerDisc`. The search may fail (e.g. no `,` in an alphabet) so
-`ind` can be either of `Nothing` (value `nothing` of type `nothing` indicates a
+`ind` can be either `nothing` (value `nothing` of type `Nothing` indicates a
 failure) or an integer hence the type of `ind` is `Union{Int, Nothing}` to
 depict just that. Finally, if the search failed (`isnothing(ind)`) we just
-return `c` as it was, otherwise we return the encoded letter based read from the
-inner ring (`innerDisc[ind]`). Observe.
+return `c` as it was, otherwise we return the encoded letter read from the inner
+ring (`innerDisc[ind]`). Observe.
 
 ```jl
 s = """
@@ -102,18 +103,17 @@ s = """
 sco(s)
 ```
 
-Once we know how to code a character, time to code the string.
-
+Once we know how to code a character, time to code a string.
 
 ```jl
 s = """
-# rotBy > 0 - encrypt, rotBy < 0 - decrypt
+# rotBy > 0 - encrypting, rotBy < 0 - decrypting, rotBy = 0 - same msg
 function codeMsg(msg::Str, rotBy::Int)::Str
 	coderFn(c::Char)::Char = codeChar(c, rotBy)
 	return map(coderFn, msg)
 end
 """
-sco(s)
+sc(s)
 ```
 
 And voila. Notice, that first we created `coderFn`, which is a function ([single
@@ -129,18 +129,18 @@ inside of a function (`codeMsg`). Now we can neatly use it with `map`.
 > (multiple dispatch).
 
 OK, time to decipher our enigmatic message (remember that in @sec:shift_solution
-we figured that the shift is equal 13).
+we figured out that the shift is equal 13).
 
 ```jl
 s = """
 # be sure to adjust the path
-# the file is roughly 31 KiB
+# the file's size is roughly 31 KiB
 codedTxt = open("./code_snippets/shift/trarfvf.txt") do file
 	read(file, Str)
 end
 
 decodedTxt = codeMsg(codedTxt, -13)
-first(decodedTxt, 54)
+"<<" * first(decodedTxt, 54) * ">>"
 """
 sco(s)
 ```
@@ -154,4 +154,5 @@ codeMsg("trarfvf", -13)
 sco(s)
 ```
 
-And indeed, even the file name indicates that it is the Book of Genesis.
+And indeed, even the file name indicates that it is (a part of) the Book of
+Genesis.
