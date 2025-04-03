@@ -78,7 +78,7 @@ Test which monkey ends on top if every animal interacts a random number of times
 (let's say 50 to 300 times) with all the other animals.
 
 Does it make a difference, if you replace the unforgiving monkey with a gullible
-one (it cooperates at random 80% of the times)?
+one (it cooperates at random 90% of the times)?
 
 > **_Note:_** You don't need to strictly adhere to the above task
 > description, feel free to adjust it to your level/liking.
@@ -154,7 +154,7 @@ function getMove(p::Player, opponentMoves::Vec{Choice})::Choice
     elseif p == unforgiving
         return sum(opponentMoves, init=0) > 3 ? betray : cooperate
     elseif p == gullible
-        return prob <= 0.8 ? cooperate : betray
+        return prob <= 0.9 ? cooperate : betray
     elseif p == paybacker
         return isempty(opponentMoves) ? cooperate : opponentMoves[end]
     elseif p == unfriendly
@@ -291,7 +291,7 @@ the results. In general the good players (monkeys) win the podium with the evil
 ones in 2:1 ratio.
 
 Interestingly, if we replace the `unforgiving` with `gullible` (it cooperates at
-random 80% of the times) we get something entirely different.
+random 90% of the times) we get something entirely different.
 
 ```jl
 s = """

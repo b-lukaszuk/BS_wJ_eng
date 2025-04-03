@@ -22,7 +22,7 @@ function getMove(p::Player, opponentMoves::Vec{Choice})::Choice
     elseif p == unforgiving
         return sum(opponentMoves, init=0) > 3 ? betray : cooperate
     elseif p == gullible
-        return prob <= 0.8 ? cooperate : betray
+        return prob <= 0.9 ? cooperate : betray
     elseif p == paybacker
         return isempty(opponentMoves) ? cooperate : opponentMoves[end]
     elseif p == unfriendly
@@ -98,7 +98,7 @@ playGame([naive, unforgiving, paybacker, unfriendly, abusive, egoist])
 
 
 ###
-# replace unforgiving with gullible (prob of cooperate ~80%)
+# replace unforgiving with gullible (prob of cooperate ~90%)
 # and observe how the results change
 ###
 
