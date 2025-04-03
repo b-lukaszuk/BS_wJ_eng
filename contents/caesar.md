@@ -24,4 +24,134 @@ name (`trarfvf`) itself as well.
 
 ## Solution {#sec:caesar_solution}
 
-The solution goes here.
+Let's start by writing a function that will create alphabets for the outer and
+inner rings of the discs from @fig:codingDiscs2.
+
+![Coding Discs. The outer disc contains the original alphabet. The inner disc
+contains the alphabet shifted by 2
+characters](./images/codingDiscs.png){#fig:codingDiscs2}
+
+```jl
+s = """
+function getAlphabets(rotBy::Int, upper::Bool)::Tuple{Str, Str}
+	alphabet::Str = upper ? join('A':'Z') : join('a':'z')
+	rot::Int = abs(rotBy) % length(alphabet)
+	rotAlphabet::Str = alphabet[(rot+1):end] * alphabet[1:rot]
+	return rotBy < 0 ? (rotAlphabet, alphabet) : (alphabet, rotAlphabet)
+end
+"""
+sc(s)
+```
+
+First we create an alphabet made of `'a'` to `'z'` letters with the desired
+casing (`upper`) using a
+[StepRange](https://docs.julialang.org/en/v1/base/collections/#Base.StepRange)
+(`'a':'z'` or `'A':'Z'` that we `join` into a string). Next, we use [modulo
+operator](https://docs.julialang.org/en/v1/base/math/#Base.rem) (`%` - returns
+reminder of a division) to get the desired rotation (`rot`). This allows us to
+gracefully handle the overflow of `rotBy` [e.g. when `rotBy` is 27 and
+`length(alphabet)` is 26 we get `28 % 26`i.e. `2` (full circle turn + shift by 2
+fields)]. Then we create the rotated alphabet (`rotAlphabet`) starting at
+`(rot+1)` and appending the beginning of the normal `alphabet`. Finally, if
+`rotBy` is negative (`rotBy < 0`, decoding the message) we return `rotAlphabet`
+and `alphabet` to be used as outer and inner disc in @fig:codingDiscs2,
+otherwise `alphabet` lands in the oter ring.
+
+Time for a simple test.
+
+```jl
+s = """
+Dict(i => getAlphabets(i, true) for i in -1:1:1)
+"""
+sco(s)
+```
+
+Appears to be working as intended. Now, even a greatest journey begins with a
+first step.  Therefore in order to encode any text we need to be able to encode
+a single character.
+
+
+```jl
+s = """
+function codeChar(c::Char, rotBy::Int)::Char
+	outerDisc::Str, innerDisc::Str = getAlphabets(rotBy, isuppercase(c))
+	ind::Union{Int, Nothing} = findfirst(c, outerDisc)
+	return isnothing(ind) ? c : innerDisc[ind]
+end
+"""
+sco(s)
+```
+
+We begin by obtaining `outerDisc` and `innerDisc` with `getAlphabets` that we
+just created. Next, we search for the index (`ind`) of the character to endode
+(`c`) in the `outerDisc`. The search may fail (e.g. no `,` in an alphabet) so
+`ind` can be either of `Nothing` (value `nothing` of type `nothing` indicates a
+failure) or an integer hence the type of `ind` is `Union{Int, Nothing}` to
+depict just that. Finally, if the search failed (`isnothing(ind)`) we just
+return `c` as it was, otherwise we return the encoded letter based read from the
+inner ring (`innerDisc[ind]`). Observe.
+
+```jl
+s = """
+(
+	codeChar('a', 1),
+	codeChar('A', 2),
+	codeChar(',', 2)
+)
+"""
+sco(s)
+```
+
+Once we know how to code a character, time to code the string.
+
+
+```jl
+s = """
+# rotBy > 0 - encrypt, rotBy < 0 - decrypt
+function codeMsg(msg::Str, rotBy::Int)::Str
+	coderFn(c::Char)::Char = codeChar(c, rotBy)
+	return map(coderFn, msg)
+end
+"""
+sco(s)
+```
+
+And voila. Notice, that first we created `coderFn`, which is a function ([single
+expression
+function](https://en.wikibooks.org/wiki/Introducing_Julia/Functions#Single_expression_functions))
+inside of a function (`codeMsg`). Now we can neatly use it with `map`.
+
+> **_Note:_** `codeChar` and `codeMsg` got similar signatures (arguments:
+> `c`/`msg` and `rotBy`/`rotBy`, return values: `Char`/`Str`). So we could just
+> name the functions `code(c::Char, rotBy::Int)::Char` and `code(msg::Str,
+> rotBy::Int)::Str` (this creates a function named `code` with two methods) and
+> let Julia choose the proper one based on the type of the used arguments
+> (multiple dispatch).
+
+OK, time to decipher our enigmatic message (remember that in @sec:shift_solution
+we figured that the shift is equal 13).
+
+```jl
+s = """
+# be sure to adjust the path
+# the file is roughly 31 KiB
+codedTxt = open("./code_snippets/shift/trarfvf.txt") do file
+	read(file, Str)
+end
+
+decodedTxt = codeMsg(codedTxt, -13)
+first(decodedTxt, 54)
+"""
+sco(s)
+```
+
+Hmm, it looks suspiciously like the first phrase from the Bible.
+
+```jl
+s = """
+codeMsg("trarfvf", -13)
+"""
+sco(s)
+```
+
+And indeed, even the file name indicates that it is the Book of Genesis.
