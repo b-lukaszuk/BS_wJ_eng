@@ -1,3 +1,6 @@
+# optional, needed only to benchmark two solutions
+import BenchmarkTools as Bt
+
 const Str = String
 
 # rotBy >= 0 - returns (alphabet, rotatedAlphabet)
@@ -41,3 +44,33 @@ end
 decodedTxt = codeMsg(codedTxt, -13)
 first(decodedTxt, 54)
 codeMsg("trarfvf", -13)
+
+# improved version
+function getEncryptionMap(rotBy::Int)::Dict{Char, Char}
+    encryptionMap::Dict{Char, Char} = Dict()
+    alphabet::Str = join('a':'z')
+    rot::Int = abs(rotBy) % length(alphabet)
+    rotAlphabet::Str = alphabet[(rot+1):end] * alphabet[1:rot]
+    if rotBy < 0
+        alphabet, rotAlphabet = rotAlphabet, alphabet
+    end
+    for i in eachindex(alphabet)
+        encryptionMap[alphabet[i]] = rotAlphabet[i]
+        encryptionMap[uppercase(alphabet[i])] = uppercase(rotAlphabet[i])
+    end
+    return encryptionMap
+end
+
+function code(c::Char, encryptionMap::Dict{Char, Char})::Char
+    return get(encryptionMap, c, c)
+end
+
+function code(msg::Str, rotBy::Int)::Str
+    encryptionMap::Dict{Char, Char} = getEncryptionMap(rotBy)
+    coderFn(c::Char)::Char = code(c, encryptionMap)
+    return map(coderFn, msg)
+end
+
+# benchmark
+Bt.@benchmark(codeMsg($codedTxt, -13))
+Bt.@benchmark(code($codedTxt, -13))

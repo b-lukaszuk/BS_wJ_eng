@@ -1,10 +1,18 @@
 # Caesar {#sec:caesar}
 
-In this chapter I will not use any external libraries. Still, once you read the
-problem description you may decide to do otherwise.
+In this chapter I used the following libraries
 
-You may compare your own solution with the one in this chapter's text (with
-explanations) or with [the code
+```jl
+s3 = """
+import BenchmarkTools as Bt
+"""
+sc(s3)
+```
+
+The above was used only for the chapter's extras and is not strictly necessary to solve the task.
+
+Anyway, you may compare your own solution with the one in this chapter's text
+(with explanations) or with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/caesar)
 (without explanations).
 
@@ -121,13 +129,6 @@ expression
 function](https://en.wikibooks.org/wiki/Introducing_Julia/Functions#Single_expression_functions))
 inside of a function (`codeMsg`). Now we can neatly use it with `map`.
 
-> **_Note:_** `codeChar` and `codeMsg` got similar signatures (arguments:
-> `c`/`msg` and `rotBy`/`rotBy`, return values: `Char`/`Str`). So we could just
-> name the functions `code(c::Char, rotBy::Int)::Char` and `code(msg::Str,
-> rotBy::Int)::Str` (this creates a function named `code` with two methods) and
-> let Julia choose the proper one based on the type of the used arguments
-> (multiple dispatch).
-
 OK, time to decipher our enigmatic message (remember that in @sec:shift_solution
 we figured out that the shift is equal 13).
 
@@ -156,3 +157,81 @@ sco(s)
 
 And indeed, even the file name indicates that it is (a part of) the Book of
 Genesis.
+
+We could stop here or try to improve our solution a bit.
+
+Let's try to define `getEncryptionMap` that will be an equivalent our
+`getAlphabets`.
+
+```jl
+s = """
+function getEncryptionMap(rotBy::Int)::Dict{Char, Char}
+    encryptionMap::Dict{Char, Char} = Dict()
+    alphabet::Str = join('a':'z')
+    rot::Int = abs(rotBy) % length(alphabet)
+    rotAlphabet::Str = alphabet[(rot+1):end] * alphabet[1:rot]
+    if rotBy < 0
+        alphabet, rotAlphabet = rotAlphabet, alphabet
+    end
+    for i in eachindex(alphabet)
+        encryptionMap[alphabet[i]] = rotAlphabet[i]
+        encryptionMap[uppercase(alphabet[i])] = uppercase(rotAlphabet[i])
+    end
+    return encryptionMap
+end
+"""
+sc(s)
+```
+
+The function is pretty similar to the previously mentioned, except for the fact
+that it returns a dictionary with the alphabet on the outer disc being the keys
+and the letters on the inner disc are its values (compare with
+@fig:codingDiscs2). Moreover, the map contains both lower- and upper-case
+characters.
+
+Time to code a character.
+
+```jl
+s = """
+function code(c::Char, encryptionMap::Dict{Char, Char})::Char
+    return get(encryptionMap, c, c)
+end
+"""
+sco(s)
+```
+
+To that end we used the built in `get` function that looks for a character (`c`,
+`get`'s second argument) in `encryptionMap`, if the search failed it returns the
+character as default (`c`, `get`'s third argument).
+
+Finally, let's code the message.
+
+```jl
+s = """
+function code(msg::Str, rotBy::Int)::Str
+    encryptionMap::Dict{Char, Char} = getEncryptionMap(rotBy)
+    coderFn(c::Char)::Char = code(c, encryptionMap)
+    return map(coderFn, msg)
+end
+"""
+sco(s)
+```
+
+Notice, that we two different versions (aka methods) of `code` function. Julia
+will choose the right one during invocation based on the type of the arguments.
+
+Time for a test.
+
+```jl
+s = """
+codeMsg(codedTxt, -13) == code(codedTxt, -13)
+"""
+sco(s)
+```
+
+Works the same, still in the above case `codeMsg` takes tens of milliseconds to
+execute, whereas `code` only hundreds of microseconds (on my laptop). The human
+may not tell the difference, but we obtained some 50x speedup thanks to the
+faster lookups in dictionaries (sometimes called hash maps in other programming
+languages) and the fact that we do not generate our discs anew for every
+letter we code.
