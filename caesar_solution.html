@@ -137,9 +137,6 @@ function codeMsg(msg::Str, rotBy::Int)::Str
     return map(coderFn, msg)
 end</code></pre>
 <p>And voila. Notice, that first we created <code>coderFn</code>, which is a function (<a href="https://en.wikibooks.org/wiki/Introducing_Julia/Functions#Single_expression_functions">single expression function</a>) inside of a function (<code>codeMsg</code>). Now we can neatly use it with <code>map</code>.</p>
-<blockquote>
-<p><strong><em>Note:</em></strong> <code>codeChar</code> and <code>codeMsg</code> got similar signatures (arguments: <code>c</code>/<code>msg</code> and <code>rotBy</code>/<code>rotBy</code>, return values: <code>Char</code>/<code>Str</code>). So we could just name the functions <code>code(c::Char, rotBy::Int)::Char</code> and <code>code(msg::Str, rotBy::Int)::Str</code> (this creates a function named <code>code</code> with two methods) and let Julia choose the proper one based on the type of the used arguments (multiple dispatch).</p>
-</blockquote>
 <p>OK, time to decipher our enigmatic message (remember that in Section <a href="./shift_solution.html#sec:shift_solution">12.2</a> we figured out that the shift is equal 13).</p>
 <pre class="language-julia"><code># be sure to adjust the path
 # the file&#39;s size is roughly 31 KiB
@@ -154,6 +151,41 @@ decodedTxt = codeMsg(codedTxt, -13)
 <pre class="language-julia"><code>codeMsg(&quot;trarfvf&quot;, -13)</code></pre>
 <p>genesis</p>
 <p>And indeed, even the file name indicates that it is (a part of) the Book of Genesis.</p>
+<p>We could stop here or try to improve our solution a bit.</p>
+<p>Let’s try to define <code>getEncryptionMap</code> that will be an equivalent our <code>getAlphabets</code>.</p>
+<pre class="language-julia"><code>function getEncryptionMap(rotBy::Int)::Dict{Char, Char}
+    encryptionMap::Dict{Char, Char} = Dict()
+    alphabet::Str = join(&#39;a&#39;:&#39;z&#39;)
+    rot::Int = abs(rotBy) % length(alphabet)
+    rotAlphabet::Str = alphabet[(rot+1):end] * alphabet[1:rot]
+    if rotBy &lt; 0
+        alphabet, rotAlphabet = rotAlphabet, alphabet
+    end
+    for i in eachindex(alphabet)
+        encryptionMap[alphabet[i]] = rotAlphabet[i]
+        encryptionMap[uppercase(alphabet[i])] = uppercase(rotAlphabet[i])
+    end
+    return encryptionMap
+end</code></pre>
+<p>The function is pretty similar to the previously mentioned, except for the fact that it returns a dictionary with the alphabet on the outer disc being the keys and the letters on the inner disc are its values (compare with Figure <a href="#fig:codingDiscs2">7</a>). Moreover, the map contains both lower- and upper-case characters.</p>
+<p>Time to code a character.</p>
+<pre class="language-julia"><code>function code(c::Char, encryptionMap::Dict{Char, Char})::Char
+    return get(encryptionMap, c, c)
+end</code></pre>
+<pre class="output"><code>code (generic function with 2 methods)</code></pre>
+<p>To that end we used the built in <code>get</code> function that looks for a character (<code>c</code>, <code>get</code>’s second argument) in <code>encryptionMap</code>, if the search failed it returns the character as default (<code>c</code>, <code>get</code>’s third argument).</p>
+<p>Finally, let’s code the message.</p>
+<pre class="language-julia"><code>function code(msg::Str, rotBy::Int)::Str
+    encryptionMap::Dict{Char, Char} = getEncryptionMap(rotBy)
+    coderFn(c::Char)::Char = code(c, encryptionMap)
+    return map(coderFn, msg)
+end</code></pre>
+<pre class="output"><code>code (generic function with 2 methods)</code></pre>
+<p>Notice, that we two different versions (aka methods) of <code>code</code> function. Julia will choose the right one during invocation based on the type of the arguments.</p>
+<p>Time for a test.</p>
+<pre class="language-julia"><code>codeMsg(codedTxt, -13) == code(codedTxt, -13)</code></pre>
+<p>true</p>
+<p>Works the same, still in the above case <code>codeMsg</code> takes tens of milliseconds to execute, whereas <code>code</code> only hundreds of microseconds (on my laptop). The human may not tell the difference, but we obtained some 50x speedup thanks to the faster lookups in dictionaries (sometimes called hash maps in other programming languages) and the fact that we do not generate our discs anew for every letter we code.</p>
 
 
 <div class="bottom-nav">

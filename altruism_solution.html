@@ -120,7 +120,8 @@ end</code></pre>
 <pre class="language-julia"><code>import Random as Rnd
 
 function getMove(p::Player, opponentMoves::Vec{Choice})::Choice
-    prob::Flt = Rnd.rand() # random float in range [0.0-1.0)
+    # random float in range [0.0-1.0), prob [0.0-1.0], so good enough
+    prob::Flt = Rnd.rand()
     if p == naive
         return cooperate
     elseif p == unforgiving

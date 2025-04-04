@@ -130,10 +130,11 @@ end</code></pre>
     @assert len % 3 == 0 &quot;the number of bases must be multiple of 3&quot;
     aas::Vec{Str} = fill(&quot;&quot;, Int(len/3))
     aaInd::Int = 0
+    codon::Str, aa::Str = &quot;&quot;, &quot;&quot;
     for i in 1:3:len
         aaInd += 1
-        codon::Str = mRnaSeq[i:(i+2)] # variable local to for loop
-        aa::Str = getAA(codon) # variable local to for loop
+        codon = mRnaSeq[i:(i+2)] # variable local to for loop
+        aa = getAA(codon) # variable local to for loop
         if aa == &quot;Stop&quot;
             break
         end
@@ -162,11 +163,11 @@ end</code></pre>
 <pre class="language-julia"><code>protein2 = translate2(mRna)
 expectedAAseq == protein2</code></pre>
 <p>true</p>
-<p>Works as expected. The functional solution (<code>translate2</code>) often has fewer lines of code. It also consists of a series of consecutive logical steps, which is quite nice. However, for a beginner (or someone that doesn’t know this paradigm well) it appears more enigmatic (and therefore off-putting). Moreover, in general it is expected to be a bit slower than the more imperative for loop version (<code>translate</code>). This should be evident with long sequences [try <code>BenchmarkTools.@benchmark translate($mRna^20)</code> vs <code>@BenchmarkTools.@benchmark translate2($mRna^20)</code> in the REPL (type it after <code>julia&gt;</code> prompt)].</p>
+<p>Works as expected. The functional solution (<code>translate2</code>) often has fewer lines of code (8 vs 17 for <code>translate2</code> and <code>translate</code>, respectively). It also consists of a series of consecutive logical steps, which is quite nice. However, for a beginner (or someone that doesn’t know this paradigm well) it appears more enigmatic (and therefore off-putting). Moreover, in general it is expected to be a bit slower than the more imperative for loop version (<code>translate</code>). This should be evident with long sequences [try <code>BenchmarkTools.@benchmark translate($mRna^20)</code> vs <code>BenchmarkTools.@benchmark translate2($mRna^20)</code> in the REPL (type it after <code>julia&gt;</code> prompt)].</p>
 <blockquote>
 <p>Note. <code>$</code> (see above) is an interpolation of global variable recommended <a href="https://juliaci.github.io/BenchmarkTools.jl/stable/">by the package</a>. On the other hand, <code>^</code>, (again see above) replicates a string <code>n</code> times, e.g. <code>"ab" ^ 3</code> = <code>"ababab"</code>. Interestingly, although <code>translate(mRna^20)</code> and <code>translate2(mRna^20)</code> receive a strand of RNA 20 times longer than <code>mRna</code> they still return the same amino acid sequence as before. Test yourself and explain why. This will also help you realize why <code>translate2</code> is slower than its counterpart.</p>
 </blockquote>
-<p>In the said case (with <code>mRna^20</code>) the difference between <span class="math inline">\(\approx 27\ [\mu s]\)</span> and <span class="math inline">\(\approx 140\ [\mu s]\)</span> (on my laptop) shouldn’t be noticeable by a human (<span class="math inline">\(140\ [\mu s]\)</span> is a bit more than 1/10 th of a second). Therefore, if the performance is acceptable you may want to go with the functional version.</p>
+<p>In the said case (with <code>mRna^20</code>) the difference between <span class="math inline">\(\approx 27\ [\mu s]\)</span> and <span class="math inline">\(\approx 140\ [\mu s]\)</span> (on my laptop) shouldn’t be noticeable by a human (<span class="math inline">\(140\ [\mu s]\)</span> is less than 1/1’000th of a second). Therefore, if the performance is acceptable you may want to go with the functional version.</p>
 <p>Anyway, both Section <a href="./transcription.html#sec:transcription">8</a> and Section <a href="./translation.html#sec:translation">9</a> were inspired by the lecture of <a href="https://www.researchgate.net/publication/16952023_Sequence_of_human_insulin_gene">this ResearchGate entry</a> based on which the DNA sequence was obtained (<code>dna_seq_template_strand.txt</code> from Section <a href="./transcription.html#sec:transcription">8</a>).</p>
 
 
