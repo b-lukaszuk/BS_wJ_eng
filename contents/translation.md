@@ -171,10 +171,11 @@ function translate(mRnaSeq::Str)::Str
     @assert len % 3 == 0 "the number of bases must be multiple of 3"
     aas::Vec{Str} = fill("", Int(len/3))
     aaInd::Int = 0
+	codon::Str, aa::Str = "", ""
     for i in 1:3:len
         aaInd += 1
-        codon::Str = mRnaSeq[i:(i+2)] # variable local to for loop
-        aa::Str = getAA(codon) # variable local to for loop
+        codon = mRnaSeq[i:(i+2)] # variable local to for loop
+        aa = getAA(codon) # variable local to for loop
         if aa == "Stop"
             break
         end
@@ -262,14 +263,15 @@ sco(s)
 ```
 
 Works as expected. The functional solution (`translate2`) often has fewer lines
-of code. It also consists of a series of consecutive logical steps, which is
-quite nice. However, for a beginner (or someone that doesn't know this paradigm
-well) it appears more enigmatic (and therefore off-putting). Moreover, in
-general it is expected to be a bit slower than the more imperative for loop
-version (`translate`). This should be evident with long sequences [try
- `BenchmarkTools.@benchmark translate($mRna^20)` vs
- `@BenchmarkTools.@benchmark translate2($mRna^20)` in the REPL (type it after
-`julia>` prompt)].
+of code (8 vs 17 for `translate2` and `translate`, respectively). It also
+consists of a series of consecutive logical steps, which is quite nice. However,
+for a beginner (or someone that doesn't know this paradigm well) it appears more
+enigmatic (and therefore off-putting). Moreover, in general it is expected to be
+a bit slower than the more imperative for loop version (`translate`). This
+should be evident with long sequences [try
+`BenchmarkTools.@benchmark translate($mRna^20)` vs
+`BenchmarkTools.@benchmark translate2($mRna^20)` in the
+REPL (type it after `julia>` prompt)].
 
 > Note. `$` (see above) is an interpolation of global variable recommended [by
 > the package](https://juliaci.github.io/BenchmarkTools.jl/stable/). On the
@@ -282,7 +284,7 @@ version (`translate`). This should be evident with long sequences [try
 
 In the said case (with `mRna^20`) the difference between $\approx 27\ [\mu s]$
 and $\approx 140\ [\mu s]$ (on my laptop) shouldn't be noticeable by a human
-($140\ [\mu s]$ is a bit more than 1/10 th of a second). Therefore, if the
+($140\ [\mu s]$ is less than 1/1'000th of a second). Therefore, if the
 performance is acceptable you may want to go with the functional version.
 
 Anyway, both @sec:transcription and @sec:translation were inspired by the

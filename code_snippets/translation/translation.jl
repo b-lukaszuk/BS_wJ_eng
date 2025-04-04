@@ -71,10 +71,11 @@ function translate(mRnaSeq::Str)::Str
     @assert len % 3 == 0 "the number of bases must be multiple of 3"
     aas::Vec{Str} = fill("", Int(len/3))
     aaInd::Int = 0
+    codon::Str, aa::Str = "", ""
     for i in 1:3:len
         aaInd += 1
-        codon::Str = mRnaSeq[i:(i+2)] # variable local to for loop
-        aa::Str = getAA(codon) # variable local to for loop
+        codon = mRnaSeq[i:(i+2)]
+        aa = getAA(codon)
         # if block could be replaced with: aa == "Stop" && break
         if aa == "Stop"
             break
