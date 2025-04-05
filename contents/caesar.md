@@ -197,7 +197,7 @@ function code(c::Char, encryptionMap::Dict{Char, Char})::Char
     return get(encryptionMap, c, c)
 end
 """
-sco(s)
+sc(s)
 ```
 
 To that end we used the built in `get` function that looks for a character (`c`,

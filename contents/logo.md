@@ -20,7 +20,7 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/logo)
 Julia is a nice programming language with over 10'000 registered packages for
 community use. Some of them come with cool logos.
 
-In this task your job is to use you favorite plotting library to reproduce the
+In this task your job is to use your favorite plotting library to reproduce the
 logo of [JuliaStats](https://juliastats.org/) that you may find
 [here](https://juliastats.org/images/logo.png) (it doesn't have to be exact).
 
