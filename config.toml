@@ -15,6 +15,7 @@ contents = [
     "altruism",
     "shift",
     "caesar",
+    "vigenere",
     "the_end",
 ]
 
