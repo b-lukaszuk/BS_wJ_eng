@@ -160,7 +160,7 @@ Genesis.
 
 We could stop here or try to improve our solution a bit.
 
-Let's try to define `getEncryptionMap` that will be an equivalent our
+Let's try to define `getEncryptionMap` that will be an equivalent of our
 `getAlphabets`.
 
 ```jl
@@ -202,7 +202,7 @@ sc(s)
 
 To that end we used the built in `get` function that looks for a character (`c`,
 `get`'s second argument) in `encryptionMap`, if the search failed it returns the
-character as default (`c`, `get`'s third argument).
+character as a default value (`c`, `get`'s third argument).
 
 Finally, let's code the message.
 
@@ -229,9 +229,9 @@ codeMsg(codedTxt, -13) == code(codedTxt, -13)
 sco(s)
 ```
 
-Works the same, still in the above case `codeMsg` takes tens of milliseconds to
-execute, whereas `code` only hundreds of microseconds (on my laptop). The human
-may not tell the difference, but we obtained some 50x speedup thanks to the
-faster lookups in dictionaries (sometimes called hash maps in other programming
-languages) and the fact that we do not generate our discs anew for every
-letter we code.
+Works the same, still in the above case `codeMsg(codedTxt, -13)` takes tens of
+milliseconds to execute, whereas `code(codedTxt, -13)` only hundreds of
+microseconds (on my laptop). The human may not tell the difference, but we
+obtained some 50x speedup thanks to the faster lookups in dictionaries
+(sometimes called hash maps in other programming languages) and the fact that we
+do not generate our discs anew for every letter we code.

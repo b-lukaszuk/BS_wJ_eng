@@ -46,7 +46,7 @@ function getAlphabets(rotBy::Int, upper::Bool)::Tuple{Str, Str}
     return rotBy < 0 ? (rotAlphabet, alphabet) : (alphabet, rotAlphabet)
 end
 
-function code(c::Char, rotBy::Int)::Char
+function codeChar(c::Char, rotBy::Int)::Char
     outerDisc::Str, innerDisc::Str = getAlphabets(rotBy, isuppercase(c))
     ind::Union{Int, Nothing} = findfirst(c, outerDisc)
     return isnothing(ind) ? c : innerDisc[ind]
@@ -63,7 +63,7 @@ function isAsciiLetter(c::Char)::Bool
     return isascii(c) && isletter(c)
 end
 
-function code(msg::Str, passphrase::Str, decode::Bool=false)::Str
+function codeMsg(msg::Str, passphrase::Str, decode::Bool=false)::Str
     pass::Str = filter(isAsciiLetter, lowercase(passphrase))
     pwr::Int = ceil(length(msg) / length(pass))
     pass = pass ^ pwr
@@ -74,7 +74,7 @@ function code(msg::Str, passphrase::Str, decode::Bool=false)::Str
     result::Vec{Char} = Vec{Char}(undef, length(msg))
     shiftsInd::Int = 1
     for (ind, char) in enumerate(msg)
-        result[ind] = code(char, shifts[shiftsInd])
+        result[ind] = codeChar(char, shifts[shiftsInd])
         if isAsciiLetter(char)
             shiftsInd += 1
         end
@@ -86,39 +86,42 @@ sc(s1)
 ```
 
 We begin with come preparatory code. First, we `lowercase` the `passphrase` and
-retain only 'a':'z' and 'A':'Z' letters (`isAsciiLetter`). Next, we check how
-many times longer is the coded message (`length(msg)`) in comparison to the
-passphrase (`length(pass)`). The `ceil` function rounds the obtained float to
-the nearest whole number higher than or equal to it. Finally, we repeat `pass`
-the necessary number of times (`^ pwr`) to make sure it is at least as long as
-our `msg`. Next, we obtain the shifts by subtracting `'a'` from every character
+retain only 'a':'z' characters (`isAsciiLetter`). Next, we check how many times
+longer is the coded message (`length(msg)`) in comparison to the passphrase
+(`length(pass)`). The `ceil` function rounds the obtained float to the nearest
+whole number higher than or equal to it. Finally, we repeat `pass` the necessary
+number of times (`^ pwr`) to make sure it is at least as long as our
+`msg`. Next, we obtain the shifts by subtracting `'a'` from every character
 (`c`) in the passphrase (`pass`). For decoding (`if decode`) purposes we change
-the signs in `shifts` to the opposite (` .*= -1`). We initialize an empty vector
-of chars of a given length (`Vec{Char}(undef, length(msg))`). Afterwards, we
-traverse (`for`) all characters (`char`) and their indices (`ind`) in `msg`. We
-code a `char` with the proper shift (`shiftsInd`). If the coded character was a
-letter (`isAsciiLetter(char)`) we update the `shiftsInd` (we use the next shift
-for coding of another letter). Finally, we concatenate the chars (`result`) into
-a string (`join`) that we return.
+the signs in `shifts` to the opposite (` .*= -1`, where `.*` multiplies every
+shift by `-1` and `=` re-assigns them to the `shifts` variable). We initialize
+an empty vector of chars of a given length (`Vec{Char}(undef,
+length(msg))`). Afterwards, we traverse (`for`) all characters (`char`) and
+their indices (`ind`) in `msg`. We code a `char` with the proper shift
+(`shiftsInd`). If the coded character was a letter (`isAsciiLetter(char)`) we
+update the `shiftsInd` (we use the next shift for coding of another
+letter). Finally, we concatenate the chars (`result`) into a string (`join`)
+that we return.
 
 Time for our minimal test.
 
 ```jl
 s = """
 (
-	code("attacking tonight", "oculorhinolaryngology"),
-	code("Attacking tonight", "oculorhinolaryngology"),
-	code("attacking Tonight", "oCulorhinolaryngology")
+	codeMsg("attacking tonight", "oculorhinolaryngology"),
+	codeMsg("Attacking tonight", "oculorhinolaryngology"),
+	codeMsg("attacking Tonight", "oCulorhinolaryngoloGY")
 )
 """
 sco(s)
 ```
 
-Yep, we got the expected "ovnlqbpvt hznzeuz" (with consistent casing).
+Yep, we got the expected "ovnlqbpvt hznzeuz" (with casing consistent with the
+original message).
 
 And now for the second part of this exercise. We will code `genesis.txt` with
-the passphrase "Julia rocks, believe in its magic." and see did it changed the
-frequency distribution of letters (no single, clearly dominant letter).
+the passphrase "Julia rocks, believe in its magic." and see if it changed the
+frequency distribution of the letters (no single, clearly dominant letter).
 
 To this end we will mostly use the code from @sec:shift_solution so go there if
 you need detailed explanations.
@@ -133,7 +136,7 @@ plainTxt = open("./code_snippets/vigenere/genesis.txt") do file
     read(file, Str)
 end
 passphrase = "Julia rocks, believe in its magic."
-codedTxt = code(plainTxt, passphrase)
+codedTxt = codeMsg(plainTxt, passphrase)
 
 (
 	first(plainTxt, 16),
@@ -147,8 +150,8 @@ Now let's use the functions to obtain the letter frequencies.
 
 ```jl
 s = """
-plainTxt = filter(isUppercaseLetter, uppercase(plainTxt))
-codedTxt = filter(isUppercaseLetter, uppercase(codedTxt))
+plainTxt = filter(isAsciiLetter, uppercase(plainTxt))
+codedTxt = filter(isAsciiLetter, uppercase(codedTxt))
 
 function getCounts(s::Str)::Dict{Char,Int}
     counts::Dict{Char, Int} = Dict()
@@ -215,3 +218,12 @@ The letter distribution definetely got more
 [uniform](https://en.wikipedia.org/wiki/Discrete_uniform_distribution). This
 should make cracking the cipher more difficult, but still
 [possible](https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher#Cryptanalysis).
+
+The performance of our `codeMsg` should be comparable to its counterpart in
+@sec:caesar_solution. If you expect to work on long text messages you may
+improve it, e.g. by generating `encryptionMaps`. It would be a `Dict{Int,
+Dict{Char, Char}}` where the key (`Int`) is a possible shift (`0` to `25`) and
+the value (`Dict{Char, Char}`) is an `encryptionMap` (like the one produced by
+`getEncryptionMap` in @sec:caesar_solution) for that shift. You could generate
+the `encryptionMaps` only once and use them inside `codeMsg` based on the shift
+from `shifts::Vec{Int}`. I'll leave this as an extra exercise for you.

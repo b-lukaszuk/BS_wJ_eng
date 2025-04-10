@@ -13,7 +13,7 @@ function getAlphabets(rotBy::Int, upper::Bool)::Tuple{Str, Str}
     return rotBy < 0 ? (rotAlphabet, alphabet) : (alphabet, rotAlphabet)
 end
 
-function code(c::Char, rotBy::Int)::Char
+function codeChar(c::Char, rotBy::Int)::Char
     outerDisc::Str, innerDisc::Str = getAlphabets(rotBy, isuppercase(c))
     ind::Union{Int, Nothing} = findfirst(c, outerDisc)
     return isnothing(ind) ? c : innerDisc[ind]
@@ -23,7 +23,7 @@ function isAsciiLetter(c::Char)::Bool
     return isascii(c) && isletter(c)
 end
 
-function code(msg::Str, passphrase::Str, decode::Bool=false)::Str
+function codeMsg(msg::Str, passphrase::Str, decode::Bool=false)::Str
     pass::Str = filter(isAsciiLetter, lowercase(passphrase))
     pwr::Int = ceil(length(msg) / length(pass))
     pass = pass ^ pwr
@@ -34,7 +34,7 @@ function code(msg::Str, passphrase::Str, decode::Bool=false)::Str
     result::Vec{Char} = Vec{Char}(undef, length(msg))
     shiftsInd::Int = 1
     for (ind, char) in enumerate(msg)
-        result[ind] = code(char, shifts[shiftsInd])
+        result[ind] = codeChar(char, shifts[shiftsInd])
         if isAsciiLetter(char)
             shiftsInd += 1
         end
@@ -45,18 +45,18 @@ end
 m = "attacking tonight"
 p = "oculorhinolaryngology"
 
-res1 = code(m, p)
+res1 = codeMsg(m, p)
 res2 = "ovnlqbpvt hznzeuz" # expected result
 res1 == res2
 
-code(res2, p, true)
+codeMsg(res2, p, true)
 
 # frequencies of genesis coded with vigenere cipher
 plainTxt = open("./genesis.txt") do file
     read(file, Str)
 end
 passphrase = "Julia rocks, believe in its magic."
-codedTxt = code(plainTxt, passphrase)
+codedTxt = codeMsg(plainTxt, passphrase)
 
 plainTxt = filter(isAsciiLetter, uppercase(plainTxt))
 codedTxt = filter(isAsciiLetter, uppercase(codedTxt))
