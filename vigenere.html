@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Solution - Build SH*T with Julia</title>
+  <title>Vigenere - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -100,65 +100,17 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="12.2" id="sec:shift_solution"><span class="header-section-number">12.2</span> Solution</h2>
-<p>Let’s approach the problem step by step.</p>
-<p>First let’s read the file’s contents (<code>open</code> and <code>read</code>, compare with Section <a href="./transcription_solution.html#sec:transcription_solution">8.2</a>), <code>uppercase</code> all the characters (compare with Section <a href="./translation_solution.html#sec:translation_solution">9.2</a>) and preserve only letters (<code>filter</code>).</p>
-<pre class="language-julia"><code># the file is roughly 31 KiB
-# if necessary adjust the filePath
-codedTxt = open(&quot;./code_snippets/shift/trarfvf.txt&quot;) do file
-    read(file, Str)
-end
-
-codedTxt = uppercase(codedTxt)
-
-function isUppercaseLetter(c::Char)::Bool
-    return c in &#39;A&#39;:&#39;Z&#39;
-end
-
-codedTxt = filter(isUppercaseLetter, codedTxt)
-first(codedTxt, 20)</code></pre>
-<p>VAGURORTVAAVATTBQPER</p>
-<p>Time to get the letter counts and frequencies.</p>
-<pre class="language-julia"><code>function getCounts(s::Str)::Dict{Char,Int}
-    counts::Dict{Char, Int} = Dict()
-    for char in s
-        if haskey(counts, char)
-            counts[char] = counts[char] + 1
-        else
-            counts[char] = 1
-        end
-    end
-    return counts
-end
-
-function getFreqs(counts::Dict{Char, Int})::Dict{Char,Float64}
-    total::Int = sum(values(counts))
-    return Dict(k =&gt; v/total for (k, v) in counts)
-end
-
-function getFreqs(s::Str)::Dict{Char,Float64}
-    return s |&gt; getCounts |&gt; getFreqs
-end</code></pre>
-<p>The code is rather simple. Moreover it is quite similar to <code>getCounts</code> and <code>getProbs</code> that I discussed it in detail <a href="https://b-lukaszuk.github.io/RJ_BS_eng/statistics_prob_theor_practice.html">in my previous book</a> so give it a sneak peak if you need a more thorough explanation (I apply DRY principle here).</p>
-<p>According to <a href="https://en.wikipedia.org/wiki/Letter_frequency">this Wikipedia’s page</a> the letter that occurs most often in English is <code>E</code> (frequency: 0.127 or 12.7%, compare with <a href="https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_probability_definition.html">this discussion</a>). Time to see which letter is the most frequent in our encoded text.</p>
-<pre class="language-julia"><code>codedLetFreqs = getFreqs(codedTxt)
-[k =&gt; v for (k, v) in codedLetFreqs if v &gt; 0.12]</code></pre>
-<pre class="output"><code>&#39;R&#39; =&gt; 0.13374233128834356</code></pre>
-<p>And the winner is <code>R</code>. In the metal insides of a computer letters are represented as numbers (see, <a href="https://en.wikipedia.org/wiki/ASCII">e.g. here</a>). We can use this to our advantage and quickly obtain the shift.</p>
-<pre class="language-julia"><code>&#39;R&#39; - &#39;E&#39; # ASCII: 82 - 69</code></pre>
-<p>13</p>
-<p>And so it turns out, that our encrypted message was coded with a shift cipher with the rotation of 13. If we were even more stubborn, we could display both the frequencies on a graph like Figure <a href="#fig:letterFrequency">6</a> (we do not expect the fit to be perfect).</p>
-<figure id="fig:letterFrequency">
-<img src="./images/letterFreqency.png" alt="Figure 6: Frequency analysis of an encrypted text." />
-<figcaption aria-hidden="true">Figure 6: Frequency analysis of an encrypted text.</figcaption>
-</figure>
+<h1 data-number="14" id="sec:vigenere"><span class="header-section-number">14</span> Vigenere</h1>
+<p>In this chapter you may or may not use the following external libraries.</p>
+<pre class="language-julia"><code>import CairoMakie as Cmk</code></pre>
+<p>You may compare your own solution with the one in this chapter’s text (with explanations) or with <a href="https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/vigenere">the code snippets</a> (without explanations).</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-2" href="./shift_problem.html"><b>12.1</b> Problem</a> <kbd>←</kbd>
+        <a class="menu-level-2" href="./caesar_solution.html"><b>13.2</b> Solution</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-1" href="./caesar.html"><b>13</b> Caesar</a>
+            <kbd>→</kbd> <a class="menu-level-2" href="./vigenere_problem.html"><b>14.1</b> Problem</a>
         </span>
     </p>
 </div>

@@ -92,7 +92,10 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./caesar.html"><b>13</b> Caesar</a></li>
 <li><a class="menu-level-2" href="./caesar_problem.html"><b>13.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./caesar_solution.html"><b>13.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./the-end.html"><b>14</b> The end</a></li>
+<li><a class="menu-level-1" href="./vigenere.html"><b>14</b> Vigenere</a></li>
+<li><a class="menu-level-2" href="./vigenere_problem.html"><b>14.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./vigenere_solution.html"><b>14.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./the-end.html"><b>15</b> The end</a></li>
 </div>
 </aside>
 
@@ -152,7 +155,7 @@ decodedTxt = codeMsg(codedTxt, -13)
 <p>genesis</p>
 <p>And indeed, even the file name indicates that it is (a part of) the Book of Genesis.</p>
 <p>We could stop here or try to improve our solution a bit.</p>
-<p>Let’s try to define <code>getEncryptionMap</code> that will be an equivalent our <code>getAlphabets</code>.</p>
+<p>Let’s try to define <code>getEncryptionMap</code> that will be an equivalent of our <code>getAlphabets</code>.</p>
 <pre class="language-julia"><code>function getEncryptionMap(rotBy::Int)::Dict{Char, Char}
     encryptionMap::Dict{Char, Char} = Dict()
     alphabet::Str = join(&#39;a&#39;:&#39;z&#39;)
@@ -172,8 +175,7 @@ end</code></pre>
 <pre class="language-julia"><code>function code(c::Char, encryptionMap::Dict{Char, Char})::Char
     return get(encryptionMap, c, c)
 end</code></pre>
-<pre class="output"><code>code (generic function with 2 methods)</code></pre>
-<p>To that end we used the built in <code>get</code> function that looks for a character (<code>c</code>, <code>get</code>’s second argument) in <code>encryptionMap</code>, if the search failed it returns the character as default (<code>c</code>, <code>get</code>’s third argument).</p>
+<p>To that end we used the built in <code>get</code> function that looks for a character (<code>c</code>, <code>get</code>’s second argument) in <code>encryptionMap</code>, if the search failed it returns the character as a default value (<code>c</code>, <code>get</code>’s third argument).</p>
 <p>Finally, let’s code the message.</p>
 <pre class="language-julia"><code>function code(msg::Str, rotBy::Int)::Str
     encryptionMap::Dict{Char, Char} = getEncryptionMap(rotBy)
@@ -185,14 +187,14 @@ end</code></pre>
 <p>Time for a test.</p>
 <pre class="language-julia"><code>codeMsg(codedTxt, -13) == code(codedTxt, -13)</code></pre>
 <p>true</p>
-<p>Works the same, still in the above case <code>codeMsg</code> takes tens of milliseconds to execute, whereas <code>code</code> only hundreds of microseconds (on my laptop). The human may not tell the difference, but we obtained some 50x speedup thanks to the faster lookups in dictionaries (sometimes called hash maps in other programming languages) and the fact that we do not generate our discs anew for every letter we code.</p>
+<p>Works the same, still in the above case <code>codeMsg(codedTxt, -13)</code> takes tens of milliseconds to execute, whereas <code>code(codedTxt, -13)</code> only hundreds of microseconds (on my laptop). The human may not tell the difference, but we obtained some 50x speedup thanks to the faster lookups in dictionaries (sometimes called hash maps in other programming languages) and the fact that we do not generate our discs anew for every letter we code.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
         <a class="menu-level-2" href="./caesar_problem.html"><b>13.1</b> Problem</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-             
+            <kbd>→</kbd> <a class="menu-level-1" href="./vigenere.html"><b>14</b> Vigenere</a>
         </span>
     </p>
 </div>
