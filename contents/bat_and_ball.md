@@ -22,7 +22,10 @@ happened to knew from my youth:
 > A bat and a ball cost in total $1.1. The bat costs $1 more than the ball. How
 > much costs the ball?
 
-Pause for a moment and try to find the answer.
+Pause for a moment and try to find the answer. If you are stuck, then do this
+with pen and paper first. Then watch
+[this](https://www.youtube.com/watch?v=AUqeb9Z3y3k) video and look for Julia's
+built in functionality that will speed up the longhand calculations.
 
 ## Solution {#sec:bat_and_ball_solution}
 
