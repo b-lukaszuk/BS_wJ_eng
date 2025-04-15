@@ -3,6 +3,7 @@ import Symbolics as Sym
 
 struct Sphere
     radius::Float64
+    Sphere(r::Float64) = r <= 0 ? error("radius must be > 0") : new(r)
 end
 
 function getVolume(s::Sphere)::Float64
