@@ -42,6 +42,7 @@ what we will use in our solution.
 s = """
 struct Sphere
     radius::Float64
+    Sphere(r::Float64) = r <= 0 ? error("radius must be > 0") : new(r)
 end
 
 # formula from Wikipedia

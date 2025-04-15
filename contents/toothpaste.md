@@ -64,7 +64,28 @@ sc(s)
 We will skip the detailed explanations, as the above are just translations of
 the Wikipedia's formulas into Julia's code.
 
-Now, in order to answer how much the sales will increase we need to estimate the
+There is a slight problem with the code above as one could argue that a cylinder
+mustn't have any of its dimensions equal to or smaller than 0 (`Int` allows for
+such numbers). So we can either use an [unsigned
+type](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/)
+(like `UInt64`) or add a sanity check within a so called [inner
+constructor](https://docs.julialang.org/en/v1/manual/constructors/#man-inner-constructor-methods).
+
+```jl
+s = """
+struct Cylinder
+    radius::Int
+    height::Int
+
+    Cylinder(r::Int, h::Int) = (r < 1 || h < 1) ?
+        error("both radius and height must be >= 1") :
+        new(r, h)
+end
+"""
+sc(s)
+```
+
+Anyway, in order to answer how much the sales will increase we need to estimate the
 increase in our toothpaste's usage when the radius and height of our cylinder
 changes.
 
