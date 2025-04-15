@@ -4,6 +4,10 @@ const Flt = Float64
 struct Cylinder
     radius::Int
     height::Int
+
+    Cylinder(r::Int, h::Int) = (r < 1 || h < 1) ?
+        error("both radius and height must be >= 1") :
+        new(r, h)
 end
 
 function getVolume(c::Cylinder)::Flt
