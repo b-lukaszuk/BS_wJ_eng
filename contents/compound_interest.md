@@ -1,4 +1,4 @@
-# Compound interest {#sec:compound_interest}
+#the  Compound interest {#sec:compound_interest}
 
 In this chapter I will not use any external libraries. Still, once you read the
 problem description you may decide to do otherwise. In that case don't let me
@@ -42,4 +42,49 @@ I make any real profit on January 2, 2025?
 
 ## Solution {#sec:compound_interest_solution}
 
-The solution goes here.
+Before we begin let's write a helper function that will nicely display the
+amount of money we get and improve the readability of our results.
+
+```jl
+s = """
+function getFormattedMoney(money::Real, sep::Char=',')::Str
+    digits::Str = round(Int, money) |> string
+    result::Str = ""
+    counter::Int = 0
+    for digit in reverse(digits) # digit is a single digit (type Char)
+        if counter == 3
+            result = sep * result
+            counter = 0
+        end
+        result = digit * result
+        counter += 1
+    end
+    return result * " usd"
+end
+"""
+sc(s)
+```
+
+The function may not be the most performant, but it was pretty easy to write. It
+receives money as a [Real](https://docs.julialang.org/en/v1/base/numbers/)
+number and sets apart every three digits with a separator (`sep`) of our choice.
+Since in English decimal separator is `.` (dot) and thousand separator is `,`
+(comma) then that's what we used here. We round the number to integer
+(`round(Int, money)`) and convert it to `string`. Next we traverse all the
+digits (`for digit`) in the opposite direction (from right to left) thanks to the
+`reverse(digits)`. Every third digit (`if counter == 3`) we place our `sep` to
+the `result` and count to three a new (`counter = 0`). Otherwise, we prepend our
+`digit` to the `result` (`digit * result`) and increase the counter
+(`counter +=1`). In the end we return the formatted number (`result * " usd"`).
+
+Let's see how it works.
+
+```jl
+s = """
+getFormattedMoney(12345.06)
+"""
+sco(s)
+```
+
+I think that twelve thousand three hundred and forty five is much easier to
+process this way than in its alternative transcription form (`12345`).
