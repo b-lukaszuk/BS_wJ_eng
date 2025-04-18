@@ -26,7 +26,7 @@ function getSphere(volume::Float64)::Sphere
 end
 
 # bile breakes big lipid droplets into small droplets
-bigS = Sphere(10) # 10 um
+bigS = Sphere(10.0) # 10 um
 bigV = getVolume(bigS)
 bigA = getSurfaceArea(bigS)
 

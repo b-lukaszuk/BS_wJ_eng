@@ -62,7 +62,7 @@ Now, let's define a big lipid droplet with a radius of, let's say, 10 [μm].
 
 ```jl
 s = """
-bigS = Sphere(10) # 10 um
+bigS = Sphere(10.0) # 10 um
 bigV = getVolume(bigS)
 bigA = getSurfaceArea(bigS)
 

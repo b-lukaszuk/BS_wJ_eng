@@ -29,9 +29,11 @@ In mathematics by convention you denote matrices with a single capital
 letter. However, since I'm not a mathematician then I'll use the lowercase names
 (they are easier to the fingers).
 
-Matrices are quite useful in mathematics and in everyday life, e.g statistical
-programs or programs rendering computer graphics rely on them heavily (chances
-are you used them without even being aware of it).
+I remember that the first time that I was introduced to the matrix algebra I
+found it pretty boring and burdensome. However, believe it or not, matrices are
+very useful in mathematics and in everyday life, e.g statistical programs or
+programs rendering computer graphics rely on them heavily (chances are you used
+them without even being aware of it).
 
 Anyway, here is the task. Read about matrix multiplication, e.g. on [Math is
 Fun](https://www.mathsisfun.com/algebra/matrix-multiplying.html) or watch a
