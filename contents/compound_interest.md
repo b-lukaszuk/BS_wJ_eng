@@ -88,3 +88,85 @@ sco(s)
 
 I think that twelve thousand three hundred and forty five is much easier to
 process this way than in its alternative transcription form (`12345`).
+
+### Answer 1 {#sec:compound_interest_problem_a1}
+
+Before we begin a quick refresher on percentages. As explained, e.g.
+[here](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_probability_definition.html)
+per definition a percentage is a hundredth part of the whole and can be
+represented in a few equivalent forms, i.e.
+
+- 0% = $\frac{0}{100}$ = 0/100 = 0.00 = 0
+- 1% = $\frac{1}{100}$ = 1/100 = 0.01
+- 5% = $\frac{5}{100}$ = 5/100 = 0.05
+- 10% = $\frac{10}{100}$ = 10/100 = 0.10 = 0.1
+- 20% = $\frac{20}{100}$ = 20/100 = 0.20 = 0.2
+- 50% = $\frac{50}{100}$ = 50/100 = 0.50 = 0.5
+- 100% = $\frac{100}{100}$ = 100/100 = 1.00 = 1
+- 105% = $\frac{105}{100}$ = 105/100 = 1.05
+
+For calculations it is especially useful to use them as decimals, hence we will
+often divide a percentage by one hundred. Now, let's say that I got $100 (my
+initial capital) on a deposit that pays 5% interest yearly. That means that
+after one year I will get $105 or 105% of my initial capital. I can express this
+mathematically as `$100 * 105% = $105` or to make it easier to type with a
+calculator `100 * 1.05 = 105`. If the deposit lasted two years then I would have
+to repeat the process one more time for year number two, i.e.
+`$105 * 105% = $110.25` (105% of my new capital), also to be expressed as
+`105 * 1.05 = 110.25`. Since the `$105` is actually `100 * 1.05` then I can
+rewrite it as `(100 * 1.05) * 1.05 = 110.25`. For year number three I got 
+`$110.25 * 105% = $115.7625` or `110.25 * 1.05 = 115.7625` or
+`((100 * 1.05) * 1.05) * 1.05 = 115.7625`. Hence a pattern emerges:
+
+$deposit\ value = \$100 * 1.05^{number\ of\ years}$
+
+or more generally
+
+$total\ value = initial\ capital * (1 + percentage/100)^{number\ of\ years}$
+
+Let's put that into a Julia's function.
+
+```jl
+s = """
+function getValue(capital::Real, avgPercentage::Real, years::Int)::Real
+    @assert years > 0 "years must be greater than 0"
+    @assert capital > 0 "capital must be greater than 0"
+    return capital * (1+avgPercentage/100.0)^years
+end
+"""
+sc(s)
+```
+
+And test it on our previous example.
+
+```jl
+s = """
+round.([getValue(100, 5, i) for i in 1:3], digits=4)
+"""
+sco(s)
+```
+
+Now, we are ready to see if Fry is a billionaire.
+
+
+```jl
+s = """
+# Futurama s1e6: 93 cents (\$0.93), 2.25%, 1_000 years
+frysMoney = getValue(0.93, 2.25, 1_000)
+frysMoney |> getFormattedMoney
+"""
+sco(s)
+```
+
+And indeed he is (four billion two hundred eighty three million, etc.). Still,
+before you head towards cryogenic clinic to duplicate Fry's success be aware of
+all the issues with
+[cryonics](https://en.wikipedia.org/wiki/Cryonics#History) and that most of the
+people frozen in 1960s' are not preserved today. Therefore, the profit seems to
+be purely theoretical.
+
+Anyway, as said the function could be used to estimate the nominal value that
+you will get from your deposit (with a stable yearly interest rate). You could
+also look at it from the other end and estimate how much you would have to earn
+to cover up for an average inflation rate over a few years. Keep that in mind as
+we go to the solution for Question 2 (see @sec:compound_interest_problem_q2).
