@@ -1,4 +1,4 @@
-#the  Compound interest {#sec:compound_interest}
+# Compound interest {#sec:compound_interest}
 
 In this chapter I will not use any external libraries. Still, once you read the
 problem description you may decide to do otherwise. In that case don't let me
@@ -21,11 +21,11 @@ the period of 1000 years it gives $4.3 billion.
 Read about [compound interest](https://en.wikipedia.org/wiki/Compound_interest)
 and use Julia to answer a few questions.
 
-### Question 1
+### Question 1 {#sec:compound_interest_problem_q1}
 
 Is Fry really a billionaire?
 
-### Question 2
+### Question 2 {#sec:compound_interest_problem_q2}
 
 According to [this
 page](https://pl.wikipedia.org/wiki/Inflacja_w_Polsce#Historia) (careful its in
@@ -34,7 +34,7 @@ Polish) the inflation in Poland over the period 2020-2024 was: 3.4%, 5.1%,
 wished) then how much I would have to earn in January 2025 to be able to buy the
 same amount of goods like on that date?
 
-### Question 3
+### Question 3 {#sec:compound_interest_problem_q3}
 
 Imagine that on January 1, 2020 I opened a bank deposit for 5 years with a
 yearly interest rate of 6%. Given the inflation rates from the question 2 would
