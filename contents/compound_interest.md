@@ -30,7 +30,7 @@ Is Fry really a billionaire?
 According to [this
 page](https://pl.wikipedia.org/wiki/Inflacja_w_Polsce#Historia) (careful its in
 Polish) the inflation in Poland over the period 2020-2024 was: 3.4%, 5.1%,
-14.4%, 11.4%, and 3.6%. If on December 31, 2019 my monthly salary was $10'000 (I
+14.4%, 11.4%, and 3.6%. If on December 31, 2019 my monthly salary was $10,000 (I
 wished) then how much I would have to earn in January 2025 to be able to buy the
 same amount of goods like on that date?
 
@@ -114,7 +114,7 @@ calculator `100 * 1.05 = 105`. If the deposit lasted two years then I would have
 to repeat the process one more time for year number two, i.e.
 `$105 * 105% = $110.25` (105% of my new capital), also to be expressed as
 `105 * 1.05 = 110.25`. Since the `$105` is actually `100 * 1.05` then I can
-rewrite it as `(100 * 1.05) * 1.05 = 110.25`. For year number three I got 
+rewrite it as `(100 * 1.05) * 1.05 = 110.25`. For year number three I got
 `$110.25 * 105% = $115.7625` or `110.25 * 1.05 = 115.7625` or
 `((100 * 1.05) * 1.05) * 1.05 = 115.7625`. Hence a pattern emerges:
 
@@ -128,7 +128,7 @@ Let's put that into a Julia's function.
 
 ```jl
 s = """
-function getValue(capital::Real, avgPercentage::Real, years::Int)::Real
+function getValue(capital::Real, avgPercentage::Real, years::Int)::Flt
     @assert years > 0 "years must be greater than 0"
     @assert capital > 0 "capital must be greater than 0"
     return capital * (1+avgPercentage/100.0)^years
@@ -170,3 +170,45 @@ you will get from your deposit (with a stable yearly interest rate). You could
 also look at it from the other end and estimate how much you would have to earn
 to cover up for an average inflation rate over a few years. Keep that in mind as
 we go to the solution for Question 2 (see @sec:compound_interest_problem_q2).
+
+### Answer 2 {#sec:compound_interest_problem_a2}
+
+What about Question 2. If on December 31, 2019 my monthly salary was
+$10,000 then how much I would have to earn in January 2025 to maintain my
+purchasing power given that the inflation rates for years 2020-2024 were equal:
+3.4%, 5.1%, 14.4%, 11.4%, and 3.6%. To answer that we will use the same
+reasoning as in the previous section (@sec:compound_interest_problem_a1), but
+since the percentages differ from year to year will will use a `for` loop to
+cover for that.
+
+```jl
+s = """
+function getValue(capital::Real, percentages::Vec{<:Real})::Flt
+    @assert capital > 0 "capital must be greater than 0"
+    for p in percentages
+        capital *= 1 + (p / 100.0)
+    end
+    return capital
+end
+"""
+sc(s)
+```
+
+Second `getValue` method defined, time to put it into good use.
+
+```jl
+s = """
+money2019 = 10_000 # Dec 31, 2019
+inflPoland = [3.4, 5.1, 14.4, 11.4, 3.6] # yrs: 2020-2024
+money2025infl = getValue(money2019, inflPoland) # Jan 1, 2025
+(
+    getFormattedMoney(money2019),
+    getFormattedMoney(money2025infl)
+)
+"""
+sco(s)
+```
+
+So I would need to earn roughly $14,348 to be able to buy the same amount of
+goods in 2025 as I could with $10,000 in 2019. Not sure why, but that doesn't
+put a smile on my face.
