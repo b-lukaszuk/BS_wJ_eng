@@ -212,3 +212,139 @@ sco(s)
 So I would need to earn roughly $14,348 to be able to buy the same amount of
 goods in 2025 as I could with $10,000 in 2019. Not sure why, but that doesn't
 put a smile on my face.
+
+### Answer 3 {#sec:compound_interest_problem_a3}
+
+As a final step let's think was it worth a while to open a 5 years long bank
+deposit (5% yearly interest rate) on January 1, 2020 given the inflation rates
+discussed in the previous section (@sec:compound_interest_problem_a2). Would I
+make any real profit on January 2, 2025?
+
+In order to figure that out we need to counterbalance two factors. The increase
+in the nominal value that I get due to the interest rate and a drop in the real
+value of money due to the inflation rate. In other words, we might want to
+calculate the real percentage change of money given the two factors combined.
+For that we should either implement a formula from a reliable source or come
+with one ourselves. In order to learn we will try the other.
+
+To that end we will use proportions (they taught me that in my high school) and
+some simple imaginable example. To make sure we are on the same page let's talk
+briefly about the proportions.
+
+Imagine that for $10 I can buy 1 bread loaf in Poland. If so, then how much
+bread can I buy for $5? Easy, its half of a bread loaf. You can solve it with
+proportions like so:
+
+$$10\ usd - 1\ bl$$ {#eq:prop1}
+
+$$5\ usd - x\ bl$$ {#eq:prop2}
+
+We set the same units on the same sides (left - right). Next, in order to get
+$x$ we multiply numbers on diagonal: 5 * 1 goes to the numerator and 10 goes
+into denominator (since it got no pair):
+
+$x = \frac{5\ usd\ *\ 1\ bl}{10\ usd}$
+
+Then we fast forward it to a solution.
+
+$x = \frac{5 * 1}{10} = \frac{5}{10} = \frac{1}{2} = 0.5$
+
+This works because @eq:prop1 and @eq:prop2 could be rewritten as:
+
+$\frac{10}{1} = \frac{5}{x}$
+
+Which is basically, solving two fractions that we learned in primary
+school. Still I like and remember the proportions example better.
+
+With that under our belt let's follow with a simple example. Imagine that in
+this year for $100 I can buy 100 chocolate bars. Due to the yearly inflation
+that is 2% the same 100 chocolate bars will cost in a year $102 dollars. Luckily
+thanks to the 5% interest rate in a year I will have $105 in banknotes. So how
+many chocolate bars will I be able to buy after a year?
+
+That's easy thanks to the proportions.
+
+$$102\ usd - 100\ cb$$ {#eq:prop3}
+
+$$105\ usd - x\ cb$$ {#eq:prop4}
+
+Which gives us:
+
+$x = \frac{105\ usd\ * 100\ cb}{102\ usd}$
+
+and
+
+$x = \frac{105 * 100}{102} = calculator\ does\ pip,\ pip,\ ...\ \approx 102.94$
+
+Therefore, we see that in this scenario the $105 in banknotes will allow us to
+buy 102.94 choclate bars (that is a form of a stable good that by itself does
+not gain or loose value over time). Based on the choclate bars we can evaluate
+the real percentage gain/loss of our nominal money to be:
+`102.94 - 100 = 2.94 chocolate bar` or 2.94%
+(chocolate bars were just an abstraction needed as a
+reference point). To put it all together in a formula, we get:
+
+$$real\ percentage = \frac{105\ usd\ *\ 100}{102\ usd} - 100$$ {#eq:prop5}
+
+Notice that `105 usd` in @eq:prop5 and @eq:prop4 is actually a placeholder for
+percentage gain in value (`100 + inflation rate`) of our money (so 105% that we
+used in our explanation in the calculations in
+@sec:compound_interest_problem_a1). On the other hand `102 usd` in @eq:prop5 and
+@eq:prop3 is actually a placeholder for percentage change in value due to the
+inflation (we divide by it, so we decrease our gain in numerator by it).
+
+Anyway, let's put @eq:prop5 into a Julia's function.
+
+```jl
+s = """
+function getRealPercChange(interestPerc::Real, inflPerc::Real)::Flt
+    return ((100 + interestPerc) * 100) / (100 + inflPerc) - 100
+end
+"""
+sc(s)
+```
+
+Now we can use it to write our final, third method, of `getValue`.
+
+```jl
+s = """
+function getValue(capital::Real,
+                  interestPercs::Vec{<:Real},
+                  inflationPercs::Vec{<:Real})::Flt
+    @assert capital > 0 "capital must be greater than 0"
+    for (intr, infl) in zip(interestPercs, inflationPercs)
+        capital = getValue(capital, getRealPercChange(intr, infl), 1)
+    end
+    return capital
+end
+"""
+sc(s)
+```
+
+That we will use to answer our question.
+
+```jl
+s = """
+interestDeposit = 6.0 # yrs: 2020-2025
+noYrs = length(inflPoland)
+money2025deposit = getValue(money2019,
+	interestDeposit, noYrs) # Jan 1, 2025
+money2025depositInflation = getValue(
+    money2019,
+	repeat([interestDeposit], noYrs), inflPoland) # Jan 1, 2025
+
+
+(
+    getFormattedMoney(money2019),
+    getFormattedMoney(money2025deposit),
+    getFormattedMoney(money2025depositInflation)
+)
+"""
+sco(s)
+```
+
+And again, reality turns out to be disappointing. The initial capital of
+\$10,000 (January 1, 2020) was increased by 6% yearly which gave me \$13,382 in
+banknotes on January 1, 2025 for which I can buy the same amount of goods that I
+could for \$9,327 on January 1, 2020. So despite more money in my wallet
+(nominal increase) I actually lost some real value. Eh.
