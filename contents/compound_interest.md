@@ -30,9 +30,9 @@ Is Fry really a billionaire?
 According to [this
 page](https://pl.wikipedia.org/wiki/Inflacja_w_Polsce#Historia) (careful its in
 Polish) the inflation in Poland over the period 2020-2024 was: 3.4%, 5.1%,
-14.4%, 11.4%, and 3.6%. If on December 31, 2019 my monthly salary was $10,000 (I
-wished) then how much I would have to earn in January 2025 to be able to buy the
-same amount of goods like on that date?
+14.4%, 11.4%, and 3.6%. If on December 31, 2019 my monthly salary was $10,000
+(I wished) then how much I would have to earn in January 2025 to be able to buy
+the same amount of goods like on that date?
 
 ### Question 3 {#sec:compound_interest_problem_q3}
 
@@ -216,36 +216,38 @@ put a smile on my face.
 ### Answer 3 {#sec:compound_interest_problem_a3}
 
 As a final step let's think was it worth a while to open a 5 years long bank
-deposit (5% yearly interest rate) on January 1, 2020 given the inflation rates
+deposit (6% yearly interest rate) on January 1, 2020 given the inflation rates
 discussed in the previous section (@sec:compound_interest_problem_a2). Would I
 make any real profit on January 2, 2025?
 
 In order to figure that out we need to counterbalance two factors. The increase
-in the nominal value that I get due to the interest rate and a drop in the real
+in the nominal value that we get due to the interest rate and a drop in the real
 value of money due to the inflation rate. In other words, we might want to
-calculate the real percentage change of money given the two factors combined.
-For that we should either implement a formula from a reliable source or come
-with one ourselves. In order to learn we will try the other.
+calculate the real percentage change in money value given the two factors
+combined. For that we should either implement a suitable formula from a reliable
+source or come with the one ourselves. In order to learn we will try the other
+(no pain, no gain).
 
-To that end we will use proportions (they taught me that in my high school) and
+To that end we will use proportions (they taught me that in the high school) and
 some simple imaginable example. To make sure we are on the same page let's talk
 briefly about the proportions.
 
-Imagine that for $10 I can buy 1 bread loaf in Poland. If so, then how much
-bread can I buy for $5? Easy, its half of a bread loaf. You can solve it with
-proportions like so:
+Imagine that for $10 (`usd` below) I can buy 1 bread loaf (`bl` below). If so,
+then how much bread can I buy for $5? Easy, its half of a bread loaf. You can
+solve it with proportions like so:
 
 $$10\ usd - 1\ bl$$ {#eq:prop1}
 
 $$5\ usd - x\ bl$$ {#eq:prop2}
 
 We set the same units on the same sides (left - right). Next, in order to get
-$x$ we multiply numbers on diagonal: 5 * 1 goes to the numerator and 10 goes
-into denominator (since it got no pair):
+$x$ we multiply numbers on the diagonals: 5 * 1 goes to the numerator and 10
+goes into denominator (since it got no pair on the diagonal it falls to the
+bottom):
 
 $x = \frac{5\ usd\ *\ 1\ bl}{10\ usd}$
 
-Then we fast forward it to a solution.
+Then we forward to a solution.
 
 $x = \frac{5 * 1}{10} = \frac{5}{10} = \frac{1}{2} = 0.5$
 
@@ -253,14 +255,19 @@ This works because @eq:prop1 and @eq:prop2 could be rewritten as:
 
 $\frac{10}{1} = \frac{5}{x}$
 
-Which is basically, solving two fractions that we learned in primary
-school. Still I like and remember the proportions example better.
+or
+
+$\frac{1}{10} = \frac{x}{5}$
+
+The above is basically just finding an equivalent fraction that we learned in
+our primary schools. Still, I like and remember the proportions example better.
 
 With that under our belt let's follow with a simple example. Imagine that in
-this year for $100 I can buy 100 chocolate bars. Due to the yearly inflation
-that is 2% the same 100 chocolate bars will cost in a year $102 dollars. Luckily
-thanks to the 5% interest rate in a year I will have $105 in banknotes. So how
-many chocolate bars will I be able to buy after a year?
+this year for $100 (`usd` below) we can buy 100 chocolate bars (`cb` below). Due
+to the yearly inflation that is let's say 2% the same 100 chocolate bars will
+cost after a year $102 dollars. Luckily, thanks to the let's say 5% interest
+rate in a year on our deposit we will have $105 in banknotes. So how many
+chocolate bars will we be able to buy after a year?
 
 That's easy thanks to the proportions.
 
@@ -276,24 +283,29 @@ and
 
 $x = \frac{105 * 100}{102} = calculator\ does\ pip,\ pip,\ ...\ \approx 102.94$
 
-Therefore, we see that in this scenario the $105 in banknotes will allow us to
-buy 102.94 choclate bars (that is a form of a stable good that by itself does
-not gain or loose value over time). Based on the choclate bars we can evaluate
-the real percentage gain/loss of our nominal money to be:
-`102.94 - 100 = 2.94 chocolate bar` or 2.94%
-(chocolate bars were just an abstraction needed as a
-reference point). To put it all together in a formula, we get:
+Therefore, we can see that in this scenario the $105 in banknotes will allow us
+to buy 102.94 chocolate bars (we think of it as a stable product that by itself
+does not gain or loose value over time). Based on the chocolate bars we can
+evaluate the real percentage gain/loss of our nominal money to be:
+`102.94 - 100 = 2.94 chocolate bar` or 2.94% (chocolate bars were just an
+abstraction needed as a reference point). To put it all together in a formula,
+we get:
 
 $$real\ percentage = \frac{105\ usd\ *\ 100}{102\ usd} - 100$$ {#eq:prop5}
 
-Notice that `105 usd` in @eq:prop5 and @eq:prop4 is actually a placeholder for
-percentage gain in value (`100 + inflation rate`) of our money (so 105% that we
-used in our explanation in the calculations in
-@sec:compound_interest_problem_a1). On the other hand `102 usd` in @eq:prop5 and
-@eq:prop3 is actually a placeholder for percentage change in value due to the
-inflation (we divide by it, so we decrease our gain in numerator by it).
+Just like chocolate bars also dollars are a placeholder in our example (the more
+material and concrete the objects are the easier it is to think about them and
+manipulate them in our heads). Notice that `105 usd` in @eq:prop5 and @eq:prop4
+actually stands for percentage gain in value (`100 + inflation rate`) of our
+money (the 105% that we used in our explanation in the calculations in
+@sec:compound_interest_problem_a1). On the other hand, `102 usd` in @eq:prop5
+and @eq:prop3 is actually a placeholder for percentage change in value due to
+the inflation (we divide by it, so we decrease our gain in numerator by it).
+Therefore we can rewrite @eq:prop5 to:
 
-Anyway, let's put @eq:prop5 into a Julia's function.
+$$real\ percentage = \frac{(100\ +\ interest\ rate) * 100}{100\ +\ inflation\ rate} - 100$$ {#eq:prop6}
+
+Now let's put @eq:prop6 into a Julia's function.
 
 ```jl
 s = """
@@ -304,7 +316,7 @@ end
 sc(s)
 ```
 
-Now we can use it to write our final, third method, of `getValue`.
+Now we can use it to write our final, third method, for `getValue`.
 
 ```jl
 s = """
@@ -321,17 +333,17 @@ end
 sc(s)
 ```
 
-That we will use to answer our question.
+We will use it to answer our question.
 
 ```jl
 s = """
 interestDeposit = 6.0 # yrs: 2020-2025
-noYrs = length(inflPoland)
+numYrs = length(inflPoland)
 money2025deposit = getValue(money2019,
-	interestDeposit, noYrs) # Jan 1, 2025
+	interestDeposit, numYrs) # Jan 1, 2025
 money2025depositInflation = getValue(
     money2019,
-	repeat([interestDeposit], noYrs), inflPoland) # Jan 1, 2025
+	repeat([interestDeposit], numYrs), inflPoland) # Jan 1, 2025
 
 
 (
@@ -344,7 +356,29 @@ sco(s)
 ```
 
 And again, reality turns out to be disappointing. The initial capital of
-\$10,000 (January 1, 2020) was increased by 6% yearly which gave me \$13,382 in
+$10,000 (January 1, 2020) was increased by 6% yearly which gave me $13,382 in
 banknotes on January 1, 2025 for which I can buy the same amount of goods that I
-could for \$9,327 on January 1, 2020. So despite more money in my wallet
+could for $9,327 on January 1, 2020. So despite more money in my wallet
 (nominal increase) I actually lost some real value. Eh.
+
+OK, let's try to be optimists here. The glass is half full. By putting the money
+on the deposit (5% yearly) we lost some money. Still, if we left it on an
+ordinary account with a lousy 0.5% interest rate we would have lost even more
+money.
+
+```jl
+s = """
+(
+	# nominal gain
+	getFormattedMoney(
+		getValue(money2019, 0.5, numYrs)),
+	# real value
+	getFormattedMoney(
+		getValue(money2019, repeat([0.5], numYrs), inflPoland))
+)
+"""
+sco(s)
+```
+
+So always look on the bright side of life, but look for a better investment
+opportunities.
