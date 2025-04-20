@@ -1,5 +1,5 @@
 # The end
 
-Task count: 13
+Number of tasks: 14
 
 That will be all. Take care.
