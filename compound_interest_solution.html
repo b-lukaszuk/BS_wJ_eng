@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Bartlomiej Lukaszuk" />
+  <title>Solution - Build SH*T with Julia</title>
+  <link rel="stylesheet" href="./style.css"/>
+    <script src="./mousetrap.min.js"></script>
+    <style>
+  @font-face {
+    font-family: JuliaMono-Regular;
+    src: url("./JuliaMono-Regular.woff2");
+  }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="./github.min.css">
+<script src="./highlight.min.js"></script>
+<script src="./julia.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', (event) => {
+    document.querySelectorAll('pre').forEach((el) => {
+        if (!el.classList.contains('output')) {
+            hljs.highlightElement(el);
+        }
+    });
+});
+</script>
+ 
+</head>
+<body>
+<script>
+function click_next() {
+  var next = document.getElementById('nav-next');
+  next.firstElementChild.nextElementSibling.click();
+}
+function click_prev() {
+  var prev = document.getElementById('nav-prev');
+  prev.firstElementChild.click();
+}
+Mousetrap.bind('right', click_next);
+Mousetrap.bind('h', click_prev);
+Mousetrap.bind('left', click_prev);
+Mousetrap.bind('l', click_next);
+</script>
+
+<div class="books-container">
+<aside class="books-menu">
+<input type="checkbox" id="menu">
+<label for="menu">☰</label>
+<div class="books-title">
+<a href="./">Build SH*T with Julia</a>
+</div><br />
+<span class="books-subtitle">
+
+</span>
+<div class="books-menu-content">
+<li><a class="menu-level-1" href="./about.html"><b>1</b> About</a></li>
+<li><a class="menu-level-1" href="./mat_multip.html"><b>2</b> Matrix Multiplication</a></li>
+<li><a class="menu-level-2" href="./mat_multip_problem.html"><b>2.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./mat_multip_solution.html"><b>2.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./bat_and_ball.html"><b>3</b> Bat and Ball</a></li>
+<li><a class="menu-level-2" href="./bat_and_ball_problem.html"><b>3.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./bat_and_ball_solution.html"><b>3.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./toothpaste.html"><b>4</b> Toothpaste</a></li>
+<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>4.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>4.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./bile.html"><b>5</b> Bile</a></li>
+<li><a class="menu-level-2" href="./bile_problem.html"><b>5.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./bile_solution.html"><b>5.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./prime_numbers.html"><b>6</b> Prime Numbers</a></li>
+<li><a class="menu-level-2" href="./prime_numbers_problem.html"><b>6.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./prime_numbers_solution.html"><b>6.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./compound_interest.html"><b>7</b> Compound interest</a></li>
+<li><a class="menu-level-2" href="./compound_interest_problem.html"><b>7.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./compound_interest_solution.html"><b>7.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./logo.html"><b>8</b> Logo</a></li>
+<li><a class="menu-level-2" href="./logo_problem.html"><b>8.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./logo_solution.html"><b>8.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./transcription.html"><b>9</b> Transcription</a></li>
+<li><a class="menu-level-2" href="./transcription_problem.html"><b>9.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./transcription_solution.html"><b>9.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./translation.html"><b>10</b> Translation</a></li>
+<li><a class="menu-level-2" href="./translation_problem.html"><b>10.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./translation_solution.html"><b>10.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./stem_and_leaf.html"><b>11</b> Stem and Leaf Plot</a></li>
+<li><a class="menu-level-2" href="./stem_and_leaf_problem.html"><b>11.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./stem_and_leaf_solution.html"><b>11.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./altruism.html"><b>12</b> Altruism</a></li>
+<li><a class="menu-level-2" href="./altruism_problem.html"><b>12.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./altruism_solution.html"><b>12.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./shift.html"><b>13</b> Shift</a></li>
+<li><a class="menu-level-2" href="./shift_problem.html"><b>13.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./shift_solution.html"><b>13.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./caesar.html"><b>14</b> Caesar</a></li>
+<li><a class="menu-level-2" href="./caesar_problem.html"><b>14.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./caesar_solution.html"><b>14.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./vigenere.html"><b>15</b> Vigenere</a></li>
+<li><a class="menu-level-2" href="./vigenere_problem.html"><b>15.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./vigenere_solution.html"><b>15.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./the-end.html"><b>16</b> The end</a></li>
+</div>
+</aside>
+
+<div class="books-content">
+<h2 data-number="7.2" id="sec:compound_interest_solution"><span class="header-section-number">7.2</span> Solution</h2>
+<p>Before we begin let’s write a helper function that will nicely display the amount of money we get and improve the readability of our results.</p>
+<pre class="language-julia"><code>function getFormattedMoney(money::Real, sep::Char=&#39;,&#39;)::Str
+    digits::Str = round(Int, money) |&gt; string
+    result::Str = &quot;&quot;
+    counter::Int = 0
+    for digit in reverse(digits) # digit is a single digit (type Char)
+        if counter == 3
+            result = sep * result
+            counter = 0
+        end
+        result = digit * result
+        counter += 1
+    end
+    return result * &quot; usd&quot;
+end</code></pre>
+<p>The function may not be the most performant, but it was pretty easy to write. It receives money as a <a href="https://docs.julialang.org/en/v1/base/numbers/">Real</a> number and sets apart every three digits with a separator (<code>sep</code>) of our choice. Since in English decimal separator is <code>.</code> (dot) and thousand separator is <code>,</code> (comma) then that’s what we used here as default (<code>sep::Char=','</code>). Inside our formatter we round the number to integer (<code>round(Int, money)</code>) and convert it to <code>string</code>. Next we traverse all the digits (<code>for digit</code>) in the opposite direction (from right to left) thanks to the <code>reverse(digits)</code>. Every third digit (<code>if counter == 3</code>) we place our <code>sep</code> to the <code>result</code> and count to three a new (<code>counter = 0</code>). Besides, we prepend our <code>digit</code> to the <code>result</code> (<code>digit * result</code>) and increase the counter (<code>counter +=1</code>). In the end we return the formatted number (<code>result * " usd"</code>).</p>
+<p>Let’s see how it works.</p>
+<pre class="language-julia"><code>getFormattedMoney(12345.06)</code></pre>
+<p>12,345 usd</p>
+<p>I think that twelve thousand three hundred and forty five is much easier to process this way than in its alternative transcription form (<code>12345</code>).</p>
+<h3 data-number="7.2.1" id="sec:compound_interest_problem_a1"><span class="header-section-number">7.2.1</span> Answer 1</h3>
+<p>Before we begin a quick refresher on percentages. As explained, e.g. <a href="https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_probability_definition.html">here</a> per definition a percentage is a hundredth part of the whole and can be represented in a few equivalent forms, i.e.</p>
+<ul>
+<li>0% = <span class="math inline">\(\frac{0}{100}\)</span> = 0/100 = 0.00 = 0,</li>
+<li>5% = <span class="math inline">\(\frac{5}{100}\)</span> = 5/100 = 0.05,</li>
+<li>20% = <span class="math inline">\(\frac{20}{100}\)</span> = 20/100 = 0.20 = 0.2,</li>
+<li>75% = <span class="math inline">\(\frac{75}{100}\)</span> = 75/100 = 0.75,</li>
+<li>100% = <span class="math inline">\(\frac{100}{100}\)</span> = 100/100 = 1.00 = 1,</li>
+<li>105% = <span class="math inline">\(\frac{105}{100}\)</span> = 105/100 = 1.05,</li>
+<li>110% = <span class="math inline">\(\frac{110}{100}\)</span> = 110/100 = 1.10 = 1.1, etc.</li>
+</ul>
+<p>For calculations it is especially useful to use them as decimals, hence we will often divide a percentage by one hundred. Now, let’s say that I got $100 (my initial capital) on a deposit that pays 5% interest yearly. That means that after one year I will get $105 or 105% of my initial capital. I can express this mathematically as <code>$100 * 105% = $105</code> or to make it easier to type with a calculator <code>100 * 1.05 = 105</code>. If the deposit lasted two years then I would have to repeat the process one more time for year number two, i.e. <code>$105 * 105% = $110.25</code> (105% of my new capital), also to be expressed as <code>105 * 1.05 = 110.25</code>. Since as we said the <code>$105</code> is actually <code>100 * 1.05</code> then I can rewrite it as <code>(100 * 1.05) * 1.05 = 110.25</code>. For year number three I got <code>$110.25 * 105% = $115.7625</code> or <code>110.25 * 1.05 = 115.7625</code> or <code>((100 * 1.05) * 1.05) * 1.05 = 115.7625</code>. The parenthesis are there to signify boundaries of mathematical operations for a previous year. We can get rid of them to get: <code>100 * 1.05 * 1.05 * 1.05</code> (we multiply <code>1.05</code> by itself as many times as there are years). Hence a pattern emerges:</p>
+<p><span class="math inline">\(deposit\ value = \$100 * 1.05^{number\ of\ years}\)</span></p>
+<p>or more generally (remember about the order of mathematical operations):</p>
+<p><span class="math inline">\(total\ value = initial\ capital * (1 + percentage/100)^{number\ of\ years}\)</span></p>
+<p>Let’s put that into a Julia’s function.</p>
+<pre class="language-julia"><code>function getValue(capital::Real, avgPercentage::Real, years::Int)::Flt
+    @assert years &gt; 0 &quot;years must be greater than 0&quot;
+    @assert capital &gt; 0 &quot;capital must be greater than 0&quot;
+    return capital * (1+avgPercentage/100.0)^years
+end</code></pre>
+<p>And test it on our previous example.</p>
+<pre class="language-julia"><code>round.([getValue(100, 5, i) for i in 1:3], digits=4)</code></pre>
+<pre class="output"><code>[105.0, 110.25, 115.7625]</code></pre>
+<p>Now, we are ready to see if Fry is a billionaire.</p>
+<pre class="language-julia"><code># Futurama s1e6: 93 cents ($0.93), 2.25%, 1_000 years
+frysMoney = getValue(0.93, 2.25, 1_000)
+frysMoney |&gt; getFormattedMoney</code></pre>
+<p>4,283,508,450 usd</p>
+<p>And indeed he is (four billion two hundred eighty three million, etc.). Still, before you head towards cryogenic clinic to duplicate Fry’s success be aware of all the issues with <a href="https://en.wikipedia.org/wiki/Cryonics#History">cryonics</a> and that most of the people frozen in 1960s’ are not preserved today. Therefore, the profit seems to be purely theoretical.</p>
+<p>Anyway, as said the function could be used to estimate the nominal value that you will get from your deposit (with a stable yearly interest rate). You could also look at it from the other end and estimate how much you would have to earn to cover up for an average inflation rate over a few years. Keep that in mind as we go to the solution for Question 2 (see Section <a href="./compound_interest_problem.html#sec:compound_interest_problem_q2">7.1.2</a>).</p>
+<h3 data-number="7.2.2" id="sec:compound_interest_problem_a2"><span class="header-section-number">7.2.2</span> Answer 2</h3>
+<p>What about Question 2. If on December 31, 2019 my monthly salary was $10,000 then how much I would have to earn in January 2025 to maintain my purchasing power given that the inflation rates for years 2020-2024 were equal: 3.4%, 5.1%, 14.4%, 11.4%, and 3.6%. To answer that we will use the same reasoning as in the previous section (Section <a href="./compound_interest_solution.html#sec:compound_interest_problem_a1">7.2.1</a>), but since the percentages differ from year to year will will use a <code>for</code> loop to cover for that.</p>
+<pre class="language-julia"><code>function getValue(capital::Real, percentages::Vec{&lt;:Real})::Flt
+    @assert capital &gt; 0 &quot;capital must be greater than 0&quot;
+    for p in percentages
+        capital *= 1 + (p / 100.0)
+    end
+    return capital
+end</code></pre>
+<p>Second <code>getValue</code> method defined, time to put it into good use.</p>
+<pre class="language-julia"><code>money2019 = 10_000 # Dec 31, 2019
+inflPoland = [3.4, 5.1, 14.4, 11.4, 3.6] # yrs: 2020-2024
+money2025infl = getValue(money2019, inflPoland) # Jan 1, 2025
+(
+    getFormattedMoney(money2019),
+    getFormattedMoney(money2025infl)
+)</code></pre>
+<pre class="output"><code>(&quot;10,000 usd&quot;, &quot;14,348 usd&quot;)</code></pre>
+<p>So I would need to earn roughly $14,348 to be able to buy the same amount of goods in 2025 as I could with $10,000 in 2019. Not sure why, but that doesn’t put a smile on my face.</p>
+<h3 data-number="7.2.3" id="sec:compound_interest_problem_a3"><span class="header-section-number">7.2.3</span> Answer 3</h3>
+<p>As a final step let’s think was it worth a while to open a 5 years long bank deposit (6% yearly interest rate) on January 1, 2020 given the inflation rates discussed in the previous section (Section <a href="./compound_interest_solution.html#sec:compound_interest_problem_a2">7.2.2</a>). Would I make any real profit on January 2, 2025?</p>
+<p>In order to figure that out we need to counterbalance two factors. The increase in the nominal value that we get due to the interest rate and a drop in the real value of money due to the inflation rate. In other words, we might want to calculate the real percentage change in money value given the two factors combined. For that we should either implement a suitable formula obtained from a reliable source or come with the one ourselves. In order to learn we will try the latter approach (no pain, no gain).</p>
+<p>To that end we will use proportions (they taught me that in the high school) and some simple imaginable example. To make sure we are on the same page let’s talk briefly about the proportions.</p>
+<p>Imagine that for $10 (<code>usd</code> below) I can buy 2 bread loafs (<code>bl</code> below). If so, then how much bread can I buy for $5? That’s easy, one bread loaf. You can solve it with proportions like so:</p>
+<p><span id="eq:prop1"><span class="math display">\[10\ usd - 2\ bl\qquad{(9)}\]</span></span></p>
+<p><span id="eq:prop2"><span class="math display">\[5\ usd - x\ bl\qquad{(10)}\]</span></span></p>
+<p>We set the same units on the same sides (left - right). Next, in order to get <span class="math inline">\(x\)</span> we multiply numbers on the diagonals: 5 * 2 goes to the numerator and 10 goes into denominator (since it got no pair on the diagonal it falls to the bottom):</p>
+<p><span class="math inline">\(x = \frac{5\ usd\ *\ 2\ bl}{10\ usd}\)</span></p>
+<p>Then we forward to our solution.</p>
+<p><span class="math inline">\(x = \frac{5 * 2}{10} = \frac{10}{10} = 1\)</span></p>
+<p>This works because Equation <a href="#eq:prop1">9</a> and Equation <a href="#eq:prop2">10</a> could be rewritten as:</p>
+<p><span class="math inline">\(\frac{10}{2} = \frac{5}{x}\)</span></p>
+<p>or</p>
+<p><span class="math inline">\(\frac{2}{10} = \frac{x}{5}\)</span></p>
+<p>The above is basically just finding an equivalent fraction that we learned in our primary schools. Still, I like and remember the proportions example better.</p>
+<p>With that under our belt let’s follow with a simple example. Imagine that in this year for $100 (<code>usd</code> below) we can buy 100 chocolate bars (<code>cb</code> below). Due to the yearly inflation that is 2% the same 100 chocolate bars will cost after a year $102 dollars. Luckily, thanks to the 5% interest rate in a year on our deposit we will have $105 in banknotes. So how many chocolate bars will we be able to buy after a year?</p>
+<p>That’s easy thanks to the proportions.</p>
+<p><span id="eq:prop3"><span class="math display">\[102\ usd - 100\ cb\qquad{(11)}\]</span></span></p>
+<p><span id="eq:prop4"><span class="math display">\[105\ usd - x\ cb\qquad{(12)}\]</span></span></p>
+<p>Which gives us:</p>
+<p><span class="math inline">\(x = \frac{105\ usd\ * 100\ cb}{102\ usd}\)</span></p>
+<p>and</p>
+<p><span class="math inline">\(x = \frac{105 * 100}{102} = calculator\ does\ pip,\ pip,\ ...\ \approx 102.94\)</span></p>
+<p>Therefore, we can see that in this scenario the $105 in banknotes will allow us to buy 102.94 chocolate bars (we think of it as a stable product that by itself does not gain or loose value over time). Based on the chocolate bars we can evaluate the real percentage gain/loss of our nominal money to be: <code>102.94 - 100 = 2.94 chocolate bar</code> or 2.94% (chocolate bars were just an abstraction needed as a reference point). When we put it all (starting from Equation <a href="#eq:prop3">11</a>) together in a formula, we get:</p>
+<p><span id="eq:prop5"><span class="math display">\[real\ percentage = \frac{105\ usd\ *\ 100}{102\ usd} - 100\qquad{(13)}\]</span></span></p>
+<p>Just like chocolate bars also dollars are a placeholder in our example (the more material and concrete the objects are the easier it is to think about them and manipulate them in our heads). Notice that <code>105 usd</code> in Equation <a href="#eq:prop5">13</a> and Equation <a href="#eq:prop4">12</a> actually stands for percentage gain in value (<code>100 + inflation rate</code>) of our money (the 105% that we used in our explanation in the calculations in Section <a href="./compound_interest_solution.html#sec:compound_interest_problem_a1">7.2.1</a>). On the other hand, <code>102 usd</code> in Equation <a href="#eq:prop5">13</a> and Equation <a href="#eq:prop3">11</a> is actually a placeholder for percentage change in value due to the inflation (we divide by it, so we decrease our gain in numerator by it). Therefore we can rewrite Equation <a href="#eq:prop5">13</a> to:</p>
+<p><span id="eq:prop6"><span class="math display">\[real\ percentage = \frac{(100\ +\ interest\ rate) * 100}{100\ +\ inflation\ rate} - 100\qquad{(14)}\]</span></span></p>
+<p>Now let’s put Equation <a href="#eq:prop6">14</a> into a Julia’s function (we could simplify it further, but I try to avoid mathematics and Julia won’t mind doing longhand calculations).</p>
+<pre class="language-julia"><code>function getRealPercChange(interestPerc::Real, inflPerc::Real)::Flt
+    return ((100 + interestPerc) * 100) / (100 + inflPerc) - 100
+end</code></pre>
+<p>Now we can use it to write our final, third method, for <code>getValue</code>.</p>
+<pre class="language-julia"><code>function getValue(capital::Real,
+                  interestPercs::Vec{&lt;:Real},
+                  inflationPercs::Vec{&lt;:Real})::Flt
+    @assert capital &gt; 0 &quot;capital must be greater than 0&quot;
+    for (intr, infl) in zip(interestPercs, inflationPercs)
+        capital = getValue(capital, getRealPercChange(intr, infl), 1)
+    end
+    return capital
+end</code></pre>
+<p>We will use it to answer our question.</p>
+<pre class="language-julia"><code>interestDeposit = 6.0 # yrs: 2020-2025
+numYrs = length(inflPoland)
+money2025deposit = getValue(money2019,
+    interestDeposit, numYrs) # Jan 1, 2025
+money2025depositInflation = getValue(
+    money2019,
+    repeat([interestDeposit], numYrs), inflPoland) # Jan 1, 2025
+
+
+(
+    getFormattedMoney(money2019),
+    getFormattedMoney(money2025deposit),
+    getFormattedMoney(money2025depositInflation)
+)</code></pre>
+<pre class="output"><code>(&quot;10,000 usd&quot;, &quot;13,382 usd&quot;, &quot;9,327 usd&quot;)</code></pre>
+<p>And again, reality turns out to be disappointing. The initial capital of $10,000 (January 1, 2020) was increased by 6% yearly which gave me $13,382 in banknotes on January 1, 2025 for which I can buy the same amount of goods that I could for $9,327 on January 1, 2020. So despite more money in my wallet (nominal increase) I actually lost some real value. Eh.</p>
+<p>OK, let’s try to be optimists here. The glass is half full. By putting the money on the deposit (5% yearly) we lost some value. Still, if we left it on an ordinary account with a lousy 0.5% interest rate the financial outcome would be even more unsatisfactory.</p>
+<pre class="language-julia"><code>(
+    # nominal gain
+    getFormattedMoney(
+        getValue(money2019, 0.5, numYrs)),
+    # real value
+    getFormattedMoney(
+        getValue(money2019, repeat([0.5], numYrs), inflPoland))
+)</code></pre>
+<pre class="output"><code>(&quot;10,253 usd&quot;, &quot;7,146 usd&quot;)</code></pre>
+<p>So always look on the bright side of life, but look for a better investment opportunities and think before you leap.</p>
+
+
+<div class="bottom-nav">
+    <p id="nav-prev" style="text-align: left;">
+        <a class="menu-level-2" href="./compound_interest_problem.html"><b>7.1</b> Problem</a> <kbd>←</kbd>
+        <span id="nav-next" style="float: right;">
+            <kbd>→</kbd> <a class="menu-level-1" href="./logo.html"><b>8</b> Logo</a>
+        </span>
+    </p>
+</div>
+
+
+<div class="license">
+    <br/>
+  <br/>
+  <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a>
+    Bartlomiej Lukaszuk
+</div>
+</div>
+</div>
+</body>
+</html>
