@@ -366,9 +366,9 @@ could for $9,327 on January 1, 2020. So despite more money in my wallet
 (nominal increase) I actually lost some real value. Eh.
 
 OK, let's try to be optimists here. The glass is half full. By putting the money
-on the deposit (5% yearly) we lost some money. Still, if we left it on an
-ordinary account with a lousy 0.5% interest rate we would have lost even more
-value.
+on the deposit (5% yearly) we lost some value. Still, if we left it on an
+ordinary account with a lousy 0.5% interest rate the financial outcome would be
+even more unsatisfactory.
 
 ```jl
 s = """
