@@ -12,7 +12,7 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/compou
 ## Problem {#sec:compound_interest_problem}
 
 There is this cartoon [Futurama](https://en.wikipedia.org/wiki/Futurama) that
-tells the story of a guy named Fry. The character was accidentally frozen on
+tells a story of a guy named Fry. The character was accidentally frozen on
 December 31, 1999 and wakes up back to life on December 31, 2999. In season 1
 episode 6 Fry visits his old bank. The teller informs him that he had on his
 account 93 cents in 1999. However, with an average yearly interest of 2.25% over
@@ -32,13 +32,13 @@ page](https://pl.wikipedia.org/wiki/Inflacja_w_Polsce#Historia) (careful its in
 Polish) the inflation in Poland over the period 2020-2024 was: 3.4%, 5.1%,
 14.4%, 11.4%, and 3.6%. If on December 31, 2019 my monthly salary was $10,000
 (I wished) then how much I would have to earn in January 2025 to be able to buy
-the same amount of goods like on that date?
+the same amount of goods like in 2019?
 
 ### Question 3 {#sec:compound_interest_problem_q3}
 
 Imagine that on January 1, 2020 I opened a bank deposit for 5 years with a
 yearly interest rate of 6%. Given the inflation rates from the question 2 would
-I make any real profit on January 2, 2025?
+I make any real profit on January 1, 2025?
 
 ## Solution {#sec:compound_interest_solution}
 
@@ -48,6 +48,7 @@ amount of money we get and improve the readability of our results.
 ```jl
 s = """
 function getFormattedMoney(money::Real, sep::Char=',')::Str
+	@assert money >= 1 "money must be >= 1"
     digits::Str = round(Int, money) |> string
     result::Str = ""
     counter::Int = 0
@@ -69,9 +70,9 @@ The function may not be the most performant, but it was pretty easy to write. It
 receives money as a [Real](https://docs.julialang.org/en/v1/base/numbers/)
 number and sets apart every three digits with a separator (`sep`) of our choice.
 Since in English decimal separator is `.` (dot) and thousand separator is `,`
-(comma) then that's what we used here as default (`sep::Char=','`). Inside our
-formatter we round the number to integer (`round(Int, money)`) and convert it to
-`string`. Next we traverse all the digits (`for digit`) in the opposite
+(comma) then that's what we used here as our default (`sep::Char=','`). Inside
+our formatter we round the number to integer (`round(Int, money)`) and convert
+it to `string`. Next we traverse all the digits (`for digit`) in the opposite
 direction (from right to left) thanks to the `reverse(digits)`. Every third
 digit (`if counter == 3`) we place our `sep` to the `result` and count to three
 a new (`counter = 0`). Besides, we prepend our `digit` to the `result`
@@ -134,7 +135,7 @@ s = """
 function getValue(capital::Real, avgPercentage::Real, years::Int)::Flt
     @assert years > 0 "years must be greater than 0"
     @assert capital > 0 "capital must be greater than 0"
-    return capital * (1+avgPercentage/100.0)^years
+    return capital * (1+avgPercentage/100)^years
 end
 """
 sc(s)
@@ -188,7 +189,7 @@ s = """
 function getValue(capital::Real, percentages::Vec{<:Real})::Flt
     @assert capital > 0 "capital must be greater than 0"
     for p in percentages
-        capital *= 1 + (p / 100.0)
+        capital *= 1 + (p / 100)
     end
     return capital
 end
@@ -234,16 +235,16 @@ To that end we will use proportions (they taught me that in the high school) and
 some simple imaginable example. To make sure we are on the same page let's talk
 briefly about the proportions.
 
-Imagine that for $10 (`usd` below) I can buy 2 bread loafs (`bl` below). If so,
-then how much bread can I buy for $5? That's easy, one bread loaf. You can solve
-it with proportions like so:
+Imagine that for $10 (`usd` below) we can buy 2 bread loafs (`bl` below). If so,
+then how much bread can we buy for $5? That's easy, one bread loaf. You can
+solve it with proportions like so:
 
 $$10\ usd - 2\ bl$$ {#eq:prop1}
 
 $$5\ usd - x\ bl$$ {#eq:prop2}
 
 We set the same units on the same sides (left - right). Next, in order to get
-$x$ we multiply numbers on the diagonals: 5 * 2 goes to the numerator and 10
+$x$ we multiply the numbers on the diagonals: 5 * 2 goes to the numerator and 10
 goes into denominator (since it got no pair on the diagonal it falls to the
 bottom):
 
@@ -267,8 +268,8 @@ our primary schools. Still, I like and remember the proportions example better.
 With that under our belt let's follow with a simple example. Imagine that in
 this year for $100 (`usd` below) we can buy 100 chocolate bars (`cb` below). Due
 to the yearly inflation that is 2% the same 100 chocolate bars will
-cost after a year $102 dollars. Luckily, thanks to the 5% interest
-rate in a year on our deposit we will have $105 in banknotes. So how many
+cost $102 dollars after a year. Luckily, thanks to the 5% yearly interest
+rate we will have $105 in banknotes from our deposit. So how many
 chocolate bars will we be able to buy after a year?
 
 That's easy thanks to the proportions.
@@ -328,6 +329,8 @@ function getValue(capital::Real,
                   interestPercs::Vec{<:Real},
                   inflationPercs::Vec{<:Real})::Flt
     @assert capital > 0 "capital must be greater than 0"
+    @assert length(interestPercs) == length(inflationPercs)
+		"interestPercs and inflationPercs must be of equal lenghts"
     for (intr, infl) in zip(interestPercs, inflationPercs)
         capital = getValue(capital, getRealPercChange(intr, infl), 1)
     end
@@ -341,7 +344,7 @@ We will use it to answer our question.
 
 ```jl
 s = """
-interestDeposit = 6.0 # yrs: 2020-2025
+interestDeposit = 6 # yrs: 2020-2025
 numYrs = length(inflPoland)
 money2025deposit = getValue(money2019,
 	interestDeposit, numYrs) # Jan 1, 2025
@@ -360,9 +363,9 @@ sco(s)
 ```
 
 And again, reality turns out to be disappointing. The initial capital of
-$10,000 (January 1, 2020) was increased by 6% yearly which gave me $13,382 in
+$10,000 (December 31, 2019) was increased by 6% yearly which gave me $13,382 in
 banknotes on January 1, 2025 for which I can buy the same amount of goods that I
-could for $9,327 on January 1, 2020. So despite more money in my wallet
+could for $9,327 on December 31, 2019. So despite more money in my wallet
 (nominal increase) I actually lost some real value. Eh.
 
 OK, let's try to be optimists here. The glass is half full. By putting the money

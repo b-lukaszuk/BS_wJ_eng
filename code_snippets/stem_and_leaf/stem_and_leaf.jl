@@ -24,8 +24,8 @@ end
 
 function getStemAndLeaf(num::Int, maxLenOfNum::Int)::Tuple{Str, Str}
     @assert maxLenOfNum > 1 "maxLenOfNum must be greater than 1"
-    @assert howManyChars(num) <= maxLenOfNum
-		"character count in num must be <= maxLenOfNum"
+    @assert(howManyChars(num) <= maxLenOfNum,
+            "character count in num must be <= maxLenOfNum")
     numStr::Str = lpad(abs(num), maxLenOfNum, "0")
     stem::Str = numStr[1:end-1] |> string
     leaf::Str = numStr[end] |> string

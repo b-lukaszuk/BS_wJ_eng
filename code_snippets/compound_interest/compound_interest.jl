@@ -3,6 +3,7 @@ const Str = String
 const Vec = Vector
 
 function getFormattedMoney(money::Real, sep::Char=',')::Str
+    @assert money >= 1 "money must be >= 1"
     digits::Str = round(Int, money) |> string
     result::Str = ""
     counter::Int = 0
@@ -23,7 +24,7 @@ getFormattedMoney(12345.06)
 function getValue(capital::Real, avgPercentage::Real, years::Int)::Flt
     @assert years > 0 "years must be greater than 0"
     @assert capital > 0 "capital must be greater than 0"
-    return capital * (1+avgPercentage/100.0)^years
+    return capital * (1+avgPercentage/100)^years
 end
 
 # Futurama s1e6: 93 cents ($0.93), 2.25%, 1_000 years
@@ -34,7 +35,7 @@ frysMoney |> getFormattedMoney
 function getValue(capital::Real, percentages::Vec{<:Real})::Flt
     @assert capital > 0 "capital must be greater than 0"
     for p in percentages
-        capital *= 1 + (p / 100.0)
+        capital *= 1 + (p / 100)
     end
     return capital
 end
@@ -56,13 +57,15 @@ function getValue(capital::Real,
                   interestPercs::Vec{<:Real},
                   inflationPercs::Vec{<:Real})::Flt
     @assert capital > 0 "capital must be greater than 0"
+    @assert(length(interestPercs) == length(inflationPercs),
+            "interestPercs and inflationPercs must be of equal lenghts")
     for (intr, infl) in zip(interestPercs, inflationPercs)
         capital = getValue(capital, getRealPercChange(intr, infl), 1)
     end
     return capital
 end
 
-interestDeposit = 6.0 # yrs: 2020-2025
+interestDeposit = 6 # yrs: 2020-2025
 numYrs = length(inflPoland)
 money2025deposit = getValue(money2019, interestDeposit, numYrs) # Jan 1, 2025
 money2025depositInflation = getValue(

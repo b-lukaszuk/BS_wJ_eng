@@ -43,7 +43,7 @@ walk away free. That being said, the betrayal is often considered to be the
 optimal strategy.
 
 You could say that was a no-brainer, but the problem is deeper than you may
-think.  Imagine there are two monkeys each got a
+think. Imagine there are two monkeys and each got a
 [tick](https://en.wikipedia.org/wiki/Tick) on their back that they cannot
 remove themselves. A tick decreases survival of an animal (it spreads diseases),
 so does the removal of the tick (less time to find food). Therefore assume that,
@@ -178,7 +178,8 @@ the code is pretty simple if you are familiar with [the decision making in
 Julia](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_decision_making.html).
 One point to notice is that here we used the `init=0` keyword argument in `sum`.
 This is a default value from which we start counting the total, and it makes
-sure that an empty vector (`opponentMoves`) returns `0` instead of an error.
+sure that an empty vector (`opponentMoves`) returns `0` instead of an error when
+used with `sum`.
 
 Time to award our players with survival points per a round (interaction) and
 their choices.

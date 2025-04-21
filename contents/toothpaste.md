@@ -25,7 +25,8 @@ spoke only one sentence: "Make the hole bigger".
 > $1'000'000. Example calculations: 100'000*(1.036^65) $\approx$ 996'000'000. In
 > that case 65 is the number of years between 1960 and 2025, whereas 1.036 is
 > how much more money you must spend every year on the same product due to the
-> assumed inflation).
+> assumed inflation). We will deal with similar calculations in
+> @sec:compound_interest.
 
 Try to figure out does making the hole bigger actually moves the sales up by
 $\geq$ 50%. Test different scenarios, e.g. different initial hole size, and
