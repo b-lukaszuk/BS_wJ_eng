@@ -231,9 +231,10 @@ combined. For that we should either implement a suitable formula obtained from a
 reliable source or come with the one ourselves. In order to learn we will try
 the latter approach (no pain, no gain).
 
-To that end we will use proportions (they taught me that in the high school) and
-some simple imaginable example. To make sure we are on the same page let's talk
-briefly about the proportions.
+To that end we will use proportions (I believe they taught me that in the high
+school in chemistry, so bear with me, you can do it) and some simple imaginable
+example. To make sure we are on the same page let's talk briefly about the
+proportions.
 
 Imagine that for $10 (`usd` below) we can buy 2 bread loafs (`bl` below). If so,
 then how much bread can we buy for $5? That's easy, one bread loaf. You can
@@ -289,22 +290,24 @@ $x = \frac{105 * 100}{102} = calculator\ does\ pip,\ pip,\ ...\ \approx 102.94$
 Therefore, we can see that in this scenario the $105 in banknotes will allow us
 to buy 102.94 chocolate bars (we think of it as a stable product that by itself
 does not gain or loose value over time). Based on the chocolate bars we can
-evaluate the real percentage gain/loss of our nominal money to be:
+evaluate the real gain/loss of our nominal money to be:
 `102.94 - 100 = 2.94 chocolate bar` or 2.94% (chocolate bars were just an
-abstraction needed as a reference point). When we put it all (starting from
-@eq:prop3) together in a formula, we get:
+abstraction needed as a reference point, something that does not change its
+value over time, hence a constant). When we put it all together (starting from
+@eq:prop3) in a formula, we get (notice that the 100 below is a constant that we
+refered to in the sentence before):
 
 $$real\ percentage = \frac{105\ usd\ *\ 100}{102\ usd} - 100$$ {#eq:prop5}
 
-Just like chocolate bars also dollars are a placeholder in our example (the more
-material and concrete the objects are the easier it is to think about them and
-manipulate them in our heads). Notice that `105 usd` in @eq:prop5 and @eq:prop4
-actually stands for percentage gain in value (`100 + inflation rate`) of our
-money (the 105% that we used in our explanation in the calculations in
-@sec:compound_interest_problem_a1). On the other hand, `102 usd` in @eq:prop5
-and @eq:prop3 is actually a placeholder for percentage change in value due to
-the inflation (we divide by it, so we decrease our gain in numerator by it).
-Therefore we can rewrite @eq:prop5 to:
+Just like chocolate bars also dollars are a placeholder in our example. We used
+them because the more material and concrete the objects are the easier it is to
+think about them and manipulate them in our heads. Notice that `105 usd` in
+@eq:prop5 and @eq:prop4 actually stands for percentage gain in value
+(`100 + inflation rate`) of our money (the 105% that we used in our explanation
+in the calculations in @sec:compound_interest_problem_a1). On the other hand,
+`102 usd` in @eq:prop5 and @eq:prop3 is actually a placeholder for percentage
+change in value due to the inflation (we divide by it, so we decrease our gain
+in numerator by it). Therefore we can rewrite @eq:prop5 to:
 
 $$real\ percentage = \frac{(100\ +\ interest\ rate) * 100}{100\ +\ inflation\ rate} - 100$$ {#eq:prop6}
 
