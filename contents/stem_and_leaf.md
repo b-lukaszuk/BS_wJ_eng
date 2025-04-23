@@ -19,14 +19,12 @@ So here is a task for you:
 
 - read the Wikipedia's description of how the plot is constructed
 - write the function that displays stem and leaf plot for positive integers
-  (e.g. in the range 0 to 110, since wider number span doesn't look well on
-  printout)
-- extend it to work also with the range -110 to 110
-- extend it to work also with floats in the range -110.9 to 110.9
+- extend it to work also with negative integers
+- extend it to work also with floats
 
 As a minimal test, make sure it works correctly on the examples from the
-[Wikipedia's web page](https://en.wikipedia.org/wiki/Stem-and-leaf_display), i.e
-
+[Wikipedia's web page](https://en.wikipedia.org/wiki/Stem-and-leaf_display),
+i.e.
 
 ```jl
 s = """
@@ -42,6 +40,10 @@ stemLeafTest3 = [-23.678758, -12.45, -3.4, 4.43, 5.5, 5.678,
 """
 sc(s)
 ```
+
+Notice that if you broaden the range of input numbers (e.g. by appending 300 or
+400, to `stemLeafTest1`) you will still get a printout, but the plot won't be so
+pretty.
 
 ## Solution {#sec:stem_and_leaf_solution}
 
