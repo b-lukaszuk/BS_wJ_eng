@@ -165,12 +165,12 @@ function getCounts(s::Str)::Dict{Char,Int}
     return counts
 end
 
-function getFreqs(counts::Dict{Char, Int})::Dict{Char,Float64}
+function getFreqs(counts::Dict{Char, Int})::Dict{Char,Flt}
     total::Int = sum(values(counts))
     return Dict(k => v/total for (k, v) in counts)
 end
 
-function getFreqs(s::Str)::Dict{Char,Float64}
+function getFreqs(s::Str)::Dict{Char,Flt}
     return s |> getCounts |> getFreqs
 end
 """
@@ -185,8 +185,8 @@ import CairoMakie as Cmk
 
 function drawFreqComparison(txt1::Str, title1::Str,
                             txt2::Str, title2::Str)::Cmk.Figure
-    letFreqs1::Dict{Char, Float64} = getFreqs(txt1)
-    letFreqs2::Dict{Char, Float64} = getFreqs(txt2)
+    letFreqs1::Dict{Char, Flt} = getFreqs(txt1)
+    letFreqs2::Dict{Char, Flt} = getFreqs(txt2)
     alphabet::Str = join('A':'Z')
     revAlphabet::Str = alphabet[end:-1:1]
     len::Int = length(alphabet)

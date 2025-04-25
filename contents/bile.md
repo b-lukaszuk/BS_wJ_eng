@@ -41,17 +41,17 @@ what we will use in our solution.
 ```jl
 s = """
 struct Sphere
-    radius::Float64
-    Sphere(r::Float64) = r <= 0 ? error("radius must be > 0") : new(r)
+    radius::Flt
+    Sphere(r::Flt) = r <= 0 ? error("radius must be > 0") : new(r)
 end
 
 # formula from Wikipedia
-function getVolume(s::Sphere)::Float64
+function getVolume(s::Sphere)::Flt
     return (4/3) * pi * s.radius^3
 end
 
 # formula from Wikipedia
-function getSurfaceArea(s::Sphere)::Float64
+function getSurfaceArea(s::Sphere)::Flt
     return 4 * pi * s.radius^2
 end
 """
@@ -131,9 +131,9 @@ do is to translate it into Julia code.
 
 ```jl
 s = """
-function getSphere(volume::Float64)::Sphere
+function getSphere(volume::Flt)::Sphere
     # cbrt - fn that calculates cube root of a number
-    radius::Float64 = cbrt(volume / (4/3) / pi)
+    radius::Flt = cbrt(volume / (4/3) / pi)
     return Sphere(radius)
 end
 """
