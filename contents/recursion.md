@@ -109,4 +109,156 @@ job is to implement the functions to calculate both the numbers.
 
 ## Solution {#sec:recursion_solution}
 
-The solution goes here.
+Factorial is an interesting little function with a set of practical
+applications, one of them I explained
+[here](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_exercises.html#sec:statistics_intro_exercise2).
+
+Factorial recursive implementation follows closely its mathematical definition
+(see below, `n!` factorial of a number n).
+
+$$
+\begin{align*}
+n! = \left\{
+    \begin {aligned}
+         & 1 \quad & \text{if } n = 1 \\
+         & n \times (n-1)! \quad & \text{otherwise}
+    \end{aligned}
+\right.
+\end{align*}
+$$
+
+Which can be translated into Julia's:
+
+```jl
+s = """
+function recFactorial(n::Int)::Int
+    @assert 1 <= n <= 20 "n must be in range [1-20]"
+    if n == 1
+        return 1
+    else
+        return n * recFactorial(n-1)
+    end
+end
+"""
+sc(s)
+```
+
+In general, factorial is well defined for positive integers and it grows very
+quickly (n > 20 would produce
+[overflow](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Overflow-behavior),
+to resolve it we could use `BigInt` instead of `Int`) hence the `@assert` line.
+Next, for `n` equal 1 we return 1, otherwise we multiply `n` by
+`recFactorial(n-1)`. Go ahead, follow the execution of the program for small
+inputs like `recFactorial(3)` in your head (similarly to `recSum` from
+@sec:recursion_problem).
+
+To get you a better feel of recursion in Julia, here are two other equivalent
+implementations of `recFactorial`.
+
+```jl
+s = """
+function recFactorialV2(n::Int)::Int
+    @assert 1 <= n <= 20 "n must be in range [1-20]"
+    return n == 1 ? 1 : n * recFactorialV2(n-1)
+end
+"""
+sc(s)
+```
+and
+
+```jl
+s = """
+function recFactorialV3(n::Int, acc::Int=1)::Int
+    @assert 1 <= n <= 20 "n must be in range [1-20]"
+    return n == 1 ? acc : recFactorialV3(n-1, n * acc)
+end
+"""
+sc(s)
+```
+
+The second version (`recFactorialV2`) uses [ternary
+operator](https://docs.julialang.org/en/v1/base/base/#?:) instead of more
+verbose `if else` statements. The third version (`recFActorialV3`) relies on so
+called accumulator (`acc`) that stores results of previous calculations (if
+any). It is also called tail-recursive function and is recommended in some
+programming languages, like [Haskell](https://en.wikipedia.org/wiki/Haskell) and
+[Scala](https://en.wikipedia.org/wiki/Scala_(programming_language)), that can
+take advantage of this kind of code to produce (internally) effective function
+implementation.
+
+Let's go to the Fibonacci sequence. When I was a student, they said that dinners
+in the student's canteen are like Figonacci numbers, i.e. each is a sum of the
+two previous ones. To put it more mathematically, we get
+
+$$
+\begin{align*}
+fib(n) = \left\{
+	\begin {aligned}
+         & 0 \quad & \text{if } n = 0 \\
+         & 1 \quad & \text{if } n = 1 \\
+         & fib(n-2) + fib(n-1) \quad & \text{otherwise}
+    \end{aligned}
+\right.
+\end{align*}
+$$
+
+Which expressed in Julia's language give us:
+
+```jl
+s = """
+function recFib(n::Int)::Int
+    @assert 0 <= n <= 40 "n must be in range [0-40]"
+    if n == 0
+        return 0
+    elseif n == 1
+        return 1
+    else
+        return recFib(n - 2) + recFib(n - 1)
+    end
+end
+
+recFib(10)
+"""
+sco(s)
+```
+
+The numbers do not grow as fast as `factorial`s, but the algorithm although
+simple, is very inefficient (e.g. for `recFib(3)` I have to calculate
+`recFib(1) + recFib(2)`, but `recFib(2)` will calculate `recFib(1)` inside of it
+as well, for greater numbers the duplicated operations threaten to throttle the
+processor). On my laptop the computation for `recFib(40)` take roughly 600-700
+[ms], so more than half a second, a slight delay noticed even by a human.
+
+Therefore we may improve our last function by using lookup tables/dictionaries
+like so:
+
+```jl
+s = """
+function recFib2(n::Int, lookup::Dict{Int, Int})::Int
+    @assert 0 <= n <= 40 "n must be in range [0-40]"
+    if !haskey(lookup, n)
+        lookup[n] = recFib2(n-2, lookup) + recFib2(n-1, lookup)
+    end
+    return lookup[n]
+end
+"""
+sc(s)
+```
+
+If there is no known value for a given Fibonacci number then we calculate it
+using the known formula. Otherwise we just return the found value. Now, the
+function is more performant, as
+
+```jl
+s = """
+fibs = Dict(0 => 0, 1 => 1)
+recFib2(40, fibs)
+"""
+sco(s)
+```
+
+takes only microseconds on its first execution (like 10-100 times
+faster). Interestingly, running `recFib2(40, fibs)` for the second time reduces
+the time to nanoseconds (a million times faster) since there are no calculations
+performed the second time). Run `recFib(40)` twice to convince yourself that it
+takes roughly the same amount of time every time it runs with the same input.
