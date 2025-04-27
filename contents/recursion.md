@@ -12,8 +12,8 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/matrix
 ## Problem {#sec:recursion_problem}
 
 [Recursion](https://en.wikipedia.org/wiki/Recursion_(computer_science)) is a
-programming technique where a function invokes itself. It relies on two simple
-principles:
+programming technique where a function invokes itself in order to solve a
+problem. It relies on two simple principles:
 
 1. know when to stop
 2. split the problem into a single step and a smaller problem
@@ -40,8 +40,8 @@ We begin by defining our edge case (know when to stop). If the vector (`v`) is
 empty (`if isempty(v)`) we return 0 (BTW. Notice that zero is a neutral
 mathematical operation for addition, any number plus zero is just itself).
 Otherwise (`else`) we add the first element of the vector (`v[1]`, single step)
-to whatever number is returned by `recSum` with rest of the vector (`v[2:end]`)
-as an argument (smaller problem).
+to whatever number is returned by `recSum` with the rest of the vector
+(`v[2:end]`) as an argument (smaller problem).
 
 Time for a couple of examples.
 
@@ -83,7 +83,7 @@ recSum([1, 2, 3]) # triggers else branch
 6
 ```
 
-Although difficult to imagine `recSum` works equally well for broader range of
+Although difficult to imagine `recSum` works equally well for a bit broader range of
 numbers.
 
 ```jl
@@ -98,9 +98,10 @@ you apply [the Gauss
 method](https://www.nctm.org/Publications/TCM-blog/Blog/The-Story-of-Gauss/).
 
 Anyway, usually recursion is not very effective and it can be rewritten with
-loops. Still, for some problems it is an easy to implement and elegant
-solution. Therefore, it worth to have this technique in your programming
-toolbox.
+loops. Moreover, too big input, e.g. `1:100_000`, will likely cause an error
+with `recSum`, but not with built-in `sum`. Still, for some problems recursion
+is an easy to implement and elegant solution. Therefore, it is worth to have
+this technique in your programming toolbox.
 
 Classical examples of recursive process in action are
 [factorial](https://en.wikipedia.org/wiki/Factorial) and [Fibonacci
@@ -114,7 +115,7 @@ applications, one of them I explained
 [here](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_exercises.html#sec:statistics_intro_exercise2).
 
 Factorial recursive implementation follows closely its mathematical definition
-(see below, `n!` factorial of a number n).
+(see below, where `n!` is a factorial of a number n).
 
 $$
 \begin{align*}
@@ -152,7 +153,7 @@ Next, for `n` equal 1 we return 1, otherwise we multiply `n` by
 inputs like `recFactorial(3)` in your head (similarly to `recSum` from
 @sec:recursion_problem).
 
-To get you a better feel of recursion in Julia, here are two other equivalent
+To get you a better feel for recursion in Julia, here are two other equivalent
 implementations of `recFactorial`.
 
 ```jl
@@ -178,17 +179,18 @@ sc(s)
 
 The second version (`recFactorialV2`) uses [ternary
 operator](https://docs.julialang.org/en/v1/base/base/#?:) instead of more
-verbose `if else` statements. The third version (`recFActorialV3`) relies on so
-called accumulator (`acc`) that stores results of previous calculations (if
-any). It is also called tail-recursive function and is recommended in some
-programming languages, like [Haskell](https://en.wikipedia.org/wiki/Haskell) and
+verbose `if else` statements. The third version (`recFactorialV3`) relies on a
+so called accumulator (`acc`) that stores the result of a previous calculation
+(if any). `recFactorialV3` is a tail-recursive function and is recommended in
+some programming languages, like
+[Haskell](https://en.wikipedia.org/wiki/Haskell) and
 [Scala](https://en.wikipedia.org/wiki/Scala_(programming_language)), that can
 take advantage of this kind of code to produce (internally) effective function
 implementation.
 
 Let's go to the Fibonacci sequence. When I was a student, they said that dinners
-in the student's canteen are like Figonacci numbers, i.e. each is a sum of the
-two previous ones. To put it more mathematically, we get
+in the student's canteen are like Figonacci numbers, i.e. each dinner is the sum
+of the two previous ones. To put it more mathematically, we get
 
 $$
 \begin{align*}
@@ -222,12 +224,13 @@ recFib(10)
 sco(s)
 ```
 
-The numbers do not grow as fast as `factorial`s, but the algorithm although
-simple, is very inefficient (e.g. for `recFib(3)` I have to calculate
+The numbers do not grow as fast as `factorial`s, but the algorithm, although
+simple, is very inefficient. For instance, for `recFib(3)` I have to calculate
 `recFib(1) + recFib(2)`, but `recFib(2)` will calculate `recFib(1)` inside of it
-as well, for greater numbers the duplicated operations threaten to throttle the
-processor). On my laptop the computation for `recFib(40)` take roughly 600-700
-[ms], so more than half a second, a slight delay noticed even by a human.
+as well. For greater numbers (inputs) the duplicated operations threaten to
+throttle the processor. On my laptop the computation for `recFib(40)` takes
+roughly 600-700 [ms], so more than half a second, a delay noticed even by a
+human.
 
 Therefore we may improve our last function by using lookup tables/dictionaries
 like so:
@@ -261,4 +264,4 @@ takes only microseconds on its first execution (like 10-100 times
 faster). Interestingly, running `recFib2(40, fibs)` for the second time reduces
 the time to nanoseconds (a million times faster) since there are no calculations
 performed the second time). Run `recFib(40)` twice to convince yourself that it
-takes roughly the same amount of time every time it runs with the same input.
+takes roughly the same amount of time every time it runs with the same `n`.
