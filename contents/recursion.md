@@ -100,8 +100,8 @@ method](https://www.nctm.org/Publications/TCM-blog/Blog/The-Story-of-Gauss/).
 Anyway, usually recursion is not very effective and it can be rewritten with
 loops. Moreover, too big input, e.g. `1:100_000`, will likely cause an error
 with `recSum`, but not with built-in `sum`. Still, for some problems recursion
-is an easy to implement and elegant solution. Therefore, it is worth to have
-this technique in your programming toolbox.
+is an easy to implement and elegant solution that gets the job done. Therefore,
+it is worth to have this technique in your programming toolbox.
 
 Classical examples of recursive process in action are
 [factorial](https://en.wikipedia.org/wiki/Factorial) and [Fibonacci
@@ -181,7 +181,7 @@ The second version (`recFactorialV2`) uses [ternary
 operator](https://docs.julialang.org/en/v1/base/base/#?:) instead of more
 verbose `if else` statements. The third version (`recFactorialV3`) relies on a
 so called accumulator (`acc`) that stores the result of a previous calculation
-(if any). `recFactorialV3` is a tail-recursive function and is recommended in
+(if any). `recFactorialV3` is a tail-recursive function that is recommended in
 some programming languages, like
 [Haskell](https://en.wikipedia.org/wiki/Haskell) and
 [Scala](https://en.wikipedia.org/wiki/Scala_(programming_language)), that can

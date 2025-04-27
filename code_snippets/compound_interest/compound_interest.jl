@@ -3,11 +3,11 @@ const Str = String
 const Vec = Vector
 
 function getFormattedMoney(money::Real, sep::Char=',')::Str
-    @assert money >= 1 "money must be >= 1"
-    digits::Str = round(Int, money) |> string
+    @assert money >= 0 "money must be >= 0"
+    amount::Str = round(Int, money) |> string
     result::Str = ""
     counter::Int = 0
-    for digit in reverse(digits) # digit is a single digit (type Char)
+    for digit in reverse(amount) # digit is a single digit (type Char)
         if counter == 3
             result = sep * result
             counter = 0

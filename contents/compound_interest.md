@@ -42,17 +42,21 @@ I make any real profit on January 1, 2025?
 
 ## Solution {#sec:compound_interest_solution}
 
-Before we begin let's write a helper function that will nicely display the
-amount of money we get and improve the readability of our results.
+Before we begin a warning. The following section, calculations, etc. may or may
+not be accurate and are only meant as a programming exercise, not a financial
+advice.
+
+As a prelude let's write a helper function that will nicely display the amount
+of money we get and improve the readability of our results.
 
 ```jl
 s = """
 function getFormattedMoney(money::Real, sep::Char=',')::Str
-	@assert money >= 1 "money must be >= 1"
-    digits::Str = round(Int, money) |> string
+    @assert money >= 0 "money must be >= 0"
+    amount::Str = round(Int, money) |> string
     result::Str = ""
     counter::Int = 0
-    for digit in reverse(digits) # digit is a single digit (type Char)
+    for digit in reverse(amount) # digit is a single digit (type Char)
         if counter == 3
             result = sep * result
             counter = 0
@@ -73,7 +77,7 @@ Since in English decimal separator is `.` (dot) and thousand separator is `,`
 (comma) then that's what we used here as our default (`sep::Char=','`). Inside
 our formatter we round the number to integer (`round(Int, money)`) and convert
 it to `string`. Next we traverse all the digits (`for digit`) in the opposite
-direction (from right to left) thanks to the `reverse(digits)`. Every third
+direction (from right to left) thanks to the `reverse(amount)`. Every third
 digit (`if counter == 3`) we place our `sep` to the `result` and count to three
 a new (`counter = 0`). Besides, we prepend our `digit` to the `result`
 (`digit * result`) and increase the counter (`counter +=1`). In the end we
@@ -311,9 +315,7 @@ in numerator by it). Therefore we can rewrite @eq:prop5 to:
 
 $$real\ percentage = \frac{(100\ +\ interest\ rate) * 100}{100\ +\ inflation\ rate} - 100$$ {#eq:prop6}
 
-Now let's put @eq:prop6 into a Julia's function (we could simplify it further,
-but I try to avoid mathematics and Julia won't mind doing longhand
-calculations).
+Now let's put @eq:prop6 into a Julia's function.
 
 ```jl
 s = """
@@ -323,6 +325,14 @@ end
 """
 sc(s)
 ```
+
+> **_Note:_** As a practical exercise you may further simplify the formula in
+> @eq:prop6 using a pen and paper. Compare your result with the output of
+> Symbolics.jl (that we met in @sec:bat_and_ball_solution), e.g.
+> `Sym.@variables realPerc interPerc inflPerc` and
+> `Sym.simplify(realPerc ~ ((100 + interPerc)*100)/(100 + inflPerc)-100)`.
+> Of course, if you think that's too much mathematics for one day, then
+> don`t. Julia won't mind computing the result of @eq:prop6 for you.
 
 Now we can use it to write our final, third method, for `getValue`.
 
