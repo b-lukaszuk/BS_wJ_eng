@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Caesar - Build SH*T with Julia</title>
+  <title>Problem - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -106,18 +106,54 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h1 data-number="15" id="sec:caesar"><span class="header-section-number">15</span> Caesar</h1>
-<p>In this chapter I used the following libraries</p>
-<pre class="language-julia"><code>import BenchmarkTools as Bt</code></pre>
-<p>The above was used only for the chapter’s extras and is not strictly necessary to solve the task.</p>
-<p>Anyway, you may compare your own solution with the one in this chapter’s text (with explanations) or with <a href="https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/caesar">the code snippets</a> (without explanations).</p>
+<h2 data-number="6.1" id="sec:recursion_problem"><span class="header-section-number">6.1</span> Problem</h2>
+<p><a href="https://en.wikipedia.org/wiki/Recursion_(computer_science)">Recursion</a> is a programming technique where a function invokes itself in order to solve a problem. It relies on two simple principles:</p>
+<ol type="1">
+<li>know when to stop</li>
+<li>split the problem into a single step and a smaller problem</li>
+</ol>
+<p>And that’s it. Let’s see how this works in practice.</p>
+<p>For that we’ll write a recursive function that sums the elements of a vector of integers.</p>
+<pre class="language-julia"><code>function recSum(v::Vec{Int})::Int
+    if isempty(v)
+        return 0
+    else
+        return v[1] + recSum(v[2:end])
+    end
+end</code></pre>
+<p>We begin by defining our edge case (know when to stop). If the vector (<code>v</code>) is empty (<code>if isempty(v)</code>) we return 0 (BTW. Notice that zero is a neutral mathematical operation for addition, any number plus zero is just itself). Otherwise (<code>else</code>) we add the first element of the vector (<code>v[1]</code>, single step) to whatever number is returned by <code>recSum</code> with the rest of the vector (<code>v[2:end]</code>) as an argument (smaller problem).</p>
+<p>Time for a couple of examples.</p>
+<p>For</p>
+<pre class="language-julia"><code>recSum([1])</code></pre>
+<p>1</p>
+<p>the execution of the program looks something like</p>
+<pre><code>recSum([1]) # triggers else branch
+    1 + recSum([]) # triggers if branch (stop)
+        1 + 0 # stop reached, time to return
+1</code></pre>
+<p>Whereas for</p>
+<pre class="language-julia"><code>recSum([1, 2, 3])</code></pre>
+<p>6</p>
+<p>we get</p>
+<pre><code>recSum([1, 2, 3]) # triggers else branch
+    1 + recSum([2, 3]) # triggers else branch
+        1 + 2 + recSum([3]) # triggers else branch
+            1 + 2 + 3 + recSum([]) # triggers if branch (stop)
+                1 + 2 + 3 + 0 # stop reached, time to return
+6</code></pre>
+<p>Although difficult to imagine <code>recSum</code> works equally well for a bit broader range of numbers.</p>
+<pre class="language-julia"><code>1:100 |&gt; collect |&gt; recSum</code></pre>
+<p>5050</p>
+<p>Believe it or not, but that last one you can calculate fairly easily yourself if you apply <a href="https://www.nctm.org/Publications/TCM-blog/Blog/The-Story-of-Gauss/">the Gauss method</a>.</p>
+<p>Anyway, usually recursion is not very effective and it can be rewritten with loops. Moreover, too big input, e.g. <code>1:100_000</code>, will likely cause an error with <code>recSum</code>, but not with built-in <code>sum</code>. Still, for some problems recursion is an easy to implement and elegant solution that gets the job done. Therefore, it is worth to have this technique in your programming toolbox.</p>
+<p>Classical examples of recursive process in action are <a href="https://en.wikipedia.org/wiki/Factorial">factorial</a> and <a href="https://en.wikipedia.org/wiki/Fibonacci_sequence">Fibonacci sequence</a>. For this task your job is to implement the functions to calculate both the numbers.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-2" href="./shift_solution.html"><b>14.2</b> Solution</a> <kbd>←</kbd>
+        <a class="menu-level-1" href="./recursion.html"><b>6</b> Recursion</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./caesar_problem.html"><b>15.1</b> Problem</a>
+            <kbd>→</kbd> <a class="menu-level-2" href="./recursion_solution.html"><b>6.2</b> Solution</a>
         </span>
     </p>
 </div>
