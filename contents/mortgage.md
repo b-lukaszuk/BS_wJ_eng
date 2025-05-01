@@ -127,3 +127,96 @@ s = """
 """
 sco(s)
 ```
+
+The money we still own to the bank will change month after month (because every
+month we pay off a fraction of it with our installment), so let's calculate just
+that.
+
+```jl
+s = """
+# amount of money owned after every month
+function getPrincipalAfterMonth(prevPrincipal::Real,
+                                interestPercYr::Real,
+                                monthlyPayment::Flt)::Flt
+    @assert (prevPrincipal >= 0 && interestPercYr > 0 && monthlyPayment > 0)
+            "incorrect argument values"
+    p::Real = prevPrincipal
+    r::Real = interestPercYr / 100 / 12
+    c::Flt = monthlyPayment
+    return (1 + r) * p - c
+end
+"""
+sc(s)
+```
+
+Not much to explain here, just a simple rewrite of the formula into Julia's
+code, but now we can estimate principal owned to the bank each year.
+
+```jl
+s = """
+# paying off mortgage year by year
+# returns principal still owned every year
+function getPrincipalOwnedEachYr(m::Mortgage)::Vec{Flt}
+    monthlyPayment::Flt = getInstallment(m)
+    principalStillOwnedYrs::Vec{Flt} = [m.principal]
+    principal::Real = m.principal
+    for month in 1:m.numMonths
+        principal = getPrincipalAfterMonth(
+            principal, m.interestPercYr, monthlyPayment)
+        if month % 12 == 0
+            push!(principalStillOwnedYrs, principal)
+        end
+    end
+    return round.(principalStillOwnedYrs, digits=2)
+end
+"""
+sc(s)
+```
+
+Here we calculate the principal owned after every month, and once a year (`month
+% 12 == 0`) we push it to a vector tracking its yearly change
+(`principalStillOwnedYrs`). Let's see how it works, if we did it right then in
+the end the principal should drop to zero.
+
+```jl
+s = """
+principals1 = getPrincipalOwnedEachYr(mortgage1)
+principals2 = getPrincipalOwnedEachYr(mortgage2)
+
+(
+    principals1[end],
+    principals2[end]
+)
+"""
+sco(s)
+```
+
+So how much principal we still own to the bank at the beginning of year 15 in
+each scenario?
+
+```jl
+s = """
+(
+    principals1[15] |> fmt,
+    principals2[15] |> fmt
+)
+"""
+sco(s)
+```
+
+Hmm, quite a lot. And when will this value drop to $\le$ 100,000 USD?
+
+```jl
+s = """
+(
+    findfirst(p -> p <= 100_000, principals1),
+    findfirst(p -> p <= 100_000, principals2)
+)
+"""
+sco(s)
+```
+
+In general, for quite some time the money we pay to the bank mostly pay off the
+interest and not the capital (see @fig:mortgagePrincipalsYrByYr).
+
+![Principal still owned to the bank year by year. Mortgage: $200,000 at 6.49% yearly for 20 years. The estimation may not be accurate.](./images/mortgagePrincipalsYrByYr.png){#fig:mortgagePrincipalsYrByYr}
