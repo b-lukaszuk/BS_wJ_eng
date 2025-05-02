@@ -220,3 +220,87 @@ In general, for quite some time the money we pay to the bank mostly pay off the
 interest and not the capital (see @fig:mortgagePrincipalsYrByYr).
 
 ![Principal still owned to the bank year by year. Mortgage: $200,000 at 6.49% yearly for 20 years. The estimation may not be accurate.](./images/mortgagePrincipalsYrByYr.png){#fig:mortgagePrincipalsYrByYr}
+
+To answer the last question (which mortgage is more worth it in terms of total
+payment and total interest) we'll use a [pie
+chart](https://docs.makie.org/v0.21/reference/plots/pie).
+
+```
+function addPieChart!(m::Mortgage, fig::Cmk.Figure, ax::Cmk.Axis, col::Int)
+    installment::Flt = getInstallment(m)
+    totalInterest::Flt = installment * m.numMonths - m.principal
+    yrs::Flt = round.(m.numMonths / 12, digits=2)
+    colors::Vec{Str} = ["coral1", "turquoise2", "white", "white", "white"]
+    lebels::Vec{Str} = ["interest = $(fmt(totalInterest))",
+                        "principal = $(fmt(m.principal))",
+                        "$(yrs) years, $(m.interestPercYr)% yearly",
+                        "total cost = $(fmt(installment * m.numMonths))",
+                        "monthly payment = $(fmt(installment))"]
+    Cmk.pie!(ax, [totalInterest, m.principal], color=colors[1:2],
+             radius=4, strokecolor=:white, strokewidth=5)
+    Cmk.hidedecorations!(ax)
+    Cmk.hidespines!(ax)
+    Cmk.Legend(fig[3, col],
+               [Cmk.PolyElement(color=c) for c in colors],
+               lebels, valign=:bottom, halign=:center, fontsize=60,
+               framevisible=false)
+    return nothing
+end
+```
+
+The function is rather simple. It adds a pie chart to an existing figure and
+axis. A point of notice, the colors used are
+`["coral1", "turquoise2", "white", "white", "white"]`. The first two will be
+used to paint the circle. But all of them, will be used in the legend
+(`Cmk.Legend`). Hence, we used `"white"` for the values that are not in the
+circle (white color on white background in the legend is basically invisible).
+We also used [string
+interpolation](https://docs.julialang.org/en/v1/manual/strings/#string-interpolation)
+where a simple interpolated value is used after the dollar character (`$`) or in
+more complicated case (a structure field, a calculation) is placed after the
+dollar character and within parenthesis (`$(2*3)`).
+
+Time to draw a comparison
+
+```
+function drawComparison(m1::Mortgage, m2::Mortgage)::Cmk.Figure
+    fig::Cmk.Figure = Cmk.Figure(fontsize=18)
+    ax1::Cmk.Axis = Cmk.Axis(
+        fig[1:2, 1], title="Mortgage simulation\n(may not be accurate)",
+        limits=(-5, 5, -5, 5), aspect=1)
+    ax2::Cmk.Axis = Cmk.Axis(
+        fig[1:2, 2], title="Mortgage simulation\n(may not be accurate)",
+        limits=(-5, 5, -5, 5), aspect=1)
+    Cmk.linkxaxes!(ax1, ax2)
+    Cmk.linkyaxes!(ax1, ax2)
+    addPieChart!(m1, fig, ax1, 1)
+    addPieChart!(m2, fig, ax2, 2)
+    return fig
+end
+
+drawComparison(mortgage1, mortgage2)
+```
+
+![Comparison of two mortgages (may not be accurate).](./images/mortgagesComparison.png){#fig:mortgageComparison}
+
+So it turns out that despite the higher interest rate of 6.49% overall we will
+pay less money to the bank for `mortgage1`. Therefore, if we are OK with a
+greater monthly payment (installment) then we may choose that one.
+
+Of course, the above was just a progamming exercise, not a financial
+advice. Moreover, the simulation may be inaccurate for many reasons. For
+instance, a bank may calculate the interest every day, and not every month, in
+that case you will pay more. Compare with the simple example below and compound
+interest from @sec:compound_interest_problem_a1.
+
+```jl
+s = """
+# 6% yearly, after 1 year
+(
+	200_000 * 1.06 |> fmt, # capitalized yearly
+	200_000 * (1 + (0.06/12))^12 |> fmt, # capitalized monthly
+	200_000 * (1 + (0.06/365))^365 |> fmt, # capitalized daily
+)
+"""
+sco(s)
+```
