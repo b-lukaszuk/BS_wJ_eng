@@ -15,7 +15,7 @@ function getFormattedMoney(money::Real, sep::Char=',')::Str
         result = digit * result
         counter += 1
     end
-    return result * " usd"
+    return result * " USD"
 end
 
 getFormattedMoney(12345.06)

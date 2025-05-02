@@ -64,7 +64,7 @@ function getFormattedMoney(money::Real, sep::Char=',')::Str
         result = digit * result
         counter += 1
     end
-    return result * " usd"
+    return result * " USD"
 end
 """
 sc(s)
@@ -81,7 +81,7 @@ direction (from right to left) thanks to the `reverse(amount)`. Every third
 digit (`if counter == 3`) we place our `sep` to the `result` and count to three
 a new (`counter = 0`). Besides, we prepend our `digit` to the `result`
 (`digit * result`) and increase the counter (`counter +=1`). In the end we
-return the formatted number (`result * " usd"`).
+return the formatted number (`result * " USD"`).
 
 Let's see how it works.
 

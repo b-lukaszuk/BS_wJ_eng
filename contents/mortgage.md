@@ -27,7 +27,7 @@ Write a Julia program that will tell you:
    case?
 3. After how many years your debt will be $\le$ $100'000?
 4. Which of the two mortgages is more worth it for you (the smaller total cost
-   and interest you pay to the bank)?
+   and total interest you pay to the bank)?
 
 Feel free to add some visual flair to your solution.
 
@@ -62,7 +62,7 @@ function fmt(money::Real, sep::Char=',',)::Str
         result = digit * result
         counter += 1
     end
-    return result * " usd"
+    return result * " USD"
 end
 """
 sc(s)
