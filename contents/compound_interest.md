@@ -400,5 +400,5 @@ s = """
 sco(s)
 ```
 
-So always look on the bright side of life, but look for a better investment
-opportunities and think before you leap.
+So always look on the bright side of life, but look for something better and
+think before you leap.

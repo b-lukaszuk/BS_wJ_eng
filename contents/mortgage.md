@@ -48,7 +48,7 @@ Next, let's use the formatting function from @sec:compound_interest_solution.
 
 ```jl
 s = """
-# getFormattedMoney from chapter: compound interest, renamed
+# getFormattedMoney from chapter: compound interest, modified
 function fmt(money::Real, sep::Char=',',)::Str
     @assert money >= 0 "money must be >= 0"
     amount::Str = round(Int, money) |> string
@@ -68,7 +68,7 @@ end
 sc(s)
 ```
 
-Time to define a `struct` that will contain all the data necessary to perform
+Time to define a `struct` that will contain the data necessary to perform
 calculations for a given mortgage.
 
 ```jl
@@ -78,8 +78,9 @@ struct Mortgage
     interestPercYr::Real
     numMonths::Int
 
-    Mortgage(p::Real, i::Real, n::Int) = (p < 0 && i < 0 && 12 < n < 480) ?
-        error("incorrect field values") : new(p, i, n)
+    Mortgage(p::Real, i::Real, n::Int) = (
+		p < 1 || i < 0 || n < 12 || n > 480) ?
+		error("incorrect field values") : new(p, i, n)
 end
 
 mortgage1 = Mortgage(200_000, 6.49, 20*12)
@@ -115,7 +116,7 @@ function arguments (and `Mortgage` fields) contain longer (more descriptive)
 names, whereas inside the functions we use the abbreviations (case insensitive)
 found in the above-mentioned formulas .
 
-With that done, we can answer how much money will we have to pay to the bank
+With that done, we can answer how much money we will have to pay to the bank
 every month for the duration of our mortgage.
 
 ```jl
@@ -128,9 +129,9 @@ s = """
 sco(s)
 ```
 
-The money we still own to the bank will change month after month (because every
-month we pay off a fraction of it with our installment), so let's calculate just
-that.
+The money we still own to the bank (principal) will change month after month
+(because every month we pay off a fraction of it with our installment), so let's
+calculate that.
 
 ```jl
 s = """
@@ -158,13 +159,13 @@ s = """
 # returns principal still owned every year
 function getPrincipalOwnedEachYr(m::Mortgage)::Vec{Flt}
     monthlyPayment::Flt = getInstallment(m)
-    principalStillOwnedYrs::Vec{Flt} = [m.principal]
-    principal::Real = m.principal
+    curPrincipal::Real = m.principal
+    principalStillOwnedYrs::Vec{Flt} = [curPrincipal]
     for month in 1:m.numMonths
-        principal = getPrincipalAfterMonth(
-            principal, m.interestPercYr, monthlyPayment)
+        curPrincipal = getPrincipalAfterMonth(
+            curPrincipal, m.interestPercYr, monthlyPayment)
         if month % 12 == 0
-            push!(principalStillOwnedYrs, principal)
+            push!(principalStillOwnedYrs, curPrincipal)
         end
     end
     return round.(principalStillOwnedYrs, digits=2)
@@ -217,12 +218,12 @@ sco(s)
 ```
 
 In general, for quite some time the money we pay to the bank mostly pay off the
-interest and not the capital (see @fig:mortgagePrincipalsYrByYr).
+interest and not the principal (see @fig:mortgagePrincipalsYrByYr).
 
 ![Principal still owned to the bank year by year. Mortgage: $200,000 at 6.49% yearly for 20 years. The estimation may not be accurate.](./images/mortgagePrincipalsYrByYr.png){#fig:mortgagePrincipalsYrByYr}
 
-To answer the last question (which mortgage is more worth it in terms of total
-payment and total interest) we'll use a [pie
+To answer the last question (which mortgage is more worth it for us in terms of
+total payment and total interest) we'll use a [pie
 chart](https://docs.makie.org/v0.21/reference/plots/pie).
 
 ```
@@ -256,9 +257,9 @@ used to paint the circle. But all of them, will be used in the legend
 circle (white color on white background in the legend is basically invisible).
 We also used [string
 interpolation](https://docs.julialang.org/en/v1/manual/strings/#string-interpolation)
-where a simple interpolated value is used after the dollar character (`$`) or in
-more complicated case (a structure field, a calculation) is placed after the
-dollar character and within parenthesis (`$(2*3)`).
+where a simple interpolated value is placed after the dollar character (`$`) or
+in a more complicated case (a structure field, a calculation) it is put after
+the dollar character and within parenthesis (e.g. `$(2*3)`).
 
 Time to draw a comparison
 
@@ -297,7 +298,7 @@ interest from @sec:compound_interest_problem_a1.
 s = """
 # 6% yearly, after 1 year
 (
-	200_000 * 1.06 |> fmt, # capitalized yearly
+	200_000 * (1 + 0.06) |> fmt, # capitalized yearly
 	200_000 * (1 + (0.06/12))^12 |> fmt, # capitalized monthly
 	200_000 * (1 + (0.06/365))^365 |> fmt, # capitalized daily
 )
