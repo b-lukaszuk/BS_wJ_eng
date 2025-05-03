@@ -10,14 +10,16 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/shift)
 
 ## Problem {#sec:shift_problem}
 
-Imagine that one day you were looking for a radio station that plays a good
-music. You searched through a range of different frequencies and found a strange
-gibberish on one of them. You recorded it and used speech to text conversion
-tool to obtain the content of `trarfvf.txt` ([see the code
-snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/shift)).
+Imagine that one day you received a mysterious e-mail to your inbox. At first
+you thought it was a spam, but it just looks like a complete gibberish. Upon
+more detailed inspection it turned out that the text got some regularity to it.
+So it might be a coded message. Just in case you saved it as `trarfvf.txt` ([see
+the code
+snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/shift)),
+since `trarfvf` was the title of the message.
 
-It turns out the text got some regularity, so it might be a coded message. A
-simple method to code something is to use a shift cipher (see @fig:codingDiscs).
+Now, a simple method to code something is to use a shift cipher (see
+@fig:codingDiscs).
 
 ![Coding Discs. The outer disc contains the original alphabet. The inner disc
 contains the alphabet shifted by 2
@@ -41,9 +43,10 @@ shift (rotation) used to code the message found in `trarfvf.txt` (~31 KiB).
 
 Let's approach the problem step by step.
 
-First let's read the file's contents (`open` and `read`, compare with
+First let's read the file's contents (`open` and `read` were discussed in
 @sec:transcription_solution), `uppercase` all the characters (compare with
-@sec:translation_solution) and preserve only letters (`filter`).
+@sec:translation_solution) and preserve only letters from the English alphabet
+(`filter`).
 
 ```jl
 s = """
@@ -113,8 +116,8 @@ codedLetFreqs = getFreqs(codedTxt)
 sco(s)
 ```
 
-And the winner is `R`. In the metal insides of a computer letters are
-represented as numbers (see,
+And the winner is `R`. Interestingly, in the metal insides of a computer letters
+are represented as numbers (see,
 [e.g. here](https://en.wikipedia.org/wiki/ASCII)). We can use this to our
 advantage and quickly obtain the shift.
 
@@ -126,8 +129,8 @@ sco(s)
 ```
 
 And so it turns out, that our encrypted message was coded with a shift cipher
-with the rotation of 13. If we were even more stubborn, we could display both
-the frequencies on a graph like @fig:letterFrequency (we do not expect the fit
-to be perfect).
+with the rotation of 13 (we will verify this finding in @sec:caesar). If we were
+even more stubborn, we could display both the frequencies on a graph like
+@fig:letterFrequency (we do not expect the fit to be perfect).
 
 ![Frequency analysis of an encrypted text.](./images/letterFreqency.png){#fig:letterFrequency}
