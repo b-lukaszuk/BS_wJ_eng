@@ -19,12 +19,13 @@ function getFormattedMoney(money::Real, sep::Char=',')::Str
 end
 
 getFormattedMoney(12345.06)
+getFormattedMoney(12345.6) # be aware of rounding
 
 # Question 1
-function getValue(capital::Real, avgPercentage::Real, years::Int)::Flt
+function getValue(principal::Real, avgPercentage::Real, years::Int)::Flt
     @assert years > 0 "years must be greater than 0"
-    @assert capital > 0 "capital must be greater than 0"
-    return capital * (1+avgPercentage/100)^years
+    @assert principal > 0 "principal must be greater than 0"
+    return principal * (1+avgPercentage/100)^years
 end
 
 # Futurama s1e6: 93 cents ($0.93), 2.25%, 1_000 years
@@ -32,12 +33,12 @@ frysMoney = getValue(0.93, 2.25, 1_000)
 frysMoney |> getFormattedMoney
 
 # Question 2
-function getValue(capital::Real, percentages::Vec{<:Real})::Flt
-    @assert capital > 0 "capital must be greater than 0"
+function getValue(principal::Real, percentages::Vec{<:Real})::Flt
+    @assert principal > 0 "principal must be greater than 0"
     for p in percentages
-        capital *= 1 + (p / 100)
+        principal *= 1 + (p / 100)
     end
-    return capital
+    return principal
 end
 
 money2019 = 10_000 # Dec 31, 2019
@@ -53,16 +54,16 @@ function getRealPercChange(interestPerc::Real, inflPerc::Real)::Flt
     return ((100 + interestPerc) * 100) / (100 + inflPerc) - 100
 end
 
-function getValue(capital::Real,
+function getValue(principal::Real,
                   interestPercs::Vec{<:Real},
                   inflationPercs::Vec{<:Real})::Flt
-    @assert capital > 0 "capital must be greater than 0"
+    @assert principal > 0 "principal must be greater than 0"
     @assert(length(interestPercs) == length(inflationPercs),
             "interestPercs and inflationPercs must be of equal lenghts")
     for (intr, infl) in zip(interestPercs, inflationPercs)
-        capital = getValue(capital, getRealPercChange(intr, infl), 1)
+        principal = getValue(principal, getRealPercChange(intr, infl), 1)
     end
-    return capital
+    return principal
 end
 
 interestDeposit = 6 # yrs: 2020-2025

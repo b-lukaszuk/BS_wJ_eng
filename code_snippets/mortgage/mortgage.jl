@@ -54,51 +54,54 @@ end
     getInstallment(mortgage2) |> fmt
 )
 
-# amount of money owned after every month
+# amount of money owed after every month
 function getPrincipalAfterMonth(prevPrincipal::Real,
                                 interestPercYr::Real,
-                                monthlyPayment::Flt)::Flt
-    @assert((prevPrincipal >= 0 && interestPercYr > 0 && monthlyPayment > 0),
+                                installment::Flt)::Flt
+    @assert((prevPrincipal >= 0 && interestPercYr >= 0 && installment > 0),
             "incorrect argument values")
     p::Real = prevPrincipal
     r::Real = interestPercYr / 100 / 12
-    c::Flt = monthlyPayment
+    c::Flt = installment
     return (1 + r) * p - c
 end
 
-getPrincipalAfterMonth(200_000, 6.5, 1_264.0) |> fmt
+# principal should be lower than prevPrincipal
+getPrincipalAfterMonth(200_000, 6.49, getInstallment(mortgage1)) |> fmt
 
 # paying off mortgage year by year
-# returns principal still owned every year
-function getPrincipalOwnedEachYr(m::Mortgage)::Vec{Flt}
+# returns principal still owed every year
+function getPrincipalOwedEachYr(m::Mortgage)::Vec{Flt}
     monthlyPayment::Flt = getInstallment(m)
     curPrincipal::Real = m.principal
-    principalStillOwnedYrs::Vec{Flt} = [curPrincipal]
+    principalStillOwedYrs::Vec{Flt} = [curPrincipal]
     for month in 1:m.numMonths
         curPrincipal = getPrincipalAfterMonth(
             curPrincipal, m.interestPercYr, monthlyPayment)
         if month % 12 == 0
-            push!(principalStillOwnedYrs, curPrincipal)
+            push!(principalStillOwedYrs, curPrincipal)
         end
     end
-    return round.(principalStillOwnedYrs, digits=2)
+    return principalStillOwedYrs
 end
 
-principals1 = getPrincipalOwnedEachYr(mortgage1)
-principals2 = getPrincipalOwnedEachYr(mortgage2)
+principals1 = getPrincipalOwedEachYr(mortgage1)
+principals2 = getPrincipalOwedEachYr(mortgage2)
 
 (
     principals1[end],
-    principals2[end]
+    principals2[end],
+    round(principals1[end], digits=2),
+    round(principals2[end], digits=2)
 )
 
-# money still owned at the beginning of year 15
+# money still owed at the beginning of year 15
 (
     principals1[15] |> fmt,
     principals2[15] |> fmt
 )
 
-# when we own <= 100_000
+# when we owe <= 100_000
 (
     findfirst(p -> p <= 100_000, principals1),
     findfirst(p -> p <= 100_000, principals2)
@@ -109,15 +112,15 @@ principals2 = getPrincipalOwnedEachYr(mortgage2)
     findfirst((<=)(100_000), principals2)
 )
 
-function drawPrincipalOwnedEachYr(m::Mortgage)::Cmk.Figure
-    moneyStillInDebtYr::Vec{Flt} = getPrincipalOwnedEachYr(m)
+function drawPrincipalOwedEachYr(m::Mortgage)::Cmk.Figure
+    moneyStillInDebtYr::Vec{Flt} = getPrincipalOwedEachYr(m)
     xs::Vec{Int} = eachindex(moneyStillInDebtYr) |> collect
     ys::Vec{Flt} = LinRange(0, maximum(moneyStillInDebtYr), 5)
-    fig::Cmk.Figure = Cmk.Figure(size=(1200, 600), fontsize=16)
+    fig::Cmk.Figure = Cmk.Figure(size=(1200, 600), fontsize=28)
     ax::Cmk.Axis = Cmk.Axis(fig[1, 1:2],
                    title="Mortgage simulation (may not be accurate)",
                    subtitle= "$(fmt(m.principal)) at $(m.interestPercYr)% yearly",
-                   xlabel="year of payment", ylabel="money owned to a bank",
+                   xlabel="year of payment", ylabel="money owed to a bank",
                    xticks=xs, yticks=(ys, fmt.(ys)))
     Cmk.barplot!(ax, xs, moneyStillInDebtYr, color=:red,
                       label="unpaid principal")
@@ -125,8 +128,8 @@ function drawPrincipalOwnedEachYr(m::Mortgage)::Cmk.Figure
     return fig
 end
 
-drawPrincipalOwnedEachYr(mortgage1) # Figure 2
-drawPrincipalOwnedEachYr(mortgage2)
+drawPrincipalOwedEachYr(mortgage1) # Figure 2
+drawPrincipalOwedEachYr(mortgage2)
 
 function addPieChart!(m::Mortgage, fig::Cmk.Figure, ax::Cmk.Axis, col::Int)
     installment::Flt = getInstallment(m)

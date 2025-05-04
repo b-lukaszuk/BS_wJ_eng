@@ -30,7 +30,7 @@ Write a Julia program that will tell you:
    fixed rate mortgage)?
 2. How much principal you will still owe to the bank at year 15 in each
    case?
-3. After how many years your debt will be $\le$ $100'000?
+3. When will your debt be $\le$ $100'000?
 4. Which of the two mortgages is more worth it for you (the smaller total cost
    and total interest you pay to the bank)?
 
@@ -41,7 +41,8 @@ e.g. [here](https://en.wikipedia.org/wiki/Mortgage_calculator#).
 
 ## Solution {#sec:mortgage_solution}
 
-Before we begin a few short definitions so that we are on the same page.
+Before we begin a few short definitions that we will use here (so that we are on
+the same page).
 
 - principal - the money you borrow form a bank
 - interest - the money you pay extra (except for the money you borrowed)
@@ -134,70 +135,73 @@ s = """
 sco(s)
 ```
 
-The money we still own to the bank (principal) will change month after month
+The money we still owe to the bank (principal) will change month after month
 (because every month we pay off a fraction of it with our installment), so let's
 calculate that.
 
 ```jl
 s = """
-# amount of money owned after every month
+# amount of money owed after every month
 function getPrincipalAfterMonth(prevPrincipal::Real,
                                 interestPercYr::Real,
-                                monthlyPayment::Flt)::Flt
-    @assert (prevPrincipal >= 0 && interestPercYr > 0 && monthlyPayment > 0)
-            "incorrect argument values"
+                                installment::Flt)::Flt
+    @assert((prevPrincipal >= 0 && interestPercYr >= 0 && installment > 0),
+            "incorrect argument values")
     p::Real = prevPrincipal
     r::Real = interestPercYr / 100 / 12
-    c::Flt = monthlyPayment
+    c::Flt = installment
     return (1 + r) * p - c
 end
 """
 sc(s)
 ```
 
-Not much to explain here, just a simple rewrite of the formula into Julia's
-code, but now we can estimate principal owned to the bank each year.
+Not much to explain here, just a simple rewrite of the formula into Julia's code
+(first we increase the principal by interest, then we subtract the installment
+from it). Now we can estimate the principal owed to the bank each year.
 
 ```jl
 s = """
 # paying off mortgage year by year
-# returns principal still owned every year
-function getPrincipalOwnedEachYr(m::Mortgage)::Vec{Flt}
+# returns principal still owed every year
+function getPrincipalOwedEachYr(m::Mortgage)::Vec{Flt}
     monthlyPayment::Flt = getInstallment(m)
     curPrincipal::Real = m.principal
-    principalStillOwnedYrs::Vec{Flt} = [curPrincipal]
+    principalStillOwedYrs::Vec{Flt} = [curPrincipal]
     for month in 1:m.numMonths
         curPrincipal = getPrincipalAfterMonth(
             curPrincipal, m.interestPercYr, monthlyPayment)
         if month % 12 == 0
-            push!(principalStillOwnedYrs, curPrincipal)
+            push!(principalStillOwedYrs, curPrincipal)
         end
     end
-    return round.(principalStillOwnedYrs, digits=2)
+    return principalStillOwedYrs
 end
 """
 sc(s)
 ```
 
-Here we calculate the principal owned after every month, and once a year (`month
+Here we calculate the principal owed after every month, and once a year (`month
 % 12 == 0`) we push it to a vector tracking its yearly change
-(`principalStillOwnedYrs`). Let's see how it works, if we did it right then in
-the end the principal should drop to zero.
+(`principalStillOwedYrs`). Let's see how it works, if we did it right then in
+the end the principal should drop to zero (small rounding errors possible).
 
 ```jl
 s = """
-principals1 = getPrincipalOwnedEachYr(mortgage1)
-principals2 = getPrincipalOwnedEachYr(mortgage2)
+principals1 = getPrincipalOwedEachYr(mortgage1)
+principals2 = getPrincipalOwedEachYr(mortgage2)
 
 (
     principals1[end],
-    principals2[end]
+    principals2[end],
+    round(principals1[end], digits=2),
+    round(principals2[end], digits=2)
 )
 """
 sco(s)
 ```
 
-So how much principal we still own to the bank at the beginning of year 15 in
+So how much principal we still owe to the bank at the beginning of year 15 in
 each scenario?
 
 ```jl
@@ -210,7 +214,8 @@ s = """
 sco(s)
 ```
 
-Hmm, quite a lot. And when will this value drop to $\le$ 100,000 USD?
+Hmm, quite a lot (remember we borrowed \$200,000 for 20 and 30 years). And when
+will this value drop to $\le$ 100,000 USD ($\le$ half of what we borrowed)?
 
 ```jl
 s = """
@@ -225,7 +230,7 @@ sco(s)
 In general, for quite some time the money we pay to the bank mostly pay off the
 interest and not the principal (see @fig:mortgagePrincipalsYrByYr).
 
-![Principal still owned to the bank year by year. Mortgage: $200,000 at 6.49% yearly for 20 years. The estimation may not be accurate.](./images/mortgagePrincipalsYrByYr.png){#fig:mortgagePrincipalsYrByYr}
+![Principal still owed to the bank year by year. Mortgage: $200,000 at 6.49% yearly for 20 years. The estimation may not be accurate.](./images/mortgagePrincipalsYrByYr.png){#fig:mortgagePrincipalsYrByYr}
 
 To answer the last question (which mortgage is more worth it for us in terms of
 total payment and total interest) we'll use a [pie
@@ -293,11 +298,11 @@ So it turns out that despite the higher interest rate of 6.49% overall we will
 pay less money to the bank for `mortgage1`. Therefore, if we are OK with a
 greater monthly payment (installment) then we may choose that one.
 
-Of course, the above was just a progamming exercise, not a financial
-advice. Moreover, the simulation may be inaccurate for many reasons. For
-instance, a bank may calculate the interest every day, and not every month, in
-that case you will pay more. Compare with the simple example below and compound
-interest from @sec:compound_interest_problem_a1.
+Of course, the above was just a programming exercise, not a financial
+advice. Moreover, the simulation may be inaccurate (to a various extent) for
+many reasons. For instance, a bank may calculate the interest every day, and not
+every month, in that case you will pay more. Compare with the simple example
+below and compound interest from @sec:compound_interest_problem_a1.
 
 ```jl
 s = """
@@ -310,3 +315,6 @@ s = """
 """
 sco(s)
 ```
+
+Anyway, once you know what's going on, it should be easier to modify the program
+to reflect a particular scenario more closely.

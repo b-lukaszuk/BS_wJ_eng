@@ -93,7 +93,8 @@ sco(s)
 ```
 
 I think that twelve thousand three hundred and forty five is much easier to
-process this way than in its alternative transcription form (`12345`).
+process this way than in its alternative transcription form (`12345`). Still, be
+aware of the rounding that takes place in it.
 
 ### Answer 1 {#sec:compound_interest_problem_a1}
 
@@ -111,15 +112,16 @@ represented in a few equivalent forms, i.e.
 - 110% = $\frac{110}{100}$ = 110/100 = 1.10 = 1.1, etc.
 
 For calculations it is especially useful to use them as decimals, hence we will
-often divide a percentage by one hundred. Now, let's say that I got $100 (my
-initial capital) on a deposit that pays 5% interest yearly. That means that
-after one year I will get $105 or 105% of my initial capital. I can express this
-mathematically as `$100 * 105% = $105` or to make it easier to type with a
-calculator `100 * 1.05 = 105`. If the deposit lasted two years then I would have
-to repeat the process one more time for year number two, i.e.
-`$105 * 105% = $110.25` (105% of my new capital), also to be expressed as
-`105 * 1.05 = 110.25`. Since as we said the `$105` is actually `100 * 1.05` then
-I can rewrite it as `(100 * 1.05) * 1.05 = 110.25`. For year number three I got
+often divide a percentage by one hundred. Now, let's say that I got $100 (this
+initial sum of money is called the **principal**) on a deposit that pays 5%
+interest yearly. That means that after one year I will get $105 or 105% of my
+initial principal. I can express this mathematically as `$100 * 105% = $105` or to
+make it easier to type with a calculator `100 * 1.05 = 105`. If the deposit
+lasted two years then I would have to repeat the process one more time for year
+number two, i.e. `$105 * 105% = $110.25` (105% of my new principal), also to be
+expressed as `105 * 1.05 = 110.25`. Since as we said the `$105` is
+actually `100 * 1.05` then I can rewrite it as `(100 * 1.05) * 1.05 = 110.25`.
+For year number three I got
 `$110.25 * 105% = $115.7625` or `110.25 * 1.05 = 115.7625` or
 `((100 * 1.05) * 1.05) * 1.05 = 115.7625`. The parenthesis are there to signify
 boundaries of mathematical operations for a previous year. We can get rid of
@@ -130,16 +132,16 @@ $deposit\ value = \$100 * 1.05^{number\ of\ years}$
 
 or more generally (remember about the order of mathematical operations):
 
-$total\ value = initial\ capital * (1 + percentage/100)^{number\ of\ years}$
+$total\ value = initial\ principal * (1 + percentage/100)^{number\ of\ years}$
 
 Let's put that into a Julia's function.
 
 ```jl
 s = """
-function getValue(capital::Real, avgPercentage::Real, years::Int)::Flt
+function getValue(principal::Real, avgPercentage::Real, years::Int)::Flt
     @assert years > 0 "years must be greater than 0"
-    @assert capital > 0 "capital must be greater than 0"
-    return capital * (1+avgPercentage/100)^years
+    @assert principal > 0 "principal must be greater than 0"
+    return principal * (1+avgPercentage/100)^years
 end
 """
 sc(s)
@@ -190,12 +192,12 @@ cover for that.
 
 ```jl
 s = """
-function getValue(capital::Real, percentages::Vec{<:Real})::Flt
-    @assert capital > 0 "capital must be greater than 0"
+function getValue(principal::Real, percentages::Vec{<:Real})::Flt
+    @assert principal > 0 "principal must be greater than 0"
     for p in percentages
-        capital *= 1 + (p / 100)
+        principal *= 1 + (p / 100)
     end
-    return capital
+    return principal
 end
 """
 sc(s)
@@ -338,16 +340,16 @@ Now we can use it to write our final, third method, for `getValue`.
 
 ```jl
 s = """
-function getValue(capital::Real,
+function getValue(principal::Real,
                   interestPercs::Vec{<:Real},
                   inflationPercs::Vec{<:Real})::Flt
-    @assert capital > 0 "capital must be greater than 0"
+    @assert principal > 0 "principal must be greater than 0"
     @assert length(interestPercs) == length(inflationPercs)
 		"interestPercs and inflationPercs must be of equal lenghts"
     for (intr, infl) in zip(interestPercs, inflationPercs)
-        capital = getValue(capital, getRealPercChange(intr, infl), 1)
+        principal = getValue(principal, getRealPercChange(intr, infl), 1)
     end
-    return capital
+    return principal
 end
 """
 sc(s)
@@ -375,7 +377,7 @@ money2025depositInflation = getValue(
 sco(s)
 ```
 
-And again, reality turns out to be disappointing. The initial capital of
+And again, reality turns out to be disappointing. The initial principal of
 $10,000 (December 31, 2019) was increased by 6% yearly which gave me $13,382 in
 banknotes on January 1, 2025 for which I can buy the same amount of goods that I
 could for $9,327 on December 31, 2019. So despite more money in my wallet
