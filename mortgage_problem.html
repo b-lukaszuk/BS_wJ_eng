@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Transcription - Build SH*T with Julia</title>
+  <title>Problem - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -109,16 +109,29 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h1 data-number="11" id="sec:transcription"><span class="header-section-number">11</span> Transcription</h1>
-<p>In this chapter I will not use any external libraries. Still, once you read the problem description you may decide to do otherwise. In that case don’t let me stop you.</p>
-<p>You may compare your own solution with the one in this chapter’s text (with explanations) or with <a href="https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/transcription">the code snippets</a> (without explanations).</p>
+<h2 data-number="9.1" id="sec:mortgage_problem"><span class="header-section-number">9.1</span> Problem</h2>
+<p>Sooner or later most of us ordinary folk end up taking a mortgage to buy an apartment or a house.</p>
+<p>So here are two scenarios for you:</p>
+<ol type="1">
+<li>you borrow $200,000 (principal) for 20 years at 6.49% yearly interest rate</li>
+<li>you borrow $200,000 (principal) for 30 years at 4.99% yearly interest rate</li>
+</ol>
+<p>Write a Julia program that will tell you:</p>
+<ol type="1">
+<li>How much money will you pay every month (installment) in both cases (assume fixed rate mortgage)?</li>
+<li>How much principal you will still owe to the bank at year 15 in each case?</li>
+<li>When will your debt be <span class="math inline">\(\le\)</span> $100’000?</li>
+<li>Which of the two mortgages is more worth it for you (the smaller total cost and total interest you pay to the bank)?</li>
+</ol>
+<p>Feel free to add some visual flair to your solution.</p>
+<p>BTW. You may read about mortgages, e.g. <a href="https://en.wikipedia.org/wiki/Mortgage_calculator#">here</a>.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-2" href="./logo_solution.html"><b>10.2</b> Solution</a> <kbd>←</kbd>
+        <a class="menu-level-1" href="./mortgage.html"><b>9</b> Mortgage</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./transcription_problem.html"><b>11.1</b> Problem</a>
+            <kbd>→</kbd> <a class="menu-level-2" href="./mortgage_solution.html"><b>9.2</b> Solution</a>
         </span>
     </p>
 </div>
