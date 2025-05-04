@@ -116,7 +116,7 @@ function drawPrincipalOwedEachYr(m::Mortgage)::Cmk.Figure
     moneyStillInDebtYr::Vec{Flt} = getPrincipalOwedEachYr(m)
     xs::Vec{Int} = eachindex(moneyStillInDebtYr) |> collect
     ys::Vec{Flt} = LinRange(0, maximum(moneyStillInDebtYr), 5)
-    fig::Cmk.Figure = Cmk.Figure(size=(1200, 600), fontsize=28)
+    fig::Cmk.Figure = Cmk.Figure(size=(1200, 600), fontsize=16)
     ax::Cmk.Axis = Cmk.Axis(fig[1, 1:2],
                    title="Mortgage simulation (may not be accurate)",
                    subtitle= "$(fmt(m.principal)) at $(m.interestPercYr)% yearly",
