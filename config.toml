@@ -11,6 +11,7 @@ contents = [
     "prime_numbers",
     "compound_interest",
     "mortgage",
+    "overpayment",
     "logo",
     "transcription",
     "translation",
