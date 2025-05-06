@@ -1,18 +1,11 @@
 # Caesar {#sec:caesar}
 
-In this chapter I used the following libraries
+In this chapter I will not use any external libraries. Still, once you read the
+problem description you may decide to do otherwise. In that case don't let me
+stop you.
 
-```jl
-s3 = """
-import BenchmarkTools as Bt
-"""
-sc(s3)
-```
-
-The above was used only for the chapter's extras and is not strictly necessary to solve the task.
-
-Anyway, you may compare your own solution with the one in this chapter's text
-(with explanations) or with [the code
+You may compare your own solution with the one in this chapter's text (with
+explanations) or with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/caesar)
 (without explanations).
 
@@ -25,10 +18,10 @@ with the shift (rotation) of 13 characters. This turns out to be the famous
 Roman emperor in antiquity (breaking the cipher without a computer program and
 sufficient amount of text is not an easy task).
 
-So here is a job for you, write a computer program that can code and decode a
-textual message with a substitution cipher of any shift. Use it to decrypt the
-message contained in `trarfvf.txt` (~31 KiB). Feel free to decipher the file
-name (`trarfvf`) itself as well.
+So here is an exercise for you, write a computer program that can code and
+decode a textual message with a substitution cipher of any shift. Use it to
+decrypt the message contained in `trarfvf.txt` (~31 KiB). Feel free to decipher
+the file name (`trarfvf`) itself as well.
 
 ## Solution {#sec:caesar_solution}
 
@@ -183,9 +176,9 @@ end
 sc(s)
 ```
 
-The function is pretty similar to the previously mentioned, except for the fact
-that it returns a dictionary with the alphabet on the outer disc being the keys
-and the letters on the inner disc are its values (compare with
+The function is pretty similar to the one previously mentioned, except for the
+fact that it returns a dictionary with the alphabet on the outer disc being the
+keys and the letters on the inner disc are its values (compare with
 @fig:codingDiscs2). Moreover, the map contains both lower- and upper-case
 characters.
 
@@ -217,8 +210,9 @@ end
 sco(s)
 ```
 
-Notice, that we two different versions (aka methods) of `code` function. Julia
-will choose the right one during invocation based on the type of the arguments.
+Notice, that we defined two different versions (aka methods) of `code`
+function. Julia will choose the right one during the invocation based on the
+type of the arguments.
 
 Time for a test.
 

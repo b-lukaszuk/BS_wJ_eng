@@ -132,7 +132,7 @@ if we add two `Choices` (`c1` and `c2`) together, we add the underlying integers
 (`Int(c1) + Int(c2)`) and when we add an integer (`n`) to a `Choice` then again
 we add the integer to the `Choice`'s integer representation (`n + Int(c)`).
 Thanks to this little trick, we will be able to count the total of
-betrayals in a vector of `Choice`s with the build in `sum` function (it relies
+betrayals in a vector of `Choice`s with the built in `sum` function (it relies
 on `+`)
 
 > **_Note:_** Do not overuse this technique. In general, you should redefine the
