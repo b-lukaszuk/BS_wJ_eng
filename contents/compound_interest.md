@@ -28,7 +28,7 @@ Is Fry really a billionaire?
 ### Question 2 {#sec:compound_interest_problem_q2}
 
 According to [this
-page](https://pl.wikipedia.org/wiki/Inflacja_w_Polsce#Historia) (careful its in
+page](https://pl.wikipedia.org/wiki/Inflacja_w_Polsce#Historia) (careful it's in
 Polish) the inflation in Poland over the period 2020-2024 was: 3.4%, 5.1%,
 14.4%, 11.4%, and 3.6%. If on December 31, 2019 my monthly salary was $10,000
 (I wished) then how much I would have to earn in January 2025 to be able to buy
@@ -73,15 +73,15 @@ sc(s)
 The function may not be the most performant, but it was pretty easy to write. It
 receives money as a [Real](https://docs.julialang.org/en/v1/base/numbers/)
 number and sets apart every three digits with a separator (`sep`) of our choice.
-Since in English decimal separator is `.` (dot) and thousand separator is `,`
-(comma) then that's what we used here as our default (`sep::Char=','`). Inside
-our formatter we round the number to integer (`round(Int, money)`) and convert
-it to `string`. Next we traverse all the digits (`for digit`) in the opposite
-direction (from right to left) thanks to the `reverse(amount)`. Every third
-digit (`if counter == 3`) we place our `sep` to the `result` and count to three
-a new (`counter = 0`). Besides, we prepend our `digit` to the `result`
-(`digit * result`) and increase the counter (`counter +=1`). In the end we
-return the formatted number (`result * " USD"`).
+Since in English a decimal separator is `.` (dot) and a thousand separator is
+`,` (comma) then that's what we used here as our default
+(`sep::Char=','`). Inside our formatter we round the number to integer
+(`round(Int, money)`) and convert it to `string`. Next we traverse all the
+digits (`for digit`) in the opposite direction (from right to left) thanks to
+the `reverse(amount)`. Every third digit (`if counter == 3`) we place our `sep`
+to the `result` and count to three a new (`counter = 0`). Besides, we prepend
+our `digit` to the `result` (`digit * result`) and increase the counter
+(`counter +=1`). In the end we return the formatted number (`result * " USD"`).
 
 Let's see how it works.
 
@@ -156,7 +156,7 @@ round.([getValue(100, 5, i) for i in 1:3], digits=4)
 sco(s)
 ```
 
-Now, we are ready to see if Fry is a billionaire.
+Now we are ready to see if Fry is a billionaire.
 
 ```jl
 s = """
@@ -187,7 +187,7 @@ $10,000 then how much I would have to earn in January 2025 to maintain my
 purchasing power given that the inflation rates for years 2020-2024 were equal:
 3.4%, 5.1%, 14.4%, 11.4%, and 3.6%. To answer that we will use the same
 reasoning as in the previous section (@sec:compound_interest_problem_a1), but
-since the percentages differ from year to year will will use a `for` loop to
+since the percentages differ from year to year we will use a `for` loop to
 cover for that.
 
 ```jl
@@ -227,14 +227,14 @@ put a smile on my face.
 As a final step let's think was it worth a while to open a 5 years long bank
 deposit (6% yearly interest rate) on January 1, 2020 given the inflation rates
 discussed in the previous section (@sec:compound_interest_problem_a2). Would I
-make any real profit on January 2, 2025?
+make any real profit on January 1, 2025?
 
 In order to figure that out we need to counterbalance two factors. The increase
 in the nominal value that we get due to the interest rate and a drop in the real
 value of money due to the inflation rate. In other words, we might want to
 calculate the real percentage change in money value given the two factors
 combined. For that we should either implement a suitable formula obtained from a
-reliable source or come with the one ourselves. In order to learn we will try
+reliable source or come up with the one ourselves. In order to learn we will try
 the latter approach (no pain, no gain).
 
 To that end we will use proportions (I believe they taught me that in the high
@@ -305,15 +305,15 @@ refered to in the sentence before):
 
 $$real\ percentage = \frac{105\ usd\ *\ 100}{102\ usd} - 100$$ {#eq:prop5}
 
-Just like chocolate bars also dollars are a placeholder in our example. We used
-them because the more material and concrete the objects are the easier it is to
-think about them and manipulate them in our heads. Notice that `105 usd` in
-@eq:prop5 and @eq:prop4 actually stands for percentage gain in value
-(`100 + inflation rate`) of our money (the 105% that we used in our explanation
-in the calculations in @sec:compound_interest_problem_a1). On the other hand,
-`102 usd` in @eq:prop5 and @eq:prop3 is actually a placeholder for percentage
-change in value due to the inflation (we divide by it, so we decrease our gain
-in numerator by it). Therefore we can rewrite @eq:prop5 to:
+Just like the chocolate bars also the dollars are a placeholder in our
+example. We used them because the more material and concrete the objects are the
+easier it is to think about them and manipulate them in our heads. Notice that
+`105 usd` in @eq:prop5 and @eq:prop4 actually stands for percentage gain in
+value (`100 + inflation rate`) of our money (the 105% that we used in our
+explanation in the calculations in @sec:compound_interest_problem_a1). On the
+other hand, `102 usd` in @eq:prop5 and @eq:prop3 is actually a placeholder for
+percentage change in value due to the inflation (we divide by it, so we decrease
+our gain in numerator by it). Therefore we can rewrite @eq:prop5 to:
 
 $$real\ percentage = \frac{(100\ +\ interest\ rate) * 100}{100\ +\ inflation\ rate} - 100$$ {#eq:prop6}
 
@@ -378,9 +378,9 @@ sco(s)
 ```
 
 And again, reality turns out to be disappointing. The initial principal of
-$10,000 (December 31, 2019) was increased by 6% yearly which gave me $13,382 in
+$10,000 (January 1, 2020) was increased by 6% yearly which gave me $13,382 in
 banknotes on January 1, 2025 for which I can buy the same amount of goods that I
-could for $9,327 on December 31, 2019. So despite more money in my wallet
+could for $9,327 on January 1, 2020. So despite more money in my wallet
 (nominal increase) I actually lost some real value. Eh.
 
 OK, let's try to be optimists here. The glass is half full. By putting the money
