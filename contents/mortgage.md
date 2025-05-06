@@ -95,7 +95,7 @@ mortgage2 = Mortgage(200_000, 4.99, 30*12)
 sc(s)
 ```
 
-Finally we are ready to calculate our monthly payment to the bank.
+Finally, we are ready to calculate our monthly payment to the bank.
 
 ```jl
 s = """
@@ -118,7 +118,7 @@ sc(s)
 
 All the formulas are based on [this Wikipedia's
 page](https://en.wikipedia.org/wiki/Mortgage_calculator#). Notice that the
-function arguments (and `Mortgage` fields) contain longer (more descriptive)
+function's arguments (and `Mortgage` fields) contain longer (more descriptive)
 names, whereas inside the functions we use the abbreviations (case insensitive)
 found in the above-mentioned formulas .
 
@@ -228,7 +228,8 @@ sco(s)
 ```
 
 In general, for quite some time the money we pay to the bank mostly pay off the
-interest and not the principal (see @fig:mortgagePrincipalsYrByYr).
+interest and not the principal, so that it drops slowly at first (see
+@fig:mortgagePrincipalsYrByYr).
 
 ![Principal still owed to the bank year by year. Mortgage: $200,000 at 6.49% yearly for 20 years. The estimation may not be accurate.](./images/mortgagePrincipalsYrByYr.png){#fig:mortgagePrincipalsYrByYr}
 
@@ -264,7 +265,7 @@ axis. A point of notice, the colors used are
 `["coral1", "turquoise2", "white", "white", "white"]`. The first two will be
 used to paint the circle. But all of them, will be used in the legend
 (`Cmk.Legend`). Hence, we used `"white"` for the values that are not in the
-circle (white color on white background in the legend is basically invisible).
+circle (white color on a white background in the legend is basically invisible).
 We also used [string
 interpolation](https://docs.julialang.org/en/v1/manual/strings/#string-interpolation)
 where a simple interpolated value is placed after the dollar character (`$`) or
@@ -295,14 +296,15 @@ drawComparison(mortgage1, mortgage2)
 ![Comparison of two mortgages (may not be accurate).](./images/mortgagesComparison.png){#fig:mortgageComparison}
 
 So it turns out that despite the higher interest rate of 6.49% overall we will
-pay less money to the bank for `mortgage1`. Therefore, if we are OK with a
+pay less money to the bank for `mortgage1`. Therefore, if we are OK with the
 greater monthly payment (installment) then we may choose that one.
 
 Of course, the above was just a programming exercise, not a financial
-advice. Moreover, the simulation may be inaccurate (to a various extent) for
-many reasons. For instance, a bank may calculate the interest every day, and not
-every month, in that case you will pay more. Compare with the simple example
-below and compound interest from @sec:compound_interest_problem_a1.
+advice. Moreover, the simulation is likely to be inaccurate (to a various
+extent) for many reasons. For instance, a bank may calculate the interest every
+day, and not every month, in that case you will pay more. Compare with the
+simple example below and the compound interest from
+@sec:compound_interest_problem_a1.
 
 ```jl
 s = """
