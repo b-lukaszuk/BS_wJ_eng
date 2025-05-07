@@ -31,4 +31,30 @@ Which scenario will give you more profit (in nominal value): to overpay `mortgag
 
 ## Solution {#sec:overpayment_solution}
 
-The solution goes here.
+There's no need to (completely) reinvent the wheel so we will use `Mortgage`,
+`fmt` and `getInstallment` we developed in @sec:mortgage_solution. The function
+we'll define is `payOffMortgage`
+
+```jl
+s = """
+# single month payment of mortgage, returns
+# (remainingPrincipal, pincipalPaid, interestPaid)
+function payOffMortgage(
+    m::Mortgage, curPrincipal::Real, installment::Real,
+    overpayment::Real)::Tuple{Real, Real, Real}
+    if curPrincipal <= 0.0
+        return (0.0, 0.0, 0.0)
+    else
+        r::Real = m.interestPercYr / 100 / 12
+        newPrincipal::Real = curPrincipal - overpayment
+        interestPaid::Real = newPrincipal * r
+        principalPaid::Real = installment - interestPaid
+        return (newPrincipal - principalPaid,
+                principalPaid + overpayment, interestPaid)
+    end
+end
+"""
+sc(s)
+```
+
+The function does a single month payment and returns
