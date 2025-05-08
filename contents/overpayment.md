@@ -57,4 +57,23 @@ end
 sc(s)
 ```
 
-The function does a single month payment and returns
+The function accepts (among others) `curPrincipal`, `installment` and
+`overpayment` and does a payment for a single month. To that end first we
+subtract `overpayment` from `curPrincipal` to get `newPrincipal`. We use
+`newPrincipal` to calculate the amount of money paid this month as interest
+(`interestPaid`). Then, we get estimate which part of the principal we paid in
+our installment (`principalPaid`). Finally, we return a tuple with 3 values: 1)
+remaining principal (after the payment), 2) principal paid this month (from
+`installment` and `overpayment`), and 3) interest paid (from `installment`). The
+remaining principal is `newPrincipal - principalPaid`. The principal that we
+paid off this month is `principalPaid` (as part of the installment) and
+`overpayment`. The interest paid this month is just `interestPaid`.
+
+Right away we see a few reasons why our function is likely not to be accurate
+(except for the obvious lack of rounding to 2 decimal points as a bank would do).
+For instance, we overpaid the money first with our `overpayment` and only then
+calculated the `interestPaid` (and other stuff) which may not be the case
+in reality. Secondly, a bank may charge a fee (or some money named otherwise)
+for every overpayment we make. Still, since all this section is just a
+programming exercise and not a financial advice then we will not be bothered by
+that fact.
