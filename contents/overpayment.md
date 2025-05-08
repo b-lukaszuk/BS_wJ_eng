@@ -42,16 +42,14 @@ s = """
 function payOffMortgage(
     m::Mortgage, curPrincipal::Real, installment::Real,
     overpayment::Real)::Tuple{Real, Real, Real}
-    if curPrincipal <= 0.0
-        return (0.0, 0.0, 0.0)
-    else
-        r::Real = m.interestPercYr / 100 / 12
-        newPrincipal::Real = curPrincipal - overpayment
-        interestPaid::Real = newPrincipal * r
-        principalPaid::Real = installment - interestPaid
-        return (newPrincipal - principalPaid,
-                principalPaid + overpayment, interestPaid)
-    end
+
+    r::Real = m.interestPercYr / 100 / 12
+    newPrincipal::Real = curPrincipal - overpayment
+    interestPaid::Real = newPrincipal * r
+    principalPaid::Real = installment - interestPaid
+
+    return (newPrincipal - principalPaid,
+               principalPaid + overpayment, interestPaid)
 end
 """
 sc(s)
@@ -77,3 +75,41 @@ in reality. Secondly, a bank may charge a fee (or some money named otherwise)
 for every overpayment we make. Still, since all this section is just a
 programming exercise and not a financial advice then we will not be bothered by
 that fact.
+
+However, we will improve our `payOffMortgage` a bit, by dealing with some edge
+cases: 1) when `curPrincipal` is 0 or negative
+(`if curPrincipal <= 0.0` below), 2) when `curPrincipal` is equal to or smaller
+than `overpayment` (`elseif curPrincipal <= overpayment` below), and 3) when
+`curPrincipal` is equal to or smaller than `overpayment + installemnt`
+(`if principalPaid >= newPrincipal` below). Therefore, our `payOffMortgage` will
+looks something like:
+
+```jl
+s = """
+# single month payment of mortgage
+# (remainingPrincipal, pincipalPaid, interestPaid)
+function payOffMortgage(
+    m::Mortgage, curPrincipal::Real, installment::Real,
+    overpayment::Real)::Tuple{Real, Real, Real}
+    if curPrincipal <= 0.0
+        return (0.0, 0.0, 0.0)
+    elseif curPrincipal <= overpayment
+        return (0.0, curPrincipal, 0.0)
+    else
+        r::Real = m.interestPercYr / 100 / 12
+        newPrincipal::Real = curPrincipal - overpayment
+        interestPaid::Real = newPrincipal * r
+        principalPaid::Real = installment - interestPaid
+        if principalPaid >= newPrincipal
+            return (0.0, newPrincipal + overpayment, interestPaid)
+        else
+            return (newPrincipal - principalPaid,
+                    principalPaid + overpayment, interestPaid)
+        end
+    end
+end
+"""
+sc(s)
+```
+
+To be continued...
