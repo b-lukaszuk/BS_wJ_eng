@@ -117,4 +117,52 @@ end
 sc(s)
 ```
 
+Once we can pay it off for one month, we can pay it off completely and summarize
+it. First, summary:
+
+```jl
+s = """
+struct Summary
+    principal
+    interest
+    months
+
+    Summary(p::Real, i::Real, m::Int) = (
+		p < 1 || i < 0 || m < 12 || m > 480) ?
+        error("incorrect field values") : new(p, i, m)
+end
+"""
+sc(s)
+```
+
+Now, for the complete mortgage pay off.
+
+```jl
+s = """
+function payOffMortgage(
+    m::Mortgage,
+    overpayments::Dict{Int, Real}=Dict{Int, Real}())::Summary
+    installment::Real = getInstallment(m) # monthly payment
+    princ::Real = m.principal
+    princPaid::Real = 0.0
+    interPaid::Real = 0.0
+    totalPrincPaid::Real = 0.0
+    totalInterestPaid::Real = 0.0
+    months::Int = 0
+    for month in 1:m.numMonths
+        if princ <= 0
+            break
+        end
+        months += 1
+        princ, princPaid, interPaid = payOffMortgage(
+            m, princ, installment, get(overpayments, month, 0))
+        totalPrincPaid += princPaid
+        totalInterestPaid += interPaid
+    end
+    return Summary(totalPrincPaid, totalInterestPaid, months)
+end
+"""
+sc(s)
+```
+
 To be continued...
