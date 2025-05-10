@@ -139,30 +139,93 @@ Now, for the complete mortgage pay off.
 
 ```jl
 s = """
+# pay off mortgage fully, with overpayment
 function payOffMortgage(
     m::Mortgage,
-    overpayments::Dict{Int, Real}=Dict{Int, Real}())::Summary
+    overpayments::Dict{Int, <:Real})::Summary
     installment::Real = getInstallment(m) # monthly payment
-    princ::Real = m.principal
+    princLeft::Real = m.principal
     princPaid::Real = 0.0
     interPaid::Real = 0.0
     totalPrincPaid::Real = 0.0
     totalInterestPaid::Real = 0.0
     months::Int = 0
     for month in 1:m.numMonths
-        if princ <= 0
+        if princLeft <= 0
             break
         end
         months += 1
-        princ, princPaid, interPaid = payOffMortgage(
-            m, princ, installment, get(overpayments, month, 0))
+        princLeft, princPaid, interPaid = payOffMortgage(
+            m, princLeft, installment, get(overpayments, month, 0))
         totalPrincPaid += princPaid
         totalInterestPaid += interPaid
     end
     return Summary(totalPrincPaid, totalInterestPaid, months)
 end
+
+# pay off mortgage according to the schedule, no overpayment
+function payOffMortgage(m::Mortgage)::Summary
+    return payOffMortgage(m, Dict{Int, Real}())
+end
 """
 sc(s)
 ```
+
+We begin, by defining a few variables. For instance, `princLeft` will hold
+principal sill left to pay after a month, `princPaid` will contain the value of
+principal paid off in a given month, `intrPaid` will store the interest paid to
+a bank in a given month. The above will be used in the `for` loop and will
+change month by month. Next, a variables that will be used in the `Summary`
+struct returned by the function (`totalInterestPaid`, `totalInterestPaid`,
+`months`).  In the `for` loop we pay off the mortgage month by month. If there
+is no principal to be paid off (`if princLeft <= 0`) we `break`
+early. Otherwise, we update the number of `months`, `totalPrincPaid`, and
+`totalInterestPaid`.  Notice, that we obtain the over-payment for a month from
+the `overpayments` dictionary, where the default over-payment is 0
+(`get(overpayments, month, 0)`).
+
+Finally, we are ready to answer our questions.
+
+How much money we save in the case of `mortgage1` (\$200,000, 6.49%, 20 years)
+(see @sec:mortgage_solution) overpaid regularly every month with \$200 dollars.
+
+```jl
+s = """
+function getTotalCost(s::Summary)::Real
+    return s.principal + s.interest
+end
+
+function getTotalCostDiff(m::Mortgage,
+	overpayments::Dict{Int, <:Real})::Real
+    s1::Summary = payOffMortgage(m)
+    s2::Summary = payOffMortgage(m, overpayments)
+    return getTotalCost(s1) - getTotalCost(s2)
+end
+
+getTotalCostDiff(mortgage1,
+	Dict(i => 200 for i in 1:mortgage1.numMonths)) |> fmt
+"""
+sco(s)
+```
+
+Quite a penny (see also @fig:mortgageOverpayment1).
+
+![Owerpaying a mortgage (\$200,000, 6.49%, 20 years) with \$200 monthly (estimation may not be accurate).](./images/mortgageOverpayment1.png){#fig:mortgageOverpayment1}
+
+And we'll overpay `mortgage2` (\$200,000, 4.99%, 30 years) with \$200 monthly.
+
+```jl
+s = """
+getTotalCostDiff(mortgage2,
+	Dict(i => 200 for i in 1:mortgage2.numMonths)) |> fmt
+"""
+sco(s)
+```
+
+The total savings appears to be even greater than for `mortgage1`, still the
+total cost seems to be greater for `mortgage2` (see @fig:mortgageOverpayment1
+and @fig:mortgageOverpayment2).
+
+![Owerpaying a mortgage (\$200,000, 4.99%, 30 years) with \$200 monthly (estimation may not be accurate).](./images/mortgageOverpayment2.png){#fig:mortgageOverpayment2}
 
 To be continued...
