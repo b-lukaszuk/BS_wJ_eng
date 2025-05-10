@@ -11,7 +11,7 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/overpa
 
 ## Problem {#sec:overpayment_problem}
 
-We finished the previous section (@sec:mortgage) with the discussion about
+We finished the previous chapter (@sec:mortgage) with the discussion about
 paying off a mortgage. In general, banks allow their clients to overpay their
 mortgages, which should be beneficial to the borrowers. So here is a task for
 you.
@@ -22,23 +22,24 @@ reduces the number of installments).
 
 Use the program to answer a few questions.
 
-How much money do you save in the case of `mortgage1` (\$200,000, 6.49%, 20
-years) and `mortgage2` (\$200,000, 4.99%, 30 years) (see @sec:mortgage_solution)
-if you overpay them regularly every month with \$200 dollars.
+How much money can you expect to save in the case of `mortgage1` (\$200,000,
+6.49%, 20 years) and `mortgage2` (\$200,000, 4.99%, 30 years) (see
+@sec:mortgage_solution) if you overpay them regularly every month with \$200
+dollars.
 
-For the `mortgage1` which one is more worth it: to overpay it every month with
+For `mortgage1` which one is more worth it: to overpay it every month with
 \$200 dollars or to overpay it only once, let's say in month 13, with \$20,000?
 
-Which scenario will give you more profit (in nominal value): to overpay
-`mortgage1` with \$20,000 in month 13, or to put this \$20,000 into a bank
-deposit that pays 5% yearly for the 19 years (roughly the remaining duration of
-the mortgage)?
+Which scenario would you expect to give you more profit (in nominal value): to
+overpay `mortgage1` with \$20,000 in month 13, or to put this \$20,000 into a
+bank deposit that pays 5% yearly for the 19 years (roughly the remaining
+duration of the mortgage)?
 
 ## Solution {#sec:overpayment_solution}
 
 There's no need to (completely) reinvent the wheel so we will use `Mortgage`,
-`fmt` and `getInstallment` we developed in @sec:mortgage_solution. The function
-we'll define is `payOffMortgage`
+`fmt` and `getInstallment` we developed in @sec:mortgage_solution. The first
+function we'll define in this chapter is `payOffMortgage`
 
 ```jl
 s = """
@@ -48,9 +49,9 @@ function payOffMortgage(
     m::Mortgage, curPrincipal::Real, installment::Real,
     overpayment::Real)::Tuple{Real, Real, Real}
 
-    r::Real = m.interestPercYr / 100 / 12
+    interestPercMonth::Real = m.interestPercYr / 100 / 12
     newPrincipal::Real = curPrincipal - overpayment
-    interestPaid::Real = newPrincipal * r
+    interestPaid::Real = newPrincipal * interestPercMonth
     principalPaid::Real = installment - interestPaid
 
     return (newPrincipal - principalPaid,
@@ -61,12 +62,12 @@ sc(s)
 ```
 
 The function accepts (among others) `curPrincipal`, `installment` and
-`overpayment` and does a payment for a single month. To that end first we
+`overpayment` and does a payment for a single month. To that end, first we
 subtract `overpayment` from `curPrincipal` to get `newPrincipal`. We use
 `newPrincipal` to calculate the amount of money paid this month as interest
-(`interestPaid`). Then, we get estimate which part of the principal we paid in
+(`interestPaid`). Then, we estimate which part of the principal we paid in
 our installment (`principalPaid`). Finally, we return a tuple with 3 values: 1)
-remaining principal (after the payment), 2) principal paid this month (from
+the remaining principal (after the payment), 2) principal paid this month (from
 `installment` and `overpayment`), and 3) interest paid (from `installment`). The
 remaining principal is `newPrincipal - principalPaid`. The principal that we
 paid off this month is `principalPaid` (as part of the installment) and
@@ -87,7 +88,7 @@ cases: 1) when `curPrincipal` is 0 or negative
 than `overpayment` (`elseif curPrincipal <= overpayment` below), and 3) when
 `curPrincipal` is equal to or smaller than `overpayment + installemnt`
 (`if principalPaid >= newPrincipal` below). Therefore, our `payOffMortgage` will
-looks something like:
+look something like:
 
 ```jl
 s = """
@@ -101,9 +102,9 @@ function payOffMortgage(
     elseif curPrincipal <= overpayment
         return (0.0, curPrincipal, 0.0)
     else
-        r::Real = m.interestPercYr / 100 / 12
+        interestPercMonth::Real = m.interestPercYr / 100 / 12
         newPrincipal::Real = curPrincipal - overpayment
-        interestPaid::Real = newPrincipal * r
+        interestPaid::Real = newPrincipal * interestPercMonth
         principalPaid::Real = installment - interestPaid
         if principalPaid >= newPrincipal
             return (0.0, newPrincipal + overpayment, interestPaid)
@@ -175,19 +176,32 @@ We begin, by defining a few variables. For instance, `princLeft` will hold
 principal sill left to pay after a month, `princPaid` will contain the value of
 principal paid off in a given month, `intrPaid` will store the interest paid to
 a bank in a given month. The above will be used in the `for` loop and will
-change month by month. Next, a variables that will be used in the `Summary`
-struct returned by the function (`totalInterestPaid`, `totalInterestPaid`,
-`months`).  In the `for` loop we pay off the mortgage month by month. If there
+change month by month. Next, the variables that will be used in the `Summary`
+struct returned by our function (`totalInterestPaid`, `totalInterestPaid`,
+`months`). In the `for` loop we pay off the mortgage month by month. If there
 is no principal to be paid off (`if princLeft <= 0`) we `break`
 early. Otherwise, we update the number of `months`, `totalPrincPaid`, and
-`totalInterestPaid`.  Notice, that we obtain the over-payment for a month from
-the `overpayments` dictionary, where the default over-payment is 0
-(`get(overpayments, month, 0)`).
+`totalInterestPaid`. Notice, that we obtain the over-payment for a month from
+the `overpayments` dictionary, where the default over-payment (if the key
+doesn't exist) is 0 (`get(overpayments, month, 0)`).
 
-Finally, we are ready to answer our questions.
+Let's do a quick sanity check. Previously (@sec:mortgage_solution), we said that
+the regular payment off `mortgage1` (\$200,000 at 6.49% for 20 years) will
+roughly yield the principal of \$200,000 and the interest of \$157,593. Let's
+see if we get that.
 
-How much money we save in the case of `mortgage1` (\$200,000, 6.49%, 20 years)
-(see @sec:mortgage_solution) overpaid regularly every month with \$200 dollars.
+```jl
+s = """
+payOffMortgage(mortgage1)
+"""
+sco(s)
+```
+
+OK, so finally, we are ready to answer our questions.
+
+How much money can we potentially save in the case of `mortgage1` (\$200,000,
+6.49%, 20 years) (see @sec:mortgage_solution) overpaid regularly every month
+with \$200 dollars.
 
 ```jl
 s = """
@@ -212,7 +226,7 @@ Quite a penny (see also @fig:mortgageOverpayment1).
 
 ![Overpaying a mortgage (\$200,000, 6.49%, 20 years) with \$200 monthly (estimation may not be accurate).](./images/mortgageOverpayment1.png){#fig:mortgageOverpayment1}
 
-And we'll overpay `mortgage2` (\$200,000, 4.99%, 30 years) with \$200 monthly.
+And now let's overpay `mortgage2` (\$200,000, 4.99%, 30 years) with \$200 monthly.
 
 ```jl
 s = """
@@ -222,16 +236,16 @@ getTotalCostDiff(mortgage2,
 sco(s)
 ```
 
-The total savings appears to be even greater than for `mortgage1`, still the
+The total savings appear to be even greater than for `mortgage1`, still the
 total cost seems to be greater for `mortgage2` (see @fig:mortgageOverpayment1
 and @fig:mortgageOverpayment2).
 
 ![Overpaying a mortgage (\$200,000, 4.99%, 30 years) with \$200 monthly (estimation may not be accurate).](./images/mortgageOverpayment2.png){#fig:mortgageOverpayment2}
 
-OK, time for the next question
+OK, time for the next question.
 
-For the `mortgage1` which one is more worth it: to overpay it every month with
-\$200 dollars or to overpay it only once, let's say in month 13, with \$20,000?
+For `mortgage1` which one is more worth it: to overpay it every month with \$200
+dollars or to overpay it only once, let's say in month 13, with \$20,000?
 
 ```jl
 s = """
@@ -249,8 +263,8 @@ an early (month 13) over-payment of a vast sum of money (\$20,000, 10% of our
 initial principal) than just by regularly overpaying the mortgage with small
 sums of it (\$200, 0.1% of our initial principal).
 
-Out of pure curiosity, let's see how much we save when we combine the two (we
-overpay \$200 every month, except for month 13, where we overpay \$20,000)
+Out of pure curiosity, let's see how much we could save when we combine the two
+(we overpay \$200 every month, except for month 13, where we overpay \$20,000)
 
 ```jl
 s = """
@@ -261,7 +275,7 @@ getTotalCostDiff(mortgage1, customOverpayments) |> fmt
 sco(s)
 ```
 
-And now, the last question. Which one is better: to overpay `mortgage1` with
+And now, the final question. Which one is better: to overpay `mortgage1` with
 \$20,000 in month 13, or to put this \$20,000 into a bank deposit that pays 5%
 yearly for the 19 years (roughly the remaining duration of the mortgage)?
 
@@ -279,4 +293,4 @@ sco(s)
 So if the calculations were accurate in this scenario in nominal money we would
 save \$41,268 in interests, whereas gained extra \$30,593 (to our initial
 \$20,000) on the bank deposit (compare with
-@sec:compound_interest_problem_a1). Advantage, over-payment.
+@sec:compound_interest_problem_a1). Advantage over-payment.

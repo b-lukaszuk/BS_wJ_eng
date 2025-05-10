@@ -299,7 +299,7 @@ So it turns out that despite the higher interest rate of 6.49% overall we will
 pay less money to the bank for `mortgage1`. Therefore, if we are OK with the
 greater monthly payment (installment) then we may choose that one.
 
-Of course, the above was just a programming exercise, not a financial
+Of course, all the above was just a programming exercise, not a financial
 advice. Moreover, the simulation is likely to be inaccurate (to a various
 extent) for many reasons. For instance, a bank may calculate the interest every
 day, and not every month, in that case you will pay more. Compare with the
