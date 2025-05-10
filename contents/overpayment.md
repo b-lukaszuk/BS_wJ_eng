@@ -210,7 +210,7 @@ sco(s)
 
 Quite a penny (see also @fig:mortgageOverpayment1).
 
-![Owerpaying a mortgage (\$200,000, 6.49%, 20 years) with \$200 monthly (estimation may not be accurate).](./images/mortgageOverpayment1.png){#fig:mortgageOverpayment1}
+![Overpaying a mortgage (\$200,000, 6.49%, 20 years) with \$200 monthly (estimation may not be accurate).](./images/mortgageOverpayment1.png){#fig:mortgageOverpayment1}
 
 And we'll overpay `mortgage2` (\$200,000, 4.99%, 30 years) with \$200 monthly.
 
@@ -226,6 +226,57 @@ The total savings appears to be even greater than for `mortgage1`, still the
 total cost seems to be greater for `mortgage2` (see @fig:mortgageOverpayment1
 and @fig:mortgageOverpayment2).
 
-![Owerpaying a mortgage (\$200,000, 4.99%, 30 years) with \$200 monthly (estimation may not be accurate).](./images/mortgageOverpayment2.png){#fig:mortgageOverpayment2}
+![Overpaying a mortgage (\$200,000, 4.99%, 30 years) with \$200 monthly (estimation may not be accurate).](./images/mortgageOverpayment2.png){#fig:mortgageOverpayment2}
 
-To be continued...
+OK, time for the next question
+
+For the `mortgage1` which one is more worth it: to overpay it every month with
+\$200 dollars or to overpay it only once, let's say in month 13, with \$20,000?
+
+```jl
+s = """
+(
+	getTotalCostDiff(mortgage1,
+		Dict(i => 200 for i in 1:mortgage1.numMonths)) |> fmt,
+	getTotalCostDiff(mortgage1, Dict(13 => 20_000)) |> fmt
+)
+"""
+sco(s)
+```
+
+Interesting, the above output indicates that we would be able to save more, with
+an early (month 13) over-payment of a vast sum of money (\$20,000, 10% of our
+initial principal) than just by regularly overpaying the mortgage with small
+sums of it (\$200, 0.1% of our initial principal).
+
+Out of pure curiosity, let's see how much we save when we combine the two (we
+overpay \$200 every month, except for month 13, where we overpay \$20,000)
+
+```jl
+s = """
+customOverpayments = Dict(i => 200 for i in 1:mortgage1.numMonths)
+customOverpayments[13] = 20_000
+getTotalCostDiff(mortgage1, customOverpayments) |> fmt
+"""
+sco(s)
+```
+
+And now, the last question. Which one is better: to overpay `mortgage1` with
+\$20,000 in month 13, or to put this \$20,000 into a bank deposit that pays 5%
+yearly for the 19 years (roughly the remaining duration of the mortgage)?
+
+```jl
+s = """
+(
+	getTotalCostDiff(mortgage1, Dict(13 => 20_000)) |> fmt,
+	# fn from chapter about compund interest
+	getValue(20_000, 5, 19) - 20_000 |> fmt
+)
+"""
+sco(s)
+```
+
+So if the calculations were accurate in this scenario in nominal money we would
+save \$41,268 in interests, whereas gained extra \$30,593 (to our initial
+\$20,000) on the bank deposit (compare with
+@sec:compound_interest_problem_a1). Advantage, over-payment.
