@@ -115,7 +115,9 @@ For calculations it is especially useful to use them as decimals, hence we will
 often divide a percentage by one hundred. Now, let's say that I got $100 (this
 initial sum of money is called the **principal**) on a deposit that pays 5%
 interest yearly. That means that after one year I will get $105 or 105% of my
-initial principal. I can express this mathematically as `$100 * 105% = $105` or to
+initial principal (the 5% of \$100 is \$5, and it is the interest we get for
+giving our money to the bank). I can express this mathematically as
+`$100 * 105% = $105` or to
 make it easier to type with a calculator `100 * 1.05 = 105`. If the deposit
 lasted two years then I would have to repeat the process one more time for year
 number two, i.e. `$105 * 105% = $110.25` (105% of my new principal), also to be
@@ -275,7 +277,7 @@ our primary schools. Still, I like and remember the proportions example better.
 With that under our belt let's follow with a simple example. Imagine that in
 this year for $100 (`usd` below) we can buy 100 chocolate bars (`cb` below). Due
 to the yearly inflation that is 2% the same 100 chocolate bars will
-cost $102 dollars after a year. Luckily, thanks to the 5% yearly interest
+cost $102 after a year. Luckily, thanks to the 5% yearly interest
 rate we will have $105 in banknotes from our deposit. So how many
 chocolate bars will we be able to buy after a year?
 
