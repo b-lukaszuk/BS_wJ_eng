@@ -8,6 +8,7 @@ contents = [
     "toothpaste",
     "bile",
     "recursion",
+    "pascals_triangle",
     "prime_numbers",
     "compound_interest",
     "mortgage",
