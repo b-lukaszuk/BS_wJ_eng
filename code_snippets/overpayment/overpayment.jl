@@ -57,9 +57,9 @@ function payOffMortgage(
     elseif curPrincipal <= overpayment
         return (0.0, curPrincipal, 0.0)
     else
-        interestPercMonth::Real = m.interestPercYr / 100 / 12
+        interestDecimMonth::Real = m.interestPercYr / 100 / 12
         newPrincipal::Real = curPrincipal - overpayment
-        interestPaid::Real = newPrincipal * interestPercMonth
+        interestPaid::Real = newPrincipal * interestDecimMonth
         principalPaid::Real = installment - interestPaid
         if principalPaid >= newPrincipal
             return (0.0, newPrincipal + overpayment, interestPaid)

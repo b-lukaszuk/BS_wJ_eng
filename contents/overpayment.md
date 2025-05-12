@@ -17,18 +17,17 @@ mortgages, which should be beneficial to the borrowers. So here is a task for
 you.
 
 Write a computer program, that will estimate the savings you make by overpaying
-a mortgage (assume the whole overpayment goes to overpay the principal and
+a mortgage (assume the whole overpayment goes to pay off the principal and
 reduces the number of installments).
 
 Use the program to answer a few questions.
 
 How much money can you expect to save in the case of `mortgage1` (\$200,000,
 6.49%, 20 years) and `mortgage2` (\$200,000, 4.99%, 30 years) (see
-@sec:mortgage_solution) if you overpay them regularly every month with \$200
-dollars.
+@sec:mortgage_solution) if you overpay them regularly every month with \$200.
 
 For `mortgage1` which one is more worth it: to overpay it every month with
-\$200 dollars or to overpay it only once, let's say in month 13, with \$20,000?
+\$200 or to overpay it only once, let's say in month 13, with \$20,000?
 
 Which scenario would you expect to give you more profit (in nominal value): to
 overpay `mortgage1` with \$20,000 in month 13, or to put this \$20,000 into a
@@ -49,9 +48,9 @@ function payOffMortgage(
     m::Mortgage, curPrincipal::Real, installment::Real,
     overpayment::Real)::Tuple{Real, Real, Real}
 
-    interestPercMonth::Real = m.interestPercYr / 100 / 12
+    interestDecimMonth::Real = m.interestPercYr / 100 / 12
     newPrincipal::Real = curPrincipal - overpayment
-    interestPaid::Real = newPrincipal * interestPercMonth
+    interestPaid::Real = newPrincipal * interestDecimMonth
     principalPaid::Real = installment - interestPaid
 
     return (newPrincipal - principalPaid,
@@ -70,17 +69,17 @@ our installment (`principalPaid`). Finally, we return a tuple with 3 values: 1)
 the remaining principal (after the payment), 2) principal paid this month (from
 `installment` and `overpayment`), and 3) interest paid (from `installment`). The
 remaining principal is `newPrincipal - principalPaid`. The principal that we
-paid off this month is `principalPaid` (as part of the installment) and
+paid off this month (as part of the installment) is `principalPaid` and
 `overpayment`. The interest paid this month is just `interestPaid`.
 
 Right away we see a few reasons why our function is likely not to be accurate
-(except for the obvious lack of rounding to 2 decimal points as a bank would do).
-For instance, we overpaid the money first with our `overpayment` and only then
-calculated the `interestPaid` (and other stuff) which may not be the case
-in reality. Secondly, a bank may charge a fee (or some money named otherwise)
-for every overpayment we make. Still, since all this section is just a
-programming exercise and not a financial advice then we will not be bothered by
-that fact.
+(except for the obvious lack of rounding to 2 decimal points as a bank would
+do).  For instance, we paid off the principal first (with our `overpayment`) and
+only then calculated the `interestPaid` (and other stuff) which may not be the
+case in reality (the order may differ). Secondly, a bank may charge a fee (or
+some money named otherwise) for every overpayment we make. Still, since all this
+section is just a programming exercise and not a financial advice then we will
+not be bothered by that fact.
 
 However, we will improve our `payOffMortgage` a bit, by dealing with some edge
 cases: 1) when `curPrincipal` is 0 or negative
@@ -102,9 +101,9 @@ function payOffMortgage(
     elseif curPrincipal <= overpayment
         return (0.0, curPrincipal, 0.0)
     else
-        interestPercMonth::Real = m.interestPercYr / 100 / 12
+        interestDecimMonth::Real = m.interestPercYr / 100 / 12
         newPrincipal::Real = curPrincipal - overpayment
-        interestPaid::Real = newPrincipal * interestPercMonth
+        interestPaid::Real = newPrincipal * interestDecimMonth
         principalPaid::Real = installment - interestPaid
         if principalPaid >= newPrincipal
             return (0.0, newPrincipal + overpayment, interestPaid)
@@ -118,7 +117,7 @@ end
 sc(s)
 ```
 
-Once we can pay it off for one month, we can pay it off completely and summarize
+Once we can pay it off for a month, we can pay it off completely and summarize
 it. First, summary:
 
 ```jl
@@ -201,7 +200,7 @@ OK, so finally, we are ready to answer our questions.
 
 How much money can we potentially save in the case of `mortgage1` (\$200,000,
 6.49%, 20 years) (see @sec:mortgage_solution) overpaid regularly every month
-with \$200 dollars.
+with \$200.
 
 ```jl
 s = """
@@ -215,7 +214,16 @@ function getTotalCostDiff(m::Mortgage,
     s2::Summary = payOffMortgage(m, overpayments)
     return getTotalCost(s1) - getTotalCost(s2)
 end
+"""
+sc(s)
+```
 
+And (here we use
+[comprehensions](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_repetition.html#sec:julia_language_comprehensions)
+with a dictionary):
+
+```jl
+s = """
 getTotalCostDiff(mortgage1,
 	Dict(i => 200 for i in 1:mortgage1.numMonths)) |> fmt
 """
@@ -226,7 +234,8 @@ Quite a penny (see also @fig:mortgageOverpayment1).
 
 ![Overpaying a mortgage (\$200,000, 6.49%, 20 years) with \$200 monthly (estimation may not be accurate).](./images/mortgageOverpayment1.png){#fig:mortgageOverpayment1}
 
-And now let's overpay `mortgage2` (\$200,000, 4.99%, 30 years) with \$200 monthly.
+And now let's overpay `mortgage2` (\$200,000, 4.99%, 30 years) with \$200
+monthly.
 
 ```jl
 s = """
@@ -245,7 +254,7 @@ and @fig:mortgageOverpayment2).
 OK, time for the next question.
 
 For `mortgage1` which one is more worth it: to overpay it every month with \$200
-dollars or to overpay it only once, let's say in month 13, with \$20,000?
+or to overpay it only once, let's say in month 13, with \$20,000?
 
 ```jl
 s = """
