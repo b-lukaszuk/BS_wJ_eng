@@ -37,8 +37,9 @@ duration of the mortgage)?
 ## Solution {#sec:overpayment_solution}
 
 There's no need to (completely) reinvent the wheel so we will use `Mortgage`,
-`fmt` and `getInstallment` we developed in @sec:mortgage_solution. The first
-function we'll define in this chapter is `payOffMortgage`
+`fmt` and `getInstallment` we developed earlier (see @sec:mortgage_solution).
+Just in case be sure to also check the terminology we defined there. Anyway, the
+first function we'll define in this chapter is `payOffMortgage`
 
 ```jl
 s = """
@@ -47,14 +48,12 @@ s = """
 function payOffMortgage(
     m::Mortgage, curPrincipal::Real, installment::Real,
     overpayment::Real)::Tuple{Real, Real, Real}
-
-    interestDecimMonth::Real = m.interestPercYr / 100 / 12
-    newPrincipal::Real = curPrincipal - overpayment
-    interestPaid::Real = newPrincipal * interestDecimMonth
+    interestDecimalMonth::Real = m.interestPercYr / 100 / 12
+    interestPaid::Real = curPrincipal * interestDecimalMonth
     principalPaid::Real = installment - interestPaid
-
-    return (newPrincipal - principalPaid,
-               principalPaid + overpayment, interestPaid)
+    newPrincipal::Real = curPrincipal - principalPaid
+    return (newPrincipal - overpayment,
+            principalPaid + overpayment, interestPaid)
 end
 """
 sc(s)
@@ -62,32 +61,28 @@ sc(s)
 
 The function accepts (among others) `curPrincipal`, `installment` and
 `overpayment` and does a payment for a single month. To that end, first we
-subtract `overpayment` from `curPrincipal` to get `newPrincipal`. We use
-`newPrincipal` to calculate the amount of money paid this month as interest
-(`interestPaid`). Then, we estimate which part of the principal we paid in
-our installment (`principalPaid`). Finally, we return a tuple with 3 values: 1)
-the remaining principal (after the payment), 2) principal paid this month (from
+calculate the monthly interest rate as a decimal (`interestDecimalMonth`) and
+use it to calculate the interest principal paid this month (`interestPaid` and
+`principalPaid`). Afterwards we calculate our the new, lower, principal
+(`newPrincipal`). Finally, we return a tuple with 3 values: 1) the remaining
+principal (after a month), 2) principal paid in a given month (from
 `installment` and `overpayment`), and 3) interest paid (from `installment`). The
-remaining principal is `newPrincipal - principalPaid`. The principal that we
-paid off this month (as part of the installment) is `principalPaid` and
-`overpayment`. The interest paid this month is just `interestPaid`.
+remaining principal is `newPrincipal - overpayment`. The principal that we paid
+off this month is `principalPaid` and `overpayment`. The interest paid this
+month is just `interestPaid`.
 
-Right away we see a few reasons why our function is likely not to be accurate
-(except for the obvious lack of rounding to 2 decimal points as a bank would
-do).  For instance, we paid off the principal first (with our `overpayment`) and
-only then calculated the `interestPaid` (and other stuff) which may not be the
-case in reality (the order may differ). Secondly, a bank may charge a fee (or
-some money named otherwise) for every overpayment we make. Still, since all this
-section is just a programming exercise and not a financial advice then we will
-not be bothered by that fact.
+Right away we see a reason or two why our function is likely not to be accurate.
+For once, we lack the rounding of money to 2 decimal points (as a bank would
+do). Secondly, a bank may charge a fee (or some money named otherwise) for every
+overpayment we make. Still, since all this section is just a programming
+exercise and not a financial advice then we will not be bothered by that fact.
 
-However, we will improve our `payOffMortgage` a bit, by dealing with some edge
-cases: 1) when `curPrincipal` is 0 or negative
-(`if curPrincipal <= 0.0` below), 2) when `curPrincipal` is equal to or smaller
-than `overpayment` (`elseif curPrincipal <= overpayment` below), and 3) when
-`curPrincipal` is equal to or smaller than `overpayment + installemnt`
-(`if principalPaid >= newPrincipal` below). Therefore, our `payOffMortgage` will
-look something like:
+Still, we will improve our `payOffMortgage` a bit, by dealing with some edge
+cases: 1) when `curPrincipal` is 0 or negative (`if curPrincipal <= 0.0` below),
+2) when `curPrincipal` is equal to or smaller than the principal paid in
+installment (`if curPrincipal <= principalPaid` below), and 3) when (`if
+newPrincipal <= overpayment` below). Therefore, our `payOffMortgage` will look
+something like:
 
 ```jl
 s = """
@@ -98,20 +93,19 @@ function payOffMortgage(
     overpayment::Real)::Tuple{Real, Real, Real}
     if curPrincipal <= 0.0
         return (0.0, 0.0, 0.0)
-    elseif curPrincipal <= overpayment
-        return (0.0, curPrincipal, 0.0)
-    else
-        interestDecimMonth::Real = m.interestPercYr / 100 / 12
-        newPrincipal::Real = curPrincipal - overpayment
-        interestPaid::Real = newPrincipal * interestDecimMonth
-        principalPaid::Real = installment - interestPaid
-        if principalPaid >= newPrincipal
-            return (0.0, newPrincipal + overpayment, interestPaid)
-        else
-            return (newPrincipal - principalPaid,
-                    principalPaid + overpayment, interestPaid)
-        end
     end
+    interestDecimalMonth::Real = m.interestPercYr / 100 / 12
+    interestPaid::Real = curPrincipal * interestDecimalMonth
+    principalPaid::Real = installment - interestPaid
+    if curPrincipal <= principalPaid
+        return (0.0, curPrincipal, interestPaid)
+    end
+    newPrincipal::Real = curPrincipal - principalPaid
+    if newPrincipal <= overpayment
+        return (0.0, newPrincipal + principalPaid, interestPaid)
+    end
+    return (newPrincipal - overpayment,
+            principalPaid + overpayment, interestPaid)
 end
 """
 sc(s)
@@ -246,8 +240,8 @@ sco(s)
 ```
 
 The total savings appear to be even greater than for `mortgage1`, still the
-total cost seems to be greater for `mortgage2` (see @fig:mortgageOverpayment1
-and @fig:mortgageOverpayment2).
+total cost seems to be greater for the overpaid `mortgage2` (see
+@fig:mortgageOverpayment1 and @fig:mortgageOverpayment2).
 
 ![Overpaying a mortgage (\$200,000, 4.99%, 30 years) with \$200 monthly (estimation may not be accurate).](./images/mortgageOverpayment2.png){#fig:mortgageOverpayment2}
 
@@ -299,7 +293,7 @@ s = """
 sco(s)
 ```
 
-So if the calculations were accurate in this scenario in nominal money we would
-save \$41,268 in interests, whereas gained extra \$30,593 (to our initial
-\$20,000) on the bank deposit (compare with
+So if the calculations were accurate in this scenario we would have saved (in
+nominal money) \$40,972 in interests, whereas gained extra \$30,593 (to our
+initial \$20,000) on the bank deposit (compare with
 @sec:compound_interest_problem_a1). Advantage over-payment.

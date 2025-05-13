@@ -54,20 +54,19 @@ function payOffMortgage(
     overpayment::Real)::Tuple{Real, Real, Real}
     if curPrincipal <= 0.0
         return (0.0, 0.0, 0.0)
-    elseif curPrincipal <= overpayment
-        return (0.0, curPrincipal, 0.0)
-    else
-        interestDecimMonth::Real = m.interestPercYr / 100 / 12
-        newPrincipal::Real = curPrincipal - overpayment
-        interestPaid::Real = newPrincipal * interestDecimMonth
-        principalPaid::Real = installment - interestPaid
-        if principalPaid >= newPrincipal
-            return (0.0, newPrincipal + overpayment, interestPaid)
-        else
-            return (newPrincipal - principalPaid,
-                    principalPaid + overpayment, interestPaid)
-        end
     end
+    interestDecimalMonth::Real = m.interestPercYr / 100 / 12
+    interestPaid::Real = curPrincipal * interestDecimalMonth
+    principalPaid::Real = installment - interestPaid
+    if curPrincipal <= principalPaid
+        return (0.0, curPrincipal, interestPaid)
+    end
+    newPrincipal::Real = curPrincipal - principalPaid
+    if newPrincipal <= overpayment
+        return (0.0, newPrincipal + principalPaid, interestPaid)
+    end
+    return (newPrincipal - overpayment,
+            principalPaid + overpayment, interestPaid)
 end
 
 struct Summary

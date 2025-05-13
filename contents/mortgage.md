@@ -21,8 +21,8 @@ apartment or a house.
 
 So here are two scenarios for you:
 
-1. you borrow $200,000 (principal) for 20 years at 6.49% yearly interest rate
-2. you borrow $200,000 (principal) for 30 years at 4.99% yearly interest rate
+1. you borrow $200,000 (principal) for 20 years at 6.49% (constant yearly interest rate)
+2. you borrow $200,000 (principal) for 30 years at 4.99% (constant yearly interest rate)
 
 Write a Julia program that will tell you:
 
