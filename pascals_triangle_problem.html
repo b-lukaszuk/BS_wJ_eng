@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Solution - Build SH*T with Julia</title>
+  <title>Problem - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -118,80 +118,15 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="14.2" id="sec:transcription_solution"><span class="header-section-number">14.2</span> Solution</h2>
-<p>The file <code>dna_seq_template_strand.txt</code> is quite small as you can see by using your file manager or Julia</p>
-<pre class="language-julia"><code>#in &#39;code_snippets&#39; folder use &quot;./transcription/dna_seq_template_strand.txt&quot;
-#in &#39;transcription&#39; folder use &quot;./dna_seq_template_strand.txt&quot;
-filePath = &quot;./code_snippets/transcription/dna_seq_template_strand.txt&quot;
-filesize(filePath)</code></pre>
-<p>4449</p>
-<p>Here we defined <code>filePath</code> to our file. Next, we checked its size with <a href="https://docs.julialang.org/en/v1/base/file/#Base.filesize">filesize</a> to see it is equal to 4449 bytes. This is slightly more than 4 kilobytes (KiB). Such a small file can be easily swallowed by <a href="https://docs.julialang.org/en/v1/base/io-network/#Base.read">read</a> (the recommended way below) and returned as a one long <code>Str</code> (type alias for <code>String</code>).</p>
-<pre class="language-julia"><code>dna = open(filePath) do file
-    read(file, Str)
-end
-dna[1:75]</code></pre>
-<p>gagctccccg gatctgtaac gggaggtctc tctcgtgggt tgtgggaggt ccgaactggc\ncggtcccac</p>
-<blockquote>
-<p>Note. For large files you should probably read it line by line with something like <code>for line in eachline(file) #do sth with line# end</code> or use a dedicated library.</p>
-</blockquote>
-<p>The nucleotide bases (<code>a</code>, <code>c</code>, <code>t</code>, <code>g</code>) are grouped by 10. Moreover, notice the <code>\n</code> character on the right. It is a <a href="https://en.wikipedia.org/wiki/Newline">newline</a> character that tells the computer to print the subsequent characters from the beginning of a new line. We need to splice sequence at positions 2424-2610 and 3397-3542 so let’s get rid of those extra characters to make the counting easier.</p>
-<pre class="language-julia"><code>dna = replace(dna, &quot; &quot; =&gt; &quot;&quot;, &quot;\n&quot; =&gt; &quot;&quot;&quot;)
-dna[1:75]</code></pre>
-<p>gagctccccggatctgtaacgggaggtctctctcgtgggttgtgggaggtccgaactggccggtcccacagggga</p>
-<p>This couldn’t be simpler, we just use <code>replace</code> and <code>itIs =&gt; shouldBe</code> syntax. The spaces (<code>" "</code>) are replaced with nothing (<code>""</code>, empty string) and newlines (<code>"\n"</code>) with nothing (<code>""</code>, empty string) as well. Effectively this removed them from our <code>dna</code> string.</p>
-<p>String splicing is easily done with indexing and string concatenation operator (<code>*</code>) like so.</p>
-<pre class="language-julia"><code>dnaExonsOnly = dna[2424:2610] * dna[3397:3542]
-dnaExonsOnly[1:75]</code></pre>
-<p>taccgggacacctacgcggaggacggggacgaccgcgacgaccgggagacccctggactgggtcggcgtcggaaa</p>
-<p>All that’s left to do is to transcribe to mRNA using the complementarity rule mentioned above. First, let’s rewrite it to Julia’s <a href="https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_decision_making#sec:julia_language_dictionaries">dictionary</a>.</p>
-<pre class="language-julia"><code>dna2mrna = Dict(
-    &#39;a&#39; =&gt; &#39;u&#39;,
-    &#39;c&#39; =&gt; &#39;g&#39;,
-    &#39;g&#39; =&gt; &#39;c&#39;,
-    &#39;t&#39; =&gt; &#39;a&#39;
-)</code></pre>
-<p>And now the transcription itself.</p>
-<pre class="language-julia"><code>function transcribe(nucleotideBase::Char,
-    complementarityMap::Dict{Char, Char} = dna2mrna)::Char
-    return get(complementarityMap, nucleotideBase, nucleotideBase)
-end
-
-(
-    transcribe(&#39;a&#39;),
-    transcribe(&#39;g&#39;),
-    transcribe(&#39;x&#39;)
-)</code></pre>
-<pre class="output"><code>(&#39;u&#39;, &#39;c&#39;, &#39;x&#39;)</code></pre>
-<p>Our transcribe function takes a character (<code>Char</code>, <code>String</code> is build of individual characters) called <code>nucleotideBase</code> and a default <code>complementarityMap</code> set to <code>dna2mrna</code>. It uses <code>get</code> to return a complementary base to <code>nucleotideBase</code> (its second argument) or a default (its third argument, in this case just return <code>nucleotideBase</code>) if a match was not found.</p>
-<p>All that’s left to do is to write a <code>transcribe</code> function for the whole string (<code>dnaExonsOnly</code>).</p>
-<pre class="language-julia"><code>function transcribe(dnaSeq::Str)::Str
-    return map(transcribe, dnaSeq)
-end
-
-mRna = transcribe(dnaExonsOnly)
-(
-    dnaExonsOnly[1:10],
-    mRna[1:10]
-)</code></pre>
-<pre class="output"><code>(&quot;taccgggaca&quot;
- &quot;auggcccugu&quot;)</code></pre>
-<p>Here a map function applies previously defined <code>transcribe</code> on every character of <code>dnaSeq</code> and glues the obtained characters into a string.</p>
-<p>Instead of the above two functions we could have just written</p>
-<pre class="language-julia"><code>mRna = map(base -&gt; get(dna2mrna, base, base), dnaExonsOnly)
-(
-    dnaExonsOnly[1:10],
-    mRna[1:10]
-)</code></pre>
-<pre class="output"><code>(&quot;taccgggaca&quot;
- &quot;auggcccugu&quot;)</code></pre>
-<p>with the same result, but I felt that the longer version was clearer.</p>
+<h2 data-number="8.1" id="sec:pascals_triangle_problem"><span class="header-section-number">8.1</span> Problem</h2>
+<p>The problem description goes here.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-2" href="./transcription_problem.html"><b>14.1</b> Problem</a> <kbd>←</kbd>
+        <a class="menu-level-1" href="./pascals_triangle.html"><b>8</b> Pascal’s triangle</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-1" href="./translation.html"><b>15</b> Translation</a>
+            <kbd>→</kbd> <a class="menu-level-2" href="./pascals_triangle_solution.html"><b>8.2</b> Solution</a>
         </span>
     </p>
 </div>
