@@ -92,7 +92,7 @@ function payOffMortgage(
     m::Mortgage, curPrincipal::Real, installment::Real,
     overpayment::Real)::Tuple{Real, Real, Real}
     if curPrincipal <= 0.0
-        return (0.0, 0.0, 0.0)
+        return (curPrincipal, 0.0, 0.0)
     end
     interestDecimalMonth::Real = m.interestPercYr / 100 / 12
     interestPaid::Real = curPrincipal * interestDecimalMonth
