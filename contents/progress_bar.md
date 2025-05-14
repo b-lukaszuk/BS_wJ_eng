@@ -28,4 +28,38 @@ i.e. `print(progress_bar)`, `print("\r")` and `print(updated_progress_bar)`.
 
 ## Solution {#sec:progress_bar_solution}
 
-The solution goes here.
+Let's begin with a function that will return us a textual representation of a
+progress bar.
+
+```jl
+s = """
+function getProgressBar(perc::Int)::Str
+    @assert 0 <= perc <= 100 "perc must be in range [0-100]"
+    return "|" ^ perc * "." ^ (100-p) * " $perc%"
+end
+"""
+sc(s)
+```
+
+`getProgressBar` accepts percentage (`perc`) and draws as many vertical bars as
+`perc`s we got (`"|" ^ perc`, where `^` replicates the string `"|"` `perc`
+times). The unused spots (`100-p`) are filed with the placeholders (`"."`). We
+finish by appending the number itself and the `%` symbol by using [string
+interpolation](https://docs.julialang.org/en/v1/manual/strings/#string-interpolation).
+
+Printing a string of 100 characters (actually a bit more) may not look good on
+some terminals. That is why we may want to limit ourselves to a smaller value
+of characters (`maxNumOfChars`) for the progress bar and rescale the percentage
+(`perc`) accordingly (see below).
+
+```jl
+s = """
+function getProgressBar(perc::Int)::Str
+    @assert 0 <= perc <= 100 "perc must be in range [0-100]"
+    maxNumOfChars:: Int = 50
+    p = round(Int, perc / (100 / maxNumOfChars))
+    return "|" ^ p * "." ^ (maxNumChars-p) * " $perc%"
+end
+"""
+sc(s)
+```
