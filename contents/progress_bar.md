@@ -48,9 +48,10 @@ finish by appending the number itself and the `%` symbol by using [string
 interpolation](https://docs.julialang.org/en/v1/manual/strings/#string-interpolation).
 
 Printing a string of 100 characters (actually a bit more) may not look good on
-some terminals. That is why we may want to limit ourselves to a smaller value
-of characters (`maxNumOfChars`) for the progress bar and rescale the percentage
-(`perc`) accordingly (see below).
+some terminals (by default terminals are often 80 characters wide). That is why
+we may want to limit ourselves to a smaller value of characters
+(`maxNumOfChars`) for the progress bar and rescale the percentage (`perc`)
+accordingly (see below).
 
 ```jl
 s = """
