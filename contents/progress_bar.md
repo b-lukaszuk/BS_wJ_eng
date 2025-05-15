@@ -47,7 +47,7 @@ mathematical operations [exponentiation (`^`) before multiplication
 [concatenation](https://docs.julialang.org/en/v1/manual/strings/#man-concatenation)
 operator (it glues two strings into a one longer string), whereas `^` multiplies
 a string to its left the number of times on its right (i.e. `"a"^3` gives us
-`"aaa"`).  `getProgressBar` accepts percentage (`perc`) and draws as many
+`"aaa"`). `getProgressBar` accepts percentage (`perc`) and draws as many
 vertical bars as `perc` tells us. The unused spots (`100-p`) are filed with the
 placeholders (`"."`). We finish by appending the number itself and the `%`
 symbol by using [string
@@ -74,3 +74,88 @@ replace(sc(s), Regex("string.*") => "\"\$perc%\"")
 The above function looses some resolution in translation of `perc` to vertical
 bars (`|`). However, the percentage is displayed anyway (`"$perc%"`) so it is
 not such a big problem after all.
+
+Now, we are ready to write a first version of our `animateProgressBar`.
+
+```
+function animateProgressBar()
+    fans::Vec{Str} = ["\\", "-", "/", "-"]
+    ind::Int = 1
+    for p in 0:100
+        println(getProgressBar(p), fans[ind])
+        ind = (ind == length(fans)) ? 1 : ind + 1
+    end
+    println(getProgressBar(100))
+    return nothing
+end
+```
+
+The function is rather simple. For every value of percentage (`for p in 0:100`)
+we draw the progress bar with a fan that changes into one of four positions
+(alternating `\`, `-`, `/`, `-` in one place a few times a second will give the
+impression of a fan). Note, the double
+[backslash](https://en.wikipedia.org/wiki/Backslash) character (`"\\"`) in
+`fans`. The `\` symbol got a particular meaning in programming. It is used to
+designate that the next character(s) is/are special. For instance
+`println("and")` will just print the conjunction 'and'. On the other hand
+`println("a\nd")` will print two 'a's, one below the other, since in Julia
+`"\n"` stands for newline. To get rid of the special meaning of `"\"` we
+precede it with another backslash, hence `"\\"`.
+
+OK, let's see what we got.
+
+```
+animateProgressBar()
+```
+
+```
+.................................................. 0% \
+.................................................. 1% -
+|................................................. 2% /
+||................................................ 3% -
+||................................................ 4% \
+||................................................ 5% -
+# part of the output trimmed
+||||||||||||||||||||||||||||||||||||||||||||||||.. 96%\
+||||||||||||||||||||||||||||||||||||||||||||||||.. 97%-
+|||||||||||||||||||||||||||||||||||||||||||||||||. 98%/
+|||||||||||||||||||||||||||||||||||||||||||||||||| 99%-
+|||||||||||||||||||||||||||||||||||||||||||||||||| 100%\
+|||||||||||||||||||||||||||||||||||||||||||||||||| 100%
+```
+
+Pretty good. There are only 2 problems, the output is printed instantaneously on
+the screen, with one line under the other. The first problem will be solved with
+[sleep](https://docs.julialang.org/en/v1/base/parallel/#Base.sleep) that makes
+the program wait for a specific number of milliseconds before executing the next
+line of code. The second problem will be solved with [ANSI escape
+codes](https://en.wikipedia.org/wiki/ANSI_escape_code) a sequence of characters
+with a special meaning (as found in the link in this sentence).
+
+```
+# the terminal must support ANSI escape codes
+# https://en.wikipedia.org/wiki/ANSI_escape_code
+function clearPrintout()
+    #"\033[xxxA" - xxx moves cursor up xxx lines
+    print("\033[1A")
+    # clears from cursor position till end of display
+    print("\033[J")
+end
+
+function animateProgressBar()
+    delayMs::Int = 0
+    fans::Vec{Str} = ["\\", "-", "/", "-"]
+    ind::Int = 1
+    for i in 0:100
+        delayMs = rand(100:250)
+        println(getProgressBar(i), fans[ind])
+        sleep(delayMs / 1000) # sleep accepts delay in seconds
+        clearPrintout()
+        ind = (ind == length(fans)) ? 1 : ind + 1
+    end
+    println(getProgressBar(100))
+    return nothing
+end
+```
+
+This time running `animateProgressBar()` will give us the desired result.
