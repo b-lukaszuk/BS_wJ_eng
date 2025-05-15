@@ -35,10 +35,10 @@ progress bar.
 s = """
 function getProgressBar(perc::Int)::Str
     @assert 0 <= perc <= 100 "perc must be in range [0-100]"
-    return "|" ^ perc * "." ^ (100-p) * " $perc%"
+    return "|" ^ perc * "." ^ (100-p) * string(" ", perc) * "%"
 end
 """
-sc(s)
+replace(sco(s), Regex("string.*") => "\"\$perc%\"")
 ```
 
 `getProgressBar` accepts percentage (`perc`) and draws as many vertical bars as
@@ -53,14 +53,15 @@ we may want to limit ourselves to a smaller value of characters
 (`maxNumOfChars`) for the progress bar and rescale the percentage (`perc`)
 accordingly (see below).
 
+
 ```jl
 s = """
 function getProgressBar(perc::Int)::Str
     @assert 0 <= perc <= 100 "perc must be in range [0-100]"
     maxNumOfChars:: Int = 50
     p = round(Int, perc / (100 / maxNumOfChars))
-    return "|" ^ p * "." ^ (maxNumChars-p) * " $perc%"
+    return "|" ^ p * "." ^ (maxNumChars-p) * string(" ", perc) * "%"
 end
 """
-sc(s)
+replace(sco(s), Regex("string.*") => "\"\$perc%\"")
 ```
