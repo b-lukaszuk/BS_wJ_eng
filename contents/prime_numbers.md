@@ -138,8 +138,8 @@ getPrimesV2(100) == primesFromWiki
 sco(s)
 ```
 
-The test passed. Before we close this chapter let's do our two methods give
-similar results.
+The test passed. Before we close this chapter let's see if the two functions
+give identical results.
 
 ```jl
 s = """
@@ -148,4 +148,4 @@ getPrimesV1(1000) == getPrimesV2(1000)
 sco(s)
 ```
 
-Good, both methods produce identical results.
+Yes, they do.

@@ -38,21 +38,26 @@ function getProgressBar(perc::Int)::Str
     return "|" ^ perc * "." ^ (100-p) * string(" ", perc) * "%"
 end
 """
-replace(sco(s), Regex("string.*") => "\"\$perc%\"")
+replace(sc(s), Regex("string.*") => "\"\$perc%\"")
 ```
 
-`getProgressBar` accepts percentage (`perc`) and draws as many vertical bars as
-`perc`s we got (`"|" ^ perc`, where `^` replicates the string `"|"` `perc`
-times). The unused spots (`100-p`) are filed with the placeholders (`"."`). We
-finish by appending the number itself and the `%` symbol by using [string
+In order to understand the function we must remember the precedence of
+mathematical operations [exponentiation (`^`) before multiplication
+(`*`)]. Moreover, we must remember that in the context of strings `*` is a
+[concatenation](https://docs.julialang.org/en/v1/manual/strings/#man-concatenation)
+operator (it glues two strings into a one longer string), whereas `^` multiplies
+a string to its left the number of times on its right (i.e. `"a"^3` gives us
+`"aaa"`).  `getProgressBar` accepts percentage (`perc`) and draws as many
+vertical bars as `perc` tells us. The unused spots (`100-p`) are filed with the
+placeholders (`"."`). We finish by appending the number itself and the `%`
+symbol by using [string
 interpolation](https://docs.julialang.org/en/v1/manual/strings/#string-interpolation).
 
 Printing a string of 100 characters (actually a bit more) may not look good on
-some terminals (by default terminals are often 80 characters wide). That is why
+some terminals (by default many terminals are 80 characters wide). That is why
 we may want to limit ourselves to a smaller value of characters
 (`maxNumOfChars`) for the progress bar and rescale the percentage (`perc`)
 accordingly (see below).
-
 
 ```jl
 s = """
@@ -63,5 +68,9 @@ function getProgressBar(perc::Int)::Str
     return "|" ^ p * "." ^ (maxNumChars-p) * string(" ", perc) * "%"
 end
 """
-replace(sco(s), Regex("string.*") => "\"\$perc%\"")
+replace(sc(s), Regex("string.*") => "\"\$perc%\"")
 ```
+
+The above function looses some resolution in translation of `perc` to vertical
+bars (`|`). However, the percentage is displayed anyway (`"$perc%"`) so it is
+not such a big problem after all.
