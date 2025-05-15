@@ -237,10 +237,10 @@ like so:
 
 ```jl
 s = """
-function recFib2(n::Int, lookup::Dict{Int, Int})::Int
+function recFib!(n::Int, lookup::Dict{Int, Int})::Int
     @assert 0 <= n <= 40 "n must be in range [0-40]"
     if !haskey(lookup, n)
-        lookup[n] = recFib2(n-2, lookup) + recFib2(n-1, lookup)
+        lookup[n] = recFib!(n-2, lookup) + recFib!(n-1, lookup)
     end
     return lookup[n]
 end
@@ -248,20 +248,25 @@ end
 sc(s)
 ```
 
-If there is no known value for a given Fibonacci number then we calculate it
-using the known formula. Otherwise we just return the found value. Now, the
-function is more performant, as
+Notice that the function modifies `lookup` (hence `!` appended to its name, per
+Julia's convention). Inside we check if there is a value for a Fibonacci's
+number in `lookup`. If not (`!haskey(lookup, n)`) then we calculate it using the
+known formula and insert it in `lookup`. Otherwise we just return the found
+value.
+
+The last function (`recFib!`) is more performant, as:
 
 ```jl
 s = """
 fibs = Dict(0 => 0, 1 => 1)
-recFib2(40, fibs)
+recFib!(40, fibs)
 """
 sco(s)
 ```
 
-takes only microseconds on its first execution (like 10-100 times
-faster). Interestingly, running `recFib2(40, fibs)` for the second time reduces
-the time to nanoseconds (a million times faster) since there are no calculations
-performed the second time). Run `recFib(40)` twice to convince yourself that it
-takes roughly the same amount of time every time it runs with the same `n`.
+takes only microseconds on its first execution (like a hundred times
+faster). Interestingly, running `recFib!(40, fibs)` for the second time reduces
+the time to nanoseconds (a million times faster) since there are no
+calculations performed the second time, just reading the number from the
+previously modified `lookup`). Run `recFib(40)` twice to convince yourself that
+it takes roughly the same amount of time every time it runs with the same `n`.

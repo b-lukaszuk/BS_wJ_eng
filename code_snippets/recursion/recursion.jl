@@ -37,7 +37,6 @@ function recFactorialV3(n::Int, acc::Int=1)::Int
     return n == 1 ? acc : recFactorialV3(n-1, n * acc)
 end
 
-
 (
     recFactorial(6),
     recFactorial(20),
@@ -59,10 +58,10 @@ function recFib(n::Int)::Int
 end
 
 # more performant definition
-function recFib2(n::Int, lookup::Dict{Int, Int})::Int
+function recFib!(n::Int, lookup::Dict{Int, Int})::Int
     @assert 0 <= n <= 40 "n must be in range [0-40]"
     if !haskey(lookup, n)
-        lookup[n] = recFib2(n-2, lookup) + recFib2(n-1, lookup)
+        lookup[n] = recFib!(n-2, lookup) + recFib!(n-1, lookup)
     end
     return lookup[n]
 end
@@ -71,8 +70,8 @@ end
 Bt.@benchmark recFib(40)
 
 # should run calculations during every sub-test
-Bt.@benchmark recFib2(40, Dict(0 => 0, 1 => 1))
+Bt.@benchmark recFib!(40, Dict(0 => 0, 1 => 1))
 
-# should run calculations only once (suring first sub-test)
+# should run calculations only once (during first sub-test)
 fibs = Dict(0 => 0, 1 => 1)
-Bt.@benchmark recFib2(40, $fibs)
+Bt.@benchmark recFib!(40, $fibs)
