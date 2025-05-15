@@ -15,10 +15,11 @@ While running a time consuming program we may see a progress bar that will
 provide the user with visual cues as to the course of its execution.
 
 So here is a task for you. Write a computer program that will animate a mock
-progress bar that goes from 0% to 100% (if you want make it similar to
+progress bar that goes from 0% to 100% (if you want, make it similar to
 the one in @fig:progressBar1). You may imitate some complex calculations with
 [sleep](https://docs.julialang.org/en/v1/base/parallel/#Base.sleep). In order to
-redraw a bar in a terminal you may want to read about [ANSI escape
+redraw a bar in a [terminal](https://en.wikipedia.org/wiki/Terminal_emulator)
+you may want to read about [ANSI escape
 codes](https://en.wikipedia.org/wiki/ANSI_escape_code). If the above is too much
 for you try to use [carriage
 return](https://en.wikipedia.org/wiki/Carriage_return),
@@ -159,3 +160,47 @@ end
 ```
 
 This time running `animateProgressBar()` will give us the desired result.
+
+As a final touch we will add some functionality for running our script (saved as
+`progress_bar.jl`) from a
+[terminal](https://en.wikipedia.org/wiki/Terminal_emulator).
+
+```
+function main()
+    println("Toy program.")
+    println("It animates a progress bar.")
+    println("Note: your terminal must support ANSI escape codes.\n")
+
+    println("Press Enter to begin.") # actually any key
+    _ = readline() # start the animation on keypress
+
+    animateProgressBar()
+
+    println("\n\nThat's all. Goodbye!")
+end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
+end
+```
+
+Although not strictly required in Julia, the `main` function is by convention a
+starting point of any (big or small) program (in other programming
+languages). Whereas the `if abspath` part makes sure that our `main` function is
+run only if the program was called directly from the terminal, i.e.
+
+```shell
+julia progress_bar.jl
+```
+
+will run it, while:
+
+```shell
+julia other_file_that_imports_progress_bar.jl
+```
+
+will not.
+
+The final effect (at least a part of it) is to be seen below.
+
+![A mock progress bar (animation works only in an HTML document)](./images/progressBar1.gif)
