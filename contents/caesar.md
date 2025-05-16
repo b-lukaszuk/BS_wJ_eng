@@ -13,7 +13,7 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/caesar
 
 We finished the previous chapter (see @sec:shift_solution) by stating that the
 file `trarfvf.txt` contains a text coded with a substitution cipher
-with the shift (rotation) of 13 characters. This turns out to be the famous
+with the shift (rotation) of 13 characters. This turns out to be the
 [Caesar cipher](https://en.wikipedia.org/wiki/Caesar_cipher) used by the famous
 Roman emperor in antiquity (breaking the cipher without a computer program and
 sufficient amount of text is not an easy task).

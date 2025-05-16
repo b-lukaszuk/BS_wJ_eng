@@ -34,13 +34,13 @@ Let's begin with a function that will return a textual representation of a
 progress bar.
 
 ```jl
-s = """
+s2 = """
 function getProgressBar(perc::Int)::Str
     @assert 0 <= perc <= 100 "perc must be in range [0-100]"
     return "|" ^ perc * "." ^ (100-p) * string(" ", perc) * "%"
 end
 """
-replace(sc(s), Regex("string.*") => "\"\$perc%\"")
+replace(sc(s2), Regex("string.*") => "\"\$perc%\"")
 ```
 
 In order to understand the function we must remember the precedence of
@@ -62,7 +62,7 @@ we may want to limit ourselves to a smaller value of characters
 accordingly (see below).
 
 ```jl
-s = """
+s3 = """
 function getProgressBar(perc::Int)::Str
     @assert 0 <= perc <= 100 "perc must be in range [0-100]"
     maxNumOfChars::Int = 50
@@ -70,7 +70,7 @@ function getProgressBar(perc::Int)::Str
     return "|" ^ p * "." ^ (maxNumChars-p) * string(" ", perc) * "%"
 end
 """
-replace(sc(s), Regex("string.*") => "\"\$perc%\"")
+replace(sc(s3), Regex("string.*") => "\"\$perc%\"")
 ```
 
 The above function looses some resolution in translation of `perc` to vertical
