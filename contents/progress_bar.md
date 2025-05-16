@@ -15,21 +15,22 @@ While running a time consuming program we may see a progress bar that will
 provide the user with visual cues as to the course of its execution.
 
 So here is a task for you. Write a computer program that will animate a mock
-progress bar that goes from 0% to 100% (if you want, make it similar to
-the one in @fig:progressBar1). You may imitate some complex calculations with
-[sleep](https://docs.julialang.org/en/v1/base/parallel/#Base.sleep). In order to
-redraw a bar in a [terminal](https://en.wikipedia.org/wiki/Terminal_emulator)
-you may want to read about [ANSI escape
-codes](https://en.wikipedia.org/wiki/ANSI_escape_code). If the above is too much
-for you try to use [carriage
+progress bar that goes from 0% to 100% (if you want, make it similar to the one
+in @fig:progressBar1). Don't worry about the complex calculations (the task is
+just to animate the bar) and use
+[sleep](https://docs.julialang.org/en/v1/base/parallel/#Base.sleep) before
+printing the bar in each iteration. In order to redraw a bar in a
+[terminal](https://en.wikipedia.org/wiki/Terminal_emulator) you may want to read
+about [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code). If
+the above is too much for you try to use [carriage
 return](https://en.wikipedia.org/wiki/Carriage_return),
-i.e. `print(progress_bar)`, `print("\r")` and `print(updated_progress_bar)`.
+i.e. `print(progress_bar1)`, `print("\r")` and `print(progress_bar2)`.
 
 ![A mock progress bar (animation works only in an HTML document)](./images/progressBar1.gif){#fig:progressBar1}
 
 ## Solution {#sec:progress_bar_solution}
 
-Let's begin with a function that will return us a textual representation of a
+Let's begin with a function that will return a textual representation of a
 progress bar.
 
 ```jl
@@ -48,10 +49,10 @@ mathematical operations [exponentiation (`^`) before multiplication
 [concatenation](https://docs.julialang.org/en/v1/manual/strings/#man-concatenation)
 operator (it glues two strings into a one longer string), whereas `^` multiplies
 a string to its left the number of times on its right (i.e. `"a"^3` gives us
-`"aaa"`). `getProgressBar` accepts percentage (`perc`) and draws as many
-vertical bars as `perc` tells us. The unused spots (`100-p`) are filed with the
-placeholders (`"."`). We finish by appending the number itself and the `%`
-symbol by using [string
+`"a" * "a" * "a"` so `"aaa"`). `getProgressBar` accepts percentage (`perc`) and
+draws as many vertical bars as `perc` tells us. The unused spots (`100-p`) are
+filed with the placeholders (`"."`). We finish by appending the number itself
+and the `%` symbol by using [string
 interpolation](https://docs.julialang.org/en/v1/manual/strings/#string-interpolation).
 
 Printing a string of 100 characters (actually a bit more) may not look good on
@@ -64,8 +65,8 @@ accordingly (see below).
 s = """
 function getProgressBar(perc::Int)::Str
     @assert 0 <= perc <= 100 "perc must be in range [0-100]"
-    maxNumOfChars:: Int = 50
-    p = round(Int, perc / (100 / maxNumOfChars))
+    maxNumOfChars::Int = 50
+    p::Int = round(Int, perc / (100 / maxNumOfChars))
     return "|" ^ p * "." ^ (maxNumChars-p) * string(" ", perc) * "%"
 end
 """
@@ -76,7 +77,7 @@ The above function looses some resolution in translation of `perc` to vertical
 bars (`|`). However, the percentage is displayed anyway (`"$perc%"`) so it is
 not such a big problem after all.
 
-Now, we are ready to write a first version of our `animateProgressBar`.
+Now, we are ready to write the first version of our `animateProgressBar`.
 
 ```
 function animateProgressBar()
@@ -125,13 +126,15 @@ animateProgressBar()
 |||||||||||||||||||||||||||||||||||||||||||||||||| 100%
 ```
 
-Pretty good. There are only 2 problems, the output is printed instantaneously on
-the screen, with one line under the other. The first problem will be solved with
+Pretty good. However, there is a small problem. Namely, the output is printed
+on the screen instantaneously with one line beneath the other. The first problem
+will be solved with
 [sleep](https://docs.julialang.org/en/v1/base/parallel/#Base.sleep) that makes
 the program wait for a specific number of milliseconds before executing the next
 line of code. The second problem will be solved with [ANSI escape
 codes](https://en.wikipedia.org/wiki/ANSI_escape_code) a sequence of characters
-with a special meaning (as found in the link in this sentence).
+with a special meaning [as found in the link (see this sentence) to the
+Wikipedia's page].
 
 ```
 # the terminal must support ANSI escape codes
@@ -147,9 +150,9 @@ function animateProgressBar()
     delayMs::Int = 0
     fans::Vec{Str} = ["\\", "-", "/", "-"]
     ind::Int = 1
-    for i in 0:100
+    for p in 0:100
         delayMs = rand(100:250)
-        println(getProgressBar(i), fans[ind])
+        println(getProgressBar(p), fans[ind])
         sleep(delayMs / 1000) # sleep accepts delay in seconds
         clearPrintout()
         ind = (ind == length(fans)) ? 1 : ind + 1
@@ -176,7 +179,7 @@ function main()
 
     animateProgressBar()
 
-    println("\n\nThat's all. Goodbye!")
+    println("\nThat's all. Goodbye!")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
@@ -184,8 +187,8 @@ if abspath(PROGRAM_FILE) == @__FILE__
 end
 ```
 
-Although not strictly required in Julia, the `main` function is by convention a
-starting point of any (big or small) program (in other programming
+Although not strictly required in Julia the `main` function is by convention a
+starting point of any (big or small) program (in many programming
 languages). Whereas the `if abspath` part makes sure that our `main` function is
 run only if the program was called directly from the terminal, i.e.
 

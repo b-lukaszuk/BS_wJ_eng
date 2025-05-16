@@ -3,8 +3,8 @@ const Vec = Vector
 
 function getProgressBar(perc::Int)::Str
     @assert 0 <= perc <= 100 "perc must be in range [0-100]"
-    maxNumChars:: Int = 50
-    p = round(Int, perc / (100 / maxNumChars))
+    maxNumChars::Int = 50
+    p::Int = round(Int, perc / (100 / maxNumChars))
     return "|" ^ p * "." ^ (maxNumChars-p) * " $perc%"
 end
 
@@ -21,9 +21,9 @@ function animateProgressBar()
     delayMs::Int = 0
     fans::Vec{Str} = ["\\", "-", "/", "-"]
     ind::Int = 1
-    for i in 0:100
+    for p in 0:100
         delayMs = rand(100:250)
-        println(getProgressBar(i), fans[ind])
+        println(getProgressBar(p), fans[ind])
         sleep(delayMs / 1000) # sleep accepts delay in seconds
         clearPrintout()
         ind = (ind == length(fans)) ? 1 : ind + 1
