@@ -228,10 +228,10 @@ principals2 = getPrincipalOwedEachYr(mortgage2)
     findfirst(p -&gt; p &lt;= 100_000, principals2)
 )</code></pre>
 <pre class="output"><code>(15, 22)</code></pre>
-<p>In general, for quite some time the money we pay to the bank mostly pay off the interest and not the principal, so that it drops slowly at first (see Figure <a href="#fig:mortgagePrincipalsYrByYr">2</a>).</p>
+<p>In general, for quite some time the money we pay to the bank mostly pay off the interest and not the principal, so that it drops slowly at first (see Figure <a href="#fig:mortgagePrincipalsYrByYr">3</a>).</p>
 <figure id="fig:mortgagePrincipalsYrByYr">
-<img src="./images/mortgagePrincipalsYrByYr.png" alt="Figure 2: Principal still owed to the bank year by year. Mortgage: $200,000 at 6.49% yearly for 20 years. The estimation may not be accurate." />
-<figcaption aria-hidden="true">Figure 2: Principal still owed to the bank year by year. Mortgage: $200,000 at 6.49% yearly for 20 years. The estimation may not be accurate.</figcaption>
+<img src="./images/mortgagePrincipalsYrByYr.png" alt="Figure 3: Principal still owed to the bank year by year. Mortgage: $200,000 at 6.49% yearly for 20 years. The estimation may not be accurate." />
+<figcaption aria-hidden="true">Figure 3: Principal still owed to the bank year by year. Mortgage: $200,000 at 6.49% yearly for 20 years. The estimation may not be accurate.</figcaption>
 </figure>
 <p>To answer the last question (which mortgage is more worth it for us in terms of total payment and total interest) we’ll use a <a href="https://docs.makie.org/v0.21/reference/plots/pie">pie chart</a>.</p>
 <pre><code>function addPieChart!(m::Mortgage, fig::Cmk.Figure, ax::Cmk.Axis, col::Int)
@@ -273,8 +273,8 @@ end
 
 drawComparison(mortgage1, mortgage2)</code></pre>
 <figure id="fig:mortgageComparison">
-<img src="./images/mortgagesComparison.png" alt="Figure 3: Comparison of two mortgages (may not be accurate)." />
-<figcaption aria-hidden="true">Figure 3: Comparison of two mortgages (may not be accurate).</figcaption>
+<img src="./images/mortgagesComparison.png" alt="Figure 4: Comparison of two mortgages (may not be accurate)." />
+<figcaption aria-hidden="true">Figure 4: Comparison of two mortgages (may not be accurate).</figcaption>
 </figure>
 <p>So it turns out that despite the higher interest rate of 6.49% overall we will pay less money to the bank for <code>mortgage1</code>. Therefore, if we are OK with the greater monthly payment (installment) then we may choose that one.</p>
 <p>Of course, all the above was just a programming exercise, not a financial advice. Moreover, the simulation is likely to be inaccurate (to a various extent) for many reasons. For instance, a bank may calculate the interest every day, and not every month, in that case you will pay more. Compare with the simple example below and the compound interest from Section <a href="./compound_interest_solution.html#sec:compound_interest_problem_a1">10.2.1</a>.</p>

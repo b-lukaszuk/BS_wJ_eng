@@ -180,18 +180,19 @@ recFib(10)</code></pre>
 <p>55</p>
 <p>The numbers do not grow as fast as <code>factorial</code>s, but the algorithm, although simple, is very inefficient. For instance, for <code>recFib(3)</code> I have to calculate <code>recFib(1) + recFib(2)</code>, but <code>recFib(2)</code> will calculate <code>recFib(1)</code> inside of it as well. For greater numbers (inputs) the duplicated operations threaten to throttle the processor. On my laptop the computation for <code>recFib(40)</code> takes roughly 600-700 [ms], so more than half a second, a delay noticed even by a human.</p>
 <p>Therefore we may improve our last function by using lookup tables/dictionaries like so:</p>
-<pre class="language-julia"><code>function recFib2(n::Int, lookup::Dict{Int, Int})::Int
+<pre class="language-julia"><code>function recFib!(n::Int, lookup::Dict{Int, Int})::Int
     @assert 0 &lt;= n &lt;= 40 &quot;n must be in range [0-40]&quot;
     if !haskey(lookup, n)
-        lookup[n] = recFib2(n-2, lookup) + recFib2(n-1, lookup)
+        lookup[n] = recFib!(n-2, lookup) + recFib!(n-1, lookup)
     end
     return lookup[n]
 end</code></pre>
-<p>If there is no known value for a given Fibonacci number then we calculate it using the known formula. Otherwise we just return the found value. Now, the function is more performant, as</p>
+<p>Notice that the function modifies <code>lookup</code> (hence <code>!</code> appended to its name, per Julia’s convention). Inside we check if there is a value for a Fibonacci’s number in <code>lookup</code>. If not (<code>!haskey(lookup, n)</code>) then we calculate it using the known formula and insert it in <code>lookup</code>. Otherwise we just return the found value.</p>
+<p>The last function (<code>recFib!</code>) is more performant, as:</p>
 <pre class="language-julia"><code>fibs = Dict(0 =&gt; 0, 1 =&gt; 1)
-recFib2(40, fibs)</code></pre>
+recFib!(40, fibs)</code></pre>
 <p>102334155</p>
-<p>takes only microseconds on its first execution (like 10-100 times faster). Interestingly, running <code>recFib2(40, fibs)</code> for the second time reduces the time to nanoseconds (a million times faster) since there are no calculations performed the second time). Run <code>recFib(40)</code> twice to convince yourself that it takes roughly the same amount of time every time it runs with the same <code>n</code>.</p>
+<p>takes only microseconds on its first execution (like a hundred times faster). Interestingly, running <code>recFib!(40, fibs)</code> for the second time reduces the time to nanoseconds (a million times faster) since there are no calculations performed the second time, just reading the number from the previously modified <code>lookup</code>). Run <code>recFib(40)</code> twice to convince yourself that it takes roughly the same amount of time every time it runs with the same <code>n</code>.</p>
 
 
 <div class="bottom-nav">

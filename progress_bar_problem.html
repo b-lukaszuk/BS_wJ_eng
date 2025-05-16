@@ -119,7 +119,12 @@ Mousetrap.bind('l', click_next);
 
 <div class="books-content">
 <h2 data-number="4.1" id="sec:progress_bar_problem"><span class="header-section-number">4.1</span> Problem</h2>
-<p>The problem description goes here.</p>
+<p>While running a time consuming program we may see a progress bar that will provide the user with visual cues as to the course of its execution.</p>
+<p>So here is a task for you. Write a computer program that will animate a mock progress bar that goes from 0% to 100% (if you want, make it similar to the one in Figure <a href="#fig:progressBar1">1</a>). Don’t worry about the complex calculations (the task is just to animate the bar) and use <a href="https://docs.julialang.org/en/v1/base/parallel/#Base.sleep">sleep</a> before printing the bar in each iteration. In order to redraw a bar in a <a href="https://en.wikipedia.org/wiki/Terminal_emulator">terminal</a> you may want to read about <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape codes</a>. If the above is too much for you try to use <a href="https://en.wikipedia.org/wiki/Carriage_return">carriage return</a>, i.e. <code>print(progress_bar1)</code>, <code>print("\r")</code> and <code>print(progress_bar2)</code>.</p>
+<figure id="fig:progressBar1">
+<img src="./images/progressBar.gif" alt="Figure 1: A mock progress bar (animation works only in an HTML document)" />
+<figcaption aria-hidden="true">Figure 1: A mock progress bar (animation works only in an HTML document)</figcaption>
+</figure>
 
 
 <div class="bottom-nav">

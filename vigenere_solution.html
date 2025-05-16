@@ -235,8 +235,8 @@ end
 drawFreqComparison(plainTxt, &quot;genesis.txt in plain text&quot;,
                    codedTxt, &quot;genesis.txt coded with a Vigenere cipher&quot;)</code></pre>
 <figure id="fig:genesisVigenere.png">
-<img src="./images/genesisVigenere.png" alt="Figure 12: Frequency analysis of plain and encrypted book of Genesis." />
-<figcaption aria-hidden="true">Figure 12: Frequency analysis of plain and encrypted book of Genesis.</figcaption>
+<img src="./images/genesisVigenere.png" alt="Figure 13: Frequency analysis of plain and encrypted book of Genesis." />
+<figcaption aria-hidden="true">Figure 13: Frequency analysis of plain and encrypted book of Genesis.</figcaption>
 </figure>
 <p>The letter distribution definetely got more <a href="https://en.wikipedia.org/wiki/Discrete_uniform_distribution">uniform</a>. This should make cracking the cipher more difficult, but still <a href="https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher#Cryptanalysis">possible</a>.</p>
 <p>The performance of our <code>codeMsg</code> should be comparable to its counterpart in Section <a href="./caesar_solution.html#sec:caesar_solution">19.2</a>. If you expect to work on long text messages you may improve it, e.g. by generating <code>encryptionMaps</code>. It would be a <code>Dict{Int, Dict{Char, Char}}</code> where the key (<code>Int</code>) is a possible shift (<code>0</code> to <code>25</code>) and the value (<code>Dict{Char, Char}</code>) is an <code>encryptionMap</code> (like the one produced by <code>getEncryptionMap</code> in Section <a href="./caesar_solution.html#sec:caesar_solution">19.2</a>) for that shift. You could generate the <code>encryptionMaps</code> only once and use them inside <code>codeMsg</code> based on the shift from <code>shifts::Vec{Int}</code>. I’ll leave this as an extra exercise for you.</p>

@@ -141,7 +141,7 @@ function payOffMortgage(
     m::Mortgage, curPrincipal::Real, installment::Real,
     overpayment::Real)::Tuple{Real, Real, Real}
     if curPrincipal &lt;= 0.0
-        return (0.0, 0.0, 0.0)
+        return (curPrincipal, 0.0, 0.0)
     end
     interestDecimalMonth::Real = m.interestPercYr / 100 / 12
     interestPaid::Real = curPrincipal * interestDecimalMonth
@@ -215,19 +215,19 @@ end</code></pre>
 <pre class="language-julia"><code>getTotalCostDiff(mortgage1,
     Dict(i =&gt; 200 for i in 1:mortgage1.numMonths)) |&gt; fmt</code></pre>
 <p>37,444 USD</p>
-<p>Quite a penny (see also Figure <a href="#fig:mortgageOverpayment1">4</a>).</p>
+<p>Quite a penny (see also Figure <a href="#fig:mortgageOverpayment1">5</a>).</p>
 <figure id="fig:mortgageOverpayment1">
-<img src="./images/mortgageOverpayment1.png" alt="Figure 4: Overpaying a mortgage ($200,000, 6.49%, 20 years) with $200 monthly (estimation may not be accurate)." />
-<figcaption aria-hidden="true">Figure 4: Overpaying a mortgage ($200,000, 6.49%, 20 years) with $200 monthly (estimation may not be accurate).</figcaption>
+<img src="./images/mortgageOverpayment1.png" alt="Figure 5: Overpaying a mortgage ($200,000, 6.49%, 20 years) with $200 monthly (estimation may not be accurate)." />
+<figcaption aria-hidden="true">Figure 5: Overpaying a mortgage ($200,000, 6.49%, 20 years) with $200 monthly (estimation may not be accurate).</figcaption>
 </figure>
 <p>And now let’s overpay <code>mortgage2</code> ($200,000, 4.99%, 30 years) with $200 monthly.</p>
 <pre class="language-julia"><code>getTotalCostDiff(mortgage2,
     Dict(i =&gt; 200 for i in 1:mortgage2.numMonths)) |&gt; fmt</code></pre>
 <p>60,987 USD</p>
-<p>The total savings appear to be even greater than for <code>mortgage1</code>, still the total cost seems to be greater for the overpaid <code>mortgage2</code> (see Figure <a href="#fig:mortgageOverpayment1">4</a> and Figure <a href="#fig:mortgageOverpayment2">5</a>).</p>
+<p>The total savings appear to be even greater than for <code>mortgage1</code>, still the total cost seems to be greater for the overpaid <code>mortgage2</code> (see Figure <a href="#fig:mortgageOverpayment1">5</a> and Figure <a href="#fig:mortgageOverpayment2">6</a>).</p>
 <figure id="fig:mortgageOverpayment2">
-<img src="./images/mortgageOverpayment2.png" alt="Figure 5: Overpaying a mortgage ($200,000, 4.99%, 30 years) with $200 monthly (estimation may not be accurate)." />
-<figcaption aria-hidden="true">Figure 5: Overpaying a mortgage ($200,000, 4.99%, 30 years) with $200 monthly (estimation may not be accurate).</figcaption>
+<img src="./images/mortgageOverpayment2.png" alt="Figure 6: Overpaying a mortgage ($200,000, 4.99%, 30 years) with $200 monthly (estimation may not be accurate)." />
+<figcaption aria-hidden="true">Figure 6: Overpaying a mortgage ($200,000, 4.99%, 30 years) with $200 monthly (estimation may not be accurate).</figcaption>
 </figure>
 <p>OK, time for the next question.</p>
 <p>For <code>mortgage1</code> which one is more worth it: to overpay it every month with $200 or to overpay it only once, let’s say in month 13, with $20,000?</p>
