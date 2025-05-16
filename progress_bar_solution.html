@@ -122,9 +122,7 @@ Mousetrap.bind('l', click_next);
 <p>Let’s begin with a function that will return a textual representation of a progress bar.</p>
 <pre class="language-julia"><code>function getProgressBar(perc::Int)::Str
     @assert 0 &lt;= perc &lt;= 100 &quot;perc must be in range [0-100]&quot;
-    maxNumOfChars::Int = 50
-    p::Int = round(Int, perc / (100 / maxNumOfChars))
-    return &quot;|&quot; ^ p * &quot;.&quot; ^ (maxNumChars-p) * &quot;$perc%&quot;
+    return &quot;|&quot; ^ perc * &quot;.&quot; ^ (100-p) * &quot;$perc%&quot;
 end</code></pre>
 <p>In order to understand the function we must remember the precedence of mathematical operations [exponentiation (<code>^</code>) before multiplication (<code>*</code>)]. Moreover, we must remember that in the context of strings <code>*</code> is a <a href="https://docs.julialang.org/en/v1/manual/strings/#man-concatenation">concatenation</a> operator (it glues two strings into a one longer string), whereas <code>^</code> multiplies a string to its left the number of times on its right (i.e. <code>"a"^3</code> gives us <code>"a" * "a" * "a"</code> so <code>"aaa"</code>). <code>getProgressBar</code> accepts percentage (<code>perc</code>) and draws as many vertical bars as <code>perc</code> tells us. The unused spots (<code>100-p</code>) are filed with the placeholders (<code>"."</code>). We finish by appending the number itself and the <code>%</code> symbol by using <a href="https://docs.julialang.org/en/v1/manual/strings/#string-interpolation">string interpolation</a>.</p>
 <p>Printing a string of 100 characters (actually a bit more) may not look good on some terminals (by default many terminals are 80 characters wide). That is why we may want to limit ourselves to a smaller value of characters (<code>maxNumOfChars</code>) for the progress bar and rescale the percentage (<code>perc</code>) accordingly (see below).</p>
