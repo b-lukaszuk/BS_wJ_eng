@@ -26,7 +26,7 @@ the above is too much for you try to use [carriage
 return](https://en.wikipedia.org/wiki/Carriage_return),
 i.e. `print(progress_bar1)`, `print("\r")` and `print(progress_bar2)`.
 
-![A mock progress bar (animation works only in an HTML document)](./images/progressBar1.gif){#fig:progressBar1}
+![A mock progress bar (animation works only in an HTML document)](./images/progressBar.gif){#fig:progressBar1}
 
 ## Solution {#sec:progress_bar_solution}
 
@@ -206,4 +206,4 @@ will not.
 
 The final effect (at least a part of it) is to be seen below.
 
-![A mock progress bar (animation works only in an HTML document)](./images/progressBar1.gif)
+![A mock progress bar (animation works only in an HTML document)](./images/progressBar.gif)
