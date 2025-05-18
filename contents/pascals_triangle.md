@@ -99,3 +99,37 @@ numbers in a pair are added (`a + b`). `getRow` uses the `sumsOfPairs` and adds
 1s on the edges. The `...` in `getRow` unpacks elements from a vector, i.e.
 `[1, [3, 2]..., 1]` becomes `[1, 3, 2, 1]`. All in all, we got a pretty
 faithful translation of the algorithm from @fig:pascalsTriangle to Julia.
+
+Now we are ready to build the triangle row by row.
+
+```jl
+s = """
+function getPascalTriangle(n::Int)::Vec{Vec{Int}}
+    @assert 0 <= n <= 10 "n must be in range [0-10]"
+    triangle::Dict{Int, Vec{Int}} = Dict(0 => [1], 1 => [1, 1])
+    if !haskey(triangle, n)
+        for row in 2:n
+            triangle[row] = getRow(triangle[row-1])
+        end
+    end
+    return [triangle[k] for k in 0:n]
+end
+"""
+sc(s)
+```
+
+We define our triangle with initial two rows. Next, we move downwards through
+the possible triangle rows (`for row in 2:n`) and build the next row based on
+the previous one `getRow(triangle[row-1])`. All that's left to do is to return
+the triangle as a vector of vectors (`Vec{Vec{Int}})`) which will give us a
+right triangle on output. For instance, let's get the Pascal's triangle from
+@fig:pascalsTriangle.
+
+```jl
+s = """
+getPascalTriangle(4)
+"""
+sco(s)
+```
+
+Pretty neat, we could end here or try to add some text formatting.
