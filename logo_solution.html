@@ -62,18 +62,18 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./bat_and_ball.html"><b>3</b> Bat and Ball</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_problem.html"><b>3.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_solution.html"><b>3.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./progress_bar.html"><b>4</b> Progress Bar</a></li>
-<li><a class="menu-level-2" href="./progress_bar_problem.html"><b>4.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./progress_bar_solution.html"><b>4.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./toothpaste.html"><b>5</b> Toothpaste</a></li>
-<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>5.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>5.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./bile.html"><b>6</b> Bile</a></li>
-<li><a class="menu-level-2" href="./bile_problem.html"><b>6.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./bile_solution.html"><b>6.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./recursion.html"><b>7</b> Recursion</a></li>
-<li><a class="menu-level-2" href="./recursion_problem.html"><b>7.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./recursion_solution.html"><b>7.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./toothpaste.html"><b>4</b> Toothpaste</a></li>
+<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>4.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>4.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./bile.html"><b>5</b> Bile</a></li>
+<li><a class="menu-level-2" href="./bile_problem.html"><b>5.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./bile_solution.html"><b>5.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./recursion.html"><b>6</b> Recursion</a></li>
+<li><a class="menu-level-2" href="./recursion_problem.html"><b>6.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./recursion_solution.html"><b>6.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./progress_bar.html"><b>7</b> Progress Bar</a></li>
+<li><a class="menu-level-2" href="./progress_bar_problem.html"><b>7.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./progress_bar_solution.html"><b>7.2</b> Solution</a></li>
 <li><a class="menu-level-1" href="./pascals_triangle.html"><b>8</b> Pascal’s triangle</a></li>
 <li><a class="menu-level-2" href="./pascals_triangle_problem.html"><b>8.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./pascals_triangle_solution.html"><b>8.2</b> Solution</a></li>
@@ -138,8 +138,8 @@ end</code></pre>
 <p>Time to take a look.</p>
 <pre><code>drawLogo()</code></pre>
 <figure id="fig:logo1">
-<img src="./images/logo1.png" alt="Figure 7: Replicating JuliaStats logo. Attempt 1." />
-<figcaption aria-hidden="true">Figure 7: Replicating JuliaStats logo. Attempt 1.</figcaption>
+<img src="./images/logo1.png" alt="Figure 8: Replicating JuliaStats logo. Attempt 1." />
+<figcaption aria-hidden="true">Figure 8: Replicating JuliaStats logo. Attempt 1.</figcaption>
 </figure>
 <p>So far, so good. Now instead of a one big point we will need a few thousand smaller points (let’s say <code>markersize=10</code>) concentrated around the center of a given group. Moreover, the points should be partially transparent [to that end we will use <code>alpha</code> keyword argument (<code>alpha=0</code> - fully transparent, <code>alpha=1</code> - fully opaque)]. One more thing, the points need to be randomly scattered, but with a greater density closer to the group’s center. This last issue will be solved by obtaining random numbers from <a href="https://b-lukaszuk.github.io/RJ_BS_eng/statistics_normal_distribution.html">the normal distribution</a> with the mean equal 0 and the standard deviation equal 1. This is what <code>randn</code> function will do. Thanks to this roughly 68% of the numbers will be in the range -1 to 1, 95% in the range -2 to 2, and 99.7% in the range -3 to 3 (greater density around the mean). Behold.</p>
 <pre class="language-julia"><code>import Random as Rnd
@@ -163,8 +163,8 @@ end</code></pre>
 <pre><code>Rnd.seed!(303) # needed to make it reproducible
 drawLogo()</code></pre>
 <figure id="fig:logo2">
-<img src="./images/logo2.png" alt="Figure 8: Replicating JuliaStats logo. Attempt 2." />
-<figcaption aria-hidden="true">Figure 8: Replicating JuliaStats logo. Attempt 2.</figcaption>
+<img src="./images/logo2.png" alt="Figure 9: Replicating JuliaStats logo. Attempt 2." />
+<figcaption aria-hidden="true">Figure 9: Replicating JuliaStats logo. Attempt 2.</figcaption>
 </figure>
 <p>We’re almost there. Notice, that <code>CairoMakie</code> nicely centered the plot, so we don’t need to do this ourselves manually.</p>
 <p>Anyway, all that’s left to do is to remove the unnecessary elements from the picture. A brief look into the documentation of the package indicates that <a href="https://docs.makie.org/v0.21/reference/blocks/axis#Hiding-Axis-spines-and-decorations">hidedecorations and hidespines</a> should do the trick.</p>
@@ -189,8 +189,8 @@ end</code></pre>
 <pre><code>Rnd.seed!(303) # needed to make it reproducible
 drawLogo()</code></pre>
 <figure id="fig:logo3">
-<img src="./images/logo3.png" alt="Figure 9: Replicating JuliaStats logo. Attempt 3." />
-<figcaption aria-hidden="true">Figure 9: Replicating JuliaStats logo. Attempt 3.</figcaption>
+<img src="./images/logo3.png" alt="Figure 10: Replicating JuliaStats logo. Attempt 3." />
+<figcaption aria-hidden="true">Figure 10: Replicating JuliaStats logo. Attempt 3.</figcaption>
 </figure>
 <p>We obtained a decent replica of the original. Of course, kudos go to the authors of the original image for their creativity and artistic taste.</p>
 

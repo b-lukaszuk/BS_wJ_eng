@@ -62,18 +62,18 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./bat_and_ball.html"><b>3</b> Bat and Ball</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_problem.html"><b>3.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_solution.html"><b>3.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./progress_bar.html"><b>4</b> Progress Bar</a></li>
-<li><a class="menu-level-2" href="./progress_bar_problem.html"><b>4.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./progress_bar_solution.html"><b>4.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./toothpaste.html"><b>5</b> Toothpaste</a></li>
-<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>5.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>5.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./bile.html"><b>6</b> Bile</a></li>
-<li><a class="menu-level-2" href="./bile_problem.html"><b>6.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./bile_solution.html"><b>6.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./recursion.html"><b>7</b> Recursion</a></li>
-<li><a class="menu-level-2" href="./recursion_problem.html"><b>7.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./recursion_solution.html"><b>7.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./toothpaste.html"><b>4</b> Toothpaste</a></li>
+<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>4.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>4.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./bile.html"><b>5</b> Bile</a></li>
+<li><a class="menu-level-2" href="./bile_problem.html"><b>5.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./bile_solution.html"><b>5.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./recursion.html"><b>6</b> Recursion</a></li>
+<li><a class="menu-level-2" href="./recursion_problem.html"><b>6.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./recursion_solution.html"><b>6.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./progress_bar.html"><b>7</b> Progress Bar</a></li>
+<li><a class="menu-level-2" href="./progress_bar_problem.html"><b>7.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./progress_bar_solution.html"><b>7.2</b> Solution</a></li>
 <li><a class="menu-level-1" href="./pascals_triangle.html"><b>8</b> Pascal’s triangle</a></li>
 <li><a class="menu-level-2" href="./pascals_triangle_problem.html"><b>8.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./pascals_triangle_solution.html"><b>8.2</b> Solution</a></li>
@@ -119,7 +119,108 @@ Mousetrap.bind('l', click_next);
 
 <div class="books-content">
 <h2 data-number="8.2" id="sec:pascals_triangle_solution"><span class="header-section-number">8.2</span> Solution</h2>
-<p>The solution goes here.</p>
+<p>If you read <a href="https://en.wikipedia.org/wiki/Pascal%27s_triangle">the Wikipedia’s description of the Pascal’s triangle</a> then you may have noticed this cool animation (see below).</p>
+<figure id="fig:pascalsTriangle">
+<img src="https://upload.wikimedia.org/wikipedia/commons/0/0d/PascalTriangleAnimated2.gif" alt="Figure 3: Construction of a Pascal’s triangle. Source: Wikipedia (public domain, used in accordance with the Licensing section)." />
+<figcaption aria-hidden="true">Figure 3: Construction of a Pascal’s triangle. Source: <a href="https://en.wikipedia.org/wiki/File:PascalTriangleAnimated2.gif">Wikipedia</a> (public domain, used in accordance with the Licensing section).</figcaption>
+</figure>
+<p>It indicates that in order to create a new row of the triangle you just take the previous row and add pair of its elements together to create the next row. Finally, at the edges of the new row you place 1s. So let’s start by doing just that.</p>
+<pre class="language-julia"><code>function getSumOfPairs(prevRow::Vec{Int})::Vec{Int}
+    @assert all(prevRow .&gt; 0) &quot;every element of prevRow must be &gt; 0&quot;
+    return [a + b for (a, b) in zip(prevRow, prevRow[2:end])]
+end
+
+function getRow(prevRow::Vec{Int})::Vec{Int}
+    @assert length(prevRow) &gt; 1 &quot;length(prevRow) must be &gt; 1&quot;
+    sumsOfPairs::Vec{Int} = getSumOfPairs(prevRow)
+    return [1, sumsOfPairs..., 1]
+end</code></pre>
+<p>The first function (<code>getSumOfPairs</code>) creates pairs of values based on the previous row (<code>prevRow</code>). It returns a vector of tuples of <code>(a, b)</code> that are the elements from the zipped vectors, e.g.</p>
+<pre class="language-julia"><code>zip([1, 2, 3, 4], [2, 3, 4]) |&gt; collect</code></pre>
+<pre class="output"><code>(1, 2)</code></pre>
+<pre class="output"><code>(2, 3)</code></pre>
+<pre class="output"><code>(3, 4)</code></pre>
+<p>Notice, that the second argument to <code>zip</code> is its first element (<code>[1, 2, 3, 4]</code>) with shift 1 (just like <code>prevRow[2:end]</code> in the body of <code>getSumOfPairs</code>) and the parallel elements from both the vectors are <code>zip</code>ped together as long as there are pairs. Next, the numbers in a pair are added (<code>a + b</code> in the body of <code>getSumOfPairs</code>). Finally, <code>getRow</code> uses the <code>sumsOfPairs</code> and adds 1s on the edges. The <code>...</code> in <code>getRow</code> unpacks elements from a vector, i.e. <code>[1, [3, 2]..., 1]</code> becomes <code>[1, 3, 2, 1]</code>. All in all, we got a pretty faithful translation of the algorithm (from Figure <a href="#fig:pascalsTriangle">3</a>) to Julia.</p>
+<p>Now we are ready to build the triangle row by row.</p>
+<pre class="language-julia"><code>function getPascalTriangle(n::Int)::Vec{Vec{Int}}
+    @assert 0 &lt;= n &lt;= 10 &quot;n must be in range [0-10]&quot;
+    triangle::Dict{Int, Vec{Int}} = Dict(0 =&gt; [1], 1 =&gt; [1, 1])
+    if !haskey(triangle, n)
+        for row in 2:n
+            triangle[row] = getRow(triangle[row-1])
+        end
+    end
+    return [triangle[k] for k in 0:n]
+end</code></pre>
+<p>We define our triangle with initial two rows. Next, we move downwards through the possible triangle rows (<code>for row in 2:n</code>) and build the next row based on the previous one <code>getRow(triangle[row-1])</code>. All that’s left to do is to return the triangle as a vector of vectors (<code>Vec{Vec{Int}})</code>) which will give us a right triangle printed in the output by default. For instance, let’s get the Pascal’s triangle from Figure <a href="#fig:pascalsTriangle">3</a>.</p>
+<pre class="language-julia"><code>getPascalTriangle(4)</code></pre>
+<pre class="output"><code>[1]</code></pre>
+<pre class="output"><code>[1, 1]</code></pre>
+<pre class="output"><code>[1, 2, 1]</code></pre>
+<pre class="output"><code>[1, 3, 3, 1]</code></pre>
+<pre class="output"><code>[1, 4, 6, 4, 1]</code></pre>
+<p>Pretty neat, we could stop here or try to add some text formatting. In order to do that we will need some way to determine the length of an integer when printed (<code>getNumLen</code> below) as well as the maximum number length in a Pascal’s triangle. The latter can be done by examining its last (longest) row, hence <code>getMaxNumLen</code> below accepts a vector.</p>
+<pre class="language-julia"><code>function getNumLen(n::Int)::Int
+    return n |&gt; string |&gt; length
+end
+
+function getMaxNumLen(v::Vec{Int})::Int
+    return map(getNumLen, v) |&gt; maximum
+end</code></pre>
+<p>Once we got it, we need a way to center a number or a row (represented as a string).</p>
+<pre class="language-julia"><code>function center(sth::A, totLen::Int)::Str where A&lt;:Union{Int, Str}
+    s::Str = string(sth)
+    len::Int = length(s)
+    @assert totLen &gt; 0 &amp;&amp; len &gt; 0 &quot;both totLen and len must be &gt; 0&quot;
+    @assert totLen &gt;= len &quot;totLen must be &gt;= len&quot;
+    diff::Int = totLen - len
+    leftSpaceLen::Int = round(Int, diff / 2)
+    rightSpaceLen::Int = diff - leftSpaceLen
+    return &quot; &quot; ^ leftSpaceLen * s * &quot; &quot; ^ rightSpaceLen
+end</code></pre>
+<p>In order to center its input (<code>sth</code> - an integer or a string) the function determines the difference (<code>diff</code>) between the length (<code>totLen</code>) of the desired result and the actual length of <code>s</code>. The difference is split roughly in half (<code>leftSpaceLen</code> and <code>rightSpaceLen</code>) and glued together with <code>s</code> using string concatenation (<code>*</code>) and exponentiation (<code>^</code>) that we met in Section <a href="./progress_bar_solution.html#sec:progress_bar_solution">7.2</a>. Due to the limited resolution offered by the text display of a terminal the result is expected to be slightly off on printout, but I think we can live with that.</p>
+<p>Time to format a row.</p>
+<pre class="language-julia"><code>function getFmtRow(
+    row::Vec{A}, numLen::Int, rowLen::Int)::Str where A&lt;:Union{Int, Str}
+    fmt(num) = center(num, numLen)
+    formattedRow::Str = join(map(fmt, row), &quot; &quot;)
+    return center(formattedRow, rowLen)
+end</code></pre>
+<p>For that we just <code>map</code> a formatter (<code>fmt</code>) over every element of the <code>row</code> and <code>join</code> the resultant vector of strings intercalating its elements with space (<code>" "</code>). Finally, we center the <code>formattedRow</code> to the desired length (<code>rowLen</code>).</p>
+<p>All that’s left to do is to get a formatted triangle.</p>
+<pre class="language-julia"><code>function getFmtPascTriangle(n::Int, k::Int)::Str
+    @assert n &gt;= 0 &amp;&amp; k &gt;= 0 &quot;n and k must be &gt;= 0&quot;
+    @assert n &lt;= 10 &amp;&amp; k &lt;= 10 &quot;n and k must be &lt;= 10&quot;
+    @assert n &gt;= k &quot;n must be &gt;= k&quot;
+    triangle::Vec{Vec{Int}} = getPascalTriangle(n)
+    lastRow::Vec{Int} = triangle[end]
+    maxNumWidth::Int = getMaxNumLen(lastRow) + 1
+    lastRowWidth::Int = (n+1) * maxNumWidth + n
+    fmtRow(row) = getFmtRow(row, maxNumWidth, lastRowWidth)
+    formattedTriangle::Str = join(map(fmtRow, triangle), &quot;\n&quot;)
+    indicators::Vec{Str} = fill(&quot; &quot;, n+1)
+    indicators[k+1] = &quot;∆&quot;
+    return formattedTriangle * &quot;\n&quot; * fmtRow(indicators)
+end</code></pre>
+<p>Since <code>getFmtPascTriangle</code> is a graphical equivalent of <code>binomial(n, k)</code> then it’s only fitting to accept the two letters as its input. We begin by obtaining the <code>triangle</code>, its <code>lastRow</code> and based on it the maximum width of a number in the triangle (<code>maxNumWidth</code>, <code>+1</code> produces more pleasing output). Next, we determine the width of the last row. Notice the <code>n+1</code> part (here and below in the function) as well as <code>k+1</code> part later on. In, general Julia and humans count elements starting from 1, whereas a Pascal’s triangle is 0 indexed, hence we added <code>+1</code> to help us translate one system into the other. Anyway, the length of <code>lastRow</code> (the longest row in <code>triangle</code>) is the number of digits in the row (<code>(n+1)</code>) times the width of a formatted digit (<code>maxNumWidth</code>) plus the number of spaces between the formatted digits. The number of spaces is 1 less than the number of slots, e.g., humans got 5 fingers, and 4 spaces between them, hence here we used <code>+n</code> since the number of digits was <code>(n+1)</code>. Next, we obtain the <code>formattedTriangle</code> by <code>map</code>ing <code>fmtRow</code> on its each row and separating the rows with newlines (<code>\n</code>). We finish, by adding the indicator (<code>"∆"</code>) under our <code>k</code> and voila, we are finally ready to answer our question.</p>
+<pre><code># how many different teams of 5 players
+# can we compose out of 9 candidates?
+getFmtPascTriangle(9, 5)</code></pre>
+<pre><code>                        1
+                      1    1
+                    1    2    1
+                 1    3    3    1
+              1    4    6    4    1
+            1    5   10   10    5    1
+          1    6   15   20   15    6    1
+       1    7   21   35   35   21    7    1
+    1    8   28   56   70   56   28    8    1
+  1    9   36   84  126  126   84   36    9    1
+                           ∆</code></pre>
+<p>Wow, 126. Who would have thought. Just in case let’s compare the output with the built in <code>binomial</code> (compare with the last row of the triangle).</p>
+<pre class="language-julia"><code>binomial.(9, 0:9)</code></pre>
+<pre class="output"><code>[1, 9, 36, 84, 126, 126, 84, 36, 9, 1]</code></pre>
+<p>So, I guess our triangle works right. Actually the two edge cases are easy enough for us to check them in our heads. For instance, how many different teams of 0 players can we compose out of 9 candidates? Well, there is only one way to do that (<code>1</code> in the bottom row, first from the left), by not choosing any player at all. And how many different teams of 1 player can we compose of 9 candidates? Well, nine teams (<code>9</code> in the bottom row, second from the left) because each player would compose one separate team.</p>
 
 
 <div class="bottom-nav">

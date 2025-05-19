@@ -62,18 +62,18 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./bat_and_ball.html"><b>3</b> Bat and Ball</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_problem.html"><b>3.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_solution.html"><b>3.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./progress_bar.html"><b>4</b> Progress Bar</a></li>
-<li><a class="menu-level-2" href="./progress_bar_problem.html"><b>4.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./progress_bar_solution.html"><b>4.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./toothpaste.html"><b>5</b> Toothpaste</a></li>
-<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>5.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>5.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./bile.html"><b>6</b> Bile</a></li>
-<li><a class="menu-level-2" href="./bile_problem.html"><b>6.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./bile_solution.html"><b>6.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./recursion.html"><b>7</b> Recursion</a></li>
-<li><a class="menu-level-2" href="./recursion_problem.html"><b>7.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./recursion_solution.html"><b>7.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./toothpaste.html"><b>4</b> Toothpaste</a></li>
+<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>4.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>4.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./bile.html"><b>5</b> Bile</a></li>
+<li><a class="menu-level-2" href="./bile_problem.html"><b>5.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./bile_solution.html"><b>5.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./recursion.html"><b>6</b> Recursion</a></li>
+<li><a class="menu-level-2" href="./recursion_problem.html"><b>6.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./recursion_solution.html"><b>6.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./progress_bar.html"><b>7</b> Progress Bar</a></li>
+<li><a class="menu-level-2" href="./progress_bar_problem.html"><b>7.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./progress_bar_solution.html"><b>7.2</b> Solution</a></li>
 <li><a class="menu-level-1" href="./pascals_triangle.html"><b>8</b> Pascal’s triangle</a></li>
 <li><a class="menu-level-2" href="./pascals_triangle_problem.html"><b>8.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./pascals_triangle_solution.html"><b>8.2</b> Solution</a></li>
@@ -118,20 +118,20 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="4.1" id="sec:progress_bar_problem"><span class="header-section-number">4.1</span> Problem</h2>
+<h2 data-number="7.1" id="sec:progress_bar_problem"><span class="header-section-number">7.1</span> Problem</h2>
 <p>While running a time consuming program we may see a progress bar that will provide the user with visual cues as to the course of its execution.</p>
-<p>So here is a task for you. Write a computer program that will animate a mock progress bar that goes from 0% to 100% (if you want, make it similar to the one in Figure <a href="#fig:progressBar1">1</a>). Don’t worry about the complex calculations (the task is just to animate the bar) and use <a href="https://docs.julialang.org/en/v1/base/parallel/#Base.sleep">sleep</a> before printing the bar in each iteration. In order to redraw a bar in a <a href="https://en.wikipedia.org/wiki/Terminal_emulator">terminal</a> you may want to read about <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape codes</a>. If the above is too much for you try to use <a href="https://en.wikipedia.org/wiki/Carriage_return">carriage return</a>, i.e. <code>print(progress_bar1)</code>, <code>print("\r")</code> and <code>print(progress_bar2)</code>.</p>
+<p>So here is a task for you. Write a computer program that will animate a mock progress bar that goes from 0% to 100% (if you want, make it similar to the one in Figure <a href="#fig:progressBar1">2</a>). Don’t worry about the complex calculations (the task is just to animate the bar) and use <a href="https://docs.julialang.org/en/v1/base/parallel/#Base.sleep">sleep</a> before printing the bar in each iteration. In order to redraw a bar in a <a href="https://en.wikipedia.org/wiki/Terminal_emulator">terminal</a> you may want to read about <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">ANSI escape codes</a>. If the above is too much for you try to use <a href="https://en.wikipedia.org/wiki/Carriage_return">carriage return</a>, i.e. <code>print(progress_bar1)</code>, <code>print("\r")</code> and <code>print(progress_bar2)</code>.</p>
 <figure id="fig:progressBar1">
-<img src="./images/progressBar.gif" alt="Figure 1: A mock progress bar (animation works only in an HTML document)" />
-<figcaption aria-hidden="true">Figure 1: A mock progress bar (animation works only in an HTML document)</figcaption>
+<img src="./images/progressBar.gif" alt="Figure 2: A mock progress bar (animation works only in an HTML document)" />
+<figcaption aria-hidden="true">Figure 2: A mock progress bar (animation works only in an HTML document)</figcaption>
 </figure>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./progress_bar.html"><b>4</b> Progress Bar</a> <kbd>←</kbd>
+        <a class="menu-level-1" href="./progress_bar.html"><b>7</b> Progress Bar</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./progress_bar_solution.html"><b>4.2</b> Solution</a>
+            <kbd>→</kbd> <a class="menu-level-2" href="./progress_bar_solution.html"><b>7.2</b> Solution</a>
         </span>
     </p>
 </div>

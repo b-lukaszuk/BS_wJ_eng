@@ -62,18 +62,18 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./bat_and_ball.html"><b>3</b> Bat and Ball</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_problem.html"><b>3.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_solution.html"><b>3.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./progress_bar.html"><b>4</b> Progress Bar</a></li>
-<li><a class="menu-level-2" href="./progress_bar_problem.html"><b>4.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./progress_bar_solution.html"><b>4.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./toothpaste.html"><b>5</b> Toothpaste</a></li>
-<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>5.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>5.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./bile.html"><b>6</b> Bile</a></li>
-<li><a class="menu-level-2" href="./bile_problem.html"><b>6.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./bile_solution.html"><b>6.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./recursion.html"><b>7</b> Recursion</a></li>
-<li><a class="menu-level-2" href="./recursion_problem.html"><b>7.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./recursion_solution.html"><b>7.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./toothpaste.html"><b>4</b> Toothpaste</a></li>
+<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>4.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>4.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./bile.html"><b>5</b> Bile</a></li>
+<li><a class="menu-level-2" href="./bile_problem.html"><b>5.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./bile_solution.html"><b>5.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./recursion.html"><b>6</b> Recursion</a></li>
+<li><a class="menu-level-2" href="./recursion_problem.html"><b>6.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./recursion_solution.html"><b>6.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./progress_bar.html"><b>7</b> Progress Bar</a></li>
+<li><a class="menu-level-2" href="./progress_bar_problem.html"><b>7.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./progress_bar_solution.html"><b>7.2</b> Solution</a></li>
 <li><a class="menu-level-1" href="./pascals_triangle.html"><b>8</b> Pascal’s triangle</a></li>
 <li><a class="menu-level-2" href="./pascals_triangle_problem.html"><b>8.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./pascals_triangle_solution.html"><b>8.2</b> Solution</a></li>
@@ -215,19 +215,19 @@ end</code></pre>
 <pre class="language-julia"><code>getTotalCostDiff(mortgage1,
     Dict(i =&gt; 200 for i in 1:mortgage1.numMonths)) |&gt; fmt</code></pre>
 <p>37,444 USD</p>
-<p>Quite a penny (see also Figure <a href="#fig:mortgageOverpayment1">5</a>).</p>
+<p>Quite a penny (see also Figure <a href="#fig:mortgageOverpayment1">6</a>).</p>
 <figure id="fig:mortgageOverpayment1">
-<img src="./images/mortgageOverpayment1.png" alt="Figure 5: Overpaying a mortgage ($200,000, 6.49%, 20 years) with $200 monthly (estimation may not be accurate)." />
-<figcaption aria-hidden="true">Figure 5: Overpaying a mortgage ($200,000, 6.49%, 20 years) with $200 monthly (estimation may not be accurate).</figcaption>
+<img src="./images/mortgageOverpayment1.png" alt="Figure 6: Overpaying a mortgage ($200,000, 6.49%, 20 years) with $200 monthly (estimation may not be accurate)." />
+<figcaption aria-hidden="true">Figure 6: Overpaying a mortgage ($200,000, 6.49%, 20 years) with $200 monthly (estimation may not be accurate).</figcaption>
 </figure>
 <p>And now let’s overpay <code>mortgage2</code> ($200,000, 4.99%, 30 years) with $200 monthly.</p>
 <pre class="language-julia"><code>getTotalCostDiff(mortgage2,
     Dict(i =&gt; 200 for i in 1:mortgage2.numMonths)) |&gt; fmt</code></pre>
 <p>60,987 USD</p>
-<p>The total savings appear to be even greater than for <code>mortgage1</code>, still the total cost seems to be greater for the overpaid <code>mortgage2</code> (see Figure <a href="#fig:mortgageOverpayment1">5</a> and Figure <a href="#fig:mortgageOverpayment2">6</a>).</p>
+<p>The total savings appear to be even greater than for <code>mortgage1</code>, still the total cost seems to be greater for the overpaid <code>mortgage2</code> (see Figure <a href="#fig:mortgageOverpayment1">6</a> and Figure <a href="#fig:mortgageOverpayment2">7</a>).</p>
 <figure id="fig:mortgageOverpayment2">
-<img src="./images/mortgageOverpayment2.png" alt="Figure 6: Overpaying a mortgage ($200,000, 4.99%, 30 years) with $200 monthly (estimation may not be accurate)." />
-<figcaption aria-hidden="true">Figure 6: Overpaying a mortgage ($200,000, 4.99%, 30 years) with $200 monthly (estimation may not be accurate).</figcaption>
+<img src="./images/mortgageOverpayment2.png" alt="Figure 7: Overpaying a mortgage ($200,000, 4.99%, 30 years) with $200 monthly (estimation may not be accurate)." />
+<figcaption aria-hidden="true">Figure 7: Overpaying a mortgage ($200,000, 4.99%, 30 years) with $200 monthly (estimation may not be accurate).</figcaption>
 </figure>
 <p>OK, time for the next question.</p>
 <p>For <code>mortgage1</code> which one is more worth it: to overpay it every month with $200 or to overpay it only once, let’s say in month 13, with $20,000?</p>

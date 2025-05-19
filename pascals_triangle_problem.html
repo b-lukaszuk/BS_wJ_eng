@@ -62,18 +62,18 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./bat_and_ball.html"><b>3</b> Bat and Ball</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_problem.html"><b>3.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_solution.html"><b>3.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./progress_bar.html"><b>4</b> Progress Bar</a></li>
-<li><a class="menu-level-2" href="./progress_bar_problem.html"><b>4.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./progress_bar_solution.html"><b>4.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./toothpaste.html"><b>5</b> Toothpaste</a></li>
-<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>5.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>5.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./bile.html"><b>6</b> Bile</a></li>
-<li><a class="menu-level-2" href="./bile_problem.html"><b>6.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./bile_solution.html"><b>6.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./recursion.html"><b>7</b> Recursion</a></li>
-<li><a class="menu-level-2" href="./recursion_problem.html"><b>7.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./recursion_solution.html"><b>7.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./toothpaste.html"><b>4</b> Toothpaste</a></li>
+<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>4.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>4.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./bile.html"><b>5</b> Bile</a></li>
+<li><a class="menu-level-2" href="./bile_problem.html"><b>5.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./bile_solution.html"><b>5.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./recursion.html"><b>6</b> Recursion</a></li>
+<li><a class="menu-level-2" href="./recursion_problem.html"><b>6.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./recursion_solution.html"><b>6.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./progress_bar.html"><b>7</b> Progress Bar</a></li>
+<li><a class="menu-level-2" href="./progress_bar_problem.html"><b>7.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./progress_bar_solution.html"><b>7.2</b> Solution</a></li>
 <li><a class="menu-level-1" href="./pascals_triangle.html"><b>8</b> Pascal’s triangle</a></li>
 <li><a class="menu-level-2" href="./pascals_triangle_problem.html"><b>8.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./pascals_triangle_solution.html"><b>8.2</b> Solution</a></li>
@@ -119,7 +119,22 @@ Mousetrap.bind('l', click_next);
 
 <div class="books-content">
 <h2 data-number="8.1" id="sec:pascals_triangle_problem"><span class="header-section-number">8.1</span> Problem</h2>
-<p>The problem description goes here.</p>
+<p>Imagine that you are a basketball coach in a local school. A basketball team is composed of 5 players. Nine kids attends your classes. You would like the kids to play in every possible configuration so that you could choose the best team to represent the school next month. You wonder how many different teams of 5 players can you compose out of 9 candidates.</p>
+<p>Such a question could be answered with the <a href="https://docs.julialang.org/en/v1/base/math/#Base.binomial">binomial</a> function or <a href="https://en.wikipedia.org/wiki/Pascal%27s_triangle">Pascal’s triangle</a>.</p>
+<p>So here is a task for you, write a program that will display the Pascal’s triangle that will help you to answer the question mentioned above.</p>
+<p>Compare its output with <code>binomial</code>.</p>
+<p>The function can display a bare (right) triangle</p>
+<pre><code>[1]
+[1, 1]
+[1, 2, 1]
+[1, 3, 3, 1]</code></pre>
+<p>or if you like challenges a slightly formatted output (it doesn’t have to be exact):</p>
+<pre><code>   1
+  1 1
+ 1 2 1
+1 3 3 1
+    ∆</code></pre>
+<p>The above indicates how many pairs of 2 people out of 3 candidates can we get (e.g in order to play doubles in tennis).</p>
 
 
 <div class="bottom-nav">

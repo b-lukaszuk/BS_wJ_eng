@@ -62,18 +62,18 @@ Mousetrap.bind('l', click_next);
 <li><a class="menu-level-1" href="./bat_and_ball.html"><b>3</b> Bat and Ball</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_problem.html"><b>3.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./bat_and_ball_solution.html"><b>3.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./progress_bar.html"><b>4</b> Progress Bar</a></li>
-<li><a class="menu-level-2" href="./progress_bar_problem.html"><b>4.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./progress_bar_solution.html"><b>4.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./toothpaste.html"><b>5</b> Toothpaste</a></li>
-<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>5.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>5.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./bile.html"><b>6</b> Bile</a></li>
-<li><a class="menu-level-2" href="./bile_problem.html"><b>6.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./bile_solution.html"><b>6.2</b> Solution</a></li>
-<li><a class="menu-level-1" href="./recursion.html"><b>7</b> Recursion</a></li>
-<li><a class="menu-level-2" href="./recursion_problem.html"><b>7.1</b> Problem</a></li>
-<li><a class="menu-level-2" href="./recursion_solution.html"><b>7.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./toothpaste.html"><b>4</b> Toothpaste</a></li>
+<li><a class="menu-level-2" href="./toothpaste_problem.html"><b>4.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./toothpaste_solution.html"><b>4.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./bile.html"><b>5</b> Bile</a></li>
+<li><a class="menu-level-2" href="./bile_problem.html"><b>5.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./bile_solution.html"><b>5.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./recursion.html"><b>6</b> Recursion</a></li>
+<li><a class="menu-level-2" href="./recursion_problem.html"><b>6.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./recursion_solution.html"><b>6.2</b> Solution</a></li>
+<li><a class="menu-level-1" href="./progress_bar.html"><b>7</b> Progress Bar</a></li>
+<li><a class="menu-level-2" href="./progress_bar_problem.html"><b>7.1</b> Problem</a></li>
+<li><a class="menu-level-2" href="./progress_bar_solution.html"><b>7.2</b> Solution</a></li>
 <li><a class="menu-level-1" href="./pascals_triangle.html"><b>8</b> Pascal’s triangle</a></li>
 <li><a class="menu-level-2" href="./pascals_triangle_problem.html"><b>8.1</b> Problem</a></li>
 <li><a class="menu-level-2" href="./pascals_triangle_solution.html"><b>8.2</b> Solution</a></li>
@@ -235,8 +235,8 @@ end
 drawFreqComparison(plainTxt, &quot;genesis.txt in plain text&quot;,
                    codedTxt, &quot;genesis.txt coded with a Vigenere cipher&quot;)</code></pre>
 <figure id="fig:genesisVigenere.png">
-<img src="./images/genesisVigenere.png" alt="Figure 13: Frequency analysis of plain and encrypted book of Genesis." />
-<figcaption aria-hidden="true">Figure 13: Frequency analysis of plain and encrypted book of Genesis.</figcaption>
+<img src="./images/genesisVigenere.png" alt="Figure 14: Frequency analysis of plain and encrypted book of Genesis." />
+<figcaption aria-hidden="true">Figure 14: Frequency analysis of plain and encrypted book of Genesis.</figcaption>
 </figure>
 <p>The letter distribution definetely got more <a href="https://en.wikipedia.org/wiki/Discrete_uniform_distribution">uniform</a>. This should make cracking the cipher more difficult, but still <a href="https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher#Cryptanalysis">possible</a>.</p>
 <p>The performance of our <code>codeMsg</code> should be comparable to its counterpart in Section <a href="./caesar_solution.html#sec:caesar_solution">19.2</a>. If you expect to work on long text messages you may improve it, e.g. by generating <code>encryptionMaps</code>. It would be a <code>Dict{Int, Dict{Char, Char}}</code> where the key (<code>Int</code>) is a possible shift (<code>0</code> to <code>25</code>) and the value (<code>Dict{Char, Char}</code>) is an <code>encryptionMap</code> (like the one produced by <code>getEncryptionMap</code> in Section <a href="./caesar_solution.html#sec:caesar_solution">19.2</a>) for that shift. You could generate the <code>encryptionMaps</code> only once and use them inside <code>codeMsg</code> based on the shift from <code>shifts::Vec{Int}</code>. I’ll leave this as an extra exercise for you.</p>
