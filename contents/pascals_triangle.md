@@ -55,7 +55,7 @@ If you read [the Wikipedia's description of the Pascal's
 triangle](https://en.wikipedia.org/wiki/Pascal%27s_triangle) then you may have
 noticed this cool animation (see below).
 
-![Construction of Pascal's triangle. Source:
+![Construction of a Pascal's triangle. Source:
 [Wikipedia](https://en.wikipedia.org/wiki/File:PascalTriangleAnimated2.gif)
 (public domain, used in accordance with the Licensing
 section).](https://upload.wikimedia.org/wikipedia/commons/0/0d/PascalTriangleAnimated2.gif){#fig:pascalsTriangle}
@@ -82,7 +82,7 @@ sc(s)
 ```
 
 The first function (`getSumOfPairs`) creates pairs of values based on the
-previous row (`prevRow`). It returns a vector of tuples of `(a, b)` being
+previous row (`prevRow`). It returns a vector of tuples of `(a, b)` that are the
 elements from the zipped vectors, e.g.
 
 ```jl
@@ -93,12 +93,13 @@ sco(s)
 ```
 
 Notice, that the second argument to `zip` is its first element (`[1, 2, 3, 4]`)
-with shift 1 (just like `prevRow[2:end]` in the body of `getSumOfPairs`) and
-parallel elements are `zip`ped together as long as there are pairs. Next, the
-numbers in a pair are added (`a + b`). `getRow` uses the `sumsOfPairs` and adds
-1s on the edges. The `...` in `getRow` unpacks elements from a vector, i.e.
-`[1, [3, 2]..., 1]` becomes `[1, 3, 2, 1]`. All in all, we got a pretty
-faithful translation of the algorithm from @fig:pascalsTriangle to Julia.
+with shift 1 (just like `prevRow[2:end]` in the body of `getSumOfPairs`) and the
+parallel elements from both the vectors are `zip`ped together as long as there
+are pairs. Next, the numbers in a pair are added (`a + b` in the body of
+`getSumOfPairs`). Finally, `getRow` uses the `sumsOfPairs` and adds 1s on the
+edges. The `...` in `getRow` unpacks elements from a vector, i.e. `[1, [3,
+2]..., 1]` becomes `[1, 3, 2, 1]`. All in all, we got a pretty faithful
+translation of the algorithm (from @fig:pascalsTriangle) to Julia.
 
 Now we are ready to build the triangle row by row.
 
@@ -122,8 +123,8 @@ We define our triangle with initial two rows. Next, we move downwards through
 the possible triangle rows (`for row in 2:n`) and build the next row based on
 the previous one `getRow(triangle[row-1])`. All that's left to do is to return
 the triangle as a vector of vectors (`Vec{Vec{Int}})`) which will give us a
-right triangle on output. For instance, let's get the Pascal's triangle from
-@fig:pascalsTriangle.
+right triangle printed in the output by default. For instance, let's get the
+Pascal's triangle from @fig:pascalsTriangle.
 
 ```jl
 s = """
@@ -132,10 +133,11 @@ getPascalTriangle(4)
 sco(s)
 ```
 
-Pretty neat, we could end here or try to add some text formatting. In order to
+Pretty neat, we could stop here or try to add some text formatting. In order to
 do that we will need some way to determine the length of an integer when printed
-(`getNumLen` below) as well as the maximum number length in a Pascal's triangle
-(actually only its last row as in `getMaxNumLen` below).
+(`getNumLen` below) as well as the maximum number length in a Pascal's triangle.
+The latter can be done by examining its last (longest) row, hence `getMaxNumLen`
+below accepts a vector.
 
 ```jl
 s = """
@@ -150,8 +152,8 @@ end
 sc(s)
 ```
 
-Once we got it, we need a way to center a number or a row represented as string
-in a line.
+Once we got it, we need a way to center a number or a row (represented as a
+string).
 
 ```jl
 s = """
@@ -170,10 +172,10 @@ sc(s)
 ```
 
 In order to center its input (`sth` - an integer or a string) the function
-determines the difference (`diff`) between the total length (`totLen`) of the
-desired result and the actual length of `s`. The difference is split roughly in
-half (`leftSpaceLen` and `rightSpaceLen`) and glued together with `s` using
-string concatenation (`*`) and exponentiation (`^`) that we met in
+determines the difference (`diff`) between the length (`totLen`) of the desired
+result and the actual length of `s`. The difference is split roughly in half
+(`leftSpaceLen` and `rightSpaceLen`) and glued together with `s` using string
+concatenation (`*`) and exponentiation (`^`) that we met in
 @sec:progress_bar_solution. Due to the limited resolution offered by the text
 display of a terminal the result is expected to be slightly off on printout, but
 I think we can live with that.
@@ -202,6 +204,7 @@ All that's left to do is to get a formatted triangle.
 s = """
 function getFmtPascTriangle(n::Int, k::Int)::Str
     @assert n >= 0 && k >= 0 "n and k must be >= 0"
+    @assert n <= 10 && k <= 10 "n and k must be <= 10"
     @assert n >= k "n must be >= k"
     triangle::Vec{Vec{Int}} = getPascalTriangle(n)
     lastRow::Vec{Int} = triangle[end]
@@ -225,14 +228,14 @@ determine the width of the last row. Notice the `n+1` part (here and below in
 the function) as well as `k+1` part later on. In, general Julia and humans count
 elements starting from 1, whereas a Pascal's triangle is 0 indexed, hence we
 added `+1` to help us translate one system into the other. Anyway, the length of
-`lastRow` (the longest row in `triangle`) is the number of digits in the row (`(n+1)`)
-times the width of a formatted digit (`maxNumWidth`) + the spaces between
-formatted digits (number of spaces is 1 less than the number of slots, e.g.,
-humans got 5 fingers, and 4 spaces between them, hence here we used `+n` since
-the number of digits was `(n+1)`). Next, we obtain the `formattedTriangle` by
-`map`ing `fmtRow` on its each row and separating the rows with newlines (`\n`).
-We finish, by adding the indicator (`"∆"`) under our `k` and voila, we are
-finally ready to answer our question.
+`lastRow` (the longest row in `triangle`) is the number of digits in the row
+(`(n+1)`) times the width of a formatted digit (`maxNumWidth`) plus the number
+of spaces between the formatted digits. The number of spaces is 1 less than the
+number of slots, e.g., humans got 5 fingers, and 4 spaces between them, hence
+here we used `+n` since the number of digits was `(n+1)`. Next, we obtain the
+`formattedTriangle` by `map`ing `fmtRow` on its each row and separating the rows
+with newlines (`\n`). We finish, by adding the indicator (`"∆"`) under our `k`
+and voila, we are finally ready to answer our question.
 
 ```
 # how many different teams of 5 players
@@ -255,7 +258,7 @@ getFmtPascTriangle(9, 5)
 ```
 
 Wow, 126. Who would have thought. Just in case let's compare the output with the
-built in `binomial` (compare with the last row).
+built in `binomial` (compare with the last row of the triangle).
 
 ```jl
 s = """
@@ -264,9 +267,10 @@ binomial.(9, 0:9)
 sco(s)
 ```
 
-So, I guess our triangle works right. Actually you may check the edge cases in
-your head, e.g. how many different teams of 0 players can we compose out of 9
-candidates. Well, there is only one way to do that (`1` in the bottom row, first
-from the left), by not choosing any player at all. And how many different teams
-of 1 player can we compose of 9 candidates. Well, nine teams (`9` in the bottom
-row, second from the left) because each player would compose one separate team.
+So, I guess our triangle works right. Actually the two edge cases are easy
+enough for us to check them in our heads. For instance, how many different teams
+of 0 players can we compose out of 9 candidates? Well, there is only one way to
+do that (`1` in the bottom row, first from the left), by not choosing any player
+at all. And how many different teams of 1 player can we compose of 9 candidates?
+Well, nine teams (`9` in the bottom row, second from the left) because each
+player would compose one separate team.
