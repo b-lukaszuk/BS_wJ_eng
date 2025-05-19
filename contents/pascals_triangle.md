@@ -58,7 +58,7 @@ noticed this cool animation (see below).
 ![Construction of a Pascal's triangle. Source:
 [Wikipedia](https://en.wikipedia.org/wiki/File:PascalTriangleAnimated2.gif)
 (public domain, used in accordance with the Licensing
-section).](https://upload.wikimedia.org/wikipedia/commons/0/0d/PascalTriangleAnimated2.gif){#fig:pascalsTriangle}
+section).](./images/PascalTriangleAnimated2.gif){#fig:pascalsTriangle}
 
 It indicates that in order to create a new row of the triangle you just take the
 previous row and add pair of its elements together to create the next
