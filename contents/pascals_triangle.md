@@ -232,8 +232,7 @@ humans got 5 fingers, and 4 spaces between them, hence here we used `+n` since
 the number of digits was `(n+1)`). Next, we obtain the `formattedTriangle` by
 `map`ing `fmtRow` on its each row and separating the rows with newlines (`\n`).
 We finish, by adding the indicator (`"∆"`) under our `k` and voila, we are
-finally ready to unswer our question.
-
+finally ready to answer our question.
 
 ```
 # how many different teams of 5 players
@@ -266,8 +265,8 @@ sco(s)
 ```
 
 So, I guess our triangle works right. Actually you may check the edge cases in
-your head, e.g.  how many different teams of 0 players can we compose out of 9
+your head, e.g. how many different teams of 0 players can we compose out of 9
 candidates. Well, there is only one way to do that (`1` in the bottom row, first
-from the left), by not choosing any player at all.  And how many different teams
+from the left), by not choosing any player at all. And how many different teams
 of 1 player can we compose of 9 candidates. Well, nine teams (`9` in the bottom
 row, second from the left) because each player would compose one separate team.
