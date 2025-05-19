@@ -177,3 +177,97 @@ string concatenation (`*`) and exponentiation (`^`) that we met in
 @sec:progress_bar_solution. Due to the limited resolution offered by the text
 display of a terminal the result is expected to be slightly off on printout, but
 I think we can live with that.
+
+Time to format a row.
+
+```jl
+s = """
+function getFmtRow(
+	row::Vec{A}, numLen::Int, rowLen::Int)::Str where A<:Union{Int, Str}
+    fmt(num) = center(num, numLen)
+    formattedRow::Str = join(map(fmt, row), " ")
+    return center(formattedRow, rowLen)
+end
+"""
+sc(s)
+```
+
+For that we just `map` a formatter (`fmt`) over every element of the `row` and
+`join` the resultant vector of strings intercalating its elements with space
+(`" "`). Finally, we center the `formattedRow` to the desired length (`rowLen`).
+
+All that's left to do is to get a formatted triangle.
+
+```jl
+s = """
+function getFmtPascTriangle(n::Int, k::Int)::Str
+    @assert n >= 0 && k >= 0 "n and k must be >= 0"
+    @assert n >= k "n must be >= k"
+    triangle::Vec{Vec{Int}} = getPascalTriangle(n)
+    lastRow::Vec{Int} = triangle[end]
+    maxNumWidth::Int = getMaxNumLen(lastRow) + 1
+    lastRowWidth::Int = (n+1) * maxNumWidth + n
+    fmtRow(row) = getFmtRow(row, maxNumWidth, lastRowWidth)
+    formattedTriangle::Str = join(map(fmtRow, triangle), "\\n")
+    indicators::Vec{Str} = fill(" ", n+1)
+    indicators[k+1] = "∆"
+    return formattedTriangle * "\\n" * fmtRow(indicators)
+end
+"""
+sc(s)
+```
+
+Since `getFmtPascTriangle` is a graphical equivalent of `binomial(n, k)` then
+it's only fitting to accept the two letters as its input. We begin by obtaining
+the `triangle`, its `lastRow` and based on it the maximum width of a number in
+the triangle (`maxNumWidth`, `+1` produces more pleasing output). Next, we
+determine the width of the last row. Notice the `n+1` part (here and below in
+the function) as well as `k+1` part later on. In, general Julia and humans count
+elements starting from 1, whereas a Pascal's triangle is 0 indexed, hence we
+added `+1` to help us translate one system into the other. Anyway, the length of
+`lastRow` (the longest row in `triangle`) is the number of digits in the row (`(n+1)`)
+times the width of a formatted digit (`maxNumWidth`) + the spaces between
+formatted digits (number of spaces is 1 less than the number of slots, e.g.,
+humans got 5 fingers, and 4 spaces between them, hence here we used `+n` since
+the number of digits was `(n+1)`). Next, we obtain the `formattedTriangle` by
+`map`ing `fmtRow` on its each row and separating the rows with newlines (`\n`).
+We finish, by adding the indicator (`"∆"`) under our `k` and voila, we are
+finally ready to unswer our question.
+
+
+```
+# how many different teams of 5 players
+# can we compose out of 9 candidates?
+getFmtPascTriangle(9, 5)
+```
+
+```
+                        1
+                      1    1
+                    1    2    1
+                 1    3    3    1
+              1    4    6    4    1
+            1    5   10   10    5    1
+          1    6   15   20   15    6    1
+       1    7   21   35   35   21    7    1
+    1    8   28   56   70   56   28    8    1
+  1    9   36   84  126  126   84   36    9    1
+                           ∆
+```
+
+Wow, 126. Who would have thought. Just in case let's compare the output with the
+built in `binomial` (compare with the last row).
+
+```jl
+s = """
+binomial.(9, 0:9)
+"""
+sco(s)
+```
+
+So, I guess our triangle works right. Actually you may check the edge cases in
+your head, e.g.  how many different teams of 0 players can we compose out of 9
+candidates. Well, there is only one way to do that (`1` in the bottom row, first
+from the left), by not choosing any player at all.  And how many different teams
+of 1 player can we compose of 9 candidates. Well, nine teams (`9` in the bottom
+row, second from the left) because each player would compose one separate team.
