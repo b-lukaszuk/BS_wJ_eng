@@ -132,4 +132,48 @@ getPascalTriangle(4)
 sco(s)
 ```
 
-Pretty neat, we could end here or try to add some text formatting.
+Pretty neat, we could end here or try to add some text formatting. In order to
+do that we will need some way to determine the length of an integer when printed
+(`getNumLen` below) as well as the maximum number length in a Pascal's triangle
+(actually only its last row as in `getMaxNumLen` below).
+
+```jl
+s = """
+function getNumLen(n::Int)::Int
+    return n |> string |> length
+end
+
+function getMaxNumLen(v::Vec{Int})::Int
+    return map(getNumLen, v) |> maximum
+end
+"""
+sc(s)
+```
+
+Once we got it, we need a way to center a number or a row represented as string
+in a line.
+
+```jl
+s = """
+function center(sth::A, totLen::Int)::Str where A<:Union{Int, Str}
+    s::Str = string(sth)
+    len::Int = length(s)
+    @assert totLen > 0 && len > 0 "both totLen and len must be > 0"
+    @assert totLen >= len "totLen must be >= len"
+    diff::Int = totLen - len
+    leftSpaceLen::Int = round(Int, diff / 2)
+    rightSpaceLen::Int = diff - leftSpaceLen
+    return " " ^ leftSpaceLen * s * " " ^ rightSpaceLen
+end
+"""
+sc(s)
+```
+
+In order to center its input (`sth` - an integer or a string) the function
+determines the difference (`diff`) between the total length (`totLen`) of the
+desired result and the actual length of `s`. The difference is split roughly in
+half (`leftSpaceLen` and `rightSpaceLen`) and glued together with `s` using
+string concatenation (`*`) and exponentiation (`^`) that we met in
+@sec:progress_bar_solution. Due to the limited resolution offered by the text
+display of a terminal the result is expected to be slightly off on printout, but
+I think we can live with that.
