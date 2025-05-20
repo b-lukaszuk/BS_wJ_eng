@@ -20,6 +20,12 @@ of the [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
 (I'm going to apply similar writing conventions without delving too much into
 the previously mentioned topics).
 
+For instance, just like in the previous book, here I will use the
+[@assert](https://docs.julialang.org/en/v1/base/base/#Base.@assert) construct to
+test some simple assumptions and print error messages. The construct is not
+recommended in serious programs (see the warning in the docs), but for a quick
+and dirty approach it should do the trick.
+
 Additionally, henceforth I will define a few type aliases, like:
 
 ```jl
