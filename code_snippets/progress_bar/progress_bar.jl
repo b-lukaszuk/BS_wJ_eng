@@ -37,10 +37,12 @@ function main()
     println("It animates a progress bar.")
     println("Note: your terminal must support ANSI escape codes.\n")
 
-    println("Press Enter to begin.") # actually any key
-    _ = readline() # start the animation on keypress
-
-    animateProgressBar()
+    # y(es) - default choice (also with Enter), anything else: no
+    println("Continue with the animation? [Y/n]")
+    choice::Str = readline()
+    if lowercase(strip(choice)) in ["y", "yes", ""]
+        animateProgressBar()
+    end
 
     println("\nThat's all. Goodbye!")
 end
