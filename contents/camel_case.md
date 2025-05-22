@@ -11,7 +11,34 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/camel_
 
 ## Problem {#sec:camel_case_problem}
 
-The problem description goes here.
+In programming there are a few different type of naming conventions, the two
+most popular of them are:
+[smallCamelCase](https://en.wikipedia.org/wiki/Camel_case) and
+[snake_case](https://en.wikipedia.org/wiki/Snake_case).
+
+At times it is useful to quickly convert from one type of naming convention to
+the other (hence such a functionality is sometimes built in in
+[IDEs](https://en.wikipedia.org/wiki/Integrated_development_environment)).
+
+Here is a task for you write two functions with the following signatures:
+
+```
+changeToCamelCase(snakeCaseWord::Str)::Str
+```
+
+and
+
+```
+changeToSnakeCase(camelCaseWord::Str)::Str
+```
+
+that will perform of the following examples according to the template:
+
+```
+"hello_world!" <=> "helloWorld!"
+"nice_to_meet_you" <=> "niceToMeetYou"
+"translate_2_english" <=> "translate2English"
+```
 
 ## Solution {#sec:camel_case_solution}
 
