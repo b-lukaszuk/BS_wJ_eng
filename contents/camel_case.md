@@ -35,10 +35,13 @@ changeToSnakeCase(camelCaseWord::Str)::Str
 that will perform of the following examples according to the template:
 
 ```
-"hello_world!" <=> "helloWorld!"
+"hello_world" <=> "helloWorld"
 "nice_to_meet_you" <=> "niceToMeetYou"
-"translate_2_english" <=> "translate2English"
+"translate_to_english" <=> "translateToEnglish"
 ```
+
+You may assume that the input is well formatted and contains only the
+underscores ("_") and the characters from the Latin alphabet.
 
 ## Solution {#sec:camel_case_solution}
 
