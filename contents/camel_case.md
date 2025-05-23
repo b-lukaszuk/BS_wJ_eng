@@ -45,12 +45,13 @@ underscores ("_") and the characters from the Latin alphabet.
 
 ## Solution {#sec:camel_case_solution}
 
-One of the most succint solutions (and the one quite performant) would be based
+One of the most succinct solutions (and the one quite performant) would be based
 on [regular expressions](https://en.wikipedia.org/wiki/Regular_expression) (also
 called regexes). Although Julia does have a regex support (see [the
 docs](https://docs.julialang.org/en/v1/base/strings/#Base.Regex)) such a
-solution would seem rather arcane and offputing for newcomers. Therefore, to
-keep things simple our solution will rely on good old for loops and conditionals.
+solution would seem rather arcane and off-putting for newcomers. Therefore, to
+keep things simple our solution will rely on good old for loops and
+conditionals.
 
 First `changeToSnakeCase` as it is a simpler one (start small and build).
 
@@ -66,3 +67,21 @@ end
 """
 sc(s)
 ```
+
+We begin with an empty `result`. Next, we travel through each character (`c`) of
+our `camelCasedWord` if a letter is uppercase (`isuppercase(c) ?`) we update our
+result (`*=`) by appending to it underscore (`'_'`) concatenated (`*`) with the
+lowercased character (`lowercase(c)`). Otherwise (`:`) we append the character
+unchanged (`c`). Finally, we `return` the `result`.
+
+Time to see if it works.
+
+```jl
+s = """
+map(changeToSnakeCase, ["helloWorld",
+	"niceToMeetYou", "translateToEnglish"])
+"""
+sco(s)
+```
+
+Looks good.
