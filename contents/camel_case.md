@@ -84,4 +84,47 @@ map(changeToSnakeCase, ["helloWorld",
 sco(s)
 ```
 
-Looks good.
+Looks good. Time for the other function.
+
+```jl
+s = """
+function changeToCamelCase(snakeCaseWord::Str)::Str
+    result::Str = ""
+    prevUnderscore::Bool = false
+    for c in snakeCaseWord
+        if c == '_'
+            prevUnderscore = true
+            continue
+        else
+            result *= prevUnderscore ? uppercase(c) : c
+            prevUnderscore = false
+        end
+    end
+    return result
+end
+"""
+sc(s)
+```
+
+One more time, we begin with an empty result (`result::Str = ""`), but this time
+we also declare an indicator that tells us whether the previously examined
+letter was an underscore (`prevUnderscore`). Next, we traverse the
+`snakeCaseWord` character by character (`for c in snakeCaseWord`) and build up
+the result. If the previously examined character was an underscore (`if c ==
+'_'`) we set the indicator to true and skip rest of the code in for loop (in
+this iteration only) with `continue`. Otherwise (`else`), we append the
+character to the result (`result *=`) with the proper casing based on the value
+of `prevUnderscore` and set this last variable to `false`. Once we're done, we
+`return` the `result`.
+
+Time for another test.
+
+```jl
+s = """
+map(changeToCamelCase,
+    ["hello_world", "nice_to_meet_you", "translate_to_english"])
+"""
+sco(s)
+```
+
+And another small success.
