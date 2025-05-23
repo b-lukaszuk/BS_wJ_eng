@@ -16,11 +16,11 @@ most popular of them are:
 [smallCamelCase](https://en.wikipedia.org/wiki/Camel_case) and
 [snake_case](https://en.wikipedia.org/wiki/Snake_case).
 
-At times it is useful to quickly convert from one type of naming convention to
-the other (hence such a functionality is sometimes built in in
+At times it is useful to quickly convert from one of them to the other (hence
+such a functionality is sometimes found in
 [IDEs](https://en.wikipedia.org/wiki/Integrated_development_environment)).
 
-Here is a task for you write two functions with the following signatures:
+Here is a task for you. Write two functions with the following signatures:
 
 ```
 changeToCamelCase(snakeCasedWord::Str)::Str
@@ -32,7 +32,7 @@ and
 changeToSnakeCase(camelCasedWord::Str)::Str
 ```
 
-that will perform of the following examples according to the template:
+The functions should perform the conversion as specified in this template:
 
 ```
 "hello_world" <=> "helloWorld"
@@ -50,10 +50,10 @@ on [regular expressions](https://en.wikipedia.org/wiki/Regular_expression) (also
 called regexes). Although Julia does have a regex support (see [the
 docs](https://docs.julialang.org/en/v1/base/strings/#Base.Regex)) such a
 solution would seem rather arcane and off-putting for newcomers. Therefore, to
-keep things simple our solution will rely on good old for loops and
+keep things simple our approach will rely on good old for loops and
 conditionals.
 
-First `changeToSnakeCase` as it is a simpler one (start small and build).
+First `changeToSnakeCase` as it is simpler to write (start small and build).
 
 ```jl
 s = """
@@ -69,12 +69,12 @@ sc(s)
 ```
 
 We begin with an empty `result`. Next, we travel through each character (`c`) of
-our `camelCasedWord` if a letter is uppercase (`isuppercase(c) ?`) we update our
-result (`*=`) by appending to it underscore (`'_'`) concatenated (`*`) with the
-lowercased character (`lowercase(c)`). Otherwise (`:`) we append the character
-unchanged (`c`). Finally, we `return` the `result`.
+our `camelCasedWord` if a letter is uppercased (`isuppercase(c) ?`) we update
+our result (`*=`) by appending to it underscore (`'_'`) concatenated (`*`) with
+the lowercased character (`lowercase(c)`). Otherwise (`:`) we append the
+character unchanged (`c`). Finally, we `return` the `result`.
 
-Time to see if it works.
+Let's see if it works.
 
 ```jl
 s = """
@@ -88,10 +88,10 @@ Looks good. Time for the other function.
 
 ```jl
 s = """
-function changeToCamelCase(snakeCaseWord::Str)::Str
+function changeToCamelCase(snakeCasedWord::Str)::Str
     result::Str = ""
     prevUnderscore::Bool = false
-    for c in snakeCaseWord
+    for c in snakeCasedWord
         if c == '_'
             prevUnderscore = true
             continue
@@ -109,9 +109,9 @@ sc(s)
 One more time, we begin with an empty result (`result::Str = ""`), but this time
 we also declare an indicator that tells us whether the previously examined
 letter was an underscore (`prevUnderscore`). Next, we traverse the
-`snakeCaseWord` character by character (`for c in snakeCaseWord`) and build up
-the result. If the previously examined character was an underscore (`if c ==
-'_'`) we set the indicator to true and skip rest of the code in for loop (in
+`snakeCasedWord` character by character (`for c in snakeCasedWord`) and build up
+the result. If the currently examined character is an underscore (`if c ==
+'_'`) we set the indicator to true and skip rest of the code in the for loop (in
 this iteration only) with `continue`. Otherwise (`else`), we append the
 character to the result (`result *=`) with the proper casing based on the value
 of `prevUnderscore` and set this last variable to `false`. Once we're done, we
