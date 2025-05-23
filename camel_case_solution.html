@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Problem - Build SH*T with Julia</title>
+  <title>Solution - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -121,50 +121,49 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="18.1" id="sec:altruism_problem"><span class="header-section-number">18.1</span> Problem</h2>
-<p>The following problem was inspired by the lecture of a Richard Dawkins’ book and his considerations about altruism. Alas, I borrowed the book and it’s been like 15-20 years since I read it, so I don’t even remember its title. Shortly, if I mess things up, the fault is mine.</p>
-<p>Anyway, there is this interesting game theory problem called <a href="https://en.wikipedia.org/wiki/Prisoner%27s_dilemma">the prisoner’s dilemma</a>. Imagine two accomplices being interrogated by the police for the crime they committed. The investigators separate them and try to convince them to testify against each other (good cop, bad cop isn’t it):</p>
-<ul>
-<li>if both of them remain silent, there is enough evidence to sentence them for one year each</li>
-<li>if both of them incriminate each other, each of them faces the sentence of two years in prison</li>
-<li>if one of them tells on the other (but the other remains silent), then the informer is free to go and the other person serves three years sentence</li>
-</ul>
-<p>Imagine, that you are one of the two. Pause for a moment and think which is the best option for you (use pure logic, not emotions, it is guaranteed that nobody will know what you did).</p>
-<p>If you stay silent you will be punished for sure, if you betray then you may walk away free. That being said, the betrayal is often considered to be the optimal strategy.</p>
-<p>You could say that was a no-brainer, but the problem is deeper than you may think. Imagine there are two monkeys and each got a <a href="https://en.wikipedia.org/wiki/Tick">tick</a> on their back that they cannot remove themselves. A tick decreases survival of an animal (it spreads diseases), so does the removal of the tick (less time to find food). Therefore assume that, when:</p>
-<ul>
-<li>one monkey betrays the other, the winner gets 3 survival points, the looser gets -2 points</li>
-<li>both monkeys cooperate they get +2 survival points each</li>
-<li>both monkeys refuse to help each other, each looses 1 survival point</li>
-</ul>
-<p>To make it more realistic assume that the monkeys are neighbors that will interact with each other a few hundred times in their lives (but they don’t know exactly how long), and get a tick just as many times. Does this new situation makes a difference, is it worth the while to be altruistic?</p>
-<p>Let’s use Julia to answer that question. To that end we assume there are 6 monkeys in the group:</p>
-<ul>
-<li>three good:
-<ul>
-<li>naive - it always cooperates</li>
-<li>unforgiving - if you betray it more than three times, it will never trust you again</li>
-<li>paybacker - first it cooperates, then it replays its partner’s last move</li>
-</ul></li>
-<li>three evil:
-<ul>
-<li>unfriendly - got a bad mood at random and may betray with the probability of 60% (p = 0.6)</li>
-<li>abusive - got a bad mood at random and may betray with the probability of 80% (p = 0.8)</li>
-<li>egoist - always betrays its partner</li>
-</ul></li>
-</ul>
-<p>Test which monkey ends on top if every animal interacts a random number of times (let’s say 50 to 300 times) with all the other animals.</p>
-<p>Does it make a difference, if you replace the unforgiving monkey with a gullible one (it cooperates at random 90% of the times)?</p>
-<blockquote>
-<p><strong><em>Note:</em></strong> You don’t need to strictly adhere to the above task description, feel free to adjust it to your level/liking.</p>
-</blockquote>
+<h2 data-number="4.2" id="sec:camel_case_solution"><span class="header-section-number">4.2</span> Solution</h2>
+<p>One of the most succinct solutions (and the one quite performant) would be based on <a href="https://en.wikipedia.org/wiki/Regular_expression">regular expressions</a> (also called regexes). Although Julia does have a regex support (see <a href="https://docs.julialang.org/en/v1/base/strings/#Base.Regex">the docs</a>) such a solution would seem rather arcane and off-putting for newcomers. Therefore, to keep things simple our approach will rely on good old for loops and conditionals.</p>
+<p>First <code>changeToSnakeCase</code> as it is simpler to write (start small and build).</p>
+<pre class="language-julia"><code>function changeToSnakeCase(camelCasedWord::Str)::Str
+    result::Str = &quot;&quot;
+    for c in camelCasedWord
+        result *= isuppercase(c) ? &#39;_&#39; * lowercase(c) : c
+    end
+    return result
+end</code></pre>
+<p>We begin with an empty <code>result</code>. Next, we travel through each character (<code>c</code>) of our <code>camelCasedWord</code> if a letter is uppercased (<code>isuppercase(c) ?</code>) we update our result (<code>*=</code>) by appending to it underscore (<code>'_'</code>) concatenated (<code>*</code>) with the lowercased character (<code>lowercase(c)</code>). Otherwise (<code>:</code>) we append the character unchanged (<code>c</code>). Finally, we <code>return</code> the <code>result</code>.</p>
+<p>Let’s see if it works.</p>
+<pre class="language-julia"><code>map(changeToSnakeCase, [&quot;helloWorld&quot;,
+    &quot;niceToMeetYou&quot;, &quot;translateToEnglish&quot;])</code></pre>
+<pre class="output"><code>[&quot;hello_world&quot;, &quot;nice_to_meet_you&quot;, &quot;translate_to_english&quot;]</code></pre>
+<p>Looks good. Time for the other function.</p>
+<pre class="language-julia"><code>function changeToCamelCase(snakeCasedWord::Str)::Str
+    result::Str = &quot;&quot;
+    prevUnderscore::Bool = false
+    for c in snakeCasedWord
+        if c == &#39;_&#39;
+            prevUnderscore = true
+            continue
+        else
+            result *= prevUnderscore ? uppercase(c) : c
+            prevUnderscore = false
+        end
+    end
+    return result
+end</code></pre>
+<p>One more time, we begin with an empty result (<code>result::Str = ""</code>), but this time we also declare an indicator that tells us whether the previously examined letter was an underscore (<code>prevUnderscore</code>). Next, we traverse the <code>snakeCasedWord</code> character by character (<code>for c in snakeCasedWord</code>) and build up the result. If the currently examined character is an underscore (<code>if c == '_'</code>) we set the indicator to true and skip rest of the code in the for loop (in this iteration only) with <code>continue</code>. Otherwise (<code>else</code>), we append the character to the result (<code>result *=</code>) with the proper casing based on the value of <code>prevUnderscore</code> and set this last variable to <code>false</code>. Once we’re done, we <code>return</code> the <code>result</code>.</p>
+<p>Time for another test.</p>
+<pre class="language-julia"><code>map(changeToCamelCase,
+    [&quot;hello_world&quot;, &quot;nice_to_meet_you&quot;, &quot;translate_to_english&quot;])</code></pre>
+<pre class="output"><code>[&quot;helloWorld&quot;, &quot;niceToMeetYou&quot;, &quot;translateToEnglish&quot;]</code></pre>
+<p>And another small success.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./altruism.html"><b>18</b> Altruism</a> <kbd>←</kbd>
+        <a class="menu-level-2" href="./camel_case_problem.html"><b>4.1</b> Problem</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./altruism_solution.html"><b>18.2</b> Solution</a>
+            <kbd>→</kbd> <a class="menu-level-1" href="./toothpaste.html"><b>5</b> Toothpaste</a>
         </span>
     </p>
 </div>

@@ -121,50 +121,25 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="18.1" id="sec:altruism_problem"><span class="header-section-number">18.1</span> Problem</h2>
-<p>The following problem was inspired by the lecture of a Richard Dawkins’ book and his considerations about altruism. Alas, I borrowed the book and it’s been like 15-20 years since I read it, so I don’t even remember its title. Shortly, if I mess things up, the fault is mine.</p>
-<p>Anyway, there is this interesting game theory problem called <a href="https://en.wikipedia.org/wiki/Prisoner%27s_dilemma">the prisoner’s dilemma</a>. Imagine two accomplices being interrogated by the police for the crime they committed. The investigators separate them and try to convince them to testify against each other (good cop, bad cop isn’t it):</p>
-<ul>
-<li>if both of them remain silent, there is enough evidence to sentence them for one year each</li>
-<li>if both of them incriminate each other, each of them faces the sentence of two years in prison</li>
-<li>if one of them tells on the other (but the other remains silent), then the informer is free to go and the other person serves three years sentence</li>
-</ul>
-<p>Imagine, that you are one of the two. Pause for a moment and think which is the best option for you (use pure logic, not emotions, it is guaranteed that nobody will know what you did).</p>
-<p>If you stay silent you will be punished for sure, if you betray then you may walk away free. That being said, the betrayal is often considered to be the optimal strategy.</p>
-<p>You could say that was a no-brainer, but the problem is deeper than you may think. Imagine there are two monkeys and each got a <a href="https://en.wikipedia.org/wiki/Tick">tick</a> on their back that they cannot remove themselves. A tick decreases survival of an animal (it spreads diseases), so does the removal of the tick (less time to find food). Therefore assume that, when:</p>
-<ul>
-<li>one monkey betrays the other, the winner gets 3 survival points, the looser gets -2 points</li>
-<li>both monkeys cooperate they get +2 survival points each</li>
-<li>both monkeys refuse to help each other, each looses 1 survival point</li>
-</ul>
-<p>To make it more realistic assume that the monkeys are neighbors that will interact with each other a few hundred times in their lives (but they don’t know exactly how long), and get a tick just as many times. Does this new situation makes a difference, is it worth the while to be altruistic?</p>
-<p>Let’s use Julia to answer that question. To that end we assume there are 6 monkeys in the group:</p>
-<ul>
-<li>three good:
-<ul>
-<li>naive - it always cooperates</li>
-<li>unforgiving - if you betray it more than three times, it will never trust you again</li>
-<li>paybacker - first it cooperates, then it replays its partner’s last move</li>
-</ul></li>
-<li>three evil:
-<ul>
-<li>unfriendly - got a bad mood at random and may betray with the probability of 60% (p = 0.6)</li>
-<li>abusive - got a bad mood at random and may betray with the probability of 80% (p = 0.8)</li>
-<li>egoist - always betrays its partner</li>
-</ul></li>
-</ul>
-<p>Test which monkey ends on top if every animal interacts a random number of times (let’s say 50 to 300 times) with all the other animals.</p>
-<p>Does it make a difference, if you replace the unforgiving monkey with a gullible one (it cooperates at random 90% of the times)?</p>
-<blockquote>
-<p><strong><em>Note:</em></strong> You don’t need to strictly adhere to the above task description, feel free to adjust it to your level/liking.</p>
-</blockquote>
+<h2 data-number="4.1" id="sec:camel_case_problem"><span class="header-section-number">4.1</span> Problem</h2>
+<p>In programming there are a few different type of naming conventions, the two most popular of them are: <a href="https://en.wikipedia.org/wiki/Camel_case">smallCamelCase</a> and <a href="https://en.wikipedia.org/wiki/Snake_case">snake_case</a>.</p>
+<p>At times it is useful to quickly convert from one of them to the other (hence such a functionality is sometimes found in <a href="https://en.wikipedia.org/wiki/Integrated_development_environment">IDEs</a>).</p>
+<p>Here is a task for you. Write two functions with the following signatures:</p>
+<pre><code>changeToCamelCase(snakeCasedWord::Str)::Str</code></pre>
+<p>and</p>
+<pre><code>changeToSnakeCase(camelCasedWord::Str)::Str</code></pre>
+<p>The functions should perform the conversion as specified in this template:</p>
+<pre><code>&quot;hello_world&quot; &lt;=&gt; &quot;helloWorld&quot;
+&quot;nice_to_meet_you&quot; &lt;=&gt; &quot;niceToMeetYou&quot;
+&quot;translate_to_english&quot; &lt;=&gt; &quot;translateToEnglish&quot;</code></pre>
+<p>You may assume that the input is well formatted and contains only the underscores (“_“) and the characters from the Latin alphabet.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./altruism.html"><b>18</b> Altruism</a> <kbd>←</kbd>
+        <a class="menu-level-1" href="./camel_case.html"><b>4</b> Camel case</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./altruism_solution.html"><b>18.2</b> Solution</a>
+            <kbd>→</kbd> <a class="menu-level-2" href="./camel_case_solution.html"><b>4.2</b> Solution</a>
         </span>
     </p>
 </div>
