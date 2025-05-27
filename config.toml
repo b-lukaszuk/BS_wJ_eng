@@ -11,6 +11,7 @@ contents = [
     "recursion",
     "progress_bar",
     "pascals_triangle",
+    "leap_year",
     "prime_numbers",
     "compound_interest",
     "mortgage",
