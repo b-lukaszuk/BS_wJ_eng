@@ -11,7 +11,14 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/leap_y
 
 ## Problem {#sec:leap_year_problem}
 
-The problem description goes here.
+As you probably know an astronomical year is slightly less than 365 days
+(roughly 365.25 days). For that reason [the Gregorian
+calendar](https://en.wikipedia.org/wiki/Gregorian_calendar) got common years
+(365 days each) and a [leap year](https://en.wikipedia.org/wiki/Leap_year).
+
+You task is to write a function that detects whether a given year is leap. Feel
+free to test it, e.g. on the following input: [1792, 1859, 1900, 1918, 1974,
+1985, 2000, 2012].
 
 ## Solution {#sec:leap_year_solution}
 
