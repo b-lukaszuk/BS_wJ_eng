@@ -1,3 +1,4 @@
+const Str = String
 const Vec = Vector
 
 # returns multiple of mult that is >= num
@@ -11,6 +12,7 @@ function getMultiple(num::Int, mult::Int=7)::Int
     end
 end
 
+# 1 - Sunday, 7 - Saturday
 function getDaysInRectangle(nDays::Int, firstDay::Int)::Vec{Int}
     nDaysFront::Int = firstDay-1
     daysFront::Vec{Int} = repeat([0], nDaysFront)
@@ -50,3 +52,20 @@ reshapeVec(x, Int(length(x) / 7), 7, true)
 # June 2025
 x = getDaysInRectangle(30, 1)
 reshapeVec(x, Int(length(x) / 7), 7, true)
+
+# 1 - Sunday, 7 - Saturday
+function getFmtMonth(nDays::Int, firstDay::Int)
+    @assert 28 <= nDays <= 31 "nDays must be in range [28-31]"
+    @assert 1 <= firstDay <= 7 "firstDay must be in range [1-7]"
+    daysVerbs::Vec{Str} = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+    days::Vec{Str} = string.(getDaysInRectangle(nDays, firstDay))
+    days = replace(days, "0" =>" ")
+    m::Matrix{Str} = reshapeVec(days, Int(length(days)/7), 7, true)
+    fmtDay(day) = lpad(day, 2)
+    fmtRow(row) = join(map(fmtDay, row), " ")
+    result::Str = ""
+    for r in eachrow(m)
+        result *= fmtRow(r) * "\n"
+    end
+    return join(daysVerbs, " ") * "\n" * result
+end
