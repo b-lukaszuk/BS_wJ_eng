@@ -75,13 +75,13 @@ const months = Dict(
     11 => "November", 12 => "December")
 
 # 1 - Sunday, 7 - Saturday
-function getFmtMonth(nYear::Int, nMonth::Int, nDays::Int, firstDay::Int)::Str
-    @assert 1 <= nYear <= 4000 "nMonth must be in range [1-4000]"
-    @assert 1 <= nMonth <= 12 "nMonth must be in range [1-12]"
-    @assert 28 <= nDays <= 31 "nDays must be in range [28-31]"
-    @assert 1 <= firstDay <= 7 "firstDay must be in range [1-7]"
+function getFmtMonth(firstDayMonth::Int, nDaysMonth::Int, month::Int, year::Int)::Str
+    @assert 1 <= year <= 4000 "year must be in range [1-4000]"
+    @assert 1 <= month <= 12 "month must be in range [1-12]"
+    @assert 28 <= nDaysMonth <= 31 "nDaysMonth must be in range [28-31]"
+    @assert 1 <= firstDayMonth <= 7 "firstDayMonth must be in range [1-7]"
     daysVerbs::Str = join(["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"], " ")
-    days::Vec{Str} = string.(getDaysInRectangle(nDays, firstDay))
+    days::Vec{Str} = string.(getDaysInRectangle(nDaysMonth, firstDayMonth))
     days = replace(days, "0" =>" ")
     m::Matrix{Str} = reshapeVec(days, Int(length(days)/7), 7, true)
     fmtDay(day) = lpad(day, 2)
@@ -90,9 +90,12 @@ function getFmtMonth(nYear::Int, nMonth::Int, nDays::Int, firstDay::Int)::Str
     for r in eachrow(m)
         result *= fmtRow(r) * "\n"
     end
-    return  center(months[nMonth] * string(" ", nYear), length(daysVerbs)) *
+    return  center(months[month] * string(" ", year), length(daysVerbs)) *
         "\n" * daysVerbs * "\n" * result
 end
 
-getFmtMonth(2025, 5, 31, 5) |> print
-getFmtMonth(2025, 12, 31, 2) |> print
+getFmtMonth(7, 28, 2, 2025) |> print
+getFmtMonth(7, 31, 3, 2025) |> print
+getFmtMonth(3, 30, 4, 2025) |> print
+getFmtMonth(5, 31, 5, 2025) |> print
+getFmtMonth(2, 31, 12, 2025) |> print
