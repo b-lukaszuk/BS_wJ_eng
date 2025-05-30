@@ -42,15 +42,19 @@ function reshapeVec(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
 end
 
 # April 2025
-x = getDaysInRectangle(30, 3)
+x = getDaysInRectangle(30, 3);
 reshapeVec(x, Int(length(x) / 7), 7, true)
 
 # May 2025
-x = getDaysInRectangle(31, 5)
+x = getDaysInRectangle(31, 5);
 reshapeVec(x, Int(length(x) / 7), 7, true)
 
 # June 2025
-x = getDaysInRectangle(30, 1)
+x = getDaysInRectangle(30, 1);
+reshapeVec(x, Int(length(x) / 7), 7, true)
+
+# February 2025
+x = getDaysInRectangle(28, 7);
 reshapeVec(x, Int(length(x) / 7), 7, true)
 
 function center(sth::A, totLen::Int)::Str where A<:Union{Int, Str}
@@ -71,7 +75,8 @@ const months = Dict(
     11 => "November", 12 => "December")
 
 # 1 - Sunday, 7 - Saturday
-function getFmtMonth(nMonth::Int, nDays::Int, firstDay::Int)::Str
+function getFmtMonth(nYear::Int, nMonth::Int, nDays::Int, firstDay::Int)::Str
+    @assert 1 <= nYear <= 4000 "nMonth must be in range [1-4000]"
     @assert 1 <= nMonth <= 12 "nMonth must be in range [1-12]"
     @assert 28 <= nDays <= 31 "nDays must be in range [28-31]"
     @assert 1 <= firstDay <= 7 "firstDay must be in range [1-7]"
@@ -85,6 +90,9 @@ function getFmtMonth(nMonth::Int, nDays::Int, firstDay::Int)::Str
     for r in eachrow(m)
         result *= fmtRow(r) * "\n"
     end
-    return  center(get(months, nMonth, 1), length(daysVerbs)) * "\n" *
-        daysVerbs * "\n" * result
+    return  center(months[nMonth] * string(" ", nYear), length(daysVerbs)) *
+        "\n" * daysVerbs * "\n" * result
 end
+
+getFmtMonth(2025, 5, 31, 5) |> print
+getFmtMonth(2025, 12, 31, 2) |> print
