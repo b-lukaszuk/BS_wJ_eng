@@ -127,3 +127,34 @@ function isLeap(yr::Int)::Bool
         return true
     end
 end
+
+# 1 - Sunday, 7 - Saturday
+# returns (1st day of month, num of days in this month)
+function getMonthData(dayJan1::Int, month::Int, leap::Bool)::Tuple{Int, Int}
+    @assert 1 <= dayJan1 <= 7 "day not in range [1-7]"
+    @assert 1 <= dayJan1 <= 12 "month not in range [1-12]"
+    curDay::Int = dayJan1
+    daysPerMonth::Vec{Int} = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    if leap
+        daysPerMonth[2] += 1
+    end
+    if month == 1
+        return (dayJan1, daysPerMonth[month])
+    end
+    for m in 2:month
+        curDay = getShiftedDay(curDay, daysPerMonth[m-1])
+    end
+    return (curDay, daysPerMonth[month])
+end
+
+# 1 - Sunday, 7 - Saturday
+# returns (1st day of month, num of days in this month)
+function getMonthData(yr::Int, month::Int)::Tuple{Int, Int}
+    @assert 1 <= yr <= 4000
+    @assert 1 <= month <= 12
+    curDay::Int = 7 # 1st Jan of year 1 is Saturday, so 7
+    for y in 1:(yr-1)
+        curDay = getShiftedDay(curDay, isLeap(y) ? 366 : 365)
+    end
+    return getMonthData(curDay, month, isLeap(yr))
+end
