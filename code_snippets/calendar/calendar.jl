@@ -1,8 +1,19 @@
 const Str = String
 const Vec = Vector
 
+const daysPerWeek::Int = 7
+const daysPerMonth::Vec{Int} = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+const daysPerMonthLeap::Vec{Int} = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+const daysPerYr::Int = 365
+const daysPerYrLeap::Int = 366
+const months::Dict{Int, Str} = Dict(
+    1 => "January", 2 => "February", 3 => "March",
+    4 => "April", 5 => "May", 6 => "June", 7 => "July",
+    8 => "August", 9 => "September", 10 => "October",
+    11 => "November", 12 => "December")
+
 # returns multiple of mult that is >= num
-function getMultiple(num::Int, mult::Int=7)::Int
+function getMultiple(num::Int, mult::Int=daysPerWeek)::Int
     @assert num > 0 "num must be > 0"
     @assert mult > 0 "mult must be > 0"
     if num % mult == 0
@@ -18,13 +29,13 @@ function getDaysInRectangle(nDays::Int, firstDay::Int)::Vec{Int}
     daysFront::Vec{Int} = repeat([0], nDaysFront)
     daysMid::Vec{Int} = collect(1:nDays)
     nDaysFrontMid::Int = nDaysFront + nDays
-    nDaysBack::Int = getMultiple(nDaysFrontMid, 7) - nDaysFrontMid
+    nDaysBack::Int = getMultiple(nDaysFrontMid, daysPerWeek) - nDaysFrontMid
     daysBack::Vec{Int} = repeat([0], nDaysBack)
     days::Vec{Int} = vcat(daysFront, daysMid, daysBack)
     return days
 end
 
-function reshapeVec(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
+function vec2matrix(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
     len::Int = length(v)
     @assert (len == r*c)
     m::Matrix{T} = Matrix{T}(undef, r, c)
@@ -41,22 +52,27 @@ function reshapeVec(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
     return m
 end
 
+# February 2025
+x = getDaysInRectangle(28, 7);
+vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
+
+# March 2025
+x = getDaysInRectangle(31, 7);
+vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
+
 # April 2025
 x = getDaysInRectangle(30, 3);
-reshapeVec(x, Int(length(x) / 7), 7, true)
+vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
 # May 2025
 x = getDaysInRectangle(31, 5);
-reshapeVec(x, Int(length(x) / 7), 7, true)
+vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
 # June 2025
 x = getDaysInRectangle(30, 1);
-reshapeVec(x, Int(length(x) / 7), 7, true)
+vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
-# February 2025
-x = getDaysInRectangle(28, 7);
-reshapeVec(x, Int(length(x) / 7), 7, true)
-
+# fn from chapter: Pascal's triangle
 function center(sth::A, totLen::Int)::Str where A<:Union{Int, Str}
     s::Str = string(sth)
     len::Int = length(s)
@@ -68,12 +84,6 @@ function center(sth::A, totLen::Int)::Str where A<:Union{Int, Str}
     return " " ^ leftSpaceLen * s * " " ^ rightSpaceLen
 end
 
-const months = Dict(
-    1 => "January", 2 => "February", 3 => "March",
-    4 => "April", 5 => "May", 6 => "June", 7 => "July",
-    8 => "August", 9 => "September", 10 => "October",
-    11 => "November", 12 => "December")
-
 # 1 - Sunday, 7 - Saturday
 function getFmtMonth(firstDayMonth::Int, nDaysMonth::Int, month::Int, year::Int)::Str
     @assert 1 <= year <= 4000 "year must be in range [1-4000]"
@@ -83,7 +93,7 @@ function getFmtMonth(firstDayMonth::Int, nDaysMonth::Int, month::Int, year::Int)
     daysVerbs::Str = join(["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"], " ")
     days::Vec{Str} = string.(getDaysInRectangle(nDaysMonth, firstDayMonth))
     days = replace(days, "0" =>" ")
-    m::Matrix{Str} = reshapeVec(days, Int(length(days)/7), 7, true)
+    m::Matrix{Str} = vec2matrix(days, Int(length(days)/daysPerWeek), daysPerWeek, true)
     fmtDay(day) = lpad(day, 2)
     fmtRow(row) = join(map(fmtDay, row), " ")
     result::Str = ""
@@ -105,10 +115,10 @@ function getShiftedDay(curDay::Int, by::Int)::Int
     @assert 1 <= curDay <= 7 "curDay not in range [1-7]"
     @assert by > 0 "by must be positive integer"
     newDay::Int = curDay
-    shift::Int = by % 7
+    shift::Int = by % daysPerWeek
     for _ in 1:shift
         newDay += 1
-        if newDay > 7
+        if newDay > daysPerWeek
             newDay = 1
         end
     end
@@ -134,17 +144,14 @@ function getMonthData(dayJan1::Int, month::Int, leap::Bool)::Tuple{Int, Int}
     @assert 1 <= dayJan1 <= 7 "day not in range [1-7]"
     @assert 1 <= dayJan1 <= 12 "month not in range [1-12]"
     curDay::Int = dayJan1
-    daysPerMonth::Vec{Int} = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    if leap
-        daysPerMonth[2] += 1
-    end
+    daysInMonths::Vec{Int} = leap ? daysPerMonthLeap : daysPerMonth
     if month == 1
-        return (dayJan1, daysPerMonth[month])
+        return (dayJan1, daysInMonths[month])
     end
     for m in 2:month
-        curDay = getShiftedDay(curDay, daysPerMonth[m-1])
+        curDay = getShiftedDay(curDay, daysInMonths[m-1])
     end
-    return (curDay, daysPerMonth[month])
+    return (curDay, daysInMonths[month])
 end
 
 # 1 - Sunday, 7 - Saturday
@@ -154,7 +161,7 @@ function getMonthData(yr::Int, month::Int)::Tuple{Int, Int}
     @assert 1 <= month <= 12
     curDay::Int = 7 # 1st Jan of year 1 is Saturday, so 7
     for y in 1:(yr-1)
-        curDay = getShiftedDay(curDay, isLeap(y) ? 366 : 365)
+        curDay = getShiftedDay(curDay, isLeap(y) ? daysPerYrLeap : daysPerYr)
     end
     return getMonthData(curDay, month, isLeap(yr))
 end
