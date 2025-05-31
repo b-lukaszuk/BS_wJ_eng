@@ -99,3 +99,31 @@ getFmtMonth(7, 31, 3, 2025) |> print
 getFmtMonth(3, 30, 4, 2025) |> print
 getFmtMonth(5, 31, 5, 2025) |> print
 getFmtMonth(2, 31, 12, 2025) |> print
+
+# 1 - Sunday, 7 - Saturday
+function getShiftedDay(curDay::Int, by::Int)::Int
+    @assert 1 <= curDay <= 7 "curDay not in range [1-7]"
+    @assert by > 0 "by must be positive integer"
+    newDay::Int = curDay
+    shift::Int = by % 7
+    for _ in 1:shift
+        newDay += 1
+        if newDay > 7
+            newDay = 1
+        end
+    end
+    return newDay
+end
+
+function isLeap(yr::Int)::Bool
+    @assert 0 < yr < 4000
+    if yr % 4 != 0
+        return false
+    elseif yr % 25 != 0
+        return true
+    elseif yr % 16 != 0
+        return false
+    else
+        return true
+    end
+end
