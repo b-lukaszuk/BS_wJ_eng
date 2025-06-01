@@ -4,8 +4,8 @@ const Vec = Vector
 const daysPerWeek::Int = 7
 const daysPerMonth::Vec{Int} = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 const daysPerMonthLeap::Vec{Int} = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-const daysPerYr::Int = 365
-const daysPerYrLeap::Int = 366
+const shiftYr::Int = 1 # using 365 here works the same
+const shiftYrLeap::Int = 2 # using 366 here works the same
 const months::Dict{Int, Str} = Dict(
     1 => "January", 2 => "February", 3 => "March",
     4 => "April", 5 => "May", 6 => "June", 7 => "July",
@@ -125,16 +125,19 @@ function getShiftedDay(curDay::Int, by::Int)::Int
     return newDay
 end
 
+# the Gregorian Calendar was introduced in 1582
+# that year: 4th October, was followed by 15th October
+# before there was the Julian calendar
 function isLeap(yr::Int)::Bool
-    @assert 0 < yr < 4000
-    if yr % 4 != 0
-        return false
-    elseif yr % 25 != 0
-        return true
-    elseif yr % 16 != 0
-        return false
+    @assert 1 <= yr <= 4001
+    divisibleBy4::Bool = yr % 4 == 0
+    divisibleBy100::Bool = yr % 100 == 0
+    divisibleBy400::Bool = yr % 400 == 0
+    gregorianException::Bool = divisibleBy100 && !divisibleBy400
+    if divisibleBy4
+        return !gregorianException
     else
-        return true
+        return false
     end
 end
 
@@ -157,11 +160,18 @@ end
 # 1 - Sunday, 7 - Saturday
 # returns (1st day of month, num of days in this month)
 function getMonthData(yr::Int, month::Int)::Tuple{Int, Int}
-    @assert 1 <= yr <= 4000
-    @assert 1 <= month <= 12
-    curDay::Int = 7 # 1st Jan of year 1 is Saturday, so 7
+    @assert 1 <= yr <= 4000 "yr not in range [1-4000]"
+    @assert 1 <= month <= 12 "month not in range [1-12]"
+    curDay::Int = 2 # 1st Jan of year 1 was Monday
     for y in 1:(yr-1)
-        curDay = getShiftedDay(curDay, isLeap(y) ? daysPerYrLeap : daysPerYr)
+        curDay = getShiftedDay(curDay, isLeap(y) ? shiftYrLeap : shiftYr)
     end
     return getMonthData(curDay, month, isLeap(yr))
 end
+
+# Feb 2000
+getFmtMonth(getMonthData(2000, 2)..., 2, 2000) |> print
+# Sep 2001
+getFmtMonth(getMonthData(2001, 9)..., 9, 2001) |> print
+# Dec 2020
+getFmtMonth(getMonthData(2020, 12)..., 12, 2020) |> print
