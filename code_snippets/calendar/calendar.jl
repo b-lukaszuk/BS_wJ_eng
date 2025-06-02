@@ -35,7 +35,7 @@ function getDaysInRectangle(nDays::Int, firstDay::Int)::Vec{Int}
     return days
 end
 
-function vec2matrix(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
+function reshape2matrix(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
     len::Int = length(v)
     @assert (len == r*c)
     m::Matrix{T} = Matrix{T}(undef, r, c)
@@ -54,23 +54,23 @@ end
 
 # February 2025
 x = getDaysInRectangle(28, 7);
-vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
+reshape2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
 # March 2025
 x = getDaysInRectangle(31, 7);
-vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
+reshape2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
 # April 2025
 x = getDaysInRectangle(30, 3);
-vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
+reshape2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
 # May 2025
 x = getDaysInRectangle(31, 5);
-vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
+reshape2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
 # June 2025
 x = getDaysInRectangle(30, 1);
-vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
+reshape2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
 # fn from chapter: Pascal's triangle
 function center(sth::A, totLen::Int)::Str where A<:Union{Int, Str}
@@ -93,7 +93,7 @@ function getFmtMonth(firstDayMonth::Int, nDaysMonth::Int, month::Int, year::Int)
     daysVerbs::Str = join(["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"], " ")
     days::Vec{Str} = string.(getDaysInRectangle(nDaysMonth, firstDayMonth))
     days = replace(days, "0" =>" ")
-    m::Matrix{Str} = vec2matrix(days, Int(length(days)/daysPerWeek), daysPerWeek, true)
+    m::Matrix{Str} = reshape2matrix(days, Int(length(days)/daysPerWeek), daysPerWeek, true)
     fmtDay(day) = lpad(day, 2)
     fmtRow(row) = join(map(fmtDay, row), " ")
     result::Str = ""
@@ -125,20 +125,12 @@ function getShiftedDay(curDay::Int, by::Int)::Int
     return newDay
 end
 
-# the Gregorian Calendar was introduced in 1582
-# that year: 4th October, was followed by 15th October
-# before there was the Julian calendar
-function isLeap(yr::Int)::Bool
+# assumes the Gregorian Calendar for yr [1 - 4000]
+function isLeap2(yr::Int)::Bool
     @assert 1 <= yr <= 4001
     divisibleBy4::Bool = yr % 4 == 0
-    divisibleBy100::Bool = yr % 100 == 0
-    divisibleBy400::Bool = yr % 400 == 0
-    gregorianException::Bool = divisibleBy100 && !divisibleBy400
-    if divisibleBy4
-        return !gregorianException
-    else
-        return false
-    end
+    gregorianException::Bool = (yr % 100 == 0) && (yr % 400 != 0)
+    return divisibleBy4 && !gregorianException
 end
 
 # 1 - Sunday, 7 - Saturday
