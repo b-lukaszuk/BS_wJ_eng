@@ -126,8 +126,8 @@ function getShiftedDay(curDay::Int, by::Int)::Int
 end
 
 # assumes the Gregorian Calendar for yr [1 - 4000]
-function isLeap2(yr::Int)::Bool
-    @assert 1 <= yr <= 4001
+function isLeap(yr::Int)::Bool
+    @assert 0 < yr < 4000
     divisibleBy4::Bool = yr % 4 == 0
     gregorianException::Bool = (yr % 100 == 0) && (yr % 400 != 0)
     return divisibleBy4 && !gregorianException
