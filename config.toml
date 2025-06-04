@@ -12,6 +12,7 @@ contents = [
     "progress_bar",
     "pascals_triangle",
     "leap_year",
+    "calendar",
     "prime_numbers",
     "compound_interest",
     "mortgage",
