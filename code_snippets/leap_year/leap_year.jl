@@ -20,7 +20,6 @@ function isLeap(yr::Int)::Bool
 end
 
 yrs = [1792, 1859, 1900, 1918, 1974, 1985, 2000, 2012]
-isLeap.(yrs)
 filter(isLeap, yrs)
 
 # simple test suite
@@ -28,7 +27,7 @@ filter(isLeap, yrs)
 
 # in the Gregorian calendar in every 400 years time span
 # there are 303 regular years and 97 leap years
-function runTest()::Int
+function runTestSet()::Int
     startYr::Int = 0
     endYr::Int = 0
     numLeapYrs::Int = 0
@@ -43,4 +42,4 @@ function runTest()::Int
     return 0
 end
 
-runTest()
+runTestSet()
