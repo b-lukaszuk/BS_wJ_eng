@@ -18,7 +18,7 @@ calendar](https://en.wikipedia.org/wiki/Gregorian_calendar) got common years
 
 You task is to write a function that detects whether a given year is leap. Feel
 free to test it, e.g. on the following input: [1792, 1859, 1900, 1918, 1974,
-1985, 2000, 2012].
+1985, 2000, 2012] of which only 1792, 2000, and 2012 are leap years.
 
 ## Solution {#sec:leap_year_solution}
 

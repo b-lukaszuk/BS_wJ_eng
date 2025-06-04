@@ -2,7 +2,7 @@
 # that year: 4th October, was followed by 15th October
 # before there was the Julian calendar
 function isLeap(yr::Int)::Bool
-    @assert 0 < yr < 4001
+    @assert 0 < yr < 4001 "yr must be in range [1-4000]"
     divisibleBy4::Bool = yr % 4 == 0
     gregorianException::Bool = (yr % 100 == 0) && (yr % 400 != 0)
     if !divisibleBy4
@@ -13,7 +13,7 @@ function isLeap(yr::Int)::Bool
 end
 
 function isLeap(yr::Int)::Bool
-    @assert 0 < yr < 4001
+    @assert 0 < yr < 4001 "yr must be in range [1-4000]"
     divisibleBy4::Bool = yr % 4 == 0
     gregorianException::Bool = (yr % 100 == 0) && (yr % 400 != 0)
     return divisibleBy4 && !gregorianException
