@@ -94,3 +94,43 @@ sco(s)
 
 The `filter` function applies `isLeap` to each element of `yrs` and returns only
 those for which the result is `true`.
+
+Since the solution was pretty easy let's add some more tests to let our fingers
+cool down slowly. If you read [the Wikipedia's
+page](https://en.wikipedia.org/wiki/Gregorian_calendar) carefully then you know
+that for every 400 years period we got 303 regular years and 97 leap
+years. Let's see if that rule holds.
+
+```jl
+s = """
+function runTestSet()::Int
+    startYr::Int = 0
+    endYr::Int = 0
+    numLeapYrs::Int = 0
+    for i in 1:3601
+        startYr = i
+        endYr = i + 400 - 1
+        numLeapYrs = filter(isLeap, startYr:endYr) |> length
+        if numLeapYrs != 97
+            return 1
+        end
+    end
+    return 0
+end
+
+runTestSet()
+"""
+sco(s)
+```
+
+Here we tested different time periods (each spanning 400 years). Notice that
+last such a period starts in the year `3601`, since our function handles inputs
+in the range [1 - 4000] and `length(3600:4000)` is actually equal
+to 401. Anyway, for each of the periods, we counted the number of leap years
+(`numLeapYrs`) with `filter` and `length`. If `numLearpYrs` differs from `97`,
+we return `1` right away (and skip other checks). Otherwise (once all the
+periods passed the tests) we return `0`. The above is a convention met in C/C++
+programming languages (see their `main` function). It is sufficient for our
+simplistic case, however, for more serious applications you should follow the
+testing advice contained in [the
+docs](https://docs.julialang.org/en/v1/stdlib/Test/).
