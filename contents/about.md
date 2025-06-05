@@ -42,14 +42,14 @@ e.g. `Vec{Int}` instead `Vector{Int}`. Notice, that the type synonyms are
 declared with `const` keyword, since they will not change for as long as a
 program runs.
 
-If, for any reason, this book is not to your liking then feel free to visit,
+If, for any reason, this book is not to your taste then feel free to visit,
 e.g. Adam Wysokinski's the [Big Book of
 Julia](https://adamwysokinski.codeberg.page/bbj/) and choose a learning
 resource of your liking. Alternatively you may visit [Rosetta Code
 web-page](https://rosettacode.org/wiki/Category:Solutions_by_Programming_Task)
 that contains over 1'000 programming exercises with solutions in different
-programming languages. Chances are many of the exercises presented here are to
-be found there.
+programming languages. Chances are many that of the exercises presented here are
+to be found there.
 
 Finally, just like in the previous book, I'll try to write in a possibly simple
 (clarity over cleverness and performance) and correct manner. Still, I'm only
