@@ -37,7 +37,7 @@ progress bar.
 s2 = """
 function getProgressBar(perc::Int)::Str
     @assert 0 <= perc <= 100 "perc must be in range [0-100]"
-    return "|" ^ perc * "." ^ (100-p) * string(" ", perc) * "%"
+    return "|" ^ perc * "." ^ (100-perc) * string(" ", perc) * "%"
 end
 """
 replace(sc(s2), Regex("string.*") => "\"\$perc%\"")
@@ -50,9 +50,9 @@ mathematical operations [exponentiation (`^`) before multiplication
 operator (it glues two strings into a one longer string), whereas `^` multiplies
 a string to its left the number of times on its right (i.e. `"a"^3` gives us
 `"a" * "a" * "a"` so `"aaa"`). `getProgressBar` accepts percentage (`perc`) and
-draws as many vertical bars as `perc` tells us. The unused spots (`100-p`) are
-filed with the placeholders (`"."`). We finish by appending the number itself
-and the `%` symbol by using [string
+draws as many vertical bars as `perc` tells us. The unused spots (`100-perc`)
+are filed with the placeholders (`"."`). We finish by appending the number
+itself and the `%` symbol by using [string
 interpolation](https://docs.julialang.org/en/v1/manual/strings/#string-interpolation).
 
 Printing a string of 100 characters (actually a bit more) may not look good on
@@ -74,8 +74,8 @@ replace(sc(s3), Regex("string.*") => "\"\$perc%\"")
 ```
 
 The above function looses some resolution in translation of `perc` to vertical
-bars (`|`). However, the percentage is displayed anyway (`"$perc%"`) so it is
-not such a big problem after all.
+bars (`|`). However, the percentage is displayed as a number anyway (`"$perc%"`)
+so it is not such a big problem after all.
 
 Now, we are ready to write the first version of our `animateProgressBar`.
 
@@ -100,7 +100,7 @@ impression of a fan). Note, the double
 `fans`. The `\` symbol got a particular meaning in programming. It is used to
 designate that the next character(s) is/are special. For instance
 `println("and")` will just print the conjunction 'and'. On the other hand
-`println("a\nd")` will print two 'a's, one below the other, since in Julia
+`println("a\nd")` will print 'a' and 'd', one below the other, since in Julia
 `"\n"` stands for newline. To get rid of the special meaning of `"\"` we
 precede it with another backslash, hence `"\\"`.
 
