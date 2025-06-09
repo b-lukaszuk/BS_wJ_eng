@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Problem - Build SH*T with Julia</title>
+  <title>Solution - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -127,24 +127,62 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="17.1" id="sec:transcription_problem"><span class="header-section-number">17.1</span> Problem</h2>
-<p>The genetic material of an eucariotic cell is located in its nucleus in the form of a nucleic acid (<a href="https://en.wikipedia.org/wiki/DNA">DNA</a> to be precise). At one point DNA fragments serve as matrices to produce proteins that build our bodies and perform some actions within it (e.g. like hormones or enzymes). Such a transformation takes two steps called <a href="https://en.wikipedia.org/wiki/Transcription_(biology)">transcription</a> and <a href="https://en.wikipedia.org/wiki/Translation_(biology)">translation</a>.</p>
-<p>During the first process, DNA’s double helix is unwind and one of the strands (called template strand) is rewritten to mRNA (hence transcription) according to the table presented below.</p>
-<pre><code> DNA | mRNA
------+------
- &#39;c&#39; | &#39;g&#39;
- &#39;g&#39; | &#39;c&#39;,
- &#39;a&#39; | &#39;u&#39;,
- &#39;t&#39; | &#39;a&#39;</code></pre>
-<p>Here: <code>a</code>, <code>c</code>, <code>g</code>, <code>t</code>, <code>u</code> are the shortcuts (also written in uppercase) for the nucleic acids’ molecular components (nucleotide bases) called <code>adenine</code>, <code>cytosine</code>, <code>guanine</code>, <code>thymine</code>, and <code>uracil</code>.</p>
-<p>This time your task is to read the data from the file: <code>dna_seq_template_strand.txt</code> (to be found in <a href="https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/transcription">the code snippets for this chapter</a>). The file contains a sequence of nucleotide bases of some gene. Splice its coding parts (aka. <a href="https://en.wikipedia.org/wiki/Exon">exons</a>), which encompass the molecules at positions 2424-2610 and 3397-3542. Transcribe the obtained strand to an mRNA molecule according to <a href="https://en.wikipedia.org/wiki/Complementarity_(molecular_biology)#DNA_and_RNA_base_pair_complementarity">the complementarity rule</a> presented in the table above.</p>
+<h2 data-number="10.2" id="sec:leap_year_solution"><span class="header-section-number">10.2</span> Solution</h2>
+<p>Let’s start with the algorithm, as stated in <a href="https://en.wikipedia.org/wiki/Gregorian_calendar">the Wikipedia’s page</a>:</p>
+<blockquote>
+<p>The rule for leap years is that every year divisible by four is a leap year, except for years that are divisible by 100, except in turn for years also divisible by 400.</p>
+</blockquote>
+<p>Nothing more, nothing less. Time to translate it into Julia’s code.</p>
+<pre class="language-julia"><code>function isLeap(yr::Int)::Bool
+    @assert 0 &lt; yr &lt; 4001 &quot;yr must be in range [1-4000]&quot;
+    divisibleBy4::Bool = yr % 4 == 0
+    gregorianException::Bool = (yr % 100 == 0) &amp;&amp; (yr % 400 != 0)
+    if !divisibleBy4
+        return false
+    else
+        return !gregorianException
+    end
+end</code></pre>
+<p>The powerhouse of our function is is <code>%</code> (modulo operator) that returns the reminder of the division. If a number <code>x</code> is evenly divided by a number <code>y</code> (<code>x % y</code>) the reminder is equal to zero (<code>==</code>). Otherwise (when <code>x % y != 0</code>) the <code>x</code> cannot be evenly divided by <code>y</code>. Although not strictly necessary, we added a mnemonic names for the tested conditions (<code>divisibleBy4</code> and <code>gregorianException</code>), which should make the code more readable. Anyway, if a year (<code>yr</code>) is not divisible by 4 (<code>!divisibleBy4</code>) then it is a common year. Otherwise (<code>else</code>) if the the year fulfills the exception rule (<code>gregorialException</code> is <code>true</code>) it is not a leap year (hence we negate <code>!</code> <code>gregorianException</code>, because <code>!true</code> is <code>false</code>). If a year (<code>yr</code>) does not meet the exception criteria (<code>gregorianException</code> is <code>false</code>) it is a common year (we negate <code>false</code>, so we get <code>true</code>).</p>
+<p>Actually, we can get rid of the <code>if</code>-<code>else</code> condition by using <code>&amp;&amp;</code> (logical and) and its short circuiting property.</p>
+<pre class="language-julia"><code>function isLeap(yr::Int)::Bool
+    @assert 0 &lt; yr &lt; 4001 &quot;yr must be in range [1-4000]&quot;
+    divisibleBy4::Bool = yr % 4 == 0
+    gregorianException::Bool = (yr % 100 == 0) &amp;&amp; (yr % 400 != 0)
+    return divisibleBy4 &amp;&amp; !gregorianException
+end</code></pre>
+<p>When <code>divisibleBy4</code> is <code>false</code> the and operator (<code>&amp;&amp;</code>) skips the evaluation of its second argument (short circuiting) and returns <code>false</code>. Otherwise, (<code>divisibleBy4</code> is <code>true</code>) <code>!gregorianException</code> is evaluated and it becomes the result of the function. For explanation of <code>!gregorianException</code> see the explanation a few paragraphs above.</p>
+<p>Time for a simple test.</p>
+<pre class="language-julia"><code>yrs = [1792, 1859, 1900, 1918, 1974, 1985, 2000, 2012]
+filter(isLeap, yrs)</code></pre>
+<pre class="output"><code>[1792, 2000, 2012]</code></pre>
+<p>The <code>filter</code> function applies <code>isLeap</code> to each element of <code>yrs</code> and returns only those for which the result is <code>true</code>.</p>
+<p>Since the solution was pretty easy let’s add some more tests to let our fingers cool down slowly. If you read <a href="https://en.wikipedia.org/wiki/Gregorian_calendar">the Wikipedia’s page</a> carefully then you know that for every 400 years period we got 303 regular years and 97 leap years. Let’s see if that rule holds.</p>
+<pre class="language-julia"><code>function runTestSet()::Int
+    startYr::Int = 0
+    endYr::Int = 0
+    numLeapYrs::Int = 0
+    for i in 1:3601
+        startYr = i
+        endYr = i + 400 - 1
+        numLeapYrs = filter(isLeap, startYr:endYr) |&gt; length
+        if numLeapYrs != 97
+            return 1
+        end
+    end
+    return 0
+end
+
+runTestSet()</code></pre>
+<p>0</p>
+<p>Here we tested different time periods (each spanning 400 years). Notice that last such a period starts in the year <code>3601</code>, since our function handles inputs in the range [1 - 4000] and <code>length(3600:4000)</code> is actually equal to 401. Anyway, for each of the periods, we counted the number of leap years (<code>numLeapYrs</code>) with <code>filter</code> and <code>length</code>. If <code>numLearpYrs</code> differs from <code>97</code>, we return <code>1</code> right away (and skip other checks). Otherwise (once all the periods passed the tests) we return <code>0</code>. The above is a convention met in C/C++ programming languages (see their <code>main</code> function). It is sufficient for our simplistic case, however, for more serious applications you should follow the testing advice contained in <a href="https://docs.julialang.org/en/v1/stdlib/Test/">the docs</a>.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./transcription.html"><b>17</b> Transcription</a> <kbd>←</kbd>
+        <a class="menu-level-2" href="./leap_year_problem.html"><b>10.1</b> Problem</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./transcription_solution.html"><b>17.2</b> Solution</a>
+            <kbd>→</kbd> <a class="menu-level-1" href="./calendar.html"><b>11</b> Calendar</a>
         </span>
     </p>
 </div>
