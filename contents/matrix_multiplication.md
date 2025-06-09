@@ -102,7 +102,7 @@ First, we place a simple assumption check with the
 [assert](https://docs.julialang.org/en/v1/base/base/#Base.@assert). Then we
 multiply each element of `row` by each element of `col` with `map`. `Map`
 applies a function (its first argument) to every element of a collection (its
-second argument), like so.
+second argument), like so:
 
 ```jl
 s = """
@@ -112,13 +112,14 @@ map(x -> x + 10, [1, 2, 3])
 sco(s)
 ```
 
-Here we used a vector (`[1, 2, 3]`) and applied an anonymous function to each of
-its elements. The function accepts one argument (`x`), adds 10 to it (`x + 10`)
-and returns (`->`) that value. Since `x` will become every element of the vector
-`[1, 2, 3]` then in effect 10 will be added to the each number and the results
-will be collected into a new vector (the old vector is not
-changed). Interestingly, we may also use a function that accepts two arguments
-and apply this function to parallel elements of two vectors, like so
+Here we used a vector (`[1, 2, 3]`) and applied an anonymous function
+(`x -> x + 10`) to each of its elements. The function accepts one argument
+(`x`), adds 10 to it (`x + 10`) and returns (`->`) that value. Since `x` will
+become every element of the vector `[1, 2, 3]` then in effect 10 will be added
+to the each component of the vector and the results will be collected into a new
+vector (the old vector is not changed). Interestingly, we may also use a
+function that accepts two arguments and apply this function to parallel elements
+of two vectors, like so:
 
 ```jl
 s = """
@@ -127,8 +128,9 @@ map((x, y) -> x * y, [1, 2, 3], [10, 100, 1000])
 sco(s)
 ```
 
-Here, `x` becomes every value of `[1, 2, 3]` and `y` every value of `[10, 100, 1000]` vector. 
-Given that `*` is just a syntactic sugar for `*(x, y)` we may simply place `*` alone.
+Here, `x` becomes every value of `[1, 2, 3]` and `y` every value of
+`[10, 100, 1000]` vector. Given that `*` is just a syntactic sugar for `*(x, y)`
+we may simply place `*` alone.
 
 ```jl
 s = """

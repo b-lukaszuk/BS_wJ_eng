@@ -8,7 +8,7 @@ The book contains a set of challenges of varying level of complexity (most
 likely in the range of easy to moderate). The exercises are for the problems
 that, for whatever reason, I found interesting. The tasks are accompanied by
 exemplary solutions in [Julia](https://julialang.org/) (with explanations).
-Still, I recommend you try to solve the tasks yourself.
+Still, I recommend you try to solve the tasks on your own.
 
 For practical reasons, I will assume this book to be read by curious readers of
 non-mathematical (i.e. resembling mine) background. Moreover, I expect that the
@@ -17,8 +17,8 @@ way to hone their newly acquired skills. To that end, I'll imagine you have read
 [my previous open access book](https://b-lukaszuk.github.io/RJ_BS_eng/). I'll do
 this not not because it is the best book in the world (which it is), but because
 of the [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
-(I'm going to apply similar writing conventions without delving too much into
-the previously mentioned topics).
+(I'm going to apply similar conventions without delving too much into the
+previously mentioned topics).
 
 For instance, just like in the previous book, here I will use the
 [assert](https://docs.julialang.org/en/v1/base/base/#Base.@assert) macro to
