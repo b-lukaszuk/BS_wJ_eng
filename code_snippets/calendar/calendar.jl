@@ -4,8 +4,8 @@ const Vec = Vector
 const daysPerWeek::Int = 7
 const daysPerMonth::Vec{Int} = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 const daysPerMonthLeap::Vec{Int} = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-const shiftYr::Int = 1 # using 365 here works the same
-const shiftYrLeap::Int = 2 # using 366 here works the same
+const shiftYr::Int = 365
+const shiftYrLeap::Int = 366
 const months::Dict{Int, Str} = Dict(
     1 => "January", 2 => "February", 3 => "March",
     4 => "April", 5 => "May", 6 => "June", 7 => "July",
@@ -113,14 +113,11 @@ getFmtMonth(2, 31, 12, 2025) |> print
 # 1 - Sunday, 7 - Saturday
 function getShiftedDay(curDay::Int, by::Int)::Int
     @assert 1 <= curDay <= 7 "curDay not in range [1-7]"
-    @assert by > 0 "by must be positive integer"
     newDay::Int = curDay
-    shift::Int = by % daysPerWeek
+    shift::Int = abs(by) % daysPerWeek
     for _ in 1:shift
-        newDay += 1
-        if newDay > daysPerWeek
-            newDay = 1
-        end
+        newDay += by < 0 ? -1 : 1
+        newDay = newDay < 1 ? 7 : (newDay > 7 ? 1 : newDay)
     end
     return newDay
 end
@@ -154,9 +151,13 @@ end
 function getMonthData(yr::Int, month::Int)::Tuple{Int, Int}
     @assert 1 <= yr <= 4000 "yr not in range [1-4000]"
     @assert 1 <= month <= 12 "month not in range [1-12]"
-    curDay::Int = 2 # 1st Jan of year 1 was Monday
-    for y in 1:(yr-1)
-        curDay = getShiftedDay(curDay, isLeap(y) ? shiftYrLeap : shiftYr)
+    curDay::Int = 4 # 1st Jan 2025 was Wednesday
+    start::Int = yr <= 2025 ? 2025-1 : 2025+1
+    step::Int = yr <= 2025 ? -1 : 1
+    yrShift::Int = 0
+    for y in start:step:yr
+        yrShift = isLeap(y) ? shiftYrLeap : shiftYr
+        curDay = getShiftedDay(curDay,  yrShift * step)
     end
     return getMonthData(curDay, month, isLeap(yr))
 end
@@ -167,3 +168,7 @@ getFmtMonth(getMonthData(2000, 2)..., 2, 2000) |> print
 getFmtMonth(getMonthData(2001, 9)..., 9, 2001) |> print
 # Dec 2020
 getFmtMonth(getMonthData(2020, 12)..., 12, 2020) |> print
+# Oct 2029
+getFmtMonth(getMonthData(2029, 10)..., 10, 2029) |> print
+# Mar 2050
+getFmtMonth(getMonthData(2050, 3)..., 3, 2050) |> print
