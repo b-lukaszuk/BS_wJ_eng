@@ -6,11 +6,16 @@ const daysPerMonth::Vec{Int} = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 const daysPerMonthLeap::Vec{Int} = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 const shiftYr::Int = 365
 const shiftYrLeap::Int = 366
-const months::Dict{Int, Str} = Dict(
+const monthsNum2Name::Dict{Int, Str} = Dict(
     1 => "January", 2 => "February", 3 => "March",
     4 => "April", 5 => "May", 6 => "June", 7 => "July",
     8 => "August", 9 => "September", 10 => "October",
     11 => "November", 12 => "December")
+const monthsName2Num::Dict{Str, Int} = Dict(
+     "Jan" => 1, "Feb" => 2, "Mar" => 3,
+    "Apr" => 4, "May" => 5, "Jun" => 6, "Jul" => 7,
+    "Aug" => 8, "Sep" => 9, "Oct" => 10,
+    "Nov" => 11, "Dec" => 12)
 
 # returns multiple of mult that is >= num
 function getMultiple(num::Int, mult::Int=daysPerWeek)::Int
@@ -97,7 +102,8 @@ function getFmtMonth(firstDayMonth::Int, nDaysMonth::Int, month::Int, year::Int)
     for r in eachrow(m)
         result *= fmtRow(r) * "\n"
     end
-    return  center(months[month] * string(" ", year), length(daysVerbs)) *
+    return  center(monthsNum2Name[month] *
+        string(" ", year), length(daysVerbs)) *
         "\n" * daysVerbs * "\n" * result
 end
 
@@ -159,13 +165,22 @@ function getMonthData(yr::Int, month::Int)::Tuple{Int, Int}
     return getMonthData(curDay, month, isLeap(yr))
 end
 
+function getCal(month::Int, yr::Int)::Str
+    getFmtMonth(getMonthData(yr, month)..., month, yr)
+end
+
+function getCal(month::Str, yr::Int)::Str
+    m::Int = monthsName2Num[month]
+    getCal(m, yr)
+end
+
 # Feb 2000
-getFmtMonth(getMonthData(2000, 2)..., 2, 2000) |> print
+getCal("Feb", 2000) |> print
 # Sep 2001
-getFmtMonth(getMonthData(2001, 9)..., 9, 2001) |> print
+getCal("Sep", 2001) |> print
 # Dec 2020
-getFmtMonth(getMonthData(2020, 12)..., 12, 2020) |> print
+getCal("Dec", 2020) |> print
 # Oct 2029
-getFmtMonth(getMonthData(2029, 10)..., 10, 2029) |> print
+getCal("Oct", 2029) |> print
 # Mar 2050
-getFmtMonth(getMonthData(2050, 3)..., 3, 2050) |> print
+getCal("Mar", 2050) |> print
