@@ -25,19 +25,16 @@ end
 
 # 1 - Sunday, 7 - Saturday
 function getDaysInRectangle(nDays::Int, firstDay::Int)::Vec{Int}
-    nDaysFront::Int = firstDay-1
-    daysFront::Vec{Int} = repeat([0], nDaysFront)
-    daysMid::Vec{Int} = collect(1:nDays)
-    nDaysFrontMid::Int = nDaysFront + nDays
-    nDaysBack::Int = getMultiple(nDaysFrontMid, daysPerWeek) - nDaysFrontMid
-    daysBack::Vec{Int} = repeat([0], nDaysBack)
-    days::Vec{Int} = vcat(daysFront, daysMid, daysBack)
+    daysFront::Int = firstDay - 1
+    days::Vec{Int} = zeros(getMultiple(nDays+daysFront, daysPerWeek))
+    days[firstDay:(firstDay+nDays-1)] = 1:nDays
     return days
 end
 
 function reshape2matrix(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
     len::Int = length(v)
-    @assert (len == r*c)
+    @assert (r > 0 && c > 0) "r and c must be positive integers"
+    @assert (len == r*c) "length(v) must be equal r*c"
     m::Matrix{T} = Matrix{T}(undef, r, c)
     stepBegin::Int = 1
     stepSize::Int = (byRow ? c : r) - 1
