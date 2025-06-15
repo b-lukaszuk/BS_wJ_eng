@@ -29,18 +29,35 @@ Su Mo Tu We Th Fr Sa
 29 30
 ```
 
-Use it to tell which day of the week you were born.
+Use it to tell on which day of the week you were born.
 
 Alternatively, assume that the Gregorian calendar has been applied throughout
-the [Common Era](https://en.wikipedia.org/wiki/Common_Era), and say:
+the [Common Era](https://en.wikipedia.org/wiki/Common_Era). Based on that say:
 
-- on what day of the week was Jesus born (assume: Dec 25, year 1)
+- on what day of the week was Jesus born (assume: Dec 25, year 1)?
 - on what day of the week did Christopher Columbus departed from Palos de la
-  Frontera and later discovered the New World (assume: Aug 3, year 1492)
+  Frontera and later discovered the New World (assume: Aug 3, year 1492)?
 - on what day of the week was the world suppose to end (assume: Dec 21, year
-  2012, but you [got plenty to choose
-  from](https://en.wikipedia.org/wiki/List_of_dates_predicted_for_apocalyptic_events))
-- on what day of the week will the year 4000 start (Jan 1)
+  2012, but you [got plenty dates to choose
+  from](https://en.wikipedia.org/wiki/List_of_dates_predicted_for_apocalyptic_events))?
+- on what day of the week will the year 4000 start?
+
+Try not to employ the built-in [Dates](https://docs Notice that you may verify
+your results with .julialang.org/en/v1/stdlib/Dates/) module in your
+solution. Still, you may use it to verify your results, e.g. in order to know on
+which day did this year start just type:
+
+```jl
+s = """
+import Dates as Dt
+
+d = Dt.Date(2025, 1, 1)
+Dt.dayname(d)
+"""
+sco(s)
+```
+
+BTW. You may use the above as your reference point for counting days.
 
 ## Solution {#sec:calendar_solution}
 
