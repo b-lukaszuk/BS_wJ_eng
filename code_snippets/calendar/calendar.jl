@@ -19,12 +19,11 @@ const monthsName2Num::Dict{Str, Int} = Dict(
 
 # returns multiple of mult that is >= num
 function getMultiple(num::Int, mult::Int=daysPerWeek)::Int
-    @assert num > 0 "num must be > 0"
-    @assert mult > 0 "mult must be > 0"
+    @assert num > 0 && mult > 0 "num and mult must be > 0"
     if num % mult == 0
         return num
     else
-        return Int(ceil(num / mult) * mult)
+        return round(Int, ceil(num / mult)) * mult
     end
 end
 
