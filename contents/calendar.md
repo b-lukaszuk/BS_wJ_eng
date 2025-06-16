@@ -61,4 +61,51 @@ BTW. You may use the above as your reference point for counting days.
 
 ## Solution {#sec:calendar_solution}
 
-The solution goes here.
+First let's begin by defining a few rather self explanatory constants (`const`)
+that we will use throughout our program.
+
+```jl
+s = """
+daysPerWeek::Int = 7
+daysPerMonth::Vec{Int} = [31, 28, 31, 30, 31, 30, 31,
+	31, 30, 31, 30, 31]
+daysPerMonthLeap::Vec{Int} = [31, 29, 31, 30, 31, 30, 31,
+	31, 30, 31, 30, 31]
+shiftYr::Int = 365
+shiftYrLeap::Int = 366
+monthsNum2Name::Dict{Int, Str} = Dict(
+    1 => "January", 2 => "February", 3 => "March",
+    4 => "April", 5 => "May", 6 => "June", 7 => "July",
+    8 => "August", 9 => "September", 10 => "October",
+    11 => "November", 12 => "December")
+monthsName2Num::Dict{Str, Int} = Dict(
+    "Jan" => 1, "Feb" => 2, "Mar" => 3,
+    "Apr" => 4, "May" => 5, "Jun" => 6, "Jul" => 7,
+    "Aug" => 8, "Sep" => 9, "Oct" => 10,
+    "Nov" => 11, "Dec" => 12)
+"""
+replace(sc(s), r"\bd" => "const d", r"\bs" => "const s", r"\bm" => "const m")
+```
+
+As you can see from the output of `cal Jan 2025` we get a rectangular printout
+with 7 rows and `x` columns. Clearly, the number of elements is a multiple of 7.
+So, let's write a function that determines how many elements should be in our
+rectangle.
+
+```jl
+s = """
+# returns multiple of mult that is >= num
+function getMultiple(num::Int, mult::Int=daysPerWeek)::Int
+    @assert num > 0 && mult > 0 "num and mult must be > 0"
+    if num % mult == 0
+        return num
+    else
+        return round(Int, ceil(num / mult)) * mult
+    end
+end
+"""
+sc(s)
+```
+
+To that end we wrote `getMultiple` that returns the multiple of `mult` that is
+greater than or equal to `num`.
