@@ -49,7 +49,8 @@ resource of your liking. Alternatively you may visit [Rosetta Code
 web-page](https://rosettacode.org/wiki/Category:Solutions_by_Programming_Task)
 that contains over 1'000 programming exercises with solutions in different
 programming languages. Chances are many that of the exercises presented here are
-to be found there.
+to be found there (not that I copied them, it's just that they've been around
+for quite some time).
 
 Finally, just like in the previous book, I'll try to write in a possibly simple
 (clarity over cleverness and performance) and correct manner. Still, I'm only

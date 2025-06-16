@@ -14,9 +14,9 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/calend
 A Gnu/Linux operating system comes with a bunch of
 [utilities](https://en.wikipedia.org/wiki/Util-linux) that help with an everyday
 life. One of them is [cal](https://en.wikipedia.org/wiki/Cal_(command)) command
-that displays a calendar. Let's try to mimic a fraction of its power (the source
-code in cal.c is over 1,000 lines long so we will not try to replicate it all).
-Write a program that prints a calendar for a given month similarly to:
+that displays a calendar. Let's try to mimic a fraction of its power.
+Write a program that prints a calendar for a given month that looks similarly
+to:
 
 ```
 > cal Jun 2025 # shell command (output starts 1 line below)
@@ -40,10 +40,10 @@ the [Common Era](https://en.wikipedia.org/wiki/Common_Era). Based on that say:
 - on what day of the week was the world suppose to end (assume: Dec 21, year
   2012, but you [got plenty dates to choose
   from](https://en.wikipedia.org/wiki/List_of_dates_predicted_for_apocalyptic_events))?
-- on what day of the week will the year 4000 start?
+- on what day of the week will the next millennium start (assume: Jan 1, 3000)?
 
-Try not to employ the built-in [Dates](https://docs Notice that you may verify
-your results with .julialang.org/en/v1/stdlib/Dates/) module in your
+Try not to employ the built-in
+[Dates](https://docs.julialang.org/en/v1/stdlib/Dates/) module in your
 solution. Still, you may use it to verify your results, e.g. in order to know on
 which day did this year start just type:
 
