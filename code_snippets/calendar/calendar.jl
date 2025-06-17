@@ -17,20 +17,21 @@ const monthsName2Num::Dict{Str, Int} = Dict(
     "Aug" => 8, "Sep" => 9, "Oct" => 10,
     "Nov" => 11, "Dec" => 12)
 
-# returns multiple of mult that is >= num
-function getMultiple(num::Int, mult::Int=daysPerWeek)::Int
-    @assert num > 0 && mult > 0 "num and mult must be > 0"
-    if num % mult == 0
-        return num
+# returns multiple of y that is >= x
+function getMultOfYGtEqX(x::Int, y::Int=daysPerWeek)::Int
+    @assert x > 0 && y > 0 "x and y must be > 0"
+    @assert x >= y "x must be >= y"
+    if x % y == 0
+        return x
     else
-        return round(Int, ceil(num / mult)) * mult
+        return round(Int, ceil(x / y)) * y
     end
 end
 
 # 1 - Sunday, 7 - Saturday
 function getDaysInRectangle(nDays::Int, firstDay::Int)::Vec{Int}
     daysFront::Int = firstDay - 1
-    days::Vec{Int} = zeros(getMultiple(nDays+daysFront, daysPerWeek))
+    days::Vec{Int} = zeros(getMultOfYGtEqX(nDays+daysFront, daysPerWeek))
     days[firstDay:(firstDay+nDays-1)] = 1:nDays
     return days
 end
@@ -70,7 +71,7 @@ x = getDaysInRectangle(31, 5);
 reshape2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
 # June 2025
-x = getDaysInRectangle(30, 1);
+x = getDaysInRectangle(30, 7);
 reshape2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
 # fn from chapter: Pascal's triangle

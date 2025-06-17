@@ -94,18 +94,18 @@ rectangle.
 
 ```jl
 s = """
-# returns multiple of mult that is >= num
-function getMultiple(num::Int, mult::Int=daysPerWeek)::Int
-    @assert num > 0 && mult > 0 "num and mult must be > 0"
-    if num % mult == 0
-        return num
+function getMultOfYGtEqX(x::Int, y::Int=daysPerWeek)::Int
+    @assert x > 0 && y > 0 "x and y must be > 0"
+    @assert x >= y "x must be >= y"
+    if x % y == 0
+        return x
     else
-        return round(Int, ceil(num / mult)) * mult
+        return round(Int, ceil(x / y)) * y
     end
 end
 """
 sc(s)
 ```
 
-To that end we wrote `getMultiple` that returns the multiple of `mult` that is
-greater than or equal to `num`.
+To that end we wrote `getMultOfYGtEqX` that, as its name implies, returns the
+multiple of `y` that is greater than or equal to `x`.
