@@ -29,14 +29,14 @@ function getMultOfYGtEqX(x::Int, y::Int=daysPerWeek)::Int
 end
 
 # 1 - Sunday, 7 - Saturday
-function getDaysInRectangle(nDays::Int, firstDay::Int)::Vec{Int}
-    daysFront::Int = firstDay - 1
+function getPaddedDays(nDays::Int, fstDay::Int)::Vec{Int}
+    daysFront::Int = fstDay - 1
     days::Vec{Int} = zeros(getMultOfYGtEqX(nDays+daysFront, daysPerWeek))
-    days[firstDay:(firstDay+nDays-1)] = 1:nDays
+    days[fstDay:(fstDay+nDays-1)] = 1:nDays
     return days
 end
 
-function reshape2matrix(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
+function vec2matrix(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
     len::Int = length(v)
     @assert (r > 0 && c > 0) "r and c must be positive integers"
     @assert (len == r*c) "length(v) must be equal r*c"
@@ -55,24 +55,24 @@ function reshape2matrix(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where
 end
 
 # February 2025
-x = getDaysInRectangle(28, 7);
-reshape2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
+x = getPaddedDays(28, 7);
+vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
 # March 2025
-x = getDaysInRectangle(31, 7);
-reshape2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
+x = getPaddedDays(31, 7);
+vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
 # April 2025
-x = getDaysInRectangle(30, 3);
-reshape2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
+x = getPaddedDays(30, 3);
+vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
 # May 2025
-x = getDaysInRectangle(31, 5);
-reshape2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
+x = getPaddedDays(31, 5);
+vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
 # June 2025
-x = getDaysInRectangle(30, 7);
-reshape2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
+x = getPaddedDays(30, 7);
+vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
 
 # fn from chapter: Pascal's triangle
 function center(sth::A, totLen::Int)::Str where A<:Union{Int, Str}
@@ -93,9 +93,9 @@ function getFmtMonth(firstDayMonth::Int, nDaysMonth::Int, month::Int, year::Int)
     @assert 28 <= nDaysMonth <= 31 "nDaysMonth must be in range [28-31]"
     @assert 1 <= firstDayMonth <= 7 "firstDayMonth must be in range [1-7]"
     daysVerbs::Str = join(["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"], " ")
-    days::Vec{Str} = string.(getDaysInRectangle(nDaysMonth, firstDayMonth))
+    days::Vec{Str} = string.(getPaddedDays(nDaysMonth, firstDayMonth))
     days = replace(days, "0" =>" ")
-    m::Matrix{Str} = reshape2matrix(days, Int(length(days)/daysPerWeek), daysPerWeek, true)
+    m::Matrix{Str} = vec2matrix(days, Int(length(days)/daysPerWeek), daysPerWeek, true)
     fmtDay(day) = lpad(day, 2)
     fmtRow(row) = join(map(fmtDay, row), " ")
     result::Str = ""
