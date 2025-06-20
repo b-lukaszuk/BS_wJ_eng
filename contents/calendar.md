@@ -108,4 +108,77 @@ sc(s)
 ```
 
 To that end we wrote `getMultOfYGtEqX` that, as its name implies, returns the
-multiple of `y` that is greater than or equal to `x`.
+multiple of `y` that is greater than or equal to `x`. Briefly, if `x` is evenly
+divisible by `y` (`x % y == 0`) then we return `x`. Otherwise, we divide `x` by
+`y` (`x / y`) and round it up to the next full number with `ceil` and represent
+it as an integer (`round(Int, ...`) . We return that number multiplied by `y`.
+
+We use it to get our days for a given month padded with zeros.
+
+```jl
+s = """
+# 1 - Sunday, 7 - Saturday
+function getPaddedDays(nDays::Int, fstDay::Int)::Vec{Int}
+    daysFront::Int = fstDay - 1
+    days::Vec{Int} = zeros(getMultOfYGtEqX(nDays+daysFront, daysPerWeek))
+    days[fstDay:(fstDay+nDays-1)] = 1:nDays
+    return days
+end
+
+function vec2matrix(v::Vec{T}, r::Int, c::Int,
+	byRow::Bool)::Matrix{T} where T
+    len::Int = length(v)
+    @assert (r > 0 && c > 0) "r and c must be positive integers"
+    @assert (len == r*c) "length(v) must be equal r*c"
+    m::Matrix{T} = Matrix{T}(undef, r, c)
+    stepBegin::Int = 1
+    stepSize::Int = (byRow ? c : r) - 1
+    for i in 1:(byRow ? r : c)
+        if byRow
+            m[i, :] = v[stepBegin:(stepBegin+stepSize)]
+        else
+            m[:, i] = v[stepBegin:(stepBegin+stepSize)]
+        end
+        stepBegin += (stepSize + 1)
+    end
+    return m
+end
+"""
+sc(s)
+```
+
+All that we need for that is to know the number of days in a given month
+(`nDays`) and what is the first day (`fstDay`, where 1 is Sunday and 7 is
+Saturday). We use the above as the arguments to `getPaddedDays`. The function
+creates a vector of `zeros` that contains number of elements that is a multiple
+of 7 (`daysPerWeek`). The vector length is determined by `getMultOfYGtEqX` and
+is at least `nDays+daysFront` long. We fill the vector (starting at `fstDay`)
+with digits for all the days (`1:nDays`). Finally we return the days.
+
+Finally, we want to put the vector (result of `getPaddedDAys`) into a matrix
+with 7 columns (`daysPerWeek`) and the appropriated number of rows. For that we
+wrote `vec2matrix`, that unlike the built in
+[reshape](https://docs.julialang.org/en/v1/base/arrays/#Base.reshape), will
+allow to break the vector (`v`) row by row (when `byRow = true`).
+
+Let's see how it works for January 2025.
+
+```jl
+s = """
+jan2025 = getPaddedDays(31, 4)
+vec2matrix(jan2025, Int(length(jan2025) / daysPerWeek), daysPerWeek, true)
+"""
+sco(s)
+```
+
+Pretty good, and how about this month.
+
+```jl
+s = """
+jun2025 = getPaddedDays(30, 1)
+vec2matrix(jun2025, Int(length(jun2025) / daysPerWeek), daysPerWeek, true)
+"""
+sco(s)
+```
+
+It appears to be working as intended.
