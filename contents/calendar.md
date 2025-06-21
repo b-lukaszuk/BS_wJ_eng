@@ -172,7 +172,7 @@ vec2matrix(jan2025, Int(length(jan2025) / daysPerWeek), daysPerWeek, true)
 sco(s)
 ```
 
-Pretty good, and how about this month.
+Pretty good, and how about this month (Junt 2025).
 
 ```jl
 s = """
@@ -183,3 +183,74 @@ sco(s)
 ```
 
 It appears to be working as intended.
+
+Time to format it a little.
+
+```jl
+s = """
+# 1 - Sunday, 7 - Saturday
+function getFmtMonth(firstDayMonth::Int, nDaysMonth::Int,
+	month::Int, year::Int)::Str
+    @assert 1 <= year <= 4000 "year must be in range [1-4000]"
+    @assert 1 <= month <= 12 "month must be in range [1-12]"
+    @assert 28 <= nDaysMonth <= 31 "nDaysMonth must be in range [28-31]"
+    @assert 1 <= firstDayMonth <= 7 "firstDayMonth must be in range [1-7]"
+    topRow2::Str = join(weekdaysNames, " ")
+    topRow1::Str = center(
+        string(monthsNum2Name[month], " ", year), length(topRow2))
+    days::Vec{Str} = string.(getPaddedDays(nDaysMonth, firstDayMonth))
+    days = replace(days, "0" =>" ")
+    m::Matrix{Str} = vec2matrix(
+        days, Int(length(days)/daysPerWeek), daysPerWeek, true)
+    fmtDay(day) = lpad(day, 2) # left padding with upto 2 spaces,
+    fmtRow(row) = join(map(fmtDay, row), " ")
+    result::Str = ""
+    for r in eachrow(m)
+        result *= fmtRow(r) * "\\n"
+    end
+    return topRow1 * "\\n" * topRow2 * "\\n" * result
+end
+"""
+sc(s)
+```
+
+We begin with a couple of sanity checks (`@assert` statements). Next, we `join`
+`weekdaysNames` into a one long string separated with spaces (`" "`) to get a
+row just above the days (`topRow2`). Above that (`topRow1`) we will place a
+month name (`monthsNum2Name[month]`) and a `year` (like `January 2025`), which
+we `center` with the function that we developed in
+@sec:pascals_triangle_solution. The following rows will be occupied by `days`
+written with the Arabic numerals and expressed as vector of strings
+(`days::Vec{Str}`). However, we replace the zeros (`"0"` used for padding) with
+spaces and put them into a matrix (`m`). All that left to do is to define day
+(`fmtDay`) and row (`fmtRow`) formatters (inline functions) for our
+matrix. We proceed by building our `result` row by row
+(`result *= fmtRow(r) * "\n"`). Finally, we return a formatted month by gluing
+everything together (`topRow1 * "\n" * topRow2 * "\n" * result`). Let's take a
+sneak peak.
+
+January 2025:
+
+```
+getFmtMonth(4, 31, 1, 2025)
+    January 2025
+Su Mo Tu We Th Fr Sa
+          1  2  3  4
+ 5  6  7  8  9 10 11
+12 13 14 15 16 17 18
+19 20 21 22 23 24 25
+26 27 28 29 30 31
+```
+
+and June 2025:
+
+```
+getFmtMonth(1, 30, 6, 2025)
+      June 2025
+Su Mo Tu We Th Fr Sa
+ 1  2  3  4  5  6  7
+ 8  9 10 11 12 13 14
+15 16 17 18 19 20 21
+22 23 24 25 26 27 28
+29 30
+```
