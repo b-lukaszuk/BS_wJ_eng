@@ -35,8 +35,6 @@ Alternatively, assume that the Gregorian calendar has been applied throughout
 the [Common Era](https://en.wikipedia.org/wiki/Common_Era). Based on that say:
 
 - on what day of the week was Jesus born (assume: Dec 25, year 1)?
-- on what day of the week did Christopher Columbus departed from Palos de la
-  Frontera and later discovered the New World (assume: Aug 3, year 1492)?
 - on what day of the week was the world suppose to end (assume: Dec 21, year
   2012, but you [got plenty dates to choose
   from](https://en.wikipedia.org/wiki/List_of_dates_predicted_for_apocalyptic_events))?
@@ -44,8 +42,8 @@ the [Common Era](https://en.wikipedia.org/wiki/Common_Era). Based on that say:
 
 Try not to employ the built-in
 [Dates](https://docs.julialang.org/en/v1/stdlib/Dates/) module in your
-solution. Still, you may use it to verify your results, e.g. in order to know on
-which day did this year start just type:
+solution (unless you have to). Still, you may use it to verify your results,
+e.g. in order to know on which day did this year start just type:
 
 ```jl
 s = """
