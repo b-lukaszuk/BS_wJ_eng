@@ -6,6 +6,7 @@ const daysPerMonth::Vec{Int} = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 const daysPerMonthLeap::Vec{Int} = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 const shiftYr::Int = 365
 const shiftYrLeap::Int = 366
+const weekdaysNames::Vec{Str} = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
 const monthsNum2Name::Dict{Int, Str} = Dict(
     1 => "January", 2 => "February", 3 => "March",
     4 => "April", 5 => "May", 6 => "June", 7 => "July",
@@ -92,19 +93,20 @@ function getFmtMonth(firstDayMonth::Int, nDaysMonth::Int, month::Int, year::Int)
     @assert 1 <= month <= 12 "month must be in range [1-12]"
     @assert 28 <= nDaysMonth <= 31 "nDaysMonth must be in range [28-31]"
     @assert 1 <= firstDayMonth <= 7 "firstDayMonth must be in range [1-7]"
-    daysVerbs::Str = join(["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"], " ")
+    topRow2::Str = join(weekdaysNames, " ")
+    topRow1::Str = center(
+        string(monthsNum2Name[month], " ", year), length(topRow2))
     days::Vec{Str} = string.(getPaddedDays(nDaysMonth, firstDayMonth))
     days = replace(days, "0" =>" ")
-    m::Matrix{Str} = vec2matrix(days, Int(length(days)/daysPerWeek), daysPerWeek, true)
+    m::Matrix{Str} = vec2matrix(
+        days, Int(length(days)/daysPerWeek), daysPerWeek, true)
     fmtDay(day) = lpad(day, 2)
     fmtRow(row) = join(map(fmtDay, row), " ")
     result::Str = ""
     for r in eachrow(m)
         result *= fmtRow(r) * "\n"
     end
-    return  center(monthsNum2Name[month] *
-        string(" ", year), length(daysVerbs)) *
-        "\n" * daysVerbs * "\n" * result
+    return topRow1 * "\n" * topRow2 * "\n" * result
 end
 
 getFmtMonth(7, 28, 2, 2025) |> print
