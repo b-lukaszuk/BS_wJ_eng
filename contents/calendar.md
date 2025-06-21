@@ -73,6 +73,7 @@ daysPerMonthLeap::Vec{Int} = [31, 29, 31, 30, 31, 30, 31,
 	31, 30, 31, 30, 31]
 shiftYr::Int = 365
 shiftYrLeap::Int = 366
+weekdaysNames::Vec{Str} = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
 monthsNum2Name::Dict{Int, Str} = Dict(
     1 => "January", 2 => "February", 3 => "March",
     4 => "April", 5 => "May", 6 => "June", 7 => "July",
@@ -84,7 +85,7 @@ monthsName2Num::Dict{Str, Int} = Dict(
     "Aug" => 8, "Sep" => 9, "Oct" => 10,
     "Nov" => 11, "Dec" => 12)
 """
-replace(sc(s), r"\bd" => "const d", r"\bs" => "const s", r"\bm" => "const m")
+replace(sc(s), r"\bd" => "const d", r"\bs" => "const s", r"\bm" => "const m", r"\bweek" => "const week")
 ```
 
 As you can see from the output of `cal Jan 2025` we get a rectangular printout
