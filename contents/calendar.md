@@ -86,10 +86,10 @@ monthsName2Num::Dict{Str, Int} = Dict(
 replace(sc(s), r"\bd" => "const d", r"\bs" => "const s", r"\bm" => "const m", r"\bweek" => "const week")
 ```
 
-As you can see from the output of `cal Jan 2025` we get a rectangular printout
-with 7 rows and `x` columns. Clearly, the number of elements is a multiple of 7.
-So, let's write a function that determines how many elements should be in our
-rectangle.
+As you can see from the output of `cal Jan 2025` (see @sec:calendar_problem) we
+get a rectangular printout with 7 columns and `x` rows. Clearly, the number of
+elements is a multiple of 7. So, let's write a function that determines how
+many elements should be in our rectangle.
 
 ```jl
 s = """
@@ -109,10 +109,11 @@ sc(s)
 To that end we wrote `getMultOfYGtEqX` that, as its name implies, returns the
 multiple of `y` that is greater than or equal to `x`. Briefly, if `x` is evenly
 divisible by `y` (`x % y == 0`) then we return `x`. Otherwise, we divide `x` by
-`y` (`x / y`) and round it up to the next full number with `ceil` and represent
-it as an integer (`round(Int, ...`) . We return that number multiplied by `y`.
+`y` (`x / y`), round it up to the next full number with `ceil` and represent it
+as an integer (`round(Int, ...`) . We return that number multiplied by `y`.
 
-We use it to get our days for a given month padded with zeros.
+We will use it (`getMultOfYGtEqX`) to get our days for a given month padded with
+zeros.
 
 ```jl
 s = """
@@ -154,7 +155,7 @@ of 7 (`daysPerWeek`). The vector length is determined by `getMultOfYGtEqX` and
 is at least `nDays+daysFront` long. We fill the vector (starting at `fstDay`)
 with digits for all the days (`1:nDays`). Finally we return the days.
 
-Finally, we want to put the vector (result of `getPaddedDAys`) into a matrix
+Finally, we want to put the vector (result of `getPaddedDays`) into a matrix
 with 7 columns (`daysPerWeek`) and the appropriated number of rows. For that we
 wrote `vec2matrix`, that unlike the built in
 [reshape](https://docs.julialang.org/en/v1/base/arrays/#Base.reshape), will
@@ -170,7 +171,7 @@ vec2matrix(jan2025, Int(length(jan2025) / daysPerWeek), daysPerWeek, true)
 sco(s)
 ```
 
-Pretty good, and how about this month (Junt 2025).
+Pretty good, and how about this month (June 2025).
 
 ```jl
 s = """
@@ -214,13 +215,13 @@ sc(s)
 
 We begin with a couple of sanity checks (`@assert` statements). Next, we `join`
 `weekdaysNames` into a one long string separated with spaces (`" "`) to get a
-row just above the days (`topRow2`). Above that (`topRow1`) we will place a
-month name (`monthsNum2Name[month]`) and a `year` (like `January 2025`), which
-we `center` with the function that we developed in
-@sec:pascals_triangle_solution. The following rows will be occupied by `days`
+row just on top of the days (`topRow2`). Above that (`topRow1`) we will place a
+month name (`monthsNum2Name[month]`) and a `year` (like `"January 2025"`), which
+we `center` with the function developed in @sec:pascals_triangle_solution.
+Finally, the consecutive rows will be occupied by `days`
 written with the Arabic numerals and expressed as vector of strings
 (`days::Vec{Str}`). However, we replace the zeros (`"0"` used for padding) with
-spaces and put them into a matrix (`m`). All that left to do is to define day
+spaces and put them into a matrix (`m`). All that's left to do is to define day
 (`fmtDay`) and row (`fmtRow`) formatters (inline functions) for our
 matrix. We proceed by building our `result` row by row
 (`result *= fmtRow(r) * "\n"`). Finally, we return a formatted month by gluing
