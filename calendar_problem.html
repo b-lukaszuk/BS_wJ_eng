@@ -128,7 +128,29 @@ Mousetrap.bind('l', click_next);
 
 <div class="books-content">
 <h2 data-number="11.1" id="sec:calendar_problem"><span class="header-section-number">11.1</span> Problem</h2>
-<p>The problem description goes here.</p>
+<p>A Gnu/Linux operating system comes with a bunch of <a href="https://en.wikipedia.org/wiki/Util-linux">utilities</a> that help with an everyday life. One of them is <a href="https://en.wikipedia.org/wiki/Cal_(command)">cal</a> command that displays a calendar. Let’s try to mimic a fraction of its power. Write a program that prints a calendar for a given month that looks similarly to:</p>
+<pre><code>&gt; cal Jun 2025 # shell command (output starts 1 line below)
+     June 2025
+Su Mo Tu We Th Fr Sa
+ 1  2  3  4  5  6  7
+ 8  9 10 11 12 13 14
+15 16 17 18 19 20 21
+22 23 24 25 26 27 28
+29 30</code></pre>
+<p>Use it to tell on which day of the week you were born.</p>
+<p>Alternatively, assume that the Gregorian calendar has been applied throughout the whole <a href="https://en.wikipedia.org/wiki/Common_Era">Common Era</a>. Based on that say:</p>
+<ul>
+<li>on what day of the week was Jesus born (assume: Dec 25, year 1)?</li>
+<li>on what day of the week was the world supposed to come to an end (assume: Dec 21, year 2012, but you <a href="https://en.wikipedia.org/wiki/List_of_dates_predicted_for_apocalyptic_events">got plenty dates to choose from</a>)?</li>
+<li>on what day of the week will the next millennium start (assume: Jan 1, 3000)?</li>
+</ul>
+<p>Try not to employ the built-in <a href="https://docs.julialang.org/en/v1/stdlib/Dates/">Dates</a> module in your solution (unless you have to). Still, you may use it to verify your results, e.g. in order to know on which day did this year start just type:</p>
+<pre class="language-julia"><code>import Dates as Dt
+
+d = Dt.Date(2025, 1, 1)
+Dt.dayname(d)</code></pre>
+<p>Wednesday</p>
+<p>BTW. You may use the above day as your reference point.</p>
 
 
 <div class="bottom-nav">
