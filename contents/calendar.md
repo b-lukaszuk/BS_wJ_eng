@@ -32,7 +32,8 @@ Su Mo Tu We Th Fr Sa
 Use it to tell on which day of the week you were born.
 
 Alternatively, assume that the Gregorian calendar has been applied throughout
-the [Common Era](https://en.wikipedia.org/wiki/Common_Era). Based on that say:
+the whole [Common Era](https://en.wikipedia.org/wiki/Common_Era). Based on that
+say:
 
 - on what day of the week was Jesus born (assume: Dec 25, year 1)?
 - on what day of the week was the world suppose to end (assume: Dec 21, year
@@ -355,3 +356,78 @@ with `for y in start:step:yr`). Of course, we take into account leap years (see
 `isLeap` from @sec:leap_year_solution) if there are any. Finally (`return`), we
 use the previously defined `getMonthData` method, to figure out the crucial data
 for a month we are looking for.
+
+All that's left to do is to pack it all into `getCal` wrapper for the ease of
+use.
+
+```jl
+s = """
+function getCal(month::Int, yr::Int)::Str
+	# ... - unpacks tuple into separate values
+    getFmtMonth(getMonthData(yr, month)..., month, yr)
+end
+
+function getCal(month::Str, yr::Int)::Str
+    m::Int = monthsName2Num[month]
+    getCal(m, yr)
+end
+"""
+sc(s)
+```
+
+Time for the first swing.
+
+```
+getCal("Jan", 2025)
+    January 2025
+Su Mo Tu We Th Fr Sa
+          1  2  3  4
+ 5  6  7  8  9 10 11
+12 13 14 15 16 17 18
+19 20 21 22 23 24 25
+26 27 28 29 30 31
+```
+
+And now for the questions.
+
+On what day of the week was Jesus born (assume: Dec 25, year 1)?
+
+```
+getCal("Dec", 1)
+     December 1
+Su Mo Tu We Th Fr Sa
+                   1
+ 2  3  4  5  6  7  8
+ 9 10 11 12 13 14 15
+16 17 18 19 20 21 22
+23 24 25 26 27 28 29
+30 31
+```
+
+On what day of the week was the world suppose to end (assume: Dec 21, year
+2012)?
+
+```
+getCal("Dec", 2012)
+    December 2012
+Su Mo Tu We Th Fr Sa
+                   1
+ 2  3  4  5  6  7  8
+ 9 10 11 12 13 14 15
+16 17 18 19 20 21 22
+23 24 25 26 27 28 29
+30 31
+```
+
+On what day of the week will the next millennium start (assume: Jan 1, 3000)?
+
+```
+getCal("Jan", 3000)
+    January 3000
+Su Mo Tu We Th Fr Sa
+          1  2  3  4
+ 5  6  7  8  9 10 11
+12 13 14 15 16 17 18
+19 20 21 22 23 24 25
+26 27 28 29 30 31
+```
