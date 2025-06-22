@@ -41,7 +41,7 @@ end
 
 function vec2matrix(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
     @assert (r > 0 && c > 0) "r and c must be positive integers"
-    @assert (length(v) == r*c) "length(v) must be equal r*c"
+    @assert (length(v) == r*c) "length(v) must be equal to r*c"
     m::Matrix{T} = Matrix{T}(undef, r, c)
     stepBegin::Int = 1
     stepSize::Int = (byRow ? c : r) - 1
@@ -75,16 +75,17 @@ function center(sth::A, totLen::Int)::Str where A<:Union{Int, Str}
 end
 
 # 1 - Sunday, 7 - Saturday
-function getFmtMonth(firstDayMonth::Int, nDaysMonth::Int, month::Int, year::Int)::Str
-    @assert 1 <= year <= 4000 "year must be in range [1-4000]"
-    @assert 1 <= month <= 12 "month must be in range [1-12]"
-    @assert 28 <= nDaysMonth <= 31 "nDaysMonth must be in range [28-31]"
+function getFmtMonth(firstDayMonth::Int, nDaysMonth::Int,
+                     month::Int, year::Int)::Str
     @assert 1 <= firstDayMonth <= 7 "firstDayMonth must be in range [1-7]"
+    @assert 28 <= nDaysMonth <= 31 "nDaysMonth must be in range [28-31]"
+    @assert 1 <= month <= 12 "month must be in range [1-12]"
+    @assert 1 <= year <= 4000 "year must be in range [1-4000]"
     topRow2::Str = join(weekdaysNames, " ")
     topRow1::Str = center(
         string(monthsNum2Name[month], " ", year), length(topRow2))
     days::Vec{Str} = string.(getPaddedDays(nDaysMonth, firstDayMonth))
-    days = replace(days, "0" =>" ")
+    days = replace(days, "0" => " ")
     m::Matrix{Str} = vec2matrix(
         days, Int(length(days)/daysPerWeek), daysPerWeek, true)
     fmtDay(day) = lpad(day, 2)
@@ -163,13 +164,15 @@ function getCal(month::Str, yr::Int)::Str
 end
 
 getCal("Jan", 2025) |> print
+d = Dt.Date(2025, 1, 1)
+Dt.dayname(d)
 
 # Jesus's birth
 getCal("Dec", 1) |> print
 d = Dt.Date(1, 12, 25)
 Dt.dayname(d)
 
-# world end (one of many)
+# the end of the world (one of many)
 getCal("Dec", 2012) |> print
 d = Dt.Date(2012, 12, 21)
 Dt.dayname(d)
