@@ -1,3 +1,5 @@
+import Dates as Dt
+
 const Str = String
 const Vec = Vector
 
@@ -38,9 +40,8 @@ function getPaddedDays(nDays::Int, fstDay::Int)::Vec{Int}
 end
 
 function vec2matrix(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
-    len::Int = length(v)
     @assert (r > 0 && c > 0) "r and c must be positive integers"
-    @assert (len == r*c) "length(v) must be equal r*c"
+    @assert (length(v) == r*c) "length(v) must be equal r*c"
     m::Matrix{T} = Matrix{T}(undef, r, c)
     stepBegin::Int = 1
     stepSize::Int = (byRow ? c : r) - 1
@@ -55,25 +56,11 @@ function vec2matrix(v::Vec{T}, r::Int, c::Int, byRow::Bool)::Matrix{T} where T
     return m
 end
 
-# February 2025
-x = getPaddedDays(28, 7);
-vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
+jan2025 = getPaddedDays(31, 4)
+vec2matrix(jan2025, Int(length(jan2025) / daysPerWeek), daysPerWeek, true)
 
-# March 2025
-x = getPaddedDays(31, 7);
-vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
-
-# April 2025
-x = getPaddedDays(30, 3);
-vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
-
-# May 2025
-x = getPaddedDays(31, 5);
-vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
-
-# June 2025
-x = getPaddedDays(30, 7);
-vec2matrix(x, Int(length(x) / daysPerWeek), daysPerWeek, true)
+jun2025 = getPaddedDays(30, 1)
+vec2matrix(jun2025, Int(length(jun2025) / daysPerWeek), daysPerWeek, true)
 
 # fn from chapter: Pascal's triangle
 function center(sth::A, totLen::Int)::Str where A<:Union{Int, Str}
@@ -109,19 +96,17 @@ function getFmtMonth(firstDayMonth::Int, nDaysMonth::Int, month::Int, year::Int)
     return topRow1 * "\n" * topRow2 * "\n" * result
 end
 
-getFmtMonth(7, 28, 2, 2025) |> print
-getFmtMonth(7, 31, 3, 2025) |> print
-getFmtMonth(3, 30, 4, 2025) |> print
-getFmtMonth(5, 31, 5, 2025) |> print
-getFmtMonth(2, 31, 12, 2025) |> print
+getFmtMonth(4, 31, 1, 2025) |> print
+getFmtMonth(1, 30, 6, 2025) |> print
 
 # 1 - Sunday, 7 - Saturday
 function getShiftedDay(curDay::Int, by::Int)::Int
     @assert 1 <= curDay <= 7 "curDay not in range [1-7]"
     newDay::Int = curDay
     shift::Int = abs(by) % daysPerWeek
+    move::Int = by < 0 ? -1 : 1
     for _ in 1:shift
-        newDay += by < 0 ? -1 : 1
+        newDay += move
         newDay = newDay < 1 ? 7 : (newDay > 7 ? 1 : newDay)
     end
     return newDay
@@ -139,7 +124,7 @@ end
 # returns (1st day of month, num of days in this month)
 function getMonthData(dayJan1::Int, month::Int, leap::Bool)::Tuple{Int, Int}
     @assert 1 <= dayJan1 <= 7 "day not in range [1-7]"
-    @assert 1 <= dayJan1 <= 12 "month not in range [1-12]"
+    @assert 1 <= month <= 12 "month not in range [1-12]"
     curDay::Int = dayJan1
     daysInMonths::Vec{Int} = leap ? daysPerMonthLeap : daysPerMonth
     if month == 1
@@ -168,6 +153,7 @@ function getMonthData(yr::Int, month::Int)::Tuple{Int, Int}
 end
 
 function getCal(month::Int, yr::Int)::Str
+    # ... - unpacks tuple into separate values
     getFmtMonth(getMonthData(yr, month)..., month, yr)
 end
 
@@ -176,13 +162,19 @@ function getCal(month::Str, yr::Int)::Str
     getCal(m, yr)
 end
 
-# Feb 2000
-getCal("Feb", 2000) |> print
-# Sep 2001
-getCal("Sep", 2001) |> print
-# Dec 2020
-getCal("Dec", 2020) |> print
-# Oct 2029
-getCal("Oct", 2029) |> print
-# Mar 2050
-getCal("Mar", 2050) |> print
+getCal("Jan", 2025) |> print
+
+# Jesus's birth
+getCal("Dec", 1) |> print
+d = Dt.Date(1, 12, 25)
+Dt.dayname(d)
+
+# world end (one of many)
+getCal("Dec", 2012) |> print
+d = Dt.Date(2012, 12, 21)
+Dt.dayname(d)
+
+# start of the next millennium
+getCal("Jan", 3000) |> print
+d = Dt.Date(3000, 1, 1)
+Dt.dayname(d)
