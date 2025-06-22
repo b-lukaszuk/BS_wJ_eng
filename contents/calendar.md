@@ -181,7 +181,7 @@ vec2matrix(jun2025, Int(length(jun2025) / daysPerWeek), daysPerWeek, true)
 sco(s)
 ```
 
-It appears to be working as intended.
+It appears to work as intended.
 
 Time to format it a little.
 
@@ -253,3 +253,42 @@ Su Mo Tu We Th Fr Sa
 22 23 24 25 26 27 28
 29 30
 ```
+
+At this point we're basically done. That is, if we wanted to take a shortcut
+and rely on the built in `Dates` module to calculate a day of the week for us
+(for details see @sec:calendar_problem). Of course, a/an (over)zealous Julia
+programmer would never do no such a thing. So let's try to figure it out on our
+own with `getShiftedDay`.
+
+```jl
+s = """
+# 1 - Sunday, 7 - Saturday
+function getShiftedDay(curDay::Int, by::Int)::Int
+    @assert 1 <= curDay <= 7 "curDay not in range [1-7]"
+    newDay::Int = curDay
+    shift::Int = abs(by) % daysPerWeek
+    move::Int = by < 0 ? -1 : 1
+    for _ in 1:shift
+        newDay += move
+        newDay = newDay < 1 ? 7 : (newDay > 7 ? 1 : newDay)
+    end
+    return newDay
+end
+"""
+sco(s)
+```
+
+The function accepts the current day (`curDay`) and a shift (`by`). That last
+parameter is the number of days before (negative values) or after (positive
+values) `curDay`. The actual `shift` is calculated using the [modulo
+operator](https://docs.julialang.org/en/v1/base/math/#Base.rem) (`%`), since a
+shift by let's say +15 days is actually a shift by two weeks (which we may
+ignore) and 1 day (`abs(15) % 7` is 1). Next, we make as many moves (day before
+is `-1`, day after is `1`) as indicated by `shift` (`for in 1:shift`). However,
+if we stepped out of the range to the left (`newDay < 1 ?`), we begin from the
+other side (`7`th day of the week). Alternatively (`: (`), if we stepped out of
+range to the right (`newDay > 7 ?`), we begin from the start (`1`). Otherwise,
+we leave `newDay` as it was (`: newDay`). Notice, however, that if `shift` is
+equal to 0 then the code in the `for` loop will not be executed and `newDay`
+equal to `curDay` will be returned (which is what we want, e.g. for `by = 0` or
+`by = 14`).
