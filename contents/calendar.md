@@ -292,3 +292,66 @@ we leave `newDay` as it was (`: newDay`). Notice, however, that if `shift` is
 equal to 0 then the code in the `for` loop will not be executed and `newDay`
 equal to `curDay` will be returned (which is what we want, e.g. for `by = 0` or
 `by = 14`).
+
+Now, `getFmtMonth` and `getPaddedDays` require a day of the week with
+which a month starts plus the number of days in that month. Let's use our
+`getShiftedDay` to figure that out for any month in a year.
+
+```jl
+s1 = """
+# 1 - Sunday, 7 - Saturday
+# returns (1st day of month, num of days in this month)
+function getMonthData(dayJan1::Int, month::Int, leap::Bool)::Tuple{Int, Int}
+    @assert 1 <= dayJan1 <= 7 "day not in range [1-7]"
+    @assert 1 <= month <= 12 "month not in range [1-12]"
+    curDay::Int = dayJan1
+    daysInMonths::Vec{Int} = leap ? daysPerMonthLeap : daysPerMonth
+    if month == 1
+        return (dayJan1, daysInMonths[month])
+    end
+    for m in 2:month
+        curDay = getShiftedDay(curDay, daysInMonths[m-1])
+    end
+    return (curDay, daysInMonths[month])
+end
+"""
+sc(s1)
+```
+
+The function is rather simple. If we want to know when a given month begins we
+just shift `curDay` (initialized with `dayJan1`) by as many days as there was in
+the previous month (`daysInMonths[m-1]`) for all the previous months up this one
+(`for m in 2:month`).
+
+If we can do such a shift for a month in a given year, we can also do it for any
+month in any given year.
+
+```jl
+s2 = """
+# 1 - Sunday, 7 - Saturday
+# returns (1st day of month, num of days in this month)
+function getMonthData(yr::Int, month::Int)::Tuple{Int, Int}
+    @assert 1 <= yr <= 4000 "yr not in range [1-4000]"
+    @assert 1 <= month <= 12 "month not in range [1-12]"
+    curDay::Int = 4 # 1st Jan 2025 was Wednesday
+    start::Int = yr <= 2025 ? 2025-1 : 2025+1
+    step::Int = yr <= 2025 ? -1 : 1
+    yrShift::Int = 0
+    for y in start:step:yr
+        yrShift = isLeap(y) ? shiftYrLeap : shiftYr
+        curDay = getShiftedDay(curDay,  yrShift * step)
+    end
+    return getMonthData(curDay, month, isLeap(yr))
+end
+"""
+sc(s2)
+```
+
+We begin, by setting a reference point (`curDay`) to be January 1, 2025 (let's
+say that we've got a calendar on a wall that we can rely on for that
+information). Next, thanks to the for loop (and `getShiftedDay`) we figure out
+on which day of the week a given year (`yr`) starts (we get there year by year
+with `for y in start:step:yr`). Of course, we take into account leap years (see
+`isLeap` from @sec:leap_year_solution) if there are any. Finally (`return`), we
+use the previously defined `getMonthData` method, to figure out the crucial data
+for a month we are looking for.
