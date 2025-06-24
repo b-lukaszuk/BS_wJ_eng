@@ -37,8 +37,8 @@ Su Mo Tu We Th Fr Sa
 Use it to tell on which day of the week you were born.
 
 Alternatively, assume that the Gregorian calendar has been applied throughout
-the whole [Common Era](https://en.wikipedia.org/wiki/Common_Era). Based on that
-say:
+the whole [Common Era](https://en.wikipedia.org/wiki/Common_Era) and based on
+that say:
 
 - on what day of the week was Jesus born (assume: Dec 25, year 1)?
 - on what day of the week was the world supposed to come to an end (assume: Dec
@@ -61,7 +61,7 @@ Dt.dayname(d)
 sco(s)
 ```
 
-BTW. You may use the above day as your reference point.
+BTW. You may use the above day as a reference point.
 
 ## Solution {#sec:calendar_solution}
 
@@ -116,7 +116,7 @@ To that end we wrote `getMultOfYGtEqX` that, as its name implies, returns the
 multiple of `y` that is greater than or equal to `x`. Briefly, if `x` is evenly
 divisible by `y` (`x % y == 0`) then we return `x`. Otherwise, we divide `x` by
 `y` (`x / y`), round it up to the next full number with `ceil` and represent it
-as an integer (`round(Int, ...`) . We return that number multiplied by `y`.
+as an integer (`round(Int, ...`) . We return that last number multiplied by `y`.
 
 We will use it (`getMultOfYGtEqX`) to get our days for a given month padded with
 zeros.
@@ -158,13 +158,14 @@ Saturday). We use the above as the arguments to `getPaddedDays`. The function
 creates a vector of `zeros` that contains number of elements that is a multiple
 of 7 (`daysPerWeek`). The vector length is determined by `getMultOfYGtEqX` and
 is at least `nDays+daysFront` long. We fill the vector (starting at `fstDay`)
-with digits for all the days (`1:nDays`). Finally, we return the days.
+with digits for all the days (`1:nDays`). Finally, we return `days`.
 
 Afterwards, we want to put the vector (result of `getPaddedDays`) into a matrix
 with 7 columns (`daysPerWeek`) and the appropriate number of rows. For that we
 wrote `vec2matrix`, that unlike the built in
 [reshape](https://docs.julialang.org/en/v1/base/arrays/#Base.reshape), will
-allow to break the vector (`v`) row by row (when `byRow = true`).
+allow us to put the vector (`v`) into the matrix (`m`) row by row
+(when `byRow = true`).
 
 Let's see how it works for January 2025.
 
@@ -186,27 +187,27 @@ vec2matrix(jun2025, Int(length(jun2025) / daysPerWeek), daysPerWeek, true)
 sco(s)
 ```
 
-It appears to work as intended.
+It appears to be working as intended.
 
-Time to format it a little.
+Time to format that output a little.
 
 ```jl
 s = """
 # 1 - Sunday, 7 - Saturday
-function getFmtMonth(firstDayMonth::Int, nDaysMonth::Int,
+function getFmtMonth(fstDayMonth::Int, nDaysMonth::Int,
                      month::Int, year::Int)::Str
-    @assert 1 <= firstDayMonth <= 7 "firstDayMonth must be in range [1-7]"
+    @assert 1 <= fstDayMonth <= 7 "fstDayMonth must be in range [1-7]"
     @assert 28 <= nDaysMonth <= 31 "nDaysMonth must be in range [28-31]"
     @assert 1 <= month <= 12 "month must be in range [1-12]"
     @assert 1 <= year <= 4000 "year must be in range [1-4000]"
     topRow2::Str = join(weekdaysNames, " ")
     topRow1::Str = center(
         string(monthsNum2Name[month], " ", year), length(topRow2))
-    days::Vec{Str} = string.(getPaddedDays(nDaysMonth, firstDayMonth))
+    days::Vec{Str} = string.(getPaddedDays(nDaysMonth, fstDayMonth))
     days = replace(days, "0" => " ")
     m::Matrix{Str} = vec2matrix(
         days, Int(length(days)/daysPerWeek), daysPerWeek, true)
-    fmtDay(day) = lpad(day, 2) # left padding with upto 2 spaces,
+    fmtDay(day) = lpad(day, 2)
     fmtRow(row) = join(map(fmtDay, row), " ")
     result::Str = ""
     for r in eachrow(m)
@@ -299,7 +300,7 @@ be returned (which is what we want, e.g. for `by = 0` or `by = 14`).
 
 Now, `getFmtMonth` and `getPaddedDays` require a day of the week with
 which a month starts plus the number of days in that month. Let's use our
-`getShiftedDay` to figure that out for any month in a given year.
+`getShiftedDay` to calculate that for any month in a given year.
 
 ```jl
 s1 = """
@@ -323,9 +324,9 @@ sc(s1)
 ```
 
 The function is rather simple. If we want to know when a given month begins we
-just shift `curDay` (initialized with `dayJan1`) by as many days as there was in
-the previous month (`daysInMonths[m-1]`) for all the previous months up to this
-one (`for m in 2:month`).
+just shift `curDay` (initialized with `dayJan1`) by as many days as there were
+in the previous month (`daysInMonths[m-1]`) for all the previous months up to
+this one (`for m in 2:month`).
 
 If we can do such a shift for a month in a given year, we can also do it for any
 month in any year.
@@ -358,7 +359,7 @@ out on which day of the week a given year (`yr`) starts (we get there year by
 year with `for y in start:step:yr`). Of course, we take into account leap years
 (see `isLeap` from @sec:leap_year_solution) if there are any. Finally
 (`return`), we use the previously defined `getMonthData` method, to get the
-calculations (starting day, days in month) for a month we are looking for.
+necessary information (starting day, days in month) for a month we are looking for.
 
 All that's left to do is to pack it all into `getCal` wrapper for the ease of
 use.
@@ -407,8 +408,8 @@ Su Mo Tu We Th Fr Sa
 30 31
 ```
 
-On what day of the week was the world suppose to end (assume: Dec 21, year
-2012)?
+On what day of the week was the world supposed to come to an end (assume: Dec
+21, year 2012)?
 
 ```
 getCal("Dec", 2012)
@@ -439,4 +440,4 @@ Of course, the above results should be correct under the assumption that [the
 Gregorian calendar](https://en.wikipedia.org/wiki/Gregorian_calendar) has been
 uniformly applied throughout the whole [Common
 Era](https://en.wikipedia.org/wiki/Common_Era). Needless to say, that was not
-the case, so I wouldn't rely on the calendar too much for your time travel.
+the case, so I wouldn't rely on `getCal` too much for your time travel.

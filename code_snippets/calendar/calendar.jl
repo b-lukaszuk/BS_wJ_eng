@@ -75,16 +75,16 @@ function center(sth::A, totLen::Int)::Str where A<:Union{Int, Str}
 end
 
 # 1 - Sunday, 7 - Saturday
-function getFmtMonth(firstDayMonth::Int, nDaysMonth::Int,
+function getFmtMonth(fstDayMonth::Int, nDaysMonth::Int,
                      month::Int, year::Int)::Str
-    @assert 1 <= firstDayMonth <= 7 "firstDayMonth must be in range [1-7]"
+    @assert 1 <= fstDayMonth <= 7 "fstDayMonth must be in range [1-7]"
     @assert 28 <= nDaysMonth <= 31 "nDaysMonth must be in range [28-31]"
     @assert 1 <= month <= 12 "month must be in range [1-12]"
     @assert 1 <= year <= 4000 "year must be in range [1-4000]"
     topRow2::Str = join(weekdaysNames, " ")
     topRow1::Str = center(
         string(monthsNum2Name[month], " ", year), length(topRow2))
-    days::Vec{Str} = string.(getPaddedDays(nDaysMonth, firstDayMonth))
+    days::Vec{Str} = string.(getPaddedDays(nDaysMonth, fstDayMonth))
     days = replace(days, "0" => " ")
     m::Matrix{Str} = vec2matrix(
         days, Int(length(days)/daysPerWeek), daysPerWeek, true)

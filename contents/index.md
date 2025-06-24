@@ -18,7 +18,7 @@ getTimeStamp()
 Hello there. This is an open access book entitled: "Build SH\*T with Julia". If
 anyone asked the full title is "Build **S**uper **H**elpful and **I**nteresting
 **T**hings with Julia", but it just doesn't have the same ring to it. Anyway,
-they say that in order to learn any programming language you need to ~~build
+they say that in order to learn a programming language you need to ~~build
 sh..~~ write a lot of different programs with it and that's what this book is
 all about.
 
