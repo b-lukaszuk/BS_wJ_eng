@@ -2,15 +2,14 @@ const Str = String
 
 startDir = joinpath(homedir(), "Desktop", "catalog_a")
 
-function printCatalogTree(path::Str)
-    for (root, dirs, files) in walkdir(startDir)
-        println("Directories in $root")
-        for dir in dirs
-            println(joinpath(root, dir)) # path to directories
-        end
-        println("Files in $root")
-        for file in files
-            println(joinpath(root, file)) # path to files
+function printCatalogTree(path::Str, level::Int=0)
+    for name in readdir(path)
+        newPath::Str = joinpath(path, name)
+        if isfile(newPath)
+            println("  " ^ level * name)
+        else
+            println("  " ^ level * name * "/")
+            printCatalogTree(newPath, level+1)
         end
     end
 end
