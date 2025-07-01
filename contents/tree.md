@@ -23,7 +23,7 @@ contents, like so (the output doesn't have to be exact):
 ~/Desktop/catalog_x
 |---catalog_y/
 |   |---catalog_z/
-|   |   |---file_y.txt
+|   |   |---file_z.txt
 |   |---file_y.txt
 |---file_x.txt
 
@@ -38,7 +38,7 @@ If your stuck, you may start by reading about Julia's
 Let's start small with an initial definition of `printCatalogTree`.
 
 ```jl
-s = """
+s1 = """
 function printCatalogTree(path::Str, pad::Str)
     for name in readdir(path)
         newPath::Str = joinpath(path, name)
@@ -54,12 +54,12 @@ function printCatalogTree(path::Str, pad::Str)
 end
 
 function printCatalogTree(path::Str)
-    println(path, "")
-	printCatalogTree(path, "")
+    println(path)
+    printCatalogTree(path, "")
     return nothing
 end
 """
-sc(s)
+sc(s1)
 ```
 
 The function is rather simple. We walk through every entry (`for name`) in the
@@ -83,7 +83,7 @@ printCatalogTree(joinpath(homedir(), "Desktop", "catalog_x"))
 /home/user_name/Desktop/catalog_x
    catalog_y/
       catalog_z/
-         file_y.txt
+         file_z.txt
       file_y.txt
    file_x.txt
 ```
