@@ -90,3 +90,44 @@ printCatalogTree(joinpath(homedir(), "Desktop", "catalog_x"))
 
 It looks quite alright. Time to replace the spaces on the left with some
 guideways that we may follow with our eyes.
+
+```jl
+s2 = """
+function printCatalogTree(path::Str, pad::Str)
+    for name in readdir(path)
+        newPath::Str = joinpath(path, name)
+        newPad::Str = pad * "---"
+        if isfile(newPath)
+            println(newPad, name)
+        else
+            println(newPad, name, "/")
+            printCatalogTree(newPath, pad * "   |")
+        end
+    end
+    return nothing
+end
+
+function printCatalogTree(path::Str)
+    println(path)
+    printCatalogTree(path, "|")
+    return nothing
+end
+"""
+sc(s2)
+```
+
+To that end we changed the `pad`s. We begin with the first column on the left
+that should start with the pipe character (`printCatalogTree(path, "|")`). Each
+line containing a file or directory should continue with hyphens "---"
+(`newPad::Str = pad * "---"`), whereas a nested directory and its contents
+should be indented and start with the pipe character as well
+(`printCatalogTree(newPath, pad * " |")`). Let's see did it work as intended.
+
+```
+/home/user_name/Desktop/catalog_x
+|---catalog_y/
+|   |---catalog_z/
+|   |   |---file_z.txt
+|   |---file_y.txt
+|---file_x.txt
+```
