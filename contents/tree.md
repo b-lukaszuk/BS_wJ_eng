@@ -20,7 +20,7 @@ Write a function `printCatalogTree` that for a given directory it prints its
 contents, like so (the output doesn't have to be exact):
 
 ```
-~/Desktop/catalog_x
+~/Desktop/catalog_x/
 |---catalog_y/
 |   |---catalog_z/
 |   |   |---file_z.txt
@@ -54,7 +54,7 @@ function printCatalogTree(path::Str, pad::Str)
 end
 
 function printCatalogTree(path::Str)
-    println(path)
+    println(path, "/")
     printCatalogTree(path, "")
     return nothing
 end
@@ -80,7 +80,7 @@ printCatalogTree(joinpath(homedir(), "Desktop", "catalog_x"))
 ```
 
 ```
-/home/user_name/Desktop/catalog_x
+/home/user_name/Desktop/catalog_x/
    catalog_y/
       catalog_z/
          file_z.txt
@@ -108,7 +108,7 @@ function printCatalogTree(path::Str, pad::Str)
 end
 
 function printCatalogTree(path::Str)
-    println(path)
+    println(path, "/")
     printCatalogTree(path, "|")
     return nothing
 end
@@ -124,7 +124,7 @@ should be indented and start with the pipe character as well
 (`printCatalogTree(newPath, pad * " |")`). Let's see did it work as intended.
 
 ```
-/home/user_name/Desktop/catalog_x
+/home/user_name/Desktop/catalog_x/
 |---catalog_y/
 |   |---catalog_z/
 |   |   |---file_z.txt
