@@ -35,4 +35,58 @@ If your stuck, you may start by reading about Julia's
 
 ## Solution {#sec:tree_solution}
 
-The solution goes here.
+Let's start small with an initial definition of `printCatalogTree`.
+
+```jl
+s = """
+function printCatalogTree(path::Str, pad::Str)
+    for name in readdir(path)
+        newPath::Str = joinpath(path, name)
+        newPad::Str = pad * "   "
+        if isfile(newPath)
+            println(newPad, name)
+        else
+            println(newPad, name, "/")
+            printCatalogTree(newPath, newPad)
+        end
+    end
+    return nothing
+end
+
+function printCatalogTree(path::Str)
+    println(path, "")
+	printCatalogTree(path, "")
+    return nothing
+end
+"""
+sc(s)
+```
+
+The function is rather simple. We walk through every entry (`for name`) in the
+examined directory (`path`). As we go `name` is converted to `newPath` which
+will be examined in a moment. If `newPath` is a file (`isfile`) we just print
+it, otherwise (`else`) it is a directory and we print it with `"/"` to
+make it stand out. Moreover we go inside it with `printCatalogTree` (recursive
+call) to print its contents. For every nesting of `printCatalogTree` we update
+the padding `newPad` by increasing the left side indentation with `* " "`. We
+conclude with another version of `printCatalogTree`, the method will make its
+invocation slightly easier and will add a header line for us.
+
+Let's see how it works (remember to create `catalog_x`, with its contents, on
+the desktop first).
+
+```
+printCatalogTree(joinpath(homedir(), "Desktop", "catalog_x"))
+```
+
+```
+/home/user_name/Desktop/catalog_x
+   catalog_y/
+      catalog_z/
+         file_y.txt
+      file_y.txt
+   file_x.txt
+```
+
+It looks quite alright. Time to replace the spaces on the left with some
+guideways that we may follow with our eyes.
