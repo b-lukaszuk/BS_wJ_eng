@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Problem - Build SH*T with Julia</title>
+  <title>Solution - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -130,16 +130,131 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="13.1" id="sec:prime_numbers_problem"><span class="header-section-number">13.1</span> Problem</h2>
-<p>A prime number is an integer greater than 1 that is divisible only by 1 and itself. Prime numbers found practical applications, e.g. in cryptography.</p>
-<p>In this task your job is to write a function that returns all prime numbers up to a certain extent. You may use any computational method from <a href="https://en.wikipedia.org/wiki/Prime_number#Computational_methods">the Wikipedia’s page</a>.</p>
+<h2 data-number="10.2" id="sec:tree_solution"><span class="header-section-number">10.2</span> Solution</h2>
+<p>Let’s start small with an initial definition of <code>printCatalogTree</code>.</p>
+<pre class="language-julia"><code>function printCatalogTree(path::Str, pad::Str)
+    newPad::Str = pad * &quot;   &quot;
+    for name in readdir(path)
+        newPath::Str = joinpath(path, name)
+        if isfile(newPath)
+            println(newPad, name)
+        else
+            println(newPad, name, &quot;/&quot;)
+            printCatalogTree(newPath, newPad)
+        end
+    end
+    return nothing
+end
+
+function printCatalogTree(path::Str)
+    println(path, &quot;/&quot;)
+    printCatalogTree(path, &quot;&quot;)
+    return nothing
+end</code></pre>
+<p>The function is rather simple. We walk through every entry (<code>for name</code>) in the examined directory (<code>path</code>). As we go <code>name</code> is converted to <code>newPath</code> which will be examined in a moment. If <code>newPath</code> is a file (<code>isfile</code>) we just print it, otherwise (<code>else</code>) it is a directory and we print it with <code>"/"</code> to make it stand out. Moreover we go inside it with <code>printCatalogTree</code> (recursive call) to print its contents. For every nesting of <code>printCatalogTree</code> we update the padding <code>newPad</code> by increasing the indentation with <code>* " "</code>. We conclude with another version of <code>printCatalogTree</code>, the method will make the function’s invocation slightly easier and will add a header line for us (<code>println(path, "/")</code>).</p>
+<p>Let’s see how it works (remember to create <code>catalog_x</code> with its contents first).</p>
+<pre><code>printCatalogTree(joinpath(homedir(), &quot;Desktop&quot;, &quot;catalog_x&quot;))</code></pre>
+<pre><code>/home/user_name/Desktop/catalog_x/
+   catalog_y/
+      catalog_z/
+         file_z.txt
+      file_y.txt
+   file_x.txt</code></pre>
+<p>It looks quite alright. Time to replace the spaces on the left with some guideways that we may follow with our eyes.</p>
+<pre class="language-julia"><code>function printCatalogTree(path::Str, pad::Str)
+    newPad::Str = pad * &quot;---&quot;
+    for name in readdir(path)
+        newPath::Str = joinpath(path, name)
+        if isfile(newPath)
+            println(newPad, name)
+        else
+            println(newPad, name, &quot;/&quot;)
+            printCatalogTree(newPath, pad * &quot;   |&quot;)
+        end
+    end
+    return nothing
+end
+
+function printCatalogTree(path::Str)
+    println(path, &quot;/&quot;)
+    printCatalogTree(path, &quot;|&quot;)
+    return nothing
+end</code></pre>
+<p>To that end we changed the <code>pad</code>s. We begin with the first column on the left that should start with the pipe character (<code>printCatalogTree(path, "|")</code>). Each line containing a file or directory should continue with hyphens “—” (<code>newPad::Str = pad * "---"</code>), whereas a nested directory and its contents should be indented and start with the pipe character as well (<code>printCatalogTree(newPath, pad * " |")</code>). Let’s see did it work as intended.</p>
+<pre><code>printCatalogTree(joinpath(homedir(), &quot;Desktop&quot;, &quot;catalog_x&quot;))</code></pre>
+<pre><code>/home/user_name/Desktop/catalog_x/
+|---catalog_y/
+|   |---catalog_z/
+|   |   |---file_z.txt
+|   |---file_y.txt
+|---file_x.txt</code></pre>
+<p>Not bad at all. Time to add a summary line.</p>
+<pre class="language-julia"><code>function printCatalogTree!(path::Str, pad::Str, count::Dict{Str, Int})
+    newPad::Str = pad * &quot;---&quot;
+    for name in readdir(path)
+        newPath::Str = joinpath(path, name)
+        if isfile(newPath)
+            println(newPad, name)
+            count[&quot;nFiles&quot;] += 1
+        else
+            println(newPad, name, &quot;/&quot;)
+            count[&quot;nDirs&quot;] += 1
+            printCatalogTree!(newPath, pad * &quot;   |&quot;, count)
+        end
+    end
+    return nothing
+end
+
+function printCatalogTree(path::Str)
+    println(path, &quot;/&quot;)
+    count::Dict{Str, Int}= Dict(&quot;nDirs&quot; =&gt; 0, &quot;nFiles&quot; =&gt; 0)
+    printCatalogTree!(path, &quot;|&quot;, count)
+    print(&quot;\n&quot;, count[&quot;nDirs&quot;], &quot; directories, &quot;, count[&quot;nFiles&quot;], &quot; files&quot;)
+    return nothing
+end</code></pre>
+<p>The necessary data will be collected in a dictionary (<code>count</code>). It has two keys: <code>nDirs</code> and <code>nFiles</code> for the number of directories and files in the tree, respectively. Remember that in Julia dictionaries are passed by reference so any modification you make to them inside of a function will be visible outside. For that purpose <code>count</code> is defined in the outer <code>printCatalogTree</code>, whereas the inner <code>printCatalogTree!</code> got exclamation point per Julia’s convention to mark a function that modifies its arguments. Anyway, the <code>count</code> dictionary is updated for every file (<code>count["nFiles"] += 1</code>) and directory (<code>count["nDirs"] += 1</code>) encountered and a summary line is added at the very bottom of the output (<code>print("\n", count["nDirs"], " directories, ", count["nFiles"], " files")</code>). Let’s see how it works on a few examples (feel free to recreate mock directory structures as seen here).</p>
+<p>First, a simple, already familiar to us, case.</p>
+<pre><code>printCatalogTree(joinpath(homedir(), &quot;Desktop&quot;, &quot;catalog_x&quot;))</code></pre>
+<pre><code>/home/user_name/Desktop/catalog_x/
+|---catalog_y/
+|   |---catalog_z/
+|   |   |---file_z.txt
+|   |---file_y.txt
+|---file_x.txt
+
+2 directories, 3 files</code></pre>
+<p>Now, a bit more convoluted tree.</p>
+<pre><code>printCatalogTree(joinpath(homedir(), &quot;Desktop&quot;, &quot;catalog_a&quot;))</code></pre>
+<pre><code>/home/user_name/Desktop/catalog_a/
+|---catalog_b/
+|   |---catalog_d/
+|   |   |---file_d.txt
+|   |---file_b1.txt
+|   |---file_b2.txt
+|---catalog_c/
+|   |---catalog_e/
+|   |   |---file_e.txt
+|   |---catalog_f/
+|   |   |---file_f1.txt
+|   |   |---file_f2.txt
+|   |   |---file_f3.txt
+|   |   |---file_f4.txt
+|---file_a.txt
+
+5 directories, 9 files</code></pre>
+<p>And an empty directory.</p>
+<pre><code>printCatalogTree(joinpath(homedir(), &quot;Desktop&quot;, &quot;catalog_zzz&quot;))</code></pre>
+<pre><code>/home/user_name/Desktop/catalog_zzz/
+
+0 directories, 0 files</code></pre>
+<p>OK, that’s it. Another tiny utility under our belts.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./prime_numbers.html"><b>13</b> Prime Numbers</a> <kbd>←</kbd>
+        <a class="menu-level-2" href="./tree_problem.html"><b>10.1</b> Problem</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./prime_numbers_solution.html"><b>13.2</b> Solution</a>
+            <kbd>→</kbd> <a class="menu-level-1" href="./leap_year.html"><b>11</b> Leap year</a>
         </span>
     </p>
 </div>

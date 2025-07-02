@@ -130,16 +130,26 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="13.1" id="sec:prime_numbers_problem"><span class="header-section-number">13.1</span> Problem</h2>
-<p>A prime number is an integer greater than 1 that is divisible only by 1 and itself. Prime numbers found practical applications, e.g. in cryptography.</p>
-<p>In this task your job is to write a function that returns all prime numbers up to a certain extent. You may use any computational method from <a href="https://en.wikipedia.org/wiki/Prime_number#Computational_methods">the Wikipedia’s page</a>.</p>
+<h2 data-number="10.1" id="sec:tree_problem"><span class="header-section-number">10.1</span> Problem</h2>
+<p>There is this nice little command <a href="https://en.wikipedia.org/wiki/Tree_(command)">tree</a> that recursively lists files and subdirectories in a given location. Let’s try to get some of that with Julia.</p>
+<p>Write a function <code>printCatalogTree</code> that displays the contents of a given directory like so (the output doesn’t have to be exact):</p>
+<pre><code>~/Desktop/catalog_x/
+|---catalog_y/
+|   |---catalog_z/
+|   |   |---file_z.txt
+|   |---file_y.txt
+|---file_x.txt
+
+2 directories, 3 files</code></pre>
+<p>Here, we got three nested catalogs: x, y, and z. Each contains a file of a corresponding name inside of it.</p>
+<p>Hint: If you are stuck now, start by reading about Julia’s <a href="https://docs.julialang.org/en/v1/base/file/">Filesystem</a>.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./prime_numbers.html"><b>13</b> Prime Numbers</a> <kbd>←</kbd>
+        <a class="menu-level-1" href="./tree.html"><b>10</b> Tree</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./prime_numbers_solution.html"><b>13.2</b> Solution</a>
+            <kbd>→</kbd> <a class="menu-level-2" href="./tree_solution.html"><b>10.2</b> Solution</a>
         </span>
     </p>
 </div>
