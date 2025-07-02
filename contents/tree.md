@@ -124,6 +124,10 @@ should be indented and start with the pipe character as well
 (`printCatalogTree(newPath, pad * " |")`). Let's see did it work as intended.
 
 ```
+printCatalogTree(joinpath(homedir(), "Desktop", "catalog_x"))
+```
+
+```
 /home/user_name/Desktop/catalog_x/
 |---catalog_y/
 |   |---catalog_z/
@@ -131,3 +135,104 @@ should be indented and start with the pipe character as well
 |   |---file_y.txt
 |---file_x.txt
 ```
+
+Not bad at all. Time to add a summary line.
+
+```jl
+s3 = """
+function printCatalogTree!(path::Str, pad::Str, count::Dict{Str, Int})
+    for name in readdir(path)
+        newPath::Str = joinpath(path, name)
+        newPad::Str = pad * "---"
+        if isfile(newPath)
+            println(newPad, name)
+            count["nFiles"] += 1
+        else
+            println(newPad, name, "/")
+            count["nDirs"] += 1
+            printCatalogTree!(newPath, pad * "   |", count)
+        end
+    end
+    return nothing
+end
+
+function printCatalogTree(path::Str)
+    println(path, "/")
+    count::Dict{Str, Int}= Dict("nDirs" => 0, "nFiles" => 0)
+    printCatalogTree!(path, "|", count)
+    print("\\n", count["nDirs"], " directories, ", count["nFiles"], " files")
+    return nothing
+end
+"""
+sc(s3)
+```
+
+The necessary data will be collected in a dictionary (`count`). It has two keys:
+`nDirs` and `nFiles` for the number of directories and files in the tree,
+respectively. Remember that in Julia dictionaries are passed by reference so any
+modification you make to them inside of a function will be visible outside.
+For that purpose `count` is defined in the outer `printCatalogTree`, whereas the
+inner `printCatalogTree!` got exclamation point per Julia's convention to mark a
+function that modifies its arguments. Anyway, the `count` dictionary is updated
+for every file (`count["nFiles"] += 1`) and directory (`count["nDirs"] += 1`)
+encountered and a summary line is added at the very bottom of the output
+(`print("\n", count["nDirs"], " directories, ", count["nFiles"], " files")`).
+Let's see how it works on few examples (feel free to recreate mock directory
+structures as seen here).
+
+First, a simple, already familiar to us, case.
+
+```
+printCatalogTree(joinpath(homedir(), "Desktop", "catalog_x"))
+```
+
+```
+/home/user_name/Desktop/catalog_x/
+|---catalog_y/
+|   |---catalog_z/
+|   |   |---file_z.txt
+|   |---file_y.txt
+|---file_x.txt
+
+2 directories, 3 files
+```
+
+Now, a bit more convoluted tree.
+
+```
+printCatalogTree(joinpath(homedir(), "Desktop", "catalog_a"))
+```
+
+```
+/home/user_name/Desktop/catalog_a/
+|---catalog_b/
+|   |---catalog_d/
+|   |   |---file_d.txt
+|   |---file_b1.txt
+|   |---file_b2.txt
+|---catalog_c/
+|   |---catalog_e/
+|   |   |---file_e.txt
+|   |---catalog_f/
+|   |   |---file_f1.txt
+|   |   |---file_f2.txt
+|   |   |---file_f3.txt
+|   |   |---file_f4.txt
+|---file_a.txt
+
+5 directories, 9 files
+```
+
+And an empty directory.
+
+```
+printCatalogTree(joinpath(homedir(), "Desktop", "catalog_zzz"))
+```
+
+```
+/home/user_name/Desktop/catalog_zzz/
+
+0 directories, 0 files
+```
+
+OK, that's it. Another tiny utility under our belts.
