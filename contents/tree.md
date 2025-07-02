@@ -16,8 +16,8 @@ There is this nice little command
 files and subdirectories in a given location. Let's try to get some of that with
 Julia.
 
-Write a function `printCatalogTree` that for a given directory it prints its
-contents, like so (the output doesn't have to be exact):
+Write a function `printCatalogTree` that displays the contents of a given
+directory like so (the output doesn't have to be exact):
 
 ```
 ~/Desktop/catalog_x/
@@ -30,7 +30,10 @@ contents, like so (the output doesn't have to be exact):
 2 directories, 3 files
 ```
 
-If your stuck, you may start by reading about Julia's
+Here, we got three nested catalogs: x, y, and z. Each contains a file of a
+corresponding name inside of it.
+
+Hint: If you are stuck now, start by reading about Julia's
 [Filesystem](https://docs.julialang.org/en/v1/base/file/).
 
 ## Solution {#sec:tree_solution}
@@ -40,9 +43,9 @@ Let's start small with an initial definition of `printCatalogTree`.
 ```jl
 s1 = """
 function printCatalogTree(path::Str, pad::Str)
+    newPad::Str = pad * "   "
     for name in readdir(path)
         newPath::Str = joinpath(path, name)
-        newPad::Str = pad * "   "
         if isfile(newPath)
             println(newPad, name)
         else
@@ -68,12 +71,12 @@ will be examined in a moment. If `newPath` is a file (`isfile`) we just print
 it, otherwise (`else`) it is a directory and we print it with `"/"` to
 make it stand out. Moreover we go inside it with `printCatalogTree` (recursive
 call) to print its contents. For every nesting of `printCatalogTree` we update
-the padding `newPad` by increasing the left side indentation with `* " "`. We
-conclude with another version of `printCatalogTree`, the method will make its
-invocation slightly easier and will add a header line for us.
+the padding `newPad` by increasing the indentation with `* " "`. We conclude
+with another version of `printCatalogTree`, the method will make the function's
+invocation slightly easier and will add a header line for us
+(`println(path, "/")`).
 
-Let's see how it works (remember to create `catalog_x`, with its contents, on
-the desktop first).
+Let's see how it works (remember to create `catalog_x` with its contents first).
 
 ```
 printCatalogTree(joinpath(homedir(), "Desktop", "catalog_x"))
@@ -94,9 +97,9 @@ guideways that we may follow with our eyes.
 ```jl
 s2 = """
 function printCatalogTree(path::Str, pad::Str)
+    newPad::Str = pad * "---"
     for name in readdir(path)
         newPath::Str = joinpath(path, name)
-        newPad::Str = pad * "---"
         if isfile(newPath)
             println(newPad, name)
         else
@@ -141,9 +144,9 @@ Not bad at all. Time to add a summary line.
 ```jl
 s3 = """
 function printCatalogTree!(path::Str, pad::Str, count::Dict{Str, Int})
+    newPad::Str = pad * "---"
     for name in readdir(path)
         newPath::Str = joinpath(path, name)
-        newPad::Str = pad * "---"
         if isfile(newPath)
             println(newPad, name)
             count["nFiles"] += 1
@@ -177,7 +180,7 @@ function that modifies its arguments. Anyway, the `count` dictionary is updated
 for every file (`count["nFiles"] += 1`) and directory (`count["nDirs"] += 1`)
 encountered and a summary line is added at the very bottom of the output
 (`print("\n", count["nDirs"], " directories, ", count["nFiles"], " files")`).
-Let's see how it works on few examples (feel free to recreate mock directory
+Let's see how it works on a few examples (feel free to recreate mock directory
 structures as seen here).
 
 First, a simple, already familiar to us, case.
