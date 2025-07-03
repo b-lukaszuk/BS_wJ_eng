@@ -69,12 +69,12 @@ The function is rather simple. We walk through every entry (`for name`) in the
 examined directory (`path`). As we go `name` is converted to `newPath` which
 will be examined in a moment. If `newPath` is a file (`isfile`) we just print
 it, otherwise (`else`) it is a directory and we print it with `"/"` to
-make it stand out. Moreover we go inside it with `printCatalogTree` (recursive
-call) to print its contents. For every nesting of `printCatalogTree` we update
-the padding `newPad` by increasing the indentation with `* " "`. We conclude
-with another version of `printCatalogTree`, the method will make the function's
-invocation slightly easier and will add a header line for us
-(`println(path, "/")`).
+make it stand out. Moreover we go inside of it with `printCatalogTree`
+(recursive call) to print its contents. For every nesting of `printCatalogTree`
+we update the padding `newPad` by increasing the indentation with `* " "`. We
+conclude with another version of `printCatalogTree`, the method will make the
+function's invocation slightly easier and will add a header line for us
+(`println(path, "/")`) that will display the root directory (`path`).
 
 Let's see how it works (remember to create `catalog_x` with its contents first).
 
