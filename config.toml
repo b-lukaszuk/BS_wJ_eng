@@ -12,6 +12,7 @@ contents = [
     "progress_bar",
     "pascals_triangle",
     "tree",
+    "roman_numerals",
     "leap_year",
     "calendar",
     "prime_numbers",
