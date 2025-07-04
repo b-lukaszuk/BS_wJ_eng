@@ -31,3 +31,37 @@ romanTest = ["I", "II", "III", "IV", "V",
              "MMMCMXCIX", "MDCCLXXVI", "MCMXVIII", "MCMXLIV", "MMXXV"]
 
 getRoman.(arabicTest) == romanTest
+
+romanTokens = map(first, roman2arabic)
+
+function getToken(roman::Str)::Tuple{Str, Str}
+    if length(roman) <= 1
+        return (roman, "")
+    elseif roman[1:2] in romanTokens
+        return (roman[1:2], string(roman[3:end]))
+    else
+        return (string(roman[1]), string(roman[2:end]))
+    end
+end
+
+function getTokens(roman::Str)::Vec{Str}
+    token::Str = ""
+    tokens::Vec{Str} = []
+    while (roman != "")
+        token, roman = getToken(roman)
+        push!(tokens, token)
+    end
+    return tokens
+end
+
+function getArabic(roman::Str)::Int
+    tokens::Vec{Str} = getTokens(roman)
+    sum::Int = 0
+    lookup::Dict{Str, Int} = Dict(roman2arabic)
+    for token in tokens
+        sum += get(lookup, token, 0)
+    end
+    return sum
+end
+
+getArabic.(romanTest) == arabicTest
