@@ -40,4 +40,76 @@ Good luck.
 
 ## Solution {#sec:roman_numerals_solution}
 
-The solution goes here.
+Let's start with a simple mapping between key Roman numerals and their Arabic
+counterparts.
+
+```jl
+s = """
+roman2arabic = [("M", 1000), ("CM", 900),
+                ("D", 500), ("CD", 400),
+                ("C", 100), ("XC", 90),
+                ("L", 50), ("XL", 40),
+                ("X", 10), ("IX", 9), ("V", 5),
+                ("IV", 4), ("I", 1)]
+"""
+replace(sc(s), r"\broman" => "const roman")
+```
+
+The mapping is defined with (`const`) keyword to signal that we do
+not wish to change it throughout the program execution. Moreover, we used a
+vector of tuples, not a dictionary, since we want to preserve the (descending)
+order of the pairs of values. Notice, that we also incluced the key landmarks
+of subtractive notation (e.g. `("CM", 900)` or `("IV", 4)`). Now, we are ready
+to take the next step.
+
+```jl
+s = """
+function getRoman(arabic::Int)::Str
+    @assert 0 < arabic < 4000
+    roman::Str = ""
+    for (r, a) in roman2arabic
+        while(arabic >= a)
+            roman *= r
+            arabic -= a
+        end
+    end
+    return roman
+end
+"""
+sc(s)
+```
+
+We will build our Roman numeral bit by bit starting from an empty string
+(`roman::Str = ""`). For that we traverse all our Roman and Arabic landmarks
+(`for (r, a) in roman2arabic`). For each of them (starting from the highest number),
+we check if currently examined Arabic landmark (`a`) is lower than the Arabic
+number we got to translate (`arabic`). As long as it is (`while(arabic >= a)`)
+we append the parallel roman landmark to our solution (`roman *= r`) and subtract
+the landmark from our Arabic number (`arabic -= a`). Once we are done we return
+our result.
+
+> Note. To better understand the above code you may read about the `while` loop
+> in [the docs](https://docs.julialang.org/en/v1/base/base/#while) and use
+> [show](https://docs.julialang.org/en/v1/base/base/#Base.@show) macro to have
+> a sneak peak how the variables in the loop change.
+
+Time for a minitest (go ahead pick a number and in your head, or on a piece of
+paper, follow the function's execution).
+
+```jl
+s = """
+getRoman.(1:10)
+"""
+sco(s)
+```
+
+OK, time for a bigger test.
+
+```jl
+s = """
+getRoman.(arabicTest) == romanTest
+"""
+sco(s)
+```
+
+Looks alright.
