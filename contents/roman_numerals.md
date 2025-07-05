@@ -24,12 +24,14 @@ solution should work correctly for the numbers in range [1-3999]).
 s = """
 arabicTest = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
               11, 12, 39, 246, 789, 2421, 160, 207, 1009, 1066,
-              3999, 1776, 1918, 1944, 2025]
+              3999, 1776, 1918, 1944, 2025,
+			  1900, 1912]
 romanTest = ["I", "II", "III", "IV", "V",
              "VI", "VII", "VIII", "IX", "X",
              "XI", "XII", "XXXIX", "CCXLVI", "DCCLXXXIX",
              "MMCDXXI", "CLX", "CCVII", "MIX", "MLXVI",
-             "MMMCMXCIX", "MDCCLXXVI", "MCMXVIII", "MCMXLIV", "MMXXV"]
+             "MMMCMXCIX", "MDCCLXXVI", "MCMXVIII", "MCMXLIV", "MMXXV",
+             "MCM", "MCMXII"]
 """
 sc(s)
 ```
