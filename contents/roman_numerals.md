@@ -149,7 +149,70 @@ replace(sc(s), r"\bromanTokens =" => "const romanTokens =")
 
 First, we extract `romanTokens` with `map` and
 [first](https://docs.julialang.org/en/v1/base/collections/#Base.first). Next,
-we use `getTokenAndRest` to split a Roman numeral into a first key token (it is
-either one or two characters long) from the left and the rest of the
+we use `getTokenAndRest` to split a Roman numeral into a key token (first on the
+left, either one or two characters long) from the left and the rest of the
 numeral. Based on it we split a Roman numeral into a vector of tokens with
-`getTokens`.
+`getTokens`. Now, we are ready to write our `getArabic`.
+
+```jl
+s = """
+function getVal(lookup::Vec{Tuple{Str, Int}}, key::Str, default::Int=0)::Int
+    for (k, v) in lookup
+        if k == key
+            return v
+        end
+    end
+    return default
+end
+
+function getArabic(roman::Str)::Int
+    tokens::Vec{Str} = getTokens(roman)
+    sum::Int = 0
+    for curToken in tokens
+        sum += getVal(roman2arabic, curToken, 0)
+    end
+    return sum
+end
+"""
+sc(s)
+```
+
+Notice, that before we moved to `getArabic` we wrote `getVal` that will provide
+us with an Arabic number for a given Roman numeral token. The above was not
+strictly necessary, as we could have just use the built-in
+[get](https://docs.julialang.org/en/v1/base/collections/#Base.get) for that
+purpose (e.g. with `get(Dict(roman2arabic), key, default)`). Anyway, to get the
+Arabic number for a given Roman numeral (`roman`), first we split it into a
+vector of `tokens` and traverse them one by one (`curToken`) with the `for`
+loop. We translate `curToken` to an Arabic numeral and add it to `sum` which we
+return once we are done.
+
+Again, let's go with a minitest (go ahead pick a number and in your head, or on
+a piece of paper, and follow the function's execution).
+
+```jl
+s = """
+getArabic.(["I", "II", "III", "IV", "V", "VI", "VII", "VIII"])
+"""
+sco(s)
+```
+
+Finally, a bigger test.
+
+```jl
+s = """
+getArabic.(romanTest) == arabicTest
+"""
+sco(s)
+```
+
+And another one.
+
+```jl
+s = """
+getArabic.(getRoman.(arabicTest)) == arabicTest
+"""
+sco(s)
+```
+
+I don't know about you, but to me the results are satisfactory.
