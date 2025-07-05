@@ -264,7 +264,7 @@ sco(s)
 Interesting, the above output indicates that we would be able to save more, with
 an early (month 13) over-payment of a vast sum of money (\$20,000, 10% of our
 initial principal) than just by regularly overpaying the mortgage with small
-sums of it (\$200, 0.1% of our initial principal).
+sums of it (\$200, 1% of our initial principal).
 
 Out of pure curiosity, let's see how much we could save when we combine the two
 (we overpay \$200 every month, except for month 13, where we overpay \$20,000)
