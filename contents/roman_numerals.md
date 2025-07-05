@@ -113,3 +113,43 @@ sco(s)
 ```
 
 Looks alright.
+
+Time to write our `getArabic` function. For that we will have to break a Roman
+numeral into tokens (from left to right) that we will use to build up an Arabic
+number.
+
+```jl
+s = """
+romanTokens = map(first, roman2arabic)
+# equivalent to
+romanTokens = map(tuple -> tuple[1], roman2arabic)
+
+function getTokenAndRest(roman::Str)::Tuple{Str, Str}
+    if length(roman) <= 1
+        return (roman, "")
+    elseif roman[1:2] in romanTokens
+        return (roman[1:2], string(roman[3:end]))
+    else
+        return (string(roman[1]), string(roman[2:end]))
+    end
+end
+
+function getTokens(roman::Str)::Vec{Str}
+    curToken::Str = ""
+    allTokens::Vec{Str} = []
+    while (roman != "")
+        curToken, roman = getTokenAndRest(roman)
+        push!(allTokens, curToken)
+    end
+    return allTokens
+end
+"""
+replace(sc(s), r"\bromanTokens =" => "const romanTokens =")
+```
+
+First, we extract `romanTokens` with `map` and
+[first](https://docs.julialang.org/en/v1/base/collections/#Base.first). Next,
+we use `getTokenAndRest` to split a Roman numeral into a first key token (it is
+either one or two characters long) from the left and the rest of the
+numeral. Based on it we split a Roman numeral into a vector of tokens with
+`getTokens`.
