@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Problem - Build SH*T with Julia</title>
+  <title>Solution - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -133,54 +133,97 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="7.1" id="sec:recursion_problem"><span class="header-section-number">7.1</span> Problem</h2>
-<p><a href="https://en.wikipedia.org/wiki/Recursion_(computer_science)">Recursion</a> is a programming technique where a function invokes itself in order to solve a problem. It relies on two simple principles:</p>
-<ol type="1">
-<li>know when to stop</li>
-<li>split the problem into a single step and a smaller problem</li>
-</ol>
-<p>And that’s it. Let’s see how this works in practice.</p>
-<p>For that we’ll write a recursive function that sums the elements of a vector of integers.</p>
-<pre class="language-julia"><code>function recSum(v::Vec{Int})::Int
-    if isempty(v)
-        return 0
-    else
-        return v[1] + recSum(v[2:end])
+<h2 data-number="11.2" id="sec:roman_numerals_solution"><span class="header-section-number">11.2</span> Solution</h2>
+<p>Let’s start with a simple mapping between some key Roman numerals and their Arabic counterparts.</p>
+<pre class="language-julia"><code>const roman2arabic = [(&quot;M&quot;, 1000), (&quot;CM&quot;, 900),
+                (&quot;D&quot;, 500), (&quot;CD&quot;, 400),
+                (&quot;C&quot;, 100), (&quot;XC&quot;, 90),
+                (&quot;L&quot;, 50), (&quot;XL&quot;, 40),
+                (&quot;X&quot;, 10), (&quot;IX&quot;, 9), (&quot;V&quot;, 5),
+                (&quot;IV&quot;, 4), (&quot;I&quot;, 1)]</code></pre>
+<p>The mapping is defined with (<code>const</code>) keyword to signal that we do not wish to change it throughout the program execution. Moreover, we used a vector of tuples, not a dictionary, since we want to preserve the (descending) order of the pairs of values. Notice, that we also incluced the key landmarks of subtractive notation (e.g. <code>("CM", 900)</code> or <code>("IV", 4)</code>). Now, we are ready to take the next step.</p>
+<pre class="language-julia"><code>function getRoman(arabic::Int)::Str
+    @assert 0 &lt; arabic &lt; 4000
+    roman::Str = &quot;&quot;
+    for (r, a) in roman2arabic
+        while(arabic &gt;= a)
+            roman *= r
+            arabic -= a
+        end
     end
+    return roman
 end</code></pre>
-<p>We begin by defining our edge case (know when to stop). If the vector (<code>v</code>) is empty (<code>if isempty(v)</code>) we return 0 (BTW. Notice that zero is a neutral mathematical operation for addition, any number plus zero is just itself). Otherwise (<code>else</code>) we add the first element of the vector (<code>v[1]</code>, single step) to whatever number is returned by <code>recSum</code> with the rest of the vector (<code>v[2:end]</code>) as an argument (smaller problem).</p>
-<p>Time for a couple of examples.</p>
-<p>For</p>
-<pre class="language-julia"><code>recSum([1])</code></pre>
-<p>1</p>
-<p>the execution of the program looks something like</p>
-<pre><code>recSum([1]) # triggers else branch
-    1 + recSum([]) # triggers if branch (stop)
-        1 + 0 # stop reached, time to return
-1</code></pre>
-<p>Whereas for</p>
-<pre class="language-julia"><code>recSum([1, 2, 3])</code></pre>
-<p>6</p>
-<p>we get</p>
-<pre><code>recSum([1, 2, 3]) # triggers else branch
-    1 + recSum([2, 3]) # triggers else branch
-        1 + 2 + recSum([3]) # triggers else branch
-            1 + 2 + 3 + recSum([]) # triggers if branch (stop)
-                1 + 2 + 3 + 0 # stop reached, time to return
-6</code></pre>
-<p>Although difficult to imagine <code>recSum</code> works equally well for a bit broader range of numbers.</p>
-<pre class="language-julia"><code>1:100 |&gt; collect |&gt; recSum</code></pre>
-<p>5050</p>
-<p>Believe it or not, but that last one you can calculate fairly easily yourself if you apply <a href="https://www.nctm.org/Publications/TCM-blog/Blog/The-Story-of-Gauss/">the Gauss method</a>.</p>
-<p>Anyway, usually recursion is not very effective and it can be rewritten with loops. Moreover, too big input, e.g. <code>1:100_000</code>, will likely cause an error with <code>recSum</code>, but not with built-in <code>sum</code>. Still, for some problems recursion is an easy to implement and elegant solution that gets the job done. Therefore, it is worth to have this technique in your programming toolbox.</p>
-<p>Classical examples of recursive process in action are <a href="https://en.wikipedia.org/wiki/Factorial">factorial</a> and <a href="https://en.wikipedia.org/wiki/Fibonacci_sequence">Fibonacci sequence</a>. For this task your job is to implement the functions to calculate both the numbers.</p>
+<p>We will build our Roman numeral bit by bit starting from an empty string (<code>roman::Str = ""</code>). For that we traverse all our Roman and Arabic landmarks (<code>for (r, a) in roman2arabic</code>). For each of them (starting from the highest number), we check if the currently examined Arabic landmark (<code>a</code>) is lower than the Arabic number we got to translate (<code>arabic</code>). As long as it is (<code>while(arabic &gt;= a)</code>) we append the parallel Roman landmark (<code>r</code>) to our solution (<code>roman *= r</code>) and subtract the Arabic landmark (<code>a</code>) from our Arabic number (<code>arabic -= a</code>). Once we are done we return the result.</p>
+<blockquote>
+<p>Note. To better understand the above code you may read about the <code>while</code> loop in <a href="https://docs.julialang.org/en/v1/base/base/#while">the docs</a> and use <a href="https://docs.julialang.org/en/v1/base/base/#Base.@show">show</a> macro to have a sneak peak how the variables in the loop change.</p>
+</blockquote>
+<p>Time for a minitest (go ahead pick a number and, in your head or on a piece of paper, follow the function’s execution).</p>
+<pre class="language-julia"><code>getRoman.(1:10)</code></pre>
+<pre class="output"><code>[&quot;I&quot;, &quot;II&quot;, &quot;III&quot;, &quot;IV&quot;, &quot;V&quot;, &quot;VI&quot;, &quot;VII&quot;, &quot;VIII&quot;, &quot;IX&quot;, &quot;X&quot;]</code></pre>
+<p>OK, time for a bigger test.</p>
+<pre class="language-julia"><code>getRoman.(arabicTest) == romanTest</code></pre>
+<p>true</p>
+<p>Looks alright.</p>
+<p>Time to write our <code>getArabic</code> function. For that we will have to break a Roman numeral into tokens (from left to right) that we will use to build up an Arabic number.</p>
+<pre class="language-julia"><code>const romanTokens = map(first, roman2arabic)
+# equivalent to
+const romanTokens = map(tuple -&gt; tuple[1], roman2arabic)
+
+function getTokenAndRest(roman::Str)::Tuple{Str, Str}
+    if length(roman) &lt;= 1
+        return (roman, &quot;&quot;)
+    elseif roman[1:2] in romanTokens
+        return (roman[1:2], string(roman[3:end]))
+    else
+        return (string(roman[1]), string(roman[2:end]))
+    end
+end
+
+function getTokens(roman::Str)::Vec{Str}
+    curToken::Str = &quot;&quot;
+    allTokens::Vec{Str} = []
+    while (roman != &quot;&quot;)
+        curToken, roman = getTokenAndRest(roman)
+        push!(allTokens, curToken)
+    end
+    return allTokens
+end</code></pre>
+<p>First, we extract <code>romanTokens</code> with <code>map</code> and <a href="https://docs.julialang.org/en/v1/base/collections/#Base.first">first</a>. Next, we use <code>getTokenAndRest</code> to split a Roman numeral into a key token (first on the left, either one or two characters long) and the rest of the numeral. The <code>string(sth)</code> part makes sure we always return a string and not a character. Anyway, based on it (<code>getTokenAndRest</code>) we split a Roman numeral into a vector of tokens with <code>getTokens</code>. Now, we are ready to write our <code>getArabic</code>.</p>
+<pre class="language-julia"><code>function getVal(lookup::Vec{Tuple{Str, Int}}, key::Str, default::Int)::Int
+    for (k, v) in lookup
+        if k == key
+            return v
+        end
+    end
+    return default
+end
+
+function getArabic(roman::Str)::Int
+    tokens::Vec{Str} = getTokens(roman)
+    sum::Int = 0
+    for curToken in tokens
+        sum += getVal(roman2arabic, curToken, 0)
+    end
+    return sum
+end</code></pre>
+<p>Notice, that before we moved to <code>getArabic</code> we wrote <code>getVal</code> that will provide us with an Arabic number for a given Roman numeral token. The above was not strictly necessary, as we could have just use the built-in <a href="https://docs.julialang.org/en/v1/base/collections/#Base.get">get</a> for that purpose (e.g. with <code>get(Dict(roman2arabic), key, default)</code>). Anyway, to get the Arabic number for a given Roman numeral (<code>roman</code>), first we split it into a vector of <code>tokens</code> and traverse them one by one (<code>curToken</code>) with the <code>for</code> loop. We translate <code>curToken</code> to an Arabic numeral and add it to <code>sum</code> which we return once we are done.</p>
+<p>Again, let’s go with a minitest (go ahead pick a number and, in your head or on a piece of paper, follow the function’s execution).</p>
+<pre class="language-julia"><code>getArabic.([&quot;I&quot;, &quot;II&quot;, &quot;III&quot;, &quot;IV&quot;, &quot;V&quot;, &quot;VI&quot;, &quot;VII&quot;, &quot;VIII&quot;])</code></pre>
+<pre class="output"><code>[1, 2, 3, 4, 5, 6, 7, 8]</code></pre>
+<p>Finally, a bigger test.</p>
+<pre class="language-julia"><code>getArabic.(romanTest) == arabicTest</code></pre>
+<p>true</p>
+<p>And another one.</p>
+<pre class="language-julia"><code>getArabic.(getRoman.(arabicTest)) == arabicTest</code></pre>
+<p>true</p>
+<p>I don’t know about you, but to me the results are satisfactory.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./recursion.html"><b>7</b> Recursion</a> <kbd>←</kbd>
+        <a class="menu-level-2" href="./roman_numerals_problem.html"><b>11.1</b> Problem</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./recursion_solution.html"><b>7.2</b> Solution</a>
+            <kbd>→</kbd> <a class="menu-level-1" href="./leap_year.html"><b>12</b> Leap year</a>
         </span>
     </p>
 </div>

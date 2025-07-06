@@ -133,54 +133,26 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="7.1" id="sec:recursion_problem"><span class="header-section-number">7.1</span> Problem</h2>
-<p><a href="https://en.wikipedia.org/wiki/Recursion_(computer_science)">Recursion</a> is a programming technique where a function invokes itself in order to solve a problem. It relies on two simple principles:</p>
-<ol type="1">
-<li>know when to stop</li>
-<li>split the problem into a single step and a smaller problem</li>
-</ol>
-<p>And that’s it. Let’s see how this works in practice.</p>
-<p>For that we’ll write a recursive function that sums the elements of a vector of integers.</p>
-<pre class="language-julia"><code>function recSum(v::Vec{Int})::Int
-    if isempty(v)
-        return 0
-    else
-        return v[1] + recSum(v[2:end])
-    end
-end</code></pre>
-<p>We begin by defining our edge case (know when to stop). If the vector (<code>v</code>) is empty (<code>if isempty(v)</code>) we return 0 (BTW. Notice that zero is a neutral mathematical operation for addition, any number plus zero is just itself). Otherwise (<code>else</code>) we add the first element of the vector (<code>v[1]</code>, single step) to whatever number is returned by <code>recSum</code> with the rest of the vector (<code>v[2:end]</code>) as an argument (smaller problem).</p>
-<p>Time for a couple of examples.</p>
-<p>For</p>
-<pre class="language-julia"><code>recSum([1])</code></pre>
-<p>1</p>
-<p>the execution of the program looks something like</p>
-<pre><code>recSum([1]) # triggers else branch
-    1 + recSum([]) # triggers if branch (stop)
-        1 + 0 # stop reached, time to return
-1</code></pre>
-<p>Whereas for</p>
-<pre class="language-julia"><code>recSum([1, 2, 3])</code></pre>
-<p>6</p>
-<p>we get</p>
-<pre><code>recSum([1, 2, 3]) # triggers else branch
-    1 + recSum([2, 3]) # triggers else branch
-        1 + 2 + recSum([3]) # triggers else branch
-            1 + 2 + 3 + recSum([]) # triggers if branch (stop)
-                1 + 2 + 3 + 0 # stop reached, time to return
-6</code></pre>
-<p>Although difficult to imagine <code>recSum</code> works equally well for a bit broader range of numbers.</p>
-<pre class="language-julia"><code>1:100 |&gt; collect |&gt; recSum</code></pre>
-<p>5050</p>
-<p>Believe it or not, but that last one you can calculate fairly easily yourself if you apply <a href="https://www.nctm.org/Publications/TCM-blog/Blog/The-Story-of-Gauss/">the Gauss method</a>.</p>
-<p>Anyway, usually recursion is not very effective and it can be rewritten with loops. Moreover, too big input, e.g. <code>1:100_000</code>, will likely cause an error with <code>recSum</code>, but not with built-in <code>sum</code>. Still, for some problems recursion is an easy to implement and elegant solution that gets the job done. Therefore, it is worth to have this technique in your programming toolbox.</p>
-<p>Classical examples of recursive process in action are <a href="https://en.wikipedia.org/wiki/Factorial">factorial</a> and <a href="https://en.wikipedia.org/wiki/Fibonacci_sequence">Fibonacci sequence</a>. For this task your job is to implement the functions to calculate both the numbers.</p>
+<h2 data-number="11.1" id="sec:roman_numerals_problem"><span class="header-section-number">11.1</span> Problem</h2>
+<p>Every now and then we encounter some Roman numerals written on an old building’s wall or a book’s page. Your job is to refresh your knowledge about the numerals, e.g. by reading <a href="https://en.wikipedia.org/wiki/Roman_numerals">this Wikipedia’s entry</a>, and write a two way converter, for instance in the form of <code>getRoman(arabic::Int)::Str</code> and <code>getArabic(roman::Str)::Int</code> functions. Below you will find two sets of parallel numbers (based on the Wikipedia’s page) so that you can test your results (your solution should work correctly for the numbers in range [1-3999]).</p>
+<pre class="language-julia"><code>arabicTest = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+              11, 12, 39, 246, 789, 2421, 160, 207, 1009, 1066,
+              3999, 1776, 1918, 1944, 2025,
+              1900, 1912]
+romanTest = [&quot;I&quot;, &quot;II&quot;, &quot;III&quot;, &quot;IV&quot;, &quot;V&quot;,
+             &quot;VI&quot;, &quot;VII&quot;, &quot;VIII&quot;, &quot;IX&quot;, &quot;X&quot;,
+             &quot;XI&quot;, &quot;XII&quot;, &quot;XXXIX&quot;, &quot;CCXLVI&quot;, &quot;DCCLXXXIX&quot;,
+             &quot;MMCDXXI&quot;, &quot;CLX&quot;, &quot;CCVII&quot;, &quot;MIX&quot;, &quot;MLXVI&quot;,
+             &quot;MMMCMXCIX&quot;, &quot;MDCCLXXVI&quot;, &quot;MCMXVIII&quot;, &quot;MCMXLIV&quot;, &quot;MMXXV&quot;,
+             &quot;MCM&quot;, &quot;MCMXII&quot;]</code></pre>
+<p>Good luck.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./recursion.html"><b>7</b> Recursion</a> <kbd>←</kbd>
+        <a class="menu-level-1" href="./roman_numerals.html"><b>11</b> Roman numerals</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./recursion_solution.html"><b>7.2</b> Solution</a>
+            <kbd>→</kbd> <a class="menu-level-2" href="./roman_numerals_solution.html"><b>11.2</b> Solution</a>
         </span>
     </p>
 </div>
