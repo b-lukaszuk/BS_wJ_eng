@@ -13,8 +13,8 @@ sc(s6)
 Those were used only for the chapter's extras and are not strictly necessary to
 solve the task.
 
-Anyway, you may compare your own solution with the one in this chapter's text
-(with explanations) or with [the code
+Anyway, you may compare your own solution with the one in this chapter (with
+explanations) or with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/translation)
 (without explanations).
 
