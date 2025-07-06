@@ -12,7 +12,7 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/roman_
 ## Problem {#sec:roman_numerals_problem}
 
 Every now and then we encounter some Roman numerals written on an old building's
-wall or on a book's page. Your job is to refresh your knowledge about the
+wall or a book's page. Your job is to refresh your knowledge about the
 numerals, e.g. by reading [this Wikipedia's
 entry](https://en.wikipedia.org/wiki/Roman_numerals), and write a two way
 converter, for instance in the form of `getRoman(arabic::Int)::Str` and
@@ -40,8 +40,8 @@ Good luck.
 
 ## Solution {#sec:roman_numerals_solution}
 
-Let's start with a simple mapping between key Roman numerals and their Arabic
-counterparts.
+Let's start with a simple mapping between some key Roman numerals and their
+Arabic counterparts.
 
 ```jl
 s = """
@@ -82,18 +82,18 @@ sc(s)
 We will build our Roman numeral bit by bit starting from an empty string
 (`roman::Str = ""`). For that we traverse all our Roman and Arabic landmarks
 (`for (r, a) in roman2arabic`). For each of them (starting from the highest number),
-we check if currently examined Arabic landmark (`a`) is lower than the Arabic
-number we got to translate (`arabic`). As long as it is (`while(arabic >= a)`)
-we append the parallel roman landmark to our solution (`roman *= r`) and subtract
-the landmark from our Arabic number (`arabic -= a`). Once we are done we return
-our result.
+we check if the currently examined Arabic landmark (`a`) is lower than the
+Arabic number we got to translate (`arabic`). As long as it is
+(`while(arabic >= a)`) we append the parallel Roman landmark (`r`) to our
+solution (`roman *= r`) and subtract the Arabic landmark (`a`) from our Arabic
+number (`arabic -= a`). Once we are done we return the result.
 
 > Note. To better understand the above code you may read about the `while` loop
 > in [the docs](https://docs.julialang.org/en/v1/base/base/#while) and use
 > [show](https://docs.julialang.org/en/v1/base/base/#Base.@show) macro to have
 > a sneak peak how the variables in the loop change.
 
-Time for a minitest (go ahead pick a number and in your head, or on a piece of
+Time for a minitest (go ahead pick a number and, in your head or on a piece of
 paper, follow the function's execution).
 
 ```jl
@@ -150,13 +150,14 @@ replace(sc(s), r"\bromanTokens =" => "const romanTokens =")
 First, we extract `romanTokens` with `map` and
 [first](https://docs.julialang.org/en/v1/base/collections/#Base.first). Next,
 we use `getTokenAndRest` to split a Roman numeral into a key token (first on the
-left, either one or two characters long) from the left and the rest of the
-numeral. Based on it we split a Roman numeral into a vector of tokens with
-`getTokens`. Now, we are ready to write our `getArabic`.
+left, either one or two characters long) and the rest of the
+numeral. The `string(sth)` part makes sure we always return a string and not a
+character. Anyway, based on it (`getTokenAndRest`) we split a Roman numeral into
+a vector of tokens with `getTokens`. Now, we are ready to write our `getArabic`.
 
 ```jl
 s = """
-function getVal(lookup::Vec{Tuple{Str, Int}}, key::Str, default::Int=0)::Int
+function getVal(lookup::Vec{Tuple{Str, Int}}, key::Str, default::Int)::Int
     for (k, v) in lookup
         if k == key
             return v
@@ -187,8 +188,8 @@ vector of `tokens` and traverse them one by one (`curToken`) with the `for`
 loop. We translate `curToken` to an Arabic numeral and add it to `sum` which we
 return once we are done.
 
-Again, let's go with a minitest (go ahead pick a number and in your head, or on
-a piece of paper, and follow the function's execution).
+Again, let's go with a minitest (go ahead pick a number and, in your head or on
+a piece of paper, follow the function's execution).
 
 ```jl
 s = """
