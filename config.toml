@@ -13,6 +13,7 @@ contents = [
     "pascals_triangle",
     "tree",
     "roman_numerals",
+    "cheque",
     "leap_year",
     "calendar",
     "prime_numbers",
