@@ -47,7 +47,7 @@ exact):
 ```
 
 The above indicates how many pairs of 2 people out of 3 candidates can we get
-(e.g in order to play doubles in tennis).
+(e.g. in order to play doubles in tennis).
 
 ## Solution {#sec:pascals_triangle_solution}
 
