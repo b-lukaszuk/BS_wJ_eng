@@ -1,5 +1,6 @@
 const Str = String
 
+# https://en.wikipedia.org/wiki/English_numerals
 units = Dict(0 => "zero", 1 => "one",
              2 => "two", 3 => "three", 4 => "four",
              5 => "five", 6 => "six", 7 => "seven",
@@ -42,4 +43,4 @@ function getEngNumeral0upto99(n::Int)::Str
     end
 end
 
-getEngNumeral0upto99.([21, 25, 32, 58, 64, 79, 83, 99])
+getEngNumeral0upto99.([0, 5, 9, 11, 13, 21, 25, 32, 58, 64, 79, 83, 99])
