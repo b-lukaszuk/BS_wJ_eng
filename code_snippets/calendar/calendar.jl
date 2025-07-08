@@ -31,6 +31,20 @@ function getMultOfYGtEqX(x::Int, y::Int=daysPerWeek)::Int
     end
 end
 
+# or
+
+# returns multiple of y that is >= x
+function getMultOfYGtEqX(x::Int, y::Int=daysPerWeek)::Int
+    @assert x > 0 && y > 0 "x and y must be > 0"
+    @assert x >= y "x must be >= y"
+    q::Int, r::Int = divrem(x, y) # quotient, reminder
+    if r == 0
+        return x
+    else
+        return (q + 1) * y
+    end
+end
+
 # 1 - Sunday, 7 - Saturday
 function getPaddedDays(nDays::Int, fstDay::Int)::Vec{Int}
     daysFront::Int = fstDay - 1

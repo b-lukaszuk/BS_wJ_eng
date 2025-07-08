@@ -117,6 +117,9 @@ multiple of `y` that is greater than or equal to `x`. Briefly, if `x` is evenly
 divisible by `y` (`x % y == 0`) then we return `x`. Otherwise, we divide `x` by
 `y` (`x / y`), round it up to the next full number with `ceil` and represent it
 as an integer (`round(Int, ...`) . We return that last number multiplied by `y`.
+The above functionality could be also implemented with the built-in
+[divrem](https://docs.julialang.org/en/v1/base/math/#Base.divrem) (see [the code
+snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/calendar)).
 
 We will use it (`getMultOfYGtEqX`) to get our days for a given month padded with
 zeros.
