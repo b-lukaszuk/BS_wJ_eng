@@ -16,7 +16,7 @@ tens = Dict(20 => "twenty", 30 => "thrity",
             70 => "seventy", 80 => "eigthy", 90 => "ninety")
 
 function getEngNumeralUpto99(n::Int)::Str
-    @assert 0 <= n <= 99 "n must be in range [0-90]"
+    @assert 0 <= n <= 99 "n must be in range [0-99]"
     if n < 20
         return unitsAndTeens[n]
     else
@@ -25,4 +25,16 @@ function getEngNumeralUpto99(n::Int)::Str
     end
 end
 
+function getEngNumeralUpto999(n::Int)::Str
+    @assert 0 <= n <= 999 "n must be in range [0-999]"
+    if n < 100
+        return getEngNumeralUpto99(n)
+    else
+        h::Int, t::Int = divrem(n, 100) # h - hundreds, t - upto tens
+        return getEngNumeralUpto99(h) * " hundred" * (t == 0 ? "" :
+            " and " * getEngNumeralUpto99(t))
+    end
+end
+
 getEngNumeralUpto99.([0, 5, 9, 11, 13, 21, 25, 32, 58, 64, 79, 83, 99])
+getEngNumeralUpto999.([101, 109, 110, 117, 120, 152, 200, 208, 394, 400, 999])
