@@ -41,5 +41,26 @@ function getEngNumeralUpto999(n::Int)::Str
     return result
 end
 
+function getEngNumeralBelow1M(n::Int)::Str
+    @assert 0 <= n <= 999_999 "n must be in range [0-999,999]"
+    if n < 1000
+        return getEngNumeralUpto999(n)
+    end
+    t::Int, h::Int = divrem(n, 1000) # t - thousands, h - hundreds
+    result::Str = getEngNumeralUpto999(t) * " thousand"
+    if h == 0
+        return result
+    elseif h < 100
+        result *= " and "
+    else
+        result *= ", "
+    end
+    result *= getEngNumeralUpto999(h)
+    return result
+end
+
 getEngNumeralUpto99.([0, 5, 9, 11, 13, 21, 25, 32, 58, 64, 79, 83, 99])
 getEngNumeralUpto999.([101, 109, 110, 117, 120, 152, 200, 208, 394, 400, 999])
+getEngNumeralBelow1M.([1_800, 4_547, 5_005, 10_800, 96_779,
+                       108_090, 108_001, 189_014, 500_506,
+                       889_308])
