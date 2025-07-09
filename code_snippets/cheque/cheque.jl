@@ -19,21 +19,26 @@ function getEngNumeralUpto99(n::Int)::Str
     @assert 0 <= n <= 99 "n must be in range [0-99]"
     if n < 20
         return unitsAndTeens[n]
-    else
-        u::Int = rem(n, 10) # u - units
-        return tens[n-u] * (u == 0 ? "" : "-" * unitsAndTeens[u])
     end
+    u::Int = rem(n, 10) # u - units
+    result::Str = tens[n-u]
+    if u != 0
+        result *= "-" * unitsAndTeens[u]
+    end
+    return result
 end
 
 function getEngNumeralUpto999(n::Int)::Str
     @assert 0 <= n <= 999 "n must be in range [0-999]"
     if n < 100
         return getEngNumeralUpto99(n)
-    else
-        h::Int, t::Int = divrem(n, 100) # h - hundreds, t - upto tens
-        return getEngNumeralUpto99(h) * " hundred" * (t == 0 ? "" :
-            " and " * getEngNumeralUpto99(t))
     end
+    h::Int, t::Int = divrem(n, 100) # h - hundreds, t - upto tens
+    result::Str = getEngNumeralUpto99(h) * " hundred"
+    if t != 0
+        result *= " and " * getEngNumeralUpto99(t)
+    end
+    return result
 end
 
 getEngNumeralUpto99.([0, 5, 9, 11, 13, 21, 25, 32, 58, 64, 79, 83, 99])
