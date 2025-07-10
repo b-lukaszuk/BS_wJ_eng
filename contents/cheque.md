@@ -11,7 +11,11 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/cheque
 
 ## Problem {#sec:cheque_problem}
 
-The problem description goes here.
+Every now and then it comes in handy to be able to write down an [English
+numeral](https://en.wikipedia.org/wiki/English_numerals) with the words. Case in
+point would be to write a sum of money on a cheque. So here is a task for
+you. Write a program in Julia that for any number, let's say in the range 1 to
+999,999 returns its transcription with words.
 
 ## Solution {#sec:cheque_solution}
 
