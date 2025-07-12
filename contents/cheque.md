@@ -128,3 +128,60 @@ s = """
 """
 replace(sco(s), "], " => "],\n")
 ```
+
+Since the previous part was so easy, there's not reason to linger. Time for our
+final leap.
+
+```jl
+s = """
+function getEngNumeralBelow1M(n::Int)::Str
+    @assert 0 <= n <= 999_999 "n must be in range [0-999,999]"
+    if n < 1000
+        return getEngNumeralUpto999(n)
+    end
+    t::Int, h::Int = divrem(n, 1000) # t - thousands, h - hundreds
+    result::Str = getEngNumeralUpto999(t) * " thousand"
+    if h == 0
+        return result
+    elseif h < 100
+        result *= " and "
+    else
+        result *= ", "
+    end
+    result *= getEngNumeralUpto999(h)
+    return result
+end
+"""
+sc(s)
+```
+
+Also this time we use our previously defined function (`getEngNumeralUpto999`)
+as an integral part of the bigger, more general solution. When a number (`n`)
+is small (`if n < 1000`) we write it down as we used to (`getEngNumeralUpto999`).
+Otherwise, we it (`n`) to thousands (`t`) and hundreds (`h`) parts. Next, we
+build our `result` for the thousands
+(`getEngNumeralUpto999(t) * " thousand`).
+When the hundreds part is 0 (`if h == 0`) we just return our result. If the
+hundreds part is small (`h < 100`) we add the conjunction `" and "`, otherwise
+(large hundreds part), we separate the following words with `", "`. Once again,
+we finish by using `getEngNumeralUpto999(h)` to transcribe the remaining part.
+
+Let's see our creation at work.
+
+```jl
+s = """
+(
+	getEngNumeralBelow1M.([0, 21, 64, 95]),
+	getEngNumeralBelow1M.([101, 320, 500]),
+	getEngNumeralBelow1M.([1_800]),
+	getEngNumeralBelow1M.([96_779]),
+	getEngNumeralBelow1M.([180_000]),
+	getEngNumeralBelow1M.([889_308])
+)
+"""
+replace(sco(s), "], " => "],\n")
+```
+
+Mission, completed. If you ever wanted to transcribe a number in the range of
+millions, you know what to do, use `getEngNumeralBelow1M` as its building block,
+and write it according to the presented schema.
