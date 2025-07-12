@@ -86,3 +86,45 @@ replace(sco(s), "], " => "],\n")
 
 Good. It appears we got that one out of our way. Let's move on to something
 bigger.
+
+```jl
+s = """
+function getEngNumeralUpto999(n::Int)::Str
+    @assert 0 <= n <= 999 "n must be in range [0-999]"
+    if n < 100
+        return getEngNumeralUpto99(n)
+    end
+    h::Int, t::Int = divrem(n, 100) # h - hundreds, t - tens
+    result::Str = getEngNumeralUpto99(h) * " hundred"
+    if t != 0
+        result *= " and " * getEngNumeralUpto99(t)
+    end
+    return result
+end
+"""
+sc(s)
+```
+
+This time we deal with all the integers below one thousand.
+The previously defined `getEngNumeralUpto99` is an important building block of
+that new function. If a number (`n`) is smaller than 100 (`if n < 100`) we just
+transcribe it as we did in the previous code snippet
+(`return getEngNumeralUpto99(n)`).
+Otherwise we split it into hundreds (`h`) and tens part (`t`, actually it may
+also contain units and teens). We start building our `result` by transcribing
+the hundreds part (`result::Str = getEngNumeralUpto99(n) * " hundred"`). When
+appropriate (`t != 0`) we append the transcript for the tens part separated with
+`"and"` (British English convention) to our `result`.
+
+Time for test.
+
+```jl
+s = """
+(
+	getEngNumeralUpto999.([0, 9, 13, 20, 66, 95]),
+	getEngNumeralUpto999.([101, 109, 110]),
+	getEngNumeralUpto999.([320, 400, 500])
+)
+"""
+replace(sco(s), "], " => "],\n")
+```
