@@ -15,7 +15,7 @@ Every now and then it comes in handy to be able to write down an [English
 numeral](https://en.wikipedia.org/wiki/English_numerals) with the words. Case in
 point would be to write a sum of money on a cheque or to display it in a finance
 (perhaps bank) app. So here is a task for you. Write a program in Julia that for
-any number, let's say in the range 1 to 999,999 returns its transcription with
+any number let's say in the range of 1 to 999,999 returns its transcription with
 words.
 
 ## Solution {#sec:cheque_solution}
@@ -38,10 +38,10 @@ tens = Dict(20 => "twenty", 30 => "thrity",
             40 => "forty", 50 => "fifty", 60 => "sixty",
             70 => "seventy", 80 => "eigthy", 90 => "ninety")
 """
-replace(sc(s), r"\units" => "const units", r"\tens " => "const tens ")
+replace(sc(s), r"\bunits" => "const units", r"\btens " => "const tens ")
 ```
 
-The above are just mappings between the necessary basic key elements of our
+The above are just mappings between the necessary basic key ingredients of our
 number soup. Let's use them to get the transcript for numbers in the range of 0
 to 99.
 
@@ -68,8 +68,8 @@ representation from the `unitsAndTeens` dictionary. Alternatively, for `n` in
 the `tens`, first we obtain the units (`u`) part, which is a reminder of
 dividing `n` by `10` (`rem(n, 10)`). We use it (`u`), to obtain the transcript
 for the tens (`tens[n-u]`). It becomes our `result` to which we attach the
-transcript for units separated by hyphen (`"-" * unitsAndTeens[u]`), but only if
-the unit is different than zero (`if u != 0`).
+transcript for units separated by a hyphen (`"-" * unitsAndTeens[u]`), but only
+if the unit is different than zero (`if u != 0`).
 
 Time for a test ride.
 
@@ -113,10 +113,10 @@ transcribe it as we did in the previous code snippet
 Otherwise we split it into hundreds (`h`) and tens part (`t`, actually it may
 also contain units and teens). We start building our `result` by transcribing
 the hundreds part (`result::Str = getEngNumeralUpto99(n) * " hundred"`). When
-appropriate (`t != 0`) we append the transcript for the tens part separated with
+appropriate (`t != 0`) we append the transcript for the tens separated with
 `"and"` (British English convention) to our `result`.
 
-Time for test.
+Time for a test.
 
 ```jl
 s = """
@@ -155,13 +155,13 @@ end
 sc(s)
 ```
 
-Also this time we use our previously defined function (`getEngNumeralUpto999`)
+This time we also use our previously defined function (`getEngNumeralUpto999`)
 as an integral part of the bigger, more general solution. When a number (`n`)
-is small (`if n < 1000`) we write it down as we used to (`getEngNumeralUpto999`).
-Otherwise, we it (`n`) to thousands (`t`) and hundreds (`h`) parts. Next, we
-build our `result` for the thousands
-(`getEngNumeralUpto999(t) * " thousand`).
-When the hundreds part is 0 (`if h == 0`) we just return our result. If the
+is small (`if n < 1000`) we write it down as we used to
+(`return getEngNumeralUpto999(n)`). Otherwise, we split it (`n`) to the
+thousands (`t`) and the hundreds (`h`) parts. Next, we build our `result` for
+the thousands (`getEngNumeralUpto999(t) * " thousand`).
+When the hundreds part is 0 (`if h == 0`) we just return our `result`. If the
 hundreds part is small (`h < 100`) we add the conjunction `" and "`, otherwise
 (large hundreds part), we separate the following words with `", "`. Once again,
 we finish by using `getEngNumeralUpto999(h)` to transcribe the remaining part.
@@ -183,5 +183,5 @@ replace(sco(s), "], " => "],\n")
 ```
 
 Mission, completed. If you ever wanted to transcribe a number in the range of
-millions, you know what to do, use `getEngNumeralBelow1M` as its building block,
-and write it according to the presented schema.
+millions, you know what to do. Use `getEngNumeralBelow1M` as its building block,
+and write it according to the above-presented schema.
