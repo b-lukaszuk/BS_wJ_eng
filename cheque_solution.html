@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Problem - Build SH*T with Julia</title>
+  <title>Solution - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -136,30 +136,109 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="9.1" id="sec:pascals_triangle_problem"><span class="header-section-number">9.1</span> Problem</h2>
-<p>Imagine that you are a basketball coach in a local school. A basketball team is composed of 5 players. Nine kids attends your classes. You would like the kids to play in every possible configuration so that you could choose the best team to represent the school next month. You wonder how many different teams of 5 players can you compose out of 9 candidates.</p>
-<p>Such a question could be answered with the <a href="https://docs.julialang.org/en/v1/base/math/#Base.binomial">binomial</a> function or <a href="https://en.wikipedia.org/wiki/Pascal%27s_triangle">Pascal’s triangle</a>.</p>
-<p>So here is a task for you, write a program that will display the Pascal’s triangle that will help you to answer the question mentioned above.</p>
-<p>Compare its output with <code>binomial</code>.</p>
-<p>The function can display a bare (right) triangle</p>
-<pre><code>[1]
-[1, 1]
-[1, 2, 1]
-[1, 3, 3, 1]</code></pre>
-<p>or if you like challenges a slightly formatted output (it doesn’t have to be exact):</p>
-<pre><code>   1
-  1 1
- 1 2 1
-1 3 3 1
-    ∆</code></pre>
-<p>The above indicates how many pairs of 2 people out of 3 candidates can we get (e.g. in order to play doubles in tennis).</p>
+<h2 data-number="12.2" id="sec:cheque_solution"><span class="header-section-number">12.2</span> Solution</h2>
+<p>We begin by defining a few constants that will be useful later on.</p>
+<pre class="language-julia"><code>const unitsAndTeens = Dict(0 =&gt; &quot;zero&quot;, 1 =&gt; &quot;one&quot;,
+                     2 =&gt; &quot;two&quot;, 3 =&gt; &quot;three&quot;, 4 =&gt; &quot;four&quot;,
+                     5 =&gt; &quot;five&quot;, 6 =&gt; &quot;six&quot;, 7 =&gt; &quot;seven&quot;,
+                     8 =&gt; &quot;eight&quot;, 9 =&gt; &quot;nine&quot;, 10 =&gt; &quot;ten&quot;,
+                     11 =&gt; &quot;eleven&quot;, 12 =&gt; &quot;twelve&quot;,
+                     13 =&gt; &quot;thirteen&quot;, 14 =&gt; &quot;fourteen&quot;,
+                     15 =&gt; &quot;fifteen&quot;, 16 =&gt; &quot;sixteen&quot;,
+                     17 =&gt; &quot;seventeen&quot;, 18 =&gt; &quot;eighteen&quot;,
+                     19 =&gt; &quot;nineteen&quot;)
+
+const tens = Dict(20 =&gt; &quot;twenty&quot;, 30 =&gt; &quot;thrity&quot;,
+            40 =&gt; &quot;forty&quot;, 50 =&gt; &quot;fifty&quot;, 60 =&gt; &quot;sixty&quot;,
+            70 =&gt; &quot;seventy&quot;, 80 =&gt; &quot;eigthy&quot;, 90 =&gt; &quot;ninety&quot;)</code></pre>
+<p>The above are just mappings between the necessary basic key ingredients of our number soup. Let’s use them to get the transcript for numbers in the range of 0 to 99.</p>
+<pre class="language-julia"><code>function getEngNumeralUpto99(n::Int)::Str
+    @assert 0 &lt;= n &lt;= 99 &quot;n must be in range [0-99]&quot;
+    if n &lt; 20
+        return unitsAndTeens[n]
+    end
+    u::Int = rem(n, 10) # u - units
+    result::Str = tens[n-u]
+    if u != 0
+        result *= &quot;-&quot; * unitsAndTeens[u]
+    end
+    return result
+end</code></pre>
+<p>Whenever a number (<code>n</code>) is below 20 (<code>if n &lt; 20</code>) we just return its representation from the <code>unitsAndTeens</code> dictionary. Alternatively, for <code>n</code> in the <code>tens</code>, first we obtain the units (<code>u</code>) part, which is a reminder of dividing <code>n</code> by <code>10</code> (<code>rem(n, 10)</code>). We use it (<code>u</code>), to obtain the transcript for the tens (<code>tens[n-u]</code>). It becomes our <code>result</code> to which we attach the transcript for units separated by a hyphen (<code>"-" * unitsAndTeens[u]</code>), but only if the unit is different than zero (<code>if u != 0</code>).</p>
+<p>Time for a test ride.</p>
+<pre class="language-julia"><code>(
+    getEngNumeralUpto99.([0, 5, 9, 11, 13, 20, 21]),
+    getEngNumeralUpto99.([25, 32, 58, 64, 66]),
+    getEngNumeralUpto99.([79, 83, 95, 99])
+)</code></pre>
+<pre class="output"><code>([&quot;zero&quot;, &quot;five&quot;, &quot;nine&quot;, &quot;eleven&quot;, &quot;thirteen&quot;, &quot;twenty&quot;, &quot;twenty-one&quot;],
+[&quot;twenty-five&quot;, &quot;thrity-two&quot;, &quot;fifty-eight&quot;, &quot;sixty-four&quot;, &quot;sixty-six&quot;],
+[&quot;seventy-nine&quot;, &quot;eigthy-three&quot;, &quot;ninety-five&quot;, &quot;ninety-nine&quot;])</code></pre>
+<p>Good. It appears we got that one out of our way. Let’s move on to something bigger.</p>
+<pre class="language-julia"><code>function getEngNumeralUpto999(n::Int)::Str
+    @assert 0 &lt;= n &lt;= 999 &quot;n must be in range [0-999]&quot;
+    if n &lt; 100
+        return getEngNumeralUpto99(n)
+    end
+    h::Int, t::Int = divrem(n, 100) # h - hundreds, t - tens
+    result::Str = getEngNumeralUpto99(h) * &quot; hundred&quot;
+    if t != 0
+        result *= &quot; and &quot; * getEngNumeralUpto99(t)
+    end
+    return result
+end</code></pre>
+<p>This time we deal with all the integers below one thousand. The previously defined <code>getEngNumeralUpto99</code> is an important building block of that new function. If a number (<code>n</code>) is smaller than 100 (<code>if n &lt; 100</code>) we just transcribe it as we did in the previous code snippet (<code>return getEngNumeralUpto99(n)</code>). Otherwise we split it into hundreds (<code>h</code>) and tens part (<code>t</code>, actually it may also contain units and teens). We start building our <code>result</code> by transcribing the hundreds part (<code>result::Str = getEngNumeralUpto99(n) * " hundred"</code>). When appropriate (<code>t != 0</code>) we append the transcript for the tens separated with <code>"and"</code> (British English convention) to our <code>result</code>.</p>
+<p>Time for a test.</p>
+<pre class="language-julia"><code>(
+    getEngNumeralUpto999.([0, 9, 13, 20, 66, 95]),
+    getEngNumeralUpto999.([101, 109, 110]),
+    getEngNumeralUpto999.([320, 400, 500])
+)</code></pre>
+<pre class="output"><code>([&quot;zero&quot;, &quot;nine&quot;, &quot;thirteen&quot;, &quot;twenty&quot;, &quot;sixty-six&quot;, &quot;ninety-five&quot;],
+[&quot;one hundred and one&quot;, &quot;one hundred and nine&quot;, &quot;one hundred and ten&quot;],
+[&quot;three hundred and twenty&quot;, &quot;four hundred&quot;, &quot;five hundred&quot;])</code></pre>
+<p>Since the previous part was so easy, there’s not reason to linger. Time for our final leap.</p>
+<pre class="language-julia"><code>function getEngNumeralBelow1M(n::Int)::Str
+    @assert 0 &lt;= n &lt;= 999_999 &quot;n must be in range [0-999,999]&quot;
+    if n &lt; 1000
+        return getEngNumeralUpto999(n)
+    end
+    t::Int, h::Int = divrem(n, 1000) # t - thousands, h - hundreds
+    result::Str = getEngNumeralUpto999(t) * &quot; thousand&quot;
+    if h == 0
+        return result
+    elseif h &lt; 100
+        result *= &quot; and &quot;
+    else
+        result *= &quot;, &quot;
+    end
+    result *= getEngNumeralUpto999(h)
+    return result
+end</code></pre>
+<p>This time we also use our previously defined function (<code>getEngNumeralUpto999</code>) as an integral part of the bigger, more general solution. When a number (<code>n</code>) is small (<code>if n &lt; 1000</code>) we write it down as we used to (<code>return getEngNumeralUpto999(n)</code>). Otherwise, we split it (<code>n</code>) to the thousands (<code>t</code>) and the hundreds (<code>h</code>) parts. Next, we build our <code>result</code> for the thousands (<code>getEngNumeralUpto999(t) * " thousand</code>). When the hundreds part is 0 (<code>if h == 0</code>) we just return our <code>result</code>. If the hundreds part is small (<code>h &lt; 100</code>) we add the conjunction <code>" and "</code>, otherwise (large hundreds part), we separate the following words with <code>", "</code>. Once again, we finish by using <code>getEngNumeralUpto999(h)</code> to transcribe the remaining part.</p>
+<p>Let’s see our creation at work.</p>
+<pre class="language-julia"><code>(
+    getEngNumeralBelow1M.([0, 21, 64, 95]),
+    getEngNumeralBelow1M.([101, 320, 500]),
+    getEngNumeralBelow1M.([1_800]),
+    getEngNumeralBelow1M.([96_779]),
+    getEngNumeralBelow1M.([180_000]),
+    getEngNumeralBelow1M.([889_308])
+)</code></pre>
+<pre class="output"><code>([&quot;zero&quot;, &quot;twenty-one&quot;, &quot;sixty-four&quot;, &quot;ninety-five&quot;],
+[&quot;one hundred and one&quot;, &quot;three hundred and twenty&quot;, &quot;five hundred&quot;],
+[&quot;one thousand, eight hundred&quot;],
+[&quot;ninety-six thousand, seven hundred and seventy-nine&quot;],
+[&quot;one hundred and eigthy thousand&quot;],
+[&quot;eight hundred and eigthy-nine thousand, three hundred and eight&quot;])</code></pre>
+<p>Mission, completed. If you ever wanted to transcribe a number in the range of millions, you know what to do. Use <code>getEngNumeralBelow1M</code> as its building block, and write it according to the above-presented schema.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./pascals_triangle.html"><b>9</b> Pascal’s triangle</a> <kbd>←</kbd>
+        <a class="menu-level-2" href="./cheque_problem.html"><b>12.1</b> Problem</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./pascals_triangle_solution.html"><b>9.2</b> Solution</a>
+            <kbd>→</kbd> <a class="menu-level-1" href="./leap_year.html"><b>13</b> Leap year</a>
         </span>
     </p>
 </div>
