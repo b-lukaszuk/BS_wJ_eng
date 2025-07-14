@@ -40,6 +40,21 @@ Imagine that on January 1, 2020 I opened a bank deposit for 5 years with a
 yearly interest rate of 6%. Given the inflation rates from the question 2 would
 I make any real profit on January 1, 2025?
 
+### Question 4 {#sec:compound_interest_problem_q4}
+
+An average Polish male, aka Jan Kowalski, retires at the age of 65, while his
+life expectancy at birth is 74 years. Jan starts his first job at the age of 20
+and earns $3,000 a month. However, since he had heard that the pension a person
+receives is equal to 50% of their last salary, he decided to save $200 monthly
+(a bit less than 7% of his earnings). Once, he retires he'll take the missing
+50% from the pile of money that he saved so that quality of his life will not
+change.
+
+Assume that: 1) there is no inflation; 2) Jan's salary is constant throughout
+his lifetime; 3) he pays $2,400 into his savings account at the beginning of
+each year; 4) the account gives him 2% yearly. Tell roughly how long will the
+money last on the retirement?
+
 ## Solution {#sec:compound_interest_solution}
 
 Before we begin a warning. The following section, calculations, etc. may or may
