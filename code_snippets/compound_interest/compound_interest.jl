@@ -87,3 +87,31 @@ money2025depositInflation = getValue(
     getFormattedMoney(
         getValue(money2019, repeat([0.5], numYrs), inflPoland))
 )
+
+# Question 4
+function getRetirementSavings(moneyPerYr::Real, avgPercPerYr::Real,
+                              years::Int)::Flt
+    @assert moneyPerYr > 0 "moneyPerYr must be greater than 0"
+    @assert avgPercPerYr > 0 "avgPercPerYr must be greater than 0"
+    @assert years > 0 "years must be greater than 0"
+    savings::Flt = 0.0
+    multiplier::Flt = 1 + avgPercPerYr / 100
+    for _ in 1:years
+        savings += moneyPerYr
+        savings *= multiplier
+    end
+    return savings
+end
+
+savingsPerYr = 200 * 12
+savingsPercentageYr = 2
+yrsWorking = 65 - 20
+
+savings = getRetirementSavings(savingsPerYr, savingsPercentageYr, yrsWorking)
+moneyPutAside = savingsPerYr * yrsWorking
+
+savings |> getFormattedMoney
+moneyPutAside |> getFormattedMoney
+
+# for how long it lasts on retirement
+savings / 1_500 / 12
