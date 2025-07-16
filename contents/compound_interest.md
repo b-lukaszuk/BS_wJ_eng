@@ -43,7 +43,7 @@ I make any real profit on January 1, 2025?
 ### Question 4 {#sec:compound_interest_problem_q4}
 
 An average Polish male, aka Jan Kowalski, retires at the age of 65, while his
-life expectancy at birth is 74 years. Jan starts his first job at the age of 20
+life expectancy at birth is 75 years. Jan starts his first job at the age of 20
 and earns $3,000 a month. However, since he had heard that the pension a person
 receives is equal to 50% of their last salary, he decided to save $200 monthly
 (a bit less than 7% of his earnings). Once, he retires he'll take the missing
