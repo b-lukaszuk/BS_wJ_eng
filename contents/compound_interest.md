@@ -421,3 +421,74 @@ sco(s)
 
 So always look on the bright side of life, but look for something better and
 think before you leap.
+
+### Answer 4 {#sec:compound_interest_problem_a4}
+
+Time for the last question.
+
+If Jan Kowalski saves $2,400 per year with 2% interest over his working life
+then how much will he get and for how long it will last? First, the savings.
+
+```jl
+s = """
+function getRetirementSavings(moneyPerYr::Real, avgPercPerYr::Real,
+                              years::Int)::Flt
+    @assert moneyPerYr > 0 "moneyPerYr must be greater than 0"
+    @assert avgPercPerYr > 0 "avgPercPerYr must be greater than 0"
+    @assert years > 0 "years must be greater than 0"
+    savings::Flt = 0.0
+    multiplier::Flt = 1 + avgPercPerYr / 100
+    for _ in 1:years
+        savings += moneyPerYr
+        savings *= multiplier
+    end
+    return savings
+end
+"""
+sc(s)
+```
+
+After the previous sections, this was ridiculously simple. For each year (`for
+_ in 1:years`) we save some money (`savings += moneyPerYr`) of which we get our
+interest (`savings *= mulitplier`) based on the formulas discussed in
+(@sec:compound_interest_problem_a1 and @sec:compound_interest_problem_a2).
+
+
+```jl
+s = """
+savingsPerYr = 2_400 # or 200 * 12
+savingsPercentageYr = 2
+yrsWorking = 65 - 20
+
+savings = getRetirementSavings(
+	savingsPerYr, savingsPercentageYr, yrsWorking)
+moneyPutAside = savingsPerYr * yrsWorking
+
+(
+	savings |> getFormattedMoney,
+	moneyPutAside |> getFormattedMoney
+)
+"""
+sco(s)
+```
+
+So over the period of 45 working years Jan would have put aside roughly $108,000
+which together with interests should give him $175,993.
+
+Now, remember, that the idea is to take $1,500 of this pile of money every month
+to fill the gap caused by his pension equal to 50% of his final salary (which we
+said was $3,000). So let's see for how long will it last.
+
+```jl
+s = """
+# 1,500 usd a month, 12 months per year
+round(savings / 1_500 / 12, digits=2)
+"""
+sco(s)
+```
+
+This should last him roughly 10 years, which is his expected life expectancy on
+retirement (retires and 65 lives up to 75). So, I guess that if Jan intends to
+beat the averages and spend more time on retirement, then he must save some more
+cash. Anyway, it seems that that saving for one's retirement might be a prudent
+idea.
