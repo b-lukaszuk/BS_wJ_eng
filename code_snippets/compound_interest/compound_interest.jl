@@ -93,7 +93,7 @@ function getRetirementSavings(moneyPerYr::Real, avgPercPerYr::Real,
                               years::Int)::Flt
     @assert moneyPerYr > 0 "moneyPerYr must be greater than 0"
     @assert avgPercPerYr > 0 "avgPercPerYr must be greater than 0"
-    @assert years > 0 "years must be greater than 0"
+    @assert 0 < years < 50 "years must be in range [1-49]"
     savings::Flt = 0.0
     multiplier::Flt = 1 + avgPercPerYr / 100
     for _ in 1:years
@@ -103,7 +103,7 @@ function getRetirementSavings(moneyPerYr::Real, avgPercPerYr::Real,
     return savings
 end
 
-savingsPerYr = 200 * 12
+savingsPerYr = 2_400 # or 200 * 12
 savingsPercentageYr = 2
 yrsWorking = 65 - 20
 
@@ -114,4 +114,5 @@ savings |> getFormattedMoney
 moneyPutAside |> getFormattedMoney
 
 # for how long it lasts on retirement
-savings / 1_500 / 12
+# 1,500 usd a month, 12 months per year
+round(savings / 1_500 / 12, digits=2)

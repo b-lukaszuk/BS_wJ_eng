@@ -426,8 +426,9 @@ think before you leap.
 
 Time for the last question.
 
-If Jan Kowalski saves $2,400 per year with 2% interest over his working life
-then how much will he get and for how long it will last? First, the savings.
+Jan Kowalski saves $2,400 per year with constant 2% interest rate over his
+working life. If so, then how much will he get and for how long will it last?
+First, the savings.
 
 ```jl
 s = """
@@ -435,12 +436,12 @@ function getRetirementSavings(moneyPerYr::Real, avgPercPerYr::Real,
                               years::Int)::Flt
     @assert moneyPerYr > 0 "moneyPerYr must be greater than 0"
     @assert avgPercPerYr > 0 "avgPercPerYr must be greater than 0"
-    @assert years > 0 "years must be greater than 0"
+    @assert 0 < years < 50 "years must be in range [1-49]"
     savings::Flt = 0.0
     multiplier::Flt = 1 + avgPercPerYr / 100
     for _ in 1:years
-        savings += moneyPerYr
-        savings *= multiplier
+        savings += moneyPerYr # saving on Jan 1
+        savings *= multiplier # interest paid on Dec 31
     end
     return savings
 end
@@ -448,10 +449,11 @@ end
 sc(s)
 ```
 
-After the previous sections, this was ridiculously simple. For each year (`for
-_ in 1:years`) we save some money (`savings += moneyPerYr`) of which we get our
-interest (`savings *= mulitplier`) based on the formulas discussed in
-(@sec:compound_interest_problem_a1 and @sec:compound_interest_problem_a2).
+After the previous sections, the function may seem ridiculously simple to
+you. For each year (`for _ in 1:years`) we save some money (`savings +=
+moneyPerYr`) of which we get our interest (`savings *= mulitplier`) based on the
+formulas discussed in (@sec:compound_interest_problem_a1 and
+@sec:compound_interest_problem_a2). Once we are done, we return what we saved.
 
 
 ```jl
@@ -472,12 +474,13 @@ moneyPutAside = savingsPerYr * yrsWorking
 sco(s)
 ```
 
-So over the period of 45 working years Jan would have put aside roughly $108,000
-which together with interests should give him $175,993.
+So over the period of 45 working years (`yrsWorking`) Jan Kowalski would have
+put aside roughly $108,000 which together with interests should give him
+$175,993.
 
 Now, remember, that the idea is to take $1,500 of this pile of money every month
-to fill the gap caused by his pension equal to 50% of his final salary (which we
-said was $3,000). So let's see for how long will it last.
+to fill the gap caused by his pension being equal to 50% of his final salary
+(which we said was $3,000). So let's see for how long will it last.
 
 ```jl
 s = """
@@ -487,8 +490,8 @@ round(savings / 1_500 / 12, digits=2)
 sco(s)
 ```
 
-This should last him roughly 10 years, which is his expected life expectancy on
-retirement (retires and 65 lives up to 75). So, I guess that if Jan intends to
-beat the averages and spend more time on retirement, then he must save some more
-cash. Anyway, it seems that that saving for one's retirement might be a prudent
-idea.
+He should be able to maintain his standard of living for roughly 10 years, which
+is his expected life expectancy on retirement (retires and 65, lives up to
+75). So, I guess that if Jan intends to beat the averages and spend more time on
+the retirement, then he must save some more cash. Anyway, it seems that to have
+some spare money on your retirement might be a prudent idea.
