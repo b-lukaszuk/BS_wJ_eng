@@ -284,6 +284,42 @@ money2025depositInflation = getValue(
 )</code></pre>
 <pre class="output"><code>(&quot;10,253 USD&quot;, &quot;7,146 USD&quot;)</code></pre>
 <p>So always look on the bright side of life, but look for something better and think before you leap.</p>
+<h3 data-number="16.2.4" id="sec:compound_interest_problem_a4"><span class="header-section-number">16.2.4</span> Answer 4</h3>
+<p>Time for the last question.</p>
+<p>Jan Kowalski saves $2,400 per year with constant 2% interest rate over his working life. If so, then how much will he get and for how long will it last? First, the savings.</p>
+<pre class="language-julia"><code>function getRetirementSavings(moneyPerYr::Real, avgPercPerYr::Real,
+                              years::Int)::Flt
+    @assert moneyPerYr &gt; 0 &quot;moneyPerYr must be greater than 0&quot;
+    @assert avgPercPerYr &gt; 0 &quot;avgPercPerYr must be greater than 0&quot;
+    @assert 0 &lt; years &lt; 50 &quot;years must be in range [1-49]&quot;
+    savings::Flt = 0.0
+    multiplier::Flt = 1 + avgPercPerYr / 100
+    for _ in 1:years
+        savings += moneyPerYr # saving on Jan 1
+        savings *= multiplier # interest paid on Dec 31
+    end
+    return savings
+end</code></pre>
+<p>After the previous sections, the function may seem ridiculously simple to you. For each year (<code>for _ in 1:years</code>) we save some money (<code>savings += moneyPerYr</code>) of which we get our interest (<code>savings *= mulitplier</code>) based on the formulas discussed in (Section <a href="./compound_interest_solution.html#sec:compound_interest_problem_a1">16.2.1</a> and Section <a href="./compound_interest_solution.html#sec:compound_interest_problem_a2">16.2.2</a>). Once we are done, we return what we saved.</p>
+<pre class="language-julia"><code>savingsPerYr = 2_400 # or 200 * 12
+savingsPercentageYr = 2
+yrsWorking = 65 - 20
+
+savings = getRetirementSavings(
+    savingsPerYr, savingsPercentageYr, yrsWorking)
+moneyPutAside = savingsPerYr * yrsWorking
+
+(
+    savings |&gt; getFormattedMoney,
+    moneyPutAside |&gt; getFormattedMoney
+)</code></pre>
+<pre class="output"><code>(&quot;175,993 USD&quot;, &quot;108,000 USD&quot;)</code></pre>
+<p>So over the period of 45 working years (<code>yrsWorking</code>) Jan Kowalski would have put aside roughly $108,000 which together with interests should give him $175,993.</p>
+<p>Now, remember, that the idea is to take $1,500 of this pile of money every month to fill the gap caused by his pension being equal to 50% of his final salary (which we said was $3,000). So let’s see for how long will it last.</p>
+<pre class="language-julia"><code># 1,500 usd a month, 12 months per year
+round(savings / 1_500 / 12, digits=2)</code></pre>
+<p>9.78</p>
+<p>He should be able to maintain his standard of living for roughly 10 years, which is his expected life expectancy on retirement (retires and 65, lives up to 75). So, I guess that if Jan intends to beat the averages and spend more time on the retirement, then he must save some more cash. Anyway, it seems that to have some spare money on your retirement might be a prudent idea.</p>
 
 
 <div class="bottom-nav">
