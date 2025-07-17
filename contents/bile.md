@@ -31,6 +31,15 @@ droplets is actually greater than the surface area of one big droplet. Of
 course, the big droplet and small droplets should contain the same volume of
 lipids.
 
+> **_Hint:_** You will have to assume the shape of a lipid droplet. If your math
+> is rusty, then choose something simple, like a
+> [cube](https://en.wikipedia.org/wiki/Cube). For instance, as a starting point
+> you may think about the classical [Rubik's
+> cube](https://en.wikipedia.org/wiki/Rubik%27s_Cube) and into how many pieces
+> you could break it. Then continue by calculating the areas and volumes of the
+> big cube and the small cubes.
+
+
 ## Solution {#sec:bile_solution}
 
 To me the shape that resembles the droplet the most is
@@ -243,3 +252,8 @@ Behold.
 
 So it turns out that what they taught me in the school all those years ago is
 actually true. But only now I can finally see it. Nice.
+
+> **_Note:_** The above was an example of a geometrical property called
+> [surface-to-volume-ratio](https://en.wikipedia.org/wiki/Surface-area-to-volume_ratio)
+> that applies to more than just the spheres and got its implications for many
+> fields of science.
