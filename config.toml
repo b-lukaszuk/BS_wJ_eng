@@ -17,6 +17,7 @@ contents = [
     "leap_year",
     "calendar",
     "prime_numbers",
+    "tic_tac_toe",
     "compound_interest",
     "mortgage",
     "overpayment",
