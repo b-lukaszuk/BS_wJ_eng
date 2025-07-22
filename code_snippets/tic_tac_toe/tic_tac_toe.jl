@@ -23,10 +23,18 @@ function getField(n::Int)::Str
 end
 
 function printGrid(g::Array{Int, 2})
-    for r in eachrow(g)
-        println(join(map(getField, r), "  "))
+    for (rowIndex, row) in enumerate(eachrow(g))
+        println(" " * join(map(getField, row), " | "))
+        if rowIndex < 3
+            println("---+---+---")
+        end
     end
     return nothing
 end
 
+printGrid(grid)
+
+grid = [1 100 3;
+        4 100 6;
+        1_000 1_000 9]
 printGrid(grid)
