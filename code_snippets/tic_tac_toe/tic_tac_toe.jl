@@ -1,5 +1,6 @@
 # TODO:
 # Write a simple tic-tac-toe game
+const Str = String
 
 # arr 1-9 is field index to display
 # 100 is 'x'
@@ -8,13 +9,16 @@ grid = [1 2 3;
         4 5 6;
         7 8 9]
 
-function getField(n::Int)::Char
+function getField(n::Int)::Str
     if n == 100
-        return 'x'
+        return "x"
     elseif n == 1_000
-        return 'o'
+        return "o"
     else
-        return string(n)[1]
+        # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+        # "\x1b[90m" - FG light black (gray)
+        # "\x1b[0m" - reset color to default
+        return "\x1b[90m" * string(n) * "\x1b[0m"
     end
 end
 
