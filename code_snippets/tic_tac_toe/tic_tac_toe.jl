@@ -38,3 +38,27 @@ grid = [1 100 3;
         4 100 6;
         1_000 1_000 9]
 printGrid(grid)
+
+function getUserInput(prompt::Str)::Str
+    print(prompt)
+    input::Str = readline()
+    return strip(input)
+end
+
+function isMoveLegal(move::Str, gameBoard::Array{Int, 2})::Bool
+    num::Int = 0
+    try
+        num = parse(Int, move)
+    catch
+        return false
+    end
+    return (0 < num < 10) && (num in gameBoard)
+end
+
+isMoveLegal("", grid)
+isMoveLegal("ala", grid)
+isMoveLegal("33", grid)
+isMoveLegal("3.3", grid)
+isMoveLegal("3.0", grid)
+isMoveLegal("3", grid)
+isMoveLegal("5 ", grid)
