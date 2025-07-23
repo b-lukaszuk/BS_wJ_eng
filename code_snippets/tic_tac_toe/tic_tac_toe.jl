@@ -62,3 +62,25 @@ isMoveLegal("3.3", grid)
 isMoveLegal("3.0", grid)
 isMoveLegal("3", grid)
 isMoveLegal("5 ", grid)
+
+function clearLines(nLines::Int)
+    @assert 0 < nLines "nLines must be a positive integer"
+    #"\033[xxxA" - xxx moves cursor up xxx lines
+    print("\033[" * string(nLines) * "A")
+    # clear from cursor position till the end of the screen
+    print("\033[0J")
+end
+
+function getUserMove(gameBoard::Array{Int, 2})::Int
+    input::Str = getUserInput("Enter your move: ")
+    while true
+        if isMoveLegal(input, gameBoard)
+            break
+        end
+        clearLines(1)
+        input = getUserInput("Illegal move. Try again. Enter your move: ")
+    end
+    return parse(Int, input)
+end
+
+getUserMove(grid)
