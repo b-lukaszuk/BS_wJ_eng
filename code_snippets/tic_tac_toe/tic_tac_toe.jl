@@ -84,3 +84,28 @@ function getUserMove(gameBoard::Array{Int, 2})::Int
 end
 
 getUserMove(grid)
+
+function isThreeInRow(gameBoard::Array{Int, 2})::Bool
+    total::Int = 0
+    for r in eachrow(gameBoard)
+        total = sum(r)
+        if total == 300 || total == 3_000
+            return true
+        end
+    end
+    return false
+end
+
+function isThreeInCol(gameBoard::Array{Int, 2})::Bool
+    total::Int = 0
+    for c in eachcol(gameBoard)
+        total = sum(c)
+        if total == 300 || total == 3_000
+            return true
+        end
+    end
+    return false
+end
+
+isThreeInRow(grid)
+isThreeInCol(grid)
