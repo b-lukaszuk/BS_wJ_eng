@@ -1,6 +1,7 @@
 # TODO:
 # Write a simple tic-tac-toe game
 const Str = String
+const Vec = Vector
 
 # arr 1-9 is field index to display
 # 100 is 'x'
@@ -109,3 +110,25 @@ end
 
 isThreeInRow(grid)
 isThreeInCol(grid)
+
+function getDiags(gameBoard::Array{Int, 2})::Tuple{Vec{Int}, Vec{Int}}
+    return (
+        [gameBoard[r, c] for (r, c) in zip(1:3, 1:3)],
+        [gameBoard[r, c] for (r, c) in zip(1:3, 3:-1:1)]
+    )
+end
+getDiags(grid)
+
+function isThreeInDiag(gameBoard::Array{Int, 2})::Bool
+    total::Int = 0
+    diags::Tuple{Vec{Int}, Vec{Int}} = getDiags(gameBoard)
+    for diag in diags
+        total = sum(diag)
+        if total == 300 || total == 3_000
+            return true
+        end
+    end
+    return false
+end
+
+isThreeInDiag(grid)
