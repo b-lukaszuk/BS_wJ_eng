@@ -132,3 +132,10 @@ function isThreeInDiag(gameBoard::Array{Int, 2})::Bool
 end
 
 isThreeInDiag(grid)
+
+function isTriplet(gameBoard::Array{Int, 2})::Bool
+    return isThreeInRow(gameBoard) || isThreeInCol(gameBoard) ||
+        isThreeInDiag(gameBoard)
+end
+
+isTriplet(grid)
