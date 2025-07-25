@@ -150,3 +150,9 @@ function isNoMoreMoves(gameBoard::Array{Int, 2})::Bool
 end
 
 isNoMoreMoves(grid)
+
+function isGameOver(gameBoard::Array{Int, 2})::Bool
+    return isGameWon(gameBoard) || isNoMoreMoves(gameBoard)
+end
+
+isGameOver(grid)
