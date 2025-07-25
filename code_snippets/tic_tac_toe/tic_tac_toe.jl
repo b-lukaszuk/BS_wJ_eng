@@ -133,9 +133,9 @@ end
 
 isThreeInDiag(grid)
 
-function isTriplet(gameBoard::Array{Int, 2})::Bool
+function isGameWon(gameBoard::Array{Int, 2})::Bool
     return isThreeInRow(gameBoard) || isThreeInCol(gameBoard) ||
         isThreeInDiag(gameBoard)
 end
 
-isTriplet(grid)
+isGameWon(grid)
