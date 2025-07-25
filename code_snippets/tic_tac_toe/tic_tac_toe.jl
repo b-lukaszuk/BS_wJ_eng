@@ -139,3 +139,14 @@ function isGameWon(gameBoard::Array{Int, 2})::Bool
 end
 
 isGameWon(grid)
+
+function isNoMoreMoves(gameBoard::Array{Int, 2})::Bool
+    for n in 1:9
+        if n in gameBoard
+            return false
+        end
+    end
+    return true
+end
+
+isNoMoreMoves(grid)
