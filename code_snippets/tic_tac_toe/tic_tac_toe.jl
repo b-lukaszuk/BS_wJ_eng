@@ -84,7 +84,7 @@ function getUserMove(gameBoard::Array{Int, 2})::Int
     return parse(Int, input)
 end
 
-getUserMove(grid)
+# getUserMove(grid)
 
 function isThreeInRow(gameBoard::Array{Int, 2})::Bool
     total::Int = 0
@@ -156,3 +156,22 @@ function isGameOver(gameBoard::Array{Int, 2})::Bool
 end
 
 isGameOver(grid)
+
+function makeMove!(move::Int, player::Int, gameBoard::Array{Int, 2})
+    @assert 0 < move < 10 "move must be in range [1-9]"
+    @assert player in [100, 1_000] "player must be 100 | 1_000"
+    nRows::Int, nCols::Int = size(grid)
+    for c in 1:nCols, r in 1:nRows
+        if gameBoard[r, c] == move
+            gameBoard[r, c] = player
+        end
+    end
+    return nothing
+end
+
+printGrid(grid)
+makeMove!(6, 100, grid)
+printGrid(grid)
+
+makeMove!(4, 1_000, grid)
+printGrid(grid)
