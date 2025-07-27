@@ -169,11 +169,19 @@ function makeMove!(move::Int, player::Int, gameBoard::Array{Int, 2})
     return nothing
 end
 
+function makeMoveHuman!(move::Int, gameBoard::Array{Int, 2})
+    makeMove!(move, 100, gameBoard)
+end
+
+function makeMoveComputer!(move::Int, gameBoard::Array{Int, 2})
+    makeMove!(move, 1_000, gameBoard)
+end
+
 printGrid(grid)
-makeMove!(6, 100, grid)
+makeMoveHuman!(3, grid)
 printGrid(grid)
 
-makeMove!(4, 1_000, grid)
+makeMoveComputer!(9, grid)
 printGrid(grid)
 
 function getComputerMove(gameBoard::Array{Int, 2})::Int
