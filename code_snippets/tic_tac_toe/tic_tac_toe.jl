@@ -175,3 +175,17 @@ printGrid(grid)
 
 makeMove!(4, 1_000, grid)
 printGrid(grid)
+
+function getComputerMove(gameBoard::Array{Int, 2})::Int
+    for i in 1:9
+        if i in gameBoard
+            return i
+        end
+    end
+    return 0
+end
+
+getComputerMove(grid)
+makeMove!(1, 1_000, grid)
+printGrid(grid)
+getComputerMove(grid)
