@@ -36,7 +36,7 @@ end
 printGrid(grid)
 
 grid = [1 100 3;
-        4 100 6;
+        4 5 6;
         1_000 1_000 9]
 printGrid(grid)
 
@@ -197,3 +197,44 @@ getComputerMove(grid)
 makeMove!(1, 1_000, grid)
 printGrid(grid)
 getComputerMove(grid)
+
+# to be corrected
+function playRound!(gameBoard::Array{Int, 2})
+    printGrid(gameBoard)
+    usrMove::Int = getUserMove(gameBoard)
+    makeMoveHuman!(usrMove, gameBoard)
+    if isGameWon(gameBoard)
+        clearLines(6)
+        printGrid(gameBoard)
+        println("Game Over. You win.")
+        return nothing
+    end
+    if isNoMoreMoves(gameBoard)
+        clearLines(6)
+        printGrid(gameBoard)
+        println("Game Over. Draw.")
+        return nothing
+    end
+
+    clearLines(6)
+    compMove::Int = getComputerMove(gameBoard)
+    println("Your move: ", usrMove)
+    println("Computer move: ", compMove)
+    makeMoveComputer!(compMove, gameBoard)
+
+    if isGameWon(gameBoard)
+        clearLines(6)
+        printGrid(gameBoard)
+        println("Game Over. Computer wins.")
+        return nothing
+    end
+    if isNoMoreMoves(gameBoard)
+        clearLines(6)
+        printGrid(gameBoard)
+        println("Game Over. Draw.")
+        return nothing
+    end
+end
+
+playRound!(grid)
+playRound!(grid)
