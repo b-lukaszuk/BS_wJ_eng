@@ -8,6 +8,12 @@ function getNewGameBoard()::Vec{Str}
 end
 
 board = getNewGameBoard()
+# lines to check for triplets
+const lines = [
+    [collect(i:(i+2)) for i in [1, 4, 7]]...,
+    [collect(i:3:(i+6)) for i in [1, 2, 3]]...,
+    [1, 5, 9], [3, 5, 7]
+]
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 function getGray(s::Str)::Str
@@ -25,8 +31,25 @@ end
 function colorBoard(board::Vec{Str})::Vec{Str}
     result::Vec{Str} = copy(board)
     for i in 1:9
-        result[i] = board[i] in ["X", "O"] ?
-            getDefault(board[i]) : getGray(board[i])
+        if !(board[i] in ["X", "O"])
+            result[i] = getGray(board[i])
+        end
+    end
+    return result
+end
+
+function isTriplet(v::Vec{Str})::Bool
+    @assert length(v) == 3 "length(v) must be equal 3"
+    return join(v) == "XXX" || join(v) == "OOO"
+end
+
+function colorFirstTriplet(board::Vec{Str})::Vec{Str}
+    result::Vec{Str} = copy(board)
+    for l in lines
+        if isTriplet(result[l])
+            result[l] = getRed.(result[l])
+            return result
+        end
     end
     return result
 end
@@ -41,6 +64,7 @@ end
 
 function printBoard(board::Vec{Str})
     cb::Vec{Str} = colorBoard(board)
+    cb = colorFirstTriplet(cb)
     for r in [1, 4, 7]
         println(" ", join(cb[r:(r+2)], " | "))
         println("---+---+---")
@@ -52,6 +76,16 @@ end
 printBoard(board)
 board[1] = "O"
 board[5] = "X"
+printBoard(board)
+# board[4] = "O"
+# board[7] = "O"
+# printBoard(board)
+# board[3] = "X"
+# board[7] = "X"
+# printBoard(board)
+board[3] = "X"
+board[6] = "X"
+board[9] = "X"
 printBoard(board)
 
 function getUserInput(prompt::Str)::Str
