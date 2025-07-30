@@ -118,7 +118,7 @@ isMoveLegal("3", board)
 isMoveLegal("2", board)
 isMoveLegal("5 ", board)
 
-function getUserMove(gameBoard::Array{Int, 2})::Int
+function getUserMove(gameBoard::Vec{Str})::Int
     input::Str = getUserInput("Enter your move: ")
     while true
         if isMoveLegal(input, gameBoard)
@@ -130,7 +130,7 @@ function getUserMove(gameBoard::Array{Int, 2})::Int
     return parse(Int, input)
 end
 
-# getUserMove(grid)
+getUserMove(board)
 
 function isThreeInRow(gameBoard::Array{Int, 2})::Bool
     total::Int = 0
