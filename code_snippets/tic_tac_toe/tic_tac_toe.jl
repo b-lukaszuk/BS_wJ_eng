@@ -160,32 +160,33 @@ end
 
 isGameOver(board)
 
-function makeMove!(move::Int, player::Int, gameBoard::Array{Int, 2})
+function makeMove!(move::Int, player::Str, board::Vec{Str})
     @assert 0 < move < 10 "move must be in range [1-9]"
-    @assert player in [100, 1_000] "player must be 100 | 1_000"
-    nRows::Int, nCols::Int = size(grid)
-    for c in 1:nCols, r in 1:nRows
-        if gameBoard[r, c] == move
-            gameBoard[r, c] = player
-        end
+    @assert isTaken(player) "player must be X or O"
+    if !isTaken(board[move])
+        board[move] = player
     end
     return nothing
 end
 
-function makeMoveHuman!(move::Int, gameBoard::Array{Int, 2})
-    makeMove!(move, 100, gameBoard)
+function makeMoveHuman!(move::Int, board::Vec{Str})
+    makeMove!(move, "X", board)
 end
 
-function makeMoveComputer!(move::Int, gameBoard::Array{Int, 2})
-    makeMove!(move, 1_000, gameBoard)
+function makeMoveComputer!(move::Int, board::Vec{Str})
+    makeMove!(move, "O", board)
 end
 
-printGrid(grid)
-makeMoveHuman!(3, grid)
-printGrid(grid)
+printBoard(board)
+makeMoveHuman!(3, board)
+printBoard(board)
+makeMoveHuman!(7, board)
+printBoard(board)
 
-makeMoveComputer!(9, grid)
-printGrid(grid)
+makeMoveComputer!(9, board)
+printBoard(board)
+makeMoveComputer!(8, board)
+printBoard(board)
 
 function getComputerMove(gameBoard::Array{Int, 2})::Int
     for i in 1:9
@@ -198,23 +199,23 @@ end
 
 getComputerMove(grid)
 makeMove!(1, 1_000, grid)
-printGrid(grid)
+printBoard(grid)
 getComputerMove(grid)
 
 # to be corrected
 function playRound!(gameBoard::Array{Int, 2})
-    printGrid(gameBoard)
+    printBoard(gameBoard)
     usrMove::Int = getUserMove(gameBoard)
     makeMoveHuman!(usrMove, gameBoard)
     if isGameWon(gameBoard)
         clearLines(6)
-        printGrid(gameBoard)
+        printBoard(gameBoard)
         println("Game Over. You win.")
         return nothing
     end
     if isNoMoreMoves(gameBoard)
         clearLines(6)
-        printGrid(gameBoard)
+        printBoard(gameBoard)
         println("Game Over. Draw.")
         return nothing
     end
@@ -227,13 +228,13 @@ function playRound!(gameBoard::Array{Int, 2})
 
     if isGameWon(gameBoard)
         clearLines(6)
-        printGrid(gameBoard)
+        printBoard(gameBoard)
         println("Game Over. Computer wins.")
         return nothing
     end
     if isNoMoreMoves(gameBoard)
         clearLines(6)
-        printGrid(gameBoard)
+        printBoard(gameBoard)
         println("Game Over. Draw.")
         return nothing
     end
