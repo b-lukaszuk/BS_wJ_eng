@@ -154,11 +154,11 @@ end
 
 isNoMoreMoves(board)
 
-function isGameOver(gameBoard::Array{Int, 2})::Bool
-    return isGameWon(gameBoard) || isNoMoreMoves(gameBoard)
+function isGameOver(board::Vec{Str})::Bool
+    return isGameWon(board) || isNoMoreMoves(board)
 end
 
-isGameOver(grid)
+isGameOver(board)
 
 function makeMove!(move::Int, player::Int, gameBoard::Array{Int, 2})
     @assert 0 < move < 10 "move must be in range [1-9]"
