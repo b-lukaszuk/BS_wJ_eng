@@ -132,59 +132,16 @@ end
 
 getUserMove(board)
 
-function isThreeInRow(gameBoard::Array{Int, 2})::Bool
-    total::Int = 0
-    for r in eachrow(gameBoard)
-        total = sum(r)
-        if total == 300 || total == 3_000
+function isGameWon(board::Vec{Str})::Bool
+    for line in lines
+        if isTriplet(board[line])
             return true
         end
     end
     return false
 end
 
-function isThreeInCol(gameBoard::Array{Int, 2})::Bool
-    total::Int = 0
-    for c in eachcol(gameBoard)
-        total = sum(c)
-        if total == 300 || total == 3_000
-            return true
-        end
-    end
-    return false
-end
-
-isThreeInRow(grid)
-isThreeInCol(grid)
-
-function getDiags(gameBoard::Array{Int, 2})::Tuple{Vec{Int}, Vec{Int}}
-    return (
-        [gameBoard[r, c] for (r, c) in zip(1:3, 1:3)],
-        [gameBoard[r, c] for (r, c) in zip(1:3, 3:-1:1)]
-    )
-end
-getDiags(grid)
-
-function isThreeInDiag(gameBoard::Array{Int, 2})::Bool
-    total::Int = 0
-    diags::Tuple{Vec{Int}, Vec{Int}} = getDiags(gameBoard)
-    for diag in diags
-        total = sum(diag)
-        if total == 300 || total == 3_000
-            return true
-        end
-    end
-    return false
-end
-
-isThreeInDiag(grid)
-
-function isGameWon(gameBoard::Array{Int, 2})::Bool
-    return isThreeInRow(gameBoard) || isThreeInCol(gameBoard) ||
-        isThreeInDiag(gameBoard)
-end
-
-isGameWon(grid)
+isGameWon(board)
 
 function isNoMoreMoves(gameBoard::Array{Int, 2})::Bool
     for n in 1:9
