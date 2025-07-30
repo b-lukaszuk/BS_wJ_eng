@@ -143,16 +143,16 @@ end
 
 isGameWon(board)
 
-function isNoMoreMoves(gameBoard::Array{Int, 2})::Bool
-    for n in 1:9
-        if n in gameBoard
+function isNoMoreMoves(board::Vec{Str})::Bool
+    for i in 1:9
+        if !isTaken(board[i])
             return false
         end
     end
     return true
 end
 
-isNoMoreMoves(grid)
+isNoMoreMoves(board)
 
 function isGameOver(gameBoard::Array{Int, 2})::Bool
     return isGameWon(gameBoard) || isNoMoreMoves(gameBoard)
