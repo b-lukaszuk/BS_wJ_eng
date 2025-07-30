@@ -188,19 +188,24 @@ printBoard(board)
 makeMoveComputer!(8, board)
 printBoard(board)
 
-function getComputerMove(gameBoard::Array{Int, 2})::Int
+function getComputerMove(board::Vec{Str})::Int
     for i in 1:9
-        if i in gameBoard
+        if !isTaken(board[i])
             return i
         end
     end
     return 0
 end
 
-getComputerMove(grid)
-makeMove!(1, 1_000, grid)
-printBoard(grid)
-getComputerMove(grid)
+printBoard(board)
+getComputerMove(board)
+makeMoveComputer!(2, board)
+printBoard(board)
+getComputerMove(board)
+makeMoveComputer!(4, board)
+printBoard(board)
+getComputerMove(board)
+isNoMoreMoves(board)
 
 # to be corrected
 function playRound!(gameBoard::Array{Int, 2})
