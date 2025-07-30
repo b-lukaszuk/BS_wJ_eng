@@ -28,10 +28,14 @@ function getRed(s::Str)::Str
     return "\x1b[31m" * s * "\x1b[0m"
 end
 
+function isTaken(field::Str)::Bool
+    return field == "X" || field == "O"
+end
+
 function colorBoard(board::Vec{Str})::Vec{Str}
     result::Vec{Str} = copy(board)
     for i in 1:9
-        if !(board[i] in ["X", "O"])
+        if !isTaken(board[i])
             result[i] = getGray(board[i])
         end
     end
@@ -94,24 +98,25 @@ function getUserInput(prompt::Str)::Str
     return strip(input)
 end
 
-function isMoveLegal(move::Str, gameBoard::Array{Int, 2})::Bool
+function isMoveLegal(move::Str, board::Vec{Str})::Bool
     num::Int = 0
     try
         num = parse(Int, move)
     catch
         return false
     end
-    return (0 < num < 10) && (num in gameBoard)
+    return (0 < num < 10) && !isTaken(board[num])
 end
 
-isMoveLegal("", grid)
-isMoveLegal("ala", grid)
-isMoveLegal("33", grid)
-isMoveLegal("3.3", grid)
-isMoveLegal("3.0", grid)
-isMoveLegal("3", grid)
-isMoveLegal("5 ", grid)
-
+isMoveLegal("", board)
+isMoveLegal("ala", board)
+isMoveLegal("33", board)
+isMoveLegal("3.3", board)
+isMoveLegal("3.0", board)
+isMoveLegal("2.0", board)
+isMoveLegal("3", board)
+isMoveLegal("2", board)
+isMoveLegal("5 ", board)
 
 function getUserMove(gameBoard::Array{Int, 2})::Int
     input::Str = getUserInput("Enter your move: ")
