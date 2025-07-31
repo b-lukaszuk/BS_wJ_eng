@@ -77,21 +77,6 @@ function printBoard(board::Vec{Str})
     return nothing
 end
 
-printBoard(board)
-board[1] = "O"
-board[5] = "X"
-printBoard(board)
-# board[4] = "O"
-# board[7] = "O"
-# printBoard(board)
-# board[3] = "X"
-# board[7] = "X"
-# printBoard(board)
-board[3] = "X"
-board[6] = "X"
-board[9] = "X"
-printBoard(board)
-
 function getUserInput(prompt::Str)::Str
     print(prompt)
     input::Str = readline()
@@ -108,16 +93,6 @@ function isMoveLegal(move::Str, board::Vec{Str})::Bool
     return (0 < num < 10) && !isTaken(board[num])
 end
 
-isMoveLegal("", board)
-isMoveLegal("ala", board)
-isMoveLegal("33", board)
-isMoveLegal("3.3", board)
-isMoveLegal("3.0", board)
-isMoveLegal("2.0", board)
-isMoveLegal("3", board)
-isMoveLegal("2", board)
-isMoveLegal("5 ", board)
-
 function getUserMove(gameBoard::Vec{Str})::Int
     input::Str = getUserInput("Enter your move: ")
     while true
@@ -130,8 +105,6 @@ function getUserMove(gameBoard::Vec{Str})::Int
     return parse(Int, input)
 end
 
-getUserMove(board)
-
 function isGameWon(board::Vec{Str})::Bool
     for line in lines
         if isTriplet(board[line])
@@ -140,8 +113,6 @@ function isGameWon(board::Vec{Str})::Bool
     end
     return false
 end
-
-isGameWon(board)
 
 function isNoMoreMoves(board::Vec{Str})::Bool
     for i in 1:9
@@ -152,13 +123,9 @@ function isNoMoreMoves(board::Vec{Str})::Bool
     return true
 end
 
-isNoMoreMoves(board)
-
 function isGameDraw(board::Vec{Str})::Bool
     return !isGameWon(board) && isNoMoreMoves(board)
 end
-
-isGameDraw(board)
 
 function makeMove!(move::Int, player::Str, board::Vec{Str})
     @assert 0 < move < 10 "move must be in range [1-9]"
@@ -177,17 +144,6 @@ function makeMoveComputer!(move::Int, board::Vec{Str})
     makeMove!(move, "O", board)
 end
 
-printBoard(board)
-makeMoveHuman!(3, board)
-printBoard(board)
-makeMoveHuman!(7, board)
-printBoard(board)
-
-makeMoveComputer!(9, board)
-printBoard(board)
-makeMoveComputer!(8, board)
-printBoard(board)
-
 function getComputerMove(board::Vec{Str})::Int
     move::Int = 0
     for i in 1:9
@@ -200,18 +156,9 @@ function getComputerMove(board::Vec{Str})::Int
     return move
 end
 
-printBoard(board)
-getComputerMove(board)
-makeMoveComputer!(2, board)
-printBoard(board)
-getComputerMove(board)
-makeMoveComputer!(4, board)
-printBoard(board)
-getComputerMove(board)
-isNoMoreMoves(board)
-
 function playMove!(player::Str, board::Vec{Str})
     @assert isTaken(player) "player must be X or O"
+    clearLines(6)
     printBoard(board)
     move::Int = (player == "X") ? getUserMove(board) : getComputerMove(board)
     makeMove!(move, player, board)
@@ -226,11 +173,16 @@ function playMove!(player::Str, board::Vec{Str})
     return nothing
 end
 
-board = getNewGameBoard()
-printBoard(board)
-playMove!("X", board)
-playMove!("O", board)
-playMove!("X", board)
-playMove!("O", board)
-playMove!("X", board)
-playMove!("O", board)
+function playGame()
+    player::Str = "X"
+    board::Vec{Str} = getNewGameBoard()
+    isOver::Bool = isGameWon(board) || isGameDraw(board)
+    while !isOver
+        playMove!(player, board)
+        player = player == "X" ? "O" : "X"
+        isOver = isGameWon(board) || isGameDraw(board)
+    end
+    return nothing
+end
+
+playGame()
