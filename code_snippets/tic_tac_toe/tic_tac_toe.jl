@@ -154,11 +154,11 @@ end
 
 isNoMoreMoves(board)
 
-function isGameOver(board::Vec{Str})::Bool
-    return isGameWon(board) || isNoMoreMoves(board)
+function isGameDraw(board::Vec{Str})::Bool
+    return !isGameWon(board) && isNoMoreMoves(board)
 end
 
-isGameOver(board)
+isGameDraw(board)
 
 function makeMove!(move::Int, player::Str, board::Vec{Str})
     @assert 0 < move < 10 "move must be in range [1-9]"
@@ -189,12 +189,15 @@ makeMoveComputer!(8, board)
 printBoard(board)
 
 function getComputerMove(board::Vec{Str})::Int
+    move::Int = 0
     for i in 1:9
         if !isTaken(board[i])
-            return i
+            move = i
+            break
         end
     end
-    return 0
+    println("Computer plays: ", move)
+    return move
 end
 
 printBoard(board)
@@ -207,43 +210,27 @@ printBoard(board)
 getComputerMove(board)
 isNoMoreMoves(board)
 
-# to be corrected
-function playRound!(gameBoard::Array{Int, 2})
-    printBoard(gameBoard)
-    usrMove::Int = getUserMove(gameBoard)
-    makeMoveHuman!(usrMove, gameBoard)
-    if isGameWon(gameBoard)
-        clearLines(6)
-        printBoard(gameBoard)
-        println("Game Over. You win.")
-        return nothing
-    end
-    if isNoMoreMoves(gameBoard)
-        clearLines(6)
-        printBoard(gameBoard)
-        println("Game Over. Draw.")
-        return nothing
-    end
-
+function playMove!(player::Str, board::Vec{Str})
+    @assert isTaken(player) "player must be X or O"
+    printBoard(board)
+    move::Int = (player == "X") ? getUserMove(board) : getComputerMove(board)
+    makeMove!(move, player, board)
     clearLines(6)
-    compMove::Int = getComputerMove(gameBoard)
-    println("Your move: ", usrMove)
-    println("Computer move: ", compMove)
-    makeMoveComputer!(compMove, gameBoard)
-
-    if isGameWon(gameBoard)
-        clearLines(6)
-        printBoard(gameBoard)
-        println("Game Over. Computer wins.")
-        return nothing
+    printBoard(board)
+    if isGameWon(board)
+        println("Game Over. ", player == "X" ? "You" : "Computer", " won.")
     end
-    if isNoMoreMoves(gameBoard)
-        clearLines(6)
-        printBoard(gameBoard)
+    if isGameDraw(board)
         println("Game Over. Draw.")
-        return nothing
     end
+    return nothing
 end
 
-playRound!(grid)
-playRound!(grid)
+board = getNewGameBoard()
+printBoard(board)
+playMove!("X", board)
+playMove!("O", board)
+playMove!("X", board)
+playMove!("O", board)
+playMove!("X", board)
+playMove!("O", board)
