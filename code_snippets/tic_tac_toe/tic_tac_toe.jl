@@ -3,25 +3,20 @@
 const Str = String
 const Vec = Vector
 
-function getNewGameBoard()::Vec{Str}
-    return string.(1:9)
-end
-
-board = getNewGameBoard()
-# lines to check for triplets
+const players = ["X", "O"]
 const lines = [
     [collect(i:(i+2)) for i in [1, 4, 7]]...,
     [collect(i:3:(i+6)) for i in [1, 2, 3]]...,
     [1, 5, 9], [3, 5, 7]
 ]
 
+function getNewGameBoard()::Vec{Str}
+    return string.(1:9)
+end
+
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 function getGray(s::Str)::Str
     return "\x1b[90m" * s * "\x1b[0m"
-end
-
-function getDefault(s::Str)::Str
-    return "\x1b[0m" * s
 end
 
 function getRed(s::Str)::Str
@@ -29,7 +24,7 @@ function getRed(s::Str)::Str
 end
 
 function isTaken(field::Str)::Bool
-    return field == "X" || field == "O"
+    return field in players
 end
 
 function colorBoard(board::Vec{Str})::Vec{Str}
@@ -129,7 +124,7 @@ end
 
 function makeMove!(move::Int, player::Str, board::Vec{Str})
     @assert 0 < move < 10 "move must be in range [1-9]"
-    @assert isTaken(player) "player must be X or O"
+    @assert player in players "player must be X or O"
     if !isTaken(board[move])
         board[move] = player
     end
@@ -157,7 +152,7 @@ function getComputerMove(board::Vec{Str})::Int
 end
 
 function playMove!(player::Str, board::Vec{Str})
-    @assert isTaken(player) "player must be X or O"
+    @assert player in players "player must be X or O"
     clearLines(6)
     printBoard(board)
     move::Int = (player == "X") ? getUserMove(board) : getComputerMove(board)
