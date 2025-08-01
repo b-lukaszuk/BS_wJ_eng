@@ -131,14 +131,6 @@ function makeMove!(move::Int, player::Str, board::Vec{Str})
     return nothing
 end
 
-function makeMoveHuman!(move::Int, board::Vec{Str})
-    makeMove!(move, "X", board)
-end
-
-function makeMoveComputer!(move::Int, board::Vec{Str})
-    makeMove!(move, "O", board)
-end
-
 function getComputerMove(board::Vec{Str})::Int
     move::Int = 0
     for i in 1:9
