@@ -145,7 +145,7 @@ end
 
 function playMove!(player::Str, board::Vec{Str})
     @assert player in players "player must be X or O"
-    clearLines(6)
+    clearLines(5)
     printBoard(board)
     move::Int = (player == "X") ? getUserMove(board) : getComputerMove(board)
     makeMove!(move, player, board)
@@ -172,4 +172,20 @@ function playGame()
     return nothing
 end
 
-playGame()
+function main()
+    println("This is a toy program to play a tic-tac-toe game.")
+    println("Note: your terminal must support ANSI escape codes.\n")
+
+    # y(es) - default choice (also with Enter), anything else: no
+    println("Continue with the game? [Y/n]")
+    choice::Str = readline()
+    if lowercase(strip(choice)) in ["y", "yes", ""]
+        playGame()
+    end
+
+    println("\nThat's all. Goodbye!")
+end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
+end
