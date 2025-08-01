@@ -16,7 +16,7 @@ tells a story of a guy named Fry. The character was accidentally frozen on
 December 31, 1999 and wakes up back to life on December 31, 2999. In season 1
 episode 6 Fry visits his old bank. The teller informs him that he had on his
 account 93 cents in 1999. However, with an average yearly interest of 2.25% over
-the period of 1000 years it gives $4.3 billion.
+the period of a thousand years it gives $4.3 billion.
 
 Read about [compound interest](https://en.wikipedia.org/wiki/Compound_interest)
 and use Julia to answer a few questions.
