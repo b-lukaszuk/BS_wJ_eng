@@ -90,8 +90,11 @@ number (`arabic -= a`). Once we are done we return the result.
 
 > Note. To better understand the above code you may read about the `while` loop
 > in [the docs](https://docs.julialang.org/en/v1/base/base/#while) and use
-> [show](https://docs.julialang.org/en/v1/base/base/#Base.@show) macro to have
-> a sneak peak how the variables in the loop change.
+> [show](https://docs.julialang.org/en/v1/base/base/#Base.@show) macro to have a
+> sneak peak how the variables in the loop change. If you ever accidentally
+> write an infinite `while` loop you may try to break the program execution by
+> pressing [Ctrl+C](https://en.wikipedia.org/wiki/Control-C) in your
+> terminal/command line.
 
 Time for a minitest (go ahead pick a number and, in your head or on a piece of
 paper, follow the function's execution).
