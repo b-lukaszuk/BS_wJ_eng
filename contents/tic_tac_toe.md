@@ -23,4 +23,41 @@ useful.
 
 ## Solution {#sec:tic_tac_toe_solution}
 
-The solution goes here.
+The first decision we must make is the internal representation of our game
+board. Two objects come to mind right away, a vector or a matrix. Here, I'll go
+with the first option.
+
+```jl
+s = """
+function getNewGameBoard()::Vec{Str}
+    return string.(1:9)
+end
+"""
+sc(s)
+```
+
+Next, we'll define a few constants that will be helpful later on.
+
+```jl
+s = """
+players = ["X", "O"]
+lines = [
+	[1, 2, 3],
+	[4, 5, 6],
+	[7, 8, 9],
+	[1, 4, 7],
+	[2, 5, 8],
+	[3, 6, 9],
+	[1, 5, 9],
+	[3, 5, 7]
+]
+"""
+replace(sc(s), r"\bplayers" => "const players", r"\blines" => "const lines")
+```
+
+The two are: `players` symbols used (`"X"` for human, `"O"` for computer player)
+and the coordinates of lines in our game board that we need to check to see if
+a player won the game. You could probably be more clever and use
+[enums](https://docs.julialang.org/en/v1/base/base/#Base.Enums.Enum) and list
+comprehensions for our lines (e.g., `[collect(i:(i+2)) for i in [1, 4, 7]]` for
+the rows), but for such a simple case it might be an overkill.
