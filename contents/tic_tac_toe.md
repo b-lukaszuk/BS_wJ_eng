@@ -60,4 +60,44 @@ and the coordinates of lines in our game board that we need to check to see if
 a player won the game. You could probably be more clever and use
 [enums](https://docs.julialang.org/en/v1/base/base/#Base.Enums.Enum) and list
 comprehensions for our lines (e.g., `[collect(i:(i+2)) for i in [1, 4, 7]]` for
-the rows), but for such a simple case it might be an overkill.
+the rows), but for such a simple case it might be overkill.
+
+OK, time to format the board.
+
+```jl
+s = """
+# https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+function getGray(s::Str)::Str
+    # "\\x1b[90m" sets forground color to gray
+    # "\\x1b[0m" resets forground color to default value
+    return "\\x1b[90m" * s * "\\x1b[0m"
+end
+
+function getRed(s::Str)::Str
+    # "\\x1b[31m" sets forground color to red
+    return "\\x1b[31m" * s * "\\x1b[0m"
+end
+
+function isTaken(field::Str)::Bool
+    return field in players
+end
+
+function colorBoard(board::Vec{Str})::Vec{Str}
+    result::Vec{Str} = copy(board)
+    for i in 1:9
+        if !isTaken(board[i])
+            result[i] = getGray(board[i])
+        end
+    end
+    return result
+end
+"""
+sc(s)
+```
+
+We begin with the definitions of `getGray` and `getRed` that will change the
+font color of the selected symbols from our game board. This should look nice on
+a standard, dark terminal display. Still, feel free to adjust the colors to your
+needs (although if you use a terminal with a white background you may want to
+stop it and get some help). Anyway, a field taken by one of the players
+(`isTaken`) will be colored by `colorBoard`.
