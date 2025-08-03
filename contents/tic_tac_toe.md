@@ -101,3 +101,33 @@ a standard, dark terminal display. Still, feel free to adjust the colors to your
 needs (although if you use a terminal with a white background you may want to
 stop it and get some help). Anyway, a field taken by one of the players
 (`isTaken`) will be colored by `colorBoard`.
+
+Personally, I would also opt to add the function for the triplets detection
+(`isTriplet`). which we will use to color them (the first we find from the
+`const lines`) with `colorFirstTriplet`. This should allow us for easier visual
+determination when the game is over (later on we will also use it in
+`isGameWon`).
+
+```jl
+s = """
+function isTriplet(v::Vec{Str})::Bool
+    @assert length(v) == 3 "length(v) must be equal 3"
+    return join(v) == "XXX" || join(v) == "OOO"
+end
+
+function colorFirstTriplet(board::Vec{Str})::Vec{Str}
+    result::Vec{Str} = copy(board)
+    for line in lines
+        if isTriplet(result[line])
+            result[line] = getRed.(result[line])
+            return result
+        end
+    end
+    return result
+end
+"""
+sc(s)
+```
+
+Notice, that neither `colorBoard`, nor `colorFirstTriplet` modify the original
+game board, instead they produce a copy of it which is returned as a result.
