@@ -79,7 +79,7 @@ function isTaken(field::Str)::Bool
     return field in players
 end
 
-function colorBoard(board::Vec{Str})::Vec{Str}
+function colorFieldNumbers(board::Vec{Str})::Vec{Str}
     result::Vec{Str} = copy(board)
     for i in 1:9
         if !isTaken(board[i])
@@ -96,8 +96,8 @@ We begin with the definition of `getGray` that will change the
 font color of the selected symbols from our game board. This should look nice on
 a standard, dark terminal display. Still, feel free to adjust the color to your
 needs (although if you use a terminal with a white background you may want to
-stop it and get some help). Anyway, a field taken by one of the players
-(`isTaken`) will be colored by `colorBoard`.
+stop it and get some help). Anyway, a field not taken by one of the players
+(`!isTaken`) will be colored by `colorFieldNumbers`.
 
 Personally, I would also opt to add the function for the triplets detection
 (`isTriplet`). which we will use to color them (the first we find based on
@@ -133,5 +133,44 @@ end
 sc(s)
 ```
 
-Notice, that neither `colorBoard`, nor `colorFirstTriplet` modify the original
-game board, instead they produce a copy of it which is returned as a result.
+Notice, that neither `colorFieldNumbers`, nor `colorFirstTriplet` modify the
+original game board, instead they produce a copy of it which is returned as a
+result.
+
+Now, we are ready to print.
+
+```jl
+s = """
+# https://en.wikipedia.org/wiki/ANSI_escape_code
+function clearLines(nLines::Int)
+    @assert 0 < nLines "nLines must be a positive integer"
+    # "\033[xxxA" - xxx moves cursor up xxx lines
+    print("\033[" * string(nLines) * "A")
+    # "\033[0J" - clears from cursor position till the end of the screen
+    print("\033[0J")
+	return nothing
+end
+
+function printBoard(board::Vec{Str})
+    bd::Vec{Str} = colorFieldNumbers(board)
+    bd = colorFirstTriplet(bd)
+    for r in [1, 4, 7]
+        println(" ", join(bd[r:(r+2)], " | "))
+        println("---+---+---")
+    end
+    clearLines(1)
+    return nothing
+end
+"""
+sc(s)
+```
+
+First, we declare `clearLines`, it will help us to tidy the printout (e.g.,
+while playing the game we will have to redraw the game board a couple of times).
+Next, we proceed with `printBoard`. Here, we color the board with the previously
+defined functions and move row by row (`[1, 4, 7]` are the indicies that mark
+the beginnings of each row). We `join` the contents of a row together (we
+glue them with `" | "`) and print it (`println`). We follow it by a row
+separator (`println("---+---+---")`). Once we're finished we remove the last row
+separator (`"---+---+---"`) (we do not want it, but it was printed because we
+were too lazy to add an if statement in our for loop).
