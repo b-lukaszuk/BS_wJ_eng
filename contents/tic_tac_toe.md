@@ -174,3 +174,43 @@ glue them with `" | "`) and print it (`println`). We follow it by a row
 separator (`println("---+---+---")`). Once we're finished we remove the last row
 separator (`"---+---+---"`) (we do not want it, but it was printed because we
 were too lazy to add an if statement in our for loop).
+
+So far, so good, time to handle a human player's (aka user's) move.
+
+```jl
+s = """
+function getUserInput(prompt::Str)::Str
+    print(prompt)
+    input::Str = readline()
+    return strip(input)
+end
+
+function isMoveLegal(move::Str, board::Vec{Str})::Bool
+    num::Int = 0
+    try
+        num = parse(Int, move)
+    catch
+        return false
+    end
+    return (0 < num < 10) && !isTaken(board[num])
+end
+
+function getUserMove(gameBoard::Vec{Str})::Int
+    input::Str = getUserInput("Enter your move: ")
+    while true
+        if isMoveLegal(input, gameBoard)
+            break
+        end
+        clearLines(1)
+        input = getUserInput("Illegal move. Try again. Enter your move: ")
+    end
+    return parse(Int, input)
+end
+"""
+sc(s)
+```
+
+We begin with `getUserInput` a function that prints the `prompt` (it tells the
+user what to do), prints it, and accepts the user's input (`readline`) that is
+returned as a result (after `strip`ing them from space/tab/new line characters
+that may be on the edges). Next, we make sure that the move made
