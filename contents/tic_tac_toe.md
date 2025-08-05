@@ -213,4 +213,13 @@ sc(s)
 We begin with `getUserInput` a function that prints the `prompt` (it tells the
 user what to do), prints it, and accepts the user's input (`readline`) that is
 returned as a result (after `strip`ing them from space/tab/new line characters
-that may be on the edges). Next, we make sure that the move made
+that may be on the edges). Next, we make sure that the move made by the user is
+legal (`isMoveLegal`), i.e. can it be correctly converted to integer
+(`parse(Int, move)`), is it in the acceptable range (`0 < num < 10`) and is the
+field free to place the player's mark (`!isTaken(board[num])`). Notice, the use
+of `try` and `catch` construct. First we `try` to make an integer out of the
+string obtained from the user (`parse(Int, move)`). This may fail (e.g., because
+we got the letter `"a"` instead of the number `"9"`). Such a failure, will
+result in an error that will terminate the program execution. We don't want that
+to happen, so we `catch` a possible error and instead of terminating the
+program, we just `return false`.
