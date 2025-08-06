@@ -197,10 +197,7 @@ end
 
 function getUserMove(gameBoard::Vec{Str})::Int
     input::Str = getUserInput("Enter your move: ")
-    while true
-        if isMoveLegal(input, gameBoard)
-            break
-        end
+    while !isMoveLegal(input, gameBoard)
         clearLines(1)
         input = getUserInput("Illegal move. Try again. Enter your move: ")
     end
@@ -227,3 +224,17 @@ possible error and instead of terminating the program, we just `return
 false`. If the `try` succeeds, we skip the `catch` part and go straight to the
 next statement after the `try`-`catch` block
 (`return (0 < num < 10) && !isTaken(board[num])`) that we already discussed.
+
+Finally, we declare `getUserMove` a function that asks the user for a move and
+is quite persistent about it. If the user gave a correct move the first time
+(`input::Str = getUserInput("Enter your move: ")`) then the while loop condition
+(`!isMoveLegal(input, gameBoard)`) is false and the loop isn't executed at all
+(we move to the return statement). However, if the user plays tricks on us and
+want to smuggle an illegal move (or maybe just did it absent-mindedly) then the
+condition (`!isMoveLegal(input, gameBoard)`) is true and `while` it is we nag
+them for a correct move (`"Illegal move. Try again. Enter your move: "`).
+
+> Note. Using `while` loop always carries a risk of it being infinite, that's
+> why it is worth to know that you can always press
+> [Ctrl+C](https://en.wikipedia.org/wiki/Control-C) that should terminate the
+> program execution.
