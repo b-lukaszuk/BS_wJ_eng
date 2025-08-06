@@ -92,6 +92,12 @@ monthsName2Num::Dict{Str, Int} = Dict(
 replace(sc(s), r"\bd" => "const d", r"\bs" => "const s", r"\bm" => "const m", r"\bweek" => "const week")
 ```
 
+> Note. Using `const` with mutable containers like vectors or dictionaries
+> allows to change their contents in the future, e.g., with `push!`. So the
+> `const` used here is more like a convention, a signal that we do not plan to
+> change the containers in the future. If we really wanted an immutable
+> container then we should consider a(n) (immutable) tuple.
+
 As you can see from the output of `cal Jan 2025` (see @sec:calendar_problem) we
 get a rectangular printout with 7 columns and `x` rows. Clearly, the number of
 elements is a multiple of 7. So, let's write a function that determines how

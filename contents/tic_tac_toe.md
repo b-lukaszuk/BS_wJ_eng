@@ -55,6 +55,12 @@ lines = [
 replace(sc(s), r"\bplayers" => "const players", r"\blines" => "const lines")
 ```
 
+> Note. Using `const` with mutable containers like vectors or dictionaries
+> allows to change their contents in the future, e.g., with `push!`. So the
+> `const` used here is more like a convention, a signal that we do not plan to
+> change the containers in the future. If we really wanted an immutable
+> container then we should consider a(n) (immutable) tuple.
+
 The two are: `players`, a vector with marks used by each of the players (`"X"` -
 human, `"O"` - computer) and the coordinates of `lines` in our game board that
 we need to check to see if a player won the game. You could probably be more
@@ -238,3 +244,29 @@ them for a correct move (`"Illegal move. Try again. Enter your move: "`).
 > why it is worth to know that you can always press
 > [Ctrl+C](https://en.wikipedia.org/wiki/Control-C) that should terminate the
 > program execution.
+
+OK, and how about a computer move.
+
+```jl
+s = """
+function getComputerMove(board::Vec{Str})::Int
+    move::Int = 0
+    for i in 1:9
+        if !isTaken(board[i])
+            move = i
+            break
+        end
+    end
+    println("Computer plays: ", move)
+    return move
+end
+"""
+sc(s)
+```
+
+We start small, `getComputerMove` will simply walk through the board and return
+an index (`i`) of a first empty, i.e., not taken by a player
+(`!isTaken(board[i])`) field. If all the fields are taken it will return `0`
+(but this will not be a problem as we will see afterwards). Since `getUserMove`
+prints one line of a screen output, then so does `getComputerMove`
+(`println("Computer plays: ", move)`) for compatibility.

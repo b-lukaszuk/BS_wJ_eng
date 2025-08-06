@@ -41,6 +41,12 @@ tens = Dict(20 => "twenty", 30 => "thrity",
 replace(sc(s), r"\bunits" => "const units", r"\btens " => "const tens ")
 ```
 
+> Note. Using `const` with mutable containers like vectors or dictionaries
+> allows to change their contents in the future, e.g., with `push!`. So the
+> `const` used here is more like a convention, a signal that we do not plan to
+> change the containers in the future. If we really wanted an immutable
+> container then we should consider a(n) (immutable) tuple.
+
 The above are just mappings between the necessary basic key ingredients of our
 number soup. Let's use them to get the transcript for numbers in the range of 0
 to 99.

@@ -59,8 +59,15 @@ The mapping is defined with (`const`) keyword to signal that we do
 not wish to change it throughout the program execution. Moreover, we used a
 vector of tuples, not a dictionary, since we want to preserve the (descending)
 order of the pairs of values. Notice, that we also incluced the key landmarks
-of subtractive notation (e.g. `("CM", 900)` or `("IV", 4)`). Now, we are ready
-to take the next step.
+of subtractive notation (e.g. `("CM", 900)` or `("IV", 4)`).
+
+> Note. Using `const` with mutable containers like vectors or dictionaries
+> allows to change their contents in the future, e.g., with `push!`. So the
+> `const` used here is more like a convention, a signal that we do not plan to
+> change the containers in the future. If we really wanted an immutable
+> container then we should consider a(n) (immutable) tuple.
+
+Now, we are ready to take the next step.
 
 ```jl
 s = """
