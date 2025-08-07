@@ -92,7 +92,7 @@ function isMoveLegal(move::Str, board::Vec{Str})::Bool
     catch
         return false
     end
-    return (0 < num < 10) && !isTaken(board[num])
+    return (num in eachindex(board)) && !isTaken(board[num])
 end
 
 function getUserMove(gameBoard::Vec{Str})::Int
@@ -117,7 +117,7 @@ function getComputerMove(board::Vec{Str})::Int
 end
 
 function makeMove!(move::Int, player::Str, board::Vec{Str})
-    @assert 0 < move < 10 "move must be in range [1-9]"
+    @assert move in eachindex(board) "move must be in range [1-9]"
     @assert player in players "player must be X or O"
     if !isTaken(board[move])
         board[move] = player

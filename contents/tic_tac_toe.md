@@ -198,7 +198,7 @@ function isMoveLegal(move::Str, board::Vec{Str})::Bool
     catch
         return false
     end
-    return (0 < num < 10) && !isTaken(board[num])
+    return (num in eachindex(board)) && !isTaken(board[num])
 end
 
 function getUserMove(gameBoard::Vec{Str})::Int
@@ -220,8 +220,8 @@ that may be on the edges).
 
 Next, we make sure that the move made by the user is legal (`isMoveLegal`),
 i.e. can it be correctly converted to integer (`parse(Int, move)`), is it in the
-acceptable range (`0 < num < 10`) and is the field free to place the player's
-mark (`!isTaken(board[num])`). Notice, the use of `try` and `catch`
+acceptable range (`num in eachindex(board)`) and is the field free to place the
+player's mark (`!isTaken(board[num])`). Notice, the use of `try` and `catch`
 construct. First we `try` to make an integer out of the string obtained from the
 user (`parse(Int, move)`). This may fail (e.g., because we got the letter `"a"`
 instead of the number `"2"`). Such a failure, will result in an error that will
@@ -229,7 +229,8 @@ terminate the program execution. We don't want that to happen, so we `catch` a
 possible error and instead of terminating the program, we just `return
 false`. If the `try` succeeds, we skip the `catch` part and go straight to the
 next statement after the `try`-`catch` block
-(`return (0 < num < 10) && !isTaken(board[num])`) that we already discussed.
+(`return (num in eachindex(board)) && !isTaken(board[num])`) that we already
+discussed.
 
 Finally, we declare `getUserMove` a function that asks the user for a move and
 is quite persistent about it. If the user gave a correct move the first time
@@ -276,7 +277,7 @@ Time to actually make a move that we obtained for a player.
 ```jl
 s = """
 function makeMove!(move::Int, player::Str, board::Vec{Str})
-    @assert 0 < move < 10 "move must be in range [1-9]"
+    @assert move in eachindex(board) "move must be in range [1-9]"
     @assert player in players "player must be X or O"
     if !isTaken(board[move])
         board[move] = player
