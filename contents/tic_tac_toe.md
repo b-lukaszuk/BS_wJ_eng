@@ -270,3 +270,24 @@ an index (`i`) of a first empty, i.e., not taken by a player
 (but this will not be a problem as we will see afterwards). Since `getUserMove`
 prints one line of a screen output, then so does `getComputerMove`
 (`println("Computer plays: ", move)`) for compatibility.
+
+Time to actually make a move that we obtained for a player.
+
+```jl
+s = """
+function makeMove!(move::Int, player::Str, board::Vec{Str})
+    @assert 0 < move < 10 "move must be in range [1-9]"
+    @assert player in players "player must be X or O"
+    if !isTaken(board[move])
+        board[move] = player
+    end
+    return nothing
+end
+"""
+sc(s)
+```
+
+For that we just take the `move`, a `player` for whom we place a mark and the
+game `board` that we will modify. If a given field isn't taken
+(`if !isTaken(board[move])`, or to put it differently, it's free to take) we
+just put the mark for a player there (`board[move] = player`).
