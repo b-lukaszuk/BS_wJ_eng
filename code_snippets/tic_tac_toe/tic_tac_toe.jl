@@ -1,13 +1,16 @@
-# TODO:
-# Write a simple tic-tac-toe game
 const Str = String
 const Vec = Vector
 
 const players = ["X", "O"]
 const lines = [
-    [collect(i:(i+2)) for i in [1, 4, 7]]...,
-    [collect(i:3:(i+6)) for i in [1, 2, 3]]...,
-    [1, 5, 9], [3, 5, 7]
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
+    [1, 4, 7],
+    [2, 5, 8],
+    [3, 6, 9],
+    [1, 5, 9],
+    [3, 5, 7],
 ]
 
 function getNewGameBoard()::Vec{Str}
@@ -16,20 +19,23 @@ end
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 function getGray(s::Str)::Str
+    # "\x1b[90m" sets forground color to gray
+    # "\x1b[0m" resets forground color to default value
     return "\x1b[90m" * s * "\x1b[0m"
-end
-
-function getRed(s::Str)::Str
-    return "\x1b[31m" * s * "\x1b[0m"
 end
 
 function isTaken(field::Str)::Bool
     return field in players
 end
 
-function colorBoard(board::Vec{Str})::Vec{Str}
+function getRed(s::Str)::Str
+    # "\x1b[31m" sets forground color to red
+    return "\x1b[31m" * s * "\x1b[0m"
+end
+
+function colorFieldNumbers(board::Vec{Str})::Vec{Str}
     result::Vec{Str} = copy(board)
-    for i in 1:9
+    for i in eachindex(board)
         if !isTaken(board[i])
             result[i] = getGray(board[i])
         end
@@ -44,9 +50,9 @@ end
 
 function colorFirstTriplet(board::Vec{Str})::Vec{Str}
     result::Vec{Str} = copy(board)
-    for l in lines
-        if isTriplet(result[l])
-            result[l] = getRed.(result[l])
+    for line in lines
+        if isTriplet(result[line])
+            result[line] = getRed.(result[line])
             return result
         end
     end
@@ -55,17 +61,18 @@ end
 
 function clearLines(nLines::Int)
     @assert 0 < nLines "nLines must be a positive integer"
-    #"\033[xxxA" - xxx moves cursor up xxx lines
+    # "\033[xxxA" - xxx moves cursor up xxx lines
     print("\033[" * string(nLines) * "A")
-    # clear from cursor position till the end of the screen
+    # "\033[0J" - clears from cursor position till the end of the screen
     print("\033[0J")
+    return nothing
 end
 
 function printBoard(board::Vec{Str})
-    cb::Vec{Str} = colorBoard(board)
-    cb = colorFirstTriplet(cb)
+    bd::Vec{Str} = colorFieldNumbers(board)
+    bd = colorFirstTriplet(bd)
     for r in [1, 4, 7]
-        println(" ", join(cb[r:(r+2)], " | "))
+        println(" ", join(bd[r:(r+2)], " | "))
         println("---+---+---")
     end
     clearLines(1)
@@ -90,14 +97,32 @@ end
 
 function getUserMove(gameBoard::Vec{Str})::Int
     input::Str = getUserInput("Enter your move: ")
-    while true
-        if isMoveLegal(input, gameBoard)
-            break
-        end
+    while !isMoveLegal(input, gameBoard)
         clearLines(1)
         input = getUserInput("Illegal move. Try again. Enter your move: ")
     end
     return parse(Int, input)
+end
+
+function getComputerMove(board::Vec{Str})::Int
+    move::Int = 0
+    for i in eachindex(board)
+        if !isTaken(board[i])
+            move = i
+            break
+        end
+    end
+    println("Computer plays: ", move)
+    return move
+end
+
+function makeMove!(move::Int, player::Str, board::Vec{Str})
+    @assert 0 < move < 10 "move must be in range [1-9]"
+    @assert player in players "player must be X or O"
+    if !isTaken(board[move])
+        board[move] = player
+    end
+    return nothing
 end
 
 function isGameWon(board::Vec{Str})::Bool
@@ -110,7 +135,7 @@ function isGameWon(board::Vec{Str})::Bool
 end
 
 function isNoMoreMoves(board::Vec{Str})::Bool
-    for i in 1:9
+    for i in eachindex(board)
         if !isTaken(board[i])
             return false
         end
@@ -120,27 +145,6 @@ end
 
 function isGameDraw(board::Vec{Str})::Bool
     return !isGameWon(board) && isNoMoreMoves(board)
-end
-
-function makeMove!(move::Int, player::Str, board::Vec{Str})
-    @assert 0 < move < 10 "move must be in range [1-9]"
-    @assert player in players "player must be X or O"
-    if !isTaken(board[move])
-        board[move] = player
-    end
-    return nothing
-end
-
-function getComputerMove(board::Vec{Str})::Int
-    move::Int = 0
-    for i in 1:9
-        if !isTaken(board[i])
-            move = i
-            break
-        end
-    end
-    println("Computer plays: ", move)
-    return move
 end
 
 function playMove!(player::Str, board::Vec{Str})
