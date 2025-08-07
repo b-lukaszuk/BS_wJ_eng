@@ -87,7 +87,7 @@ end
 
 function colorFieldNumbers(board::Vec{Str})::Vec{Str}
     result::Vec{Str} = copy(board)
-    for i in 1:9
+    for i in eachindex(board)
         if !isTaken(board[i])
             result[i] = getGray(board[i])
         end
@@ -251,7 +251,7 @@ OK, and how about a computer move.
 s = """
 function getComputerMove(board::Vec{Str})::Int
     move::Int = 0
-    for i in 1:9
+    for i in eachindex(board)
         if !isTaken(board[i])
             move = i
             break
