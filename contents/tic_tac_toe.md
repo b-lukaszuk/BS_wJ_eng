@@ -293,8 +293,32 @@ game `board` that we will modify. If a given field isn't taken
 (`if !isTaken(board[move])`, or to put it differently, it's free to take) we
 just put the mark for a player there (`board[move] = player`).
 
-Now, we are almost ready to actually play a move. Almost, because before a move
-is played we need to make sure that the game is not over yet (see below).
+Time to write `playMove`, a function that will handle a player move and its
+display on the screen.
+
+```jl
+s = """
+function playMove!(player::Str, board::Vec{Str})
+    @assert player in players "player must be X or O"
+    printBoard(board)
+    move::Int = (player == "X") ? getUserMove(board) : getComputerMove(board)
+    makeMove!(move, player, board)
+    clearLines(6)
+    printBoard(board)
+    return nothing
+end
+"""
+sc(s)
+```
+
+We begin by displaying the board (`printBoard`) and obtaining a `move` for a
+player (`(player == "X") ? getUserMove(board) : getComputerMove(board)`). Once
+we got the move, we place the correct marker on the board (with `makeMove!`) and
+re-draw the board (`clearLines` and `printBoard`).
+
+Now, we are almost ready to actually play a game. Almost, because we need a few
+more helper functions. First, we must figure out when the game is over and
+why. This can be simply achieved with the following snippet.
 
 ```jl
 s = """
@@ -316,8 +340,8 @@ function isNoMoreMoves(board::Vec{Str})::Bool
     return true
 end
 
-function isGameDraw(board::Vec{Str})::Bool
-    return !isGameWon(board) && isNoMoreMoves(board)
+function isGameOver(board::Vec{Str})::Bool
+    return isGameWon(board) || isNoMoreMoves(board)
 end
 """
 sc(s)
