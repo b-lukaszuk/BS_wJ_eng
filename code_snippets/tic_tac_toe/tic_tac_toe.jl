@@ -125,6 +125,16 @@ function makeMove!(move::Int, player::Str, board::Vec{Str})
     return nothing
 end
 
+function playMove!(player::Str, board::Vec{Str})
+    @assert player in players "player must be X or O"
+    printBoard(board)
+    move::Int = (player == "X") ? getUserMove(board) : getComputerMove(board)
+    makeMove!(move, player, board)
+    clearLines(6)
+    printBoard(board)
+    return nothing
+end
+
 function isGameWon(board::Vec{Str})::Bool
     for line in lines
         if isTriplet(board[line])
@@ -147,14 +157,9 @@ function isGameOver(board::Vec{Str})::Bool
     return isGameWon(board) || isNoMoreMoves(board)
 end
 
-function playMove!(player::Str, board::Vec{Str})
+function togglePlayer(player::Str)::Str
     @assert player in players "player must be X or O"
-    printBoard(board)
-    move::Int = (player == "X") ? getUserMove(board) : getComputerMove(board)
-    makeMove!(move, player, board)
-    clearLines(6)
-    printBoard(board)
-    return nothing
+    return player == "X" ? "O" : "X"
 end
 
 function displayEndScreen(player::Str, board::Vec{Str})
@@ -164,11 +169,6 @@ function displayEndScreen(player::Str, board::Vec{Str})
         println("Game Over. ", player == "X" ? "You" : "Computer", " won.") :
         println("Game Over. Draw.")
     return nothing
-end
-
-function togglePlayer(player::Str)::Str
-    @assert player in players "player must be X or O"
-    return player == "X" ? "O" : "X"
 end
 
 function playGame()
