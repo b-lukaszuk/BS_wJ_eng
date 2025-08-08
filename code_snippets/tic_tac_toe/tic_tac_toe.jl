@@ -143,36 +143,43 @@ function isNoMoreMoves(board::Vec{Str})::Bool
     return true
 end
 
-function isGameDraw(board::Vec{Str})::Bool
-    return !isGameWon(board) && isNoMoreMoves(board)
+function isGameOver(board::Vec{Str})::Bool
+    return isGameWon(board) || isNoMoreMoves(board)
 end
 
 function playMove!(player::Str, board::Vec{Str})
     @assert player in players "player must be X or O"
-    clearLines(5)
     printBoard(board)
     move::Int = (player == "X") ? getUserMove(board) : getComputerMove(board)
     makeMove!(move, player, board)
     clearLines(6)
     printBoard(board)
-    if isGameWon(board)
-        println("Game Over. ", player == "X" ? "You" : "Computer", " won.")
-    end
-    if isGameDraw(board)
-        println("Game Over. Draw.")
-    end
     return nothing
 end
 
+function displayEndScreen(player::Str, board::Vec{Str})
+    @assert player in players "player must be X or O"
+    printBoard(board)
+    isGameWon(board) ?
+        println("Game Over. ", player == "X" ? "You" : "Computer", " won.") :
+        println("Game Over. Draw.")
+    return nothing
+end
+
+function togglePlayer(player::Str)::Str
+    @assert player in players "player must be X or O"
+    return player == "X" ? "O" : "X"
+end
+
 function playGame()
-    player::Str = "X"
     board::Vec{Str} = getNewGameBoard()
-    isOver::Bool = isGameWon(board) || isGameDraw(board)
-    while !isOver
+    player::Str = "O"
+    while !isGameOver(board)
+        player = togglePlayer(player)
         playMove!(player, board)
-        player = player == "X" ? "O" : "X"
-        isOver = isGameWon(board) || isGameDraw(board)
+        clearLines(5)
     end
+    displayEndScreen(player, board)
     return nothing
 end
 
