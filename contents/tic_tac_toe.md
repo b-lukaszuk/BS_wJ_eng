@@ -292,3 +292,33 @@ For that we just take the `move`, a `player` for whom we place a mark and the
 game `board` that we will modify. If a given field isn't taken
 (`if !isTaken(board[move])`, or to put it differently, it's free to take) we
 just put the mark for a player there (`board[move] = player`).
+
+Now, we are almost ready to actually play a move. Almost, because before a move
+is played we need to make sure that the game is not over yet (see below).
+
+```jl
+s = """
+function isGameWon(board::Vec{Str})::Bool
+    for line in lines
+        if isTriplet(board[line])
+            return true
+        end
+    end
+    return false
+end
+
+function isNoMoreMoves(board::Vec{Str})::Bool
+    for i in eachindex(board)
+        if !isTaken(board[i])
+            return false
+        end
+    end
+    return true
+end
+
+function isGameDraw(board::Vec{Str})::Bool
+    return !isGameWon(board) && isNoMoreMoves(board)
+end
+"""
+sc(s)
+```
