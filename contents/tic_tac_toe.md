@@ -390,3 +390,39 @@ before another move. When the game is finished just `displayGameOverScreen`.
 And voila. You can `playGame`. Test it, e.g., with the following sequence of
 moves: 2, 3, 7, 6, 9 - you win; 2, 3, 6, 8 - computer wins; 7, 2, 4, 6, 9 -
 draw.
+
+There are a couple of things to improve on (if you want to). You could add a
+`sleep` statement into `getComputerMove` so that the user got time to read the
+message with move declaration (`println("Computer plays: ", move)`). Moreover,
+as for now the algorithm generating move in `getComputerMove` is great for
+testing, but gets boring pretty quickly, feel free to change it (or try to beat
+the algorithm found in [the code
+snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/tic_tac_toe))
+
+Lastly, like in @sec:progress_bar_solution you could also add the functionality
+to run the game from a terminal (with `julia tic_tac_toe.jl`).
+
+```jl
+s = """
+function main()
+    println("This is a toy program to play a tic-tac-toe game.")
+    println("Note: your terminal must support ANSI escape codes.\n")
+
+    # y(es) - default choice (also with Enter), anything else: no
+    println("Continue with the game? [Y/n]")
+    choice::Str = readline()
+    if lowercase(strip(choice)) in ["y", "yes", ""]
+        playGame()
+    end
+
+    println("\nThat's all. Goodbye!")
+end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
+end
+"""
+sc(s)
+```
+
+That's it. Have fun playing the game.
