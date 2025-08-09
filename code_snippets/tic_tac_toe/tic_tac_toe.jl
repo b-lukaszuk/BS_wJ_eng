@@ -71,8 +71,8 @@ end
 function printBoard(board::Vec{Str})
     bd::Vec{Str} = colorFieldNumbers(board)
     bd = colorFirstTriplet(bd)
-    for r in [1, 4, 7]
-        println(" ", join(bd[r:(r+2)], " | "))
+    for row in lines[1:3]
+        println(" ", join(bd[row], " | "))
         println("---+---+---")
     end
     clearLines(1)
@@ -162,12 +162,13 @@ function togglePlayer(player::Str)::Str
     return player == "X" ? "O" : "X"
 end
 
-function displayEndScreen(player::Str, board::Vec{Str})
+function displayGameOverScreen(player::Str, board::Vec{Str})
     @assert player in players "player must be X or O"
     printBoard(board)
+    print("Game Over. ")
     isGameWon(board) ?
-        println("Game Over. ", player == "X" ? "You" : "Computer", " won.") :
-        println("Game Over. Draw.")
+        println(player == "X" ? "You" : "Computer", " won.") :
+        println("Draw.")
     return nothing
 end
 
@@ -179,7 +180,7 @@ function playGame()
         playMove!(player, board)
         clearLines(5)
     end
-    displayEndScreen(player, board)
+    displayGameOverScreen(player, board)
     return nothing
 end
 
