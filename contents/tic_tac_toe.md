@@ -160,8 +160,8 @@ end
 function printBoard(board::Vec{Str})
     bd::Vec{Str} = colorFieldNumbers(board)
     bd = colorFirstTriplet(bd)
-    for r in [1, 4, 7]
-        println(" ", join(bd[r:(r+2)], " | "))
+    for row in lines[1:3] # first 3 lines are for rows
+        println(" ", join(bd[row], " | "))
         println("---+---+---")
     end
     clearLines(1)
@@ -387,4 +387,6 @@ We begin by initializing `board` and the `player` on a move. Next, while the
 game isn't over (`while !isGameOver(board)`), we toggle the player
 (`togglePlayer(player)`), `playMove` and clear the display (`clearLines(5)`)
 before another move. When the game is finished just `displayGameOverScreen`.
-And voila.
+And voila. You can `playGame`. Test it, e.g., with the following sequence of
+moves: 2, 3, 7, 6, 9 - you win; 2, 3, 6, 8 - computer wins; 7, 2, 4, 6, 9 -
+draw.
