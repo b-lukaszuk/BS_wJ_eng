@@ -301,7 +301,7 @@ s = """
 function playMove!(player::Str, board::Vec{Str})
     @assert player in players "player must be X or O"
     printBoard(board)
-    move::Int = (player == "X") ? getUserMove(board) : getComputerMove(board)
+    move::Int = (player=="X") ? getUserMove(board) : getComputerMove(board)
     makeMove!(move, player, board)
     clearLines(6)
     printBoard(board)
@@ -346,3 +346,45 @@ end
 """
 sc(s)
 ```
+
+Once the game is over we display an appropriate info.
+
+```jl
+s = """
+function displayGameOverScreen(player::Str, board::Vec{Str})
+    @assert player in players "player must be X or O"
+    printBoard(board)
+    print("Game Over. ")
+    isGameWon(board) ?
+        println(player == "X" ? "You" : "Computer", " won.") :
+        println("Draw.")
+    return nothing
+end
+"""
+sc(s)
+```
+
+And finally, we're ready to play a game.
+
+```jl
+s = """
+function playGame()
+    board::Vec{Str} = getNewGameBoard()
+    player::Str = "O"
+    while !isGameOver(board)
+        player = togglePlayer(player)
+        playMove!(player, board)
+        clearLines(5)
+    end
+    displayGameOverScreen(player, board)
+    return nothing
+end
+"""
+sc(s)
+```
+
+We begin by initializing `board` and the `player` on a move. Next, while the
+game isn't over (`while !isGameOver(board)`), we toggle the player
+(`togglePlayer(player)`), `playMove` and clear the display (`clearLines(5)`)
+before another move. When the game is finished just `displayGameOverScreen`.
+And voila.
