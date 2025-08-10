@@ -58,7 +58,7 @@ replace(sc(s), r"\broman" => "const roman")
 The mapping is defined with (`const`) keyword to signal that we do
 not wish to change it throughout the program execution. Moreover, we used a
 vector of tuples, not a dictionary, since we want to preserve the (descending)
-order of the pairs of values. Notice, that we also incluced the key landmarks
+order of the pairs of values. Notice, that we incluced the key landmarks
 of subtractive notation (e.g. `("CM", 900)` or `("IV", 4)`).
 
 > Note. Using `const` with mutable containers like vectors or dictionaries
