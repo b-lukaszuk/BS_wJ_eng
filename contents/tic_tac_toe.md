@@ -24,8 +24,8 @@ useful.
 ## Solution {#sec:tic_tac_toe_solution}
 
 The first decision we must make is the internal representation of our game
-board. Two objects come to mind right away, a vector or a matrix. Here, I'll go
-with the first option.
+board. Two candidate data types come to mind right away, a vector or a
+matrix. Here, I'll go with the first option.
 
 ```jl
 s = """
@@ -101,13 +101,13 @@ sc(s)
 We begin with the definition of `getGray` that will change the
 font color of the selected symbols from our game board. This should look nice on
 a standard, dark terminal display. Still, feel free to adjust the color to your
-needs (although if you use a terminal with a white background you may want to
-stop it and get some help). Anyway, a field not taken by one of the players
+needs (although if you use a terminal with a white background you may rather
+stop and get some help). Anyway, a field not taken by one of the players
 (`!isTaken`) will be colored by `colorFieldNumbers`.
 
 Personally, I would also opt to add the function for the triplets detection
 (`isTriplet`). which we will use to color them (the first we find based on
-`const lines`) with `colorFirstTriplet`. This should allow us for easier visual
+`lines`) with `colorFirstTriplet`. This should allow us for easier visual
 determination when the game is over (later on we will also use it in
 `isGameWon`).
 
@@ -141,7 +141,8 @@ sc(s)
 
 Notice, that neither `colorFieldNumbers`, nor `colorFirstTriplet` modify the
 original game board, instead they produce a copy of it which is returned as a
-result.
+result (since the game board is a short vector there shouldn't be any serious
+performance issues).
 
 Now, we are ready to print.
 
@@ -151,7 +152,7 @@ s = """
 function clearLines(nLines::Int)
     @assert 0 < nLines "nLines must be a positive integer"
     # "\\033[xxxA" - xxx moves cursor up xxx lines
-    print("\\033[" * string(nLines) * "A")
+    print("\\033[", nLines, "A")
     # "\\033[0J" - clears from cursor position till the end of the screen
     print("\\033[0J")
 	return nothing
@@ -173,13 +174,13 @@ sc(s)
 
 First, we declare `clearLines`, it will help us to tidy the printout (e.g.,
 while playing the game we will have to redraw the game board a couple of times).
-Next, we proceed with `printBoard`. Here, we color the board with the previously
-defined functions and move row by row (`[1, 4, 7]` are the indicies that mark
-the beginnings of each row). We `join` the contents of a row together (we
-glue them with `" | "`) and print it (`println`). We follow it by a row
-separator (`println("---+---+---")`). Once we're finished we remove the last row
-separator (`"---+---+---"`) (we do not want it, but it was printed because we
-were too lazy to add an if statement in our for loop).
+Next, we proceed with `printBoard`. We color the board with the previously
+defined functions and move row by row (`lines[1:3]` contains the indices for
+the three rows). We `join` the contents of a row together
+(we glue them with `" | "`) and print it (`println`).
+We follow it by a row separator (`println("---+---+---")`). Once we're finished
+we remove the last row separator (`"---+---+---"`) (we do not want it, but it
+was printed because we were too lazy to add an if statement in our for loop).
 
 So far, so good, time to handle a human player's (aka user's) move.
 
@@ -213,33 +214,32 @@ end
 sc(s)
 ```
 
-We begin with `getUserInput` a function that prints the `prompt` (it tells the
-user what to do), prints it, and accepts the user's input (`readline`) that is
-returned as a result (after `strip`ing them from space/tab/new line characters
-that may be on the edges).
+We begin with `getUserInput` a function that takes the `prompt` (its argument,
+it tells the user what to do), prints it, and accepts the user's input
+(`readline`) that is returned as a result (after `strip`ing it from
+space/tab/new line characters that may be on the edges).
 
 Next, we make sure that the move made by the user is legal (`isMoveLegal`),
-i.e. can it be correctly converted to integer (`parse(Int, move)`), is it in the
-acceptable range (`num in eachindex(board)`) and is the field free to place the
-player's mark (`!isTaken(board[num])`). Notice, the use of `try` and `catch`
+i.e. it can be correctly converted to an integer (`parse(Int, move)`), it is in
+the acceptable range (`num in eachindex(board)`) and is the field free to place
+the player's mark (`!isTaken(board[num])`). Notice, the use of `try` and `catch`
 construct. First we `try` to make an integer out of the string obtained from the
 user (`parse(Int, move)`). This may fail (e.g., because we got the letter `"a"`
 instead of the number `"2"`). Such a failure, will result in an error that will
 terminate the program execution. We don't want that to happen, so we `catch` a
 possible error and instead of terminating the program, we just `return
 false`. If the `try` succeeds, we skip the `catch` part and go straight to the
-next statement after the `try`-`catch` block
-(`return (num in eachindex(board)) && !isTaken(board[num])`) that we already
-discussed.
+next statement after the `try`-`catch` block (`return (num in eachindex(board))
+&& !isTaken(board[num])`) that we already discussed.
 
 Finally, we declare `getUserMove` a function that asks the user for a move and
-is quite persistent about it. If the user gave a correct move the first time
+is quite persistent about it. If the user gives a correct move the first time
 (`input::Str = getUserInput("Enter your move: ")`) then the while loop condition
 (`!isMoveLegal(input, gameBoard)`) is false and the loop isn't executed at all
 (we move to the return statement). However, if the user plays tricks on us and
-want to smuggle an illegal move (or maybe just did it absent-mindedly) then the
-condition (`!isMoveLegal(input, gameBoard)`) is true and `while` it is we nag
-them for a correct move (`"Illegal move. Try again. Enter your move: "`).
+want to smuggle an illegal move (or maybe the just did it absent-mindedly) then
+the condition (`!isMoveLegal(input, gameBoard)`) is true and `while` it is we
+nag them for a correct move (`"Illegal move. Try again. Enter your move: "`).
 
 > Note. Using `while` loop always carries a risk of it being infinite, that's
 > why it is worth to know that you can always press
@@ -268,8 +268,8 @@ sc(s)
 We start small, `getComputerMove` will simply walk through the board and return
 an index (`i`) of a first empty, i.e., not taken by a player
 (`!isTaken(board[i])`) field. If all the fields are taken it will return `0`
-(but this will not be a problem as we will see afterwards). Since `getUserMove`
-prints one line of a screen output, then so does `getComputerMove`
+(in reality this will never happen as we will see in `playGame` later on). Since
+`getUserMove` prints one line of a screen output, then so does `getComputerMove`
 (`println("Computer plays: ", move)`) for compatibility.
 
 Time to actually make a move that we obtained for a player.
@@ -386,7 +386,7 @@ sc(s)
 We begin by initializing `board` and the `player` on a move. Next, while the
 game isn't over (`while !isGameOver(board)`), we toggle the player
 (`togglePlayer(player)`), `playMove` and clear the display (`clearLines(5)`)
-before another move. When the game is finished just `displayGameOverScreen`.
+before another move. When the game is finished we just `displayGameOverScreen`.
 And voila. You can `playGame`. Test it, e.g., with the following sequence of
 moves: 2, 3, 7, 6, 9 - you win; 2, 3, 6, 8 - computer wins; 7, 2, 4, 6, 9 -
 draw.
@@ -397,7 +397,8 @@ message with move declaration (`println("Computer plays: ", move)`). Moreover,
 as for now the algorithm generating move in `getComputerMove` is great for
 testing, but gets boring pretty quickly, feel free to change it (or try to beat
 the algorithm found in [the code
-snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/tic_tac_toe))
+snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/tic_tac_toe),
+it's possible to do so, but it's more challenging).
 
 Lastly, like in @sec:progress_bar_solution you could also add the functionality
 to run the game from a terminal (with `julia tic_tac_toe.jl`).
@@ -406,7 +407,7 @@ to run the game from a terminal (with `julia tic_tac_toe.jl`).
 s = """
 function main()
     println("This is a toy program to play a tic-tac-toe game.")
-    println("Note: your terminal must support ANSI escape codes.\n")
+    println("Note: your terminal must support ANSI escape codes.\\n")
 
     # y(es) - default choice (also with Enter), anything else: no
     println("Continue with the game? [Y/n]")
@@ -415,7 +416,7 @@ function main()
         playGame()
     end
 
-    println("\nThat's all. Goodbye!")
+    println("\\nThat's all. Goodbye!")
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
