@@ -24,8 +24,8 @@ function getGray(s::Str)::Str
     return "\x1b[90m" * s * "\x1b[0m"
 end
 
-function isTaken(field::Str)::Bool
-    return field in players
+function isFree2Take(field::Str)::Bool
+    return !(field in players)
 end
 
 function getRed(s::Str)::Str
@@ -36,7 +36,7 @@ end
 function colorFieldNumbers(board::Vec{Str})::Vec{Str}
     result::Vec{Str} = copy(board)
     for i in eachindex(board)
-        if !isTaken(board[i])
+        if isFree2Take(board[i])
             result[i] = getGray(board[i])
         end
     end
@@ -92,7 +92,7 @@ function isMoveLegal(move::Str, board::Vec{Str})::Bool
     catch
         return false
     end
-    return (num in eachindex(board)) && !isTaken(board[num])
+    return (num in eachindex(board)) && isFree2Take(board[num])
 end
 
 function getUserMove(gameBoard::Vec{Str})::Int
@@ -107,7 +107,7 @@ end
 function getComputerMove(board::Vec{Str})::Int
     move::Int = 0
     for i in eachindex(board)
-        if !isTaken(board[i])
+        if isFree2Take(board[i])
             move = i
             break
         end
@@ -119,7 +119,7 @@ end
 function makeMove!(move::Int, player::Str, board::Vec{Str})
     @assert move in eachindex(board) "move must be in range [1-9]"
     @assert player in players "player must be X or O"
-    if !isTaken(board[move])
+    if isFree2Take(board[move])
         board[move] = player
     end
     return nothing
@@ -146,7 +146,7 @@ end
 
 function isNoMoreMoves(board::Vec{Str})::Bool
     for i in eachindex(board)
-        if !isTaken(board[i])
+        if isFree2Take(board[i])
             return false
         end
     end
