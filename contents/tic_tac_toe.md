@@ -81,14 +81,14 @@ function getGray(s::Str)::Str
     return "\\x1b[90m" * s * "\\x1b[0m"
 end
 
-function isTaken(field::Str)::Bool
-    return field in players
+function isFree2Take(field::Str)::Bool
+    return !(field in players)
 end
 
 function colorFieldNumbers(board::Vec{Str})::Vec{Str}
     result::Vec{Str} = copy(board)
     for i in eachindex(board)
-        if !isTaken(board[i])
+        if isFree2Take(board[i])
             result[i] = getGray(board[i])
         end
     end
@@ -103,7 +103,7 @@ font color of the selected symbols from our game board. This should look nice on
 a standard, dark terminal display. Still, feel free to adjust the color to your
 needs (although if you use a terminal with a white background you may rather
 stop and get some help). Anyway, a field not taken by one of the players
-(`!isTaken`) will be colored by `colorFieldNumbers`.
+(`isFree2Take`) will be colored by `colorFieldNumbers`.
 
 Personally, I would also opt to add the function for the triplets detection
 (`isTriplet`). which we will use to color them (the first we find based on
@@ -199,7 +199,7 @@ function isMoveLegal(move::Str, board::Vec{Str})::Bool
     catch
         return false
     end
-    return (num in eachindex(board)) && !isTaken(board[num])
+    return (num in eachindex(board)) && isFree2Take(board[num])
 end
 
 function getUserMove(gameBoard::Vec{Str})::Int
@@ -222,15 +222,16 @@ space/tab/new line characters that may be on the edges).
 Next, we make sure that the move made by the user is legal (`isMoveLegal`),
 i.e. it can be correctly converted to an integer (`parse(Int, move)`), it is in
 the acceptable range (`num in eachindex(board)`) and is the field free to place
-the player's mark (`!isTaken(board[num])`). Notice, the use of `try` and `catch`
-construct. First we `try` to make an integer out of the string obtained from the
-user (`parse(Int, move)`). This may fail (e.g., because we got the letter `"a"`
-instead of the number `"2"`). Such a failure, will result in an error that will
-terminate the program execution. We don't want that to happen, so we `catch` a
-possible error and instead of terminating the program, we just `return
-false`. If the `try` succeeds, we skip the `catch` part and go straight to the
-next statement after the `try`-`catch` block (`return (num in eachindex(board))
-&& !isTaken(board[num])`) that we already discussed.
+the player's mark (`isFree2Take(board[num])`). Notice, the use of `try` and
+`catch` construct. First we `try` to make an integer out of the string obtained
+from the user (`parse(Int, move)`). This may fail (e.g., because we got the
+letter `"a"` instead of the number `"2"`). Such a failure, will result in an
+error that will terminate the program execution. We don't want that to happen,
+so we `catch` a possible error and instead of terminating the program, we just
+`return false`. If the `try` succeeds, we skip the `catch` part and go straight
+to the next statement after the `try`-`catch` block
+(`return (num in eachindex(board)) && isFree2Take(board[num])`) that we already
+discussed.
 
 Finally, we declare `getUserMove` a function that asks the user for a move and
 is quite persistent about it. If the user gives a correct move the first time
@@ -253,7 +254,7 @@ s = """
 function getComputerMove(board::Vec{Str})::Int
     move::Int = 0
     for i in eachindex(board)
-        if !isTaken(board[i])
+        if isFree2Take(board[i])
             move = i
             break
         end
@@ -267,7 +268,7 @@ sc(s)
 
 We start small, `getComputerMove` will simply walk through the board and return
 an index (`i`) of a first empty, i.e., not taken by a player
-(`!isTaken(board[i])`) field. If all the fields are taken it will return `0`
+(`isFree2Take(board[i])`) field. If all the fields are taken it will return `0`
 (in reality this will never happen as we will see in `playGame` later on). Since
 `getUserMove` prints one line of a screen output, then so does `getComputerMove`
 (`println("Computer plays: ", move)`) for compatibility.
@@ -279,7 +280,7 @@ s = """
 function makeMove!(move::Int, player::Str, board::Vec{Str})
     @assert move in eachindex(board) "move must be in range [1-9]"
     @assert player in players "player must be X or O"
-    if !isTaken(board[move])
+    if isFree2Take(board[move])
         board[move] = player
     end
     return nothing
@@ -289,9 +290,9 @@ sc(s)
 ```
 
 For that we just take the `move`, a `player` for whom we place a mark and the
-game `board` that we will modify. If a given field isn't taken
-(`if !isTaken(board[move])`, or to put it differently, it's free to take) we
-just put the mark for a player there (`board[move] = player`).
+game `board` that we will modify. If a given field isn't taken (or to put it
+differently, it's free to take, hence `if isFree2Take(board[move])`) we just put
+the mark for a player there (`board[move] = player`).
 
 Time to write `playMove`, a function that will handle a player move and its
 display on the screen.
@@ -333,7 +334,7 @@ end
 
 function isNoMoreMoves(board::Vec{Str})::Bool
     for i in eachindex(board)
-        if !isTaken(board[i])
+        if isFree2Take(board[i])
             return false
         end
     end
@@ -396,9 +397,8 @@ There are a couple of things to improve on (if you want to). You could add a
 message with move declaration (`println("Computer plays: ", move)`). Moreover,
 as for now the algorithm generating move in `getComputerMove` is great for
 testing, but gets boring pretty quickly, feel free to change it (or try to beat
-the algorithm found in [the code
-snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/tic_tac_toe),
-it's possible to do so, but it's more challenging).
+a slightly more challenging algorithm found in [the code
+snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/tic_tac_toe)).
 
 Lastly, like in @sec:progress_bar_solution you could also add the functionality
 to run the game from a terminal (with `julia tic_tac_toe.jl`).
