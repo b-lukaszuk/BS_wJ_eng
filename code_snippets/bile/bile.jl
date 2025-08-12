@@ -3,6 +3,9 @@ import Symbolics as Sym
 
 const Flt = Float64
 
+# the code in this file is meant to serve as a programming exercise only
+# and it may not act correctly
+
 struct Sphere
     radius::Flt
     Sphere(r::Flt) = r <= 0 ? error("radius must be > 0") : new(r)

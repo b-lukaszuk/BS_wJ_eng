@@ -1,5 +1,8 @@
 const Vec = Vector
 
+# the code in this file is meant to serve as a programming exercise only
+# and it may not act correctly
+
 # matrices are often named with a single capital letter
 # convention from mathematics
 A = [10.5 9.5; 8.5 7.5; 6.5 5.5]

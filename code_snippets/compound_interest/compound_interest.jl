@@ -2,6 +2,9 @@ const Flt = Float64
 const Str = String
 const Vec = Vector
 
+# the code is meant to serve as a programming exercise, not a financial advice
+# all the calculations may be incorrect
+
 function getFormattedMoney(money::Real, sep::Char=',')::Str
     @assert money >= 0 "money must be >= 0"
     amount::Str = round(Int, money) |> string

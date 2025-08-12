@@ -4,6 +4,9 @@ import BenchmarkTools as Bt # external library
 const Str = String
 const Vec = Vector
 
+# the code in this file is meant to serve as a programming exercise only
+# and it may not act correctly
+
 # codon - triplet of nucleotide bases, aa - amino acid
 codon2aa = Dict(
     "UUU"=> "Phe", "UUC"=> "Phe", "UUA" => "Leu",

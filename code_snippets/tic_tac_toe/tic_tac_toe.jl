@@ -1,6 +1,9 @@
 const Str = String
 const Vec = Vector
 
+# the code in this file is meant to serve as a programming exercise only
+# and it may not act correctly
+
 const players = ["X", "O"]
 # lines[1:3] - rows, lines[4:6] - columns, lines[7:8] - diagonals
 const lines = [

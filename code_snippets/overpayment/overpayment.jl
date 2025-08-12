@@ -3,6 +3,9 @@ import CairoMakie as Cmk
 const Str = String
 const Vec = Vector
 
+# the code is meant to serve as a programming exercise, not a financial advice
+# all the calculations may be incorrect
+
 struct Mortgage
     principal::Real
     interestPercYr::Real

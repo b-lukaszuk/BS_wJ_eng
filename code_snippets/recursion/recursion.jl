@@ -1,5 +1,8 @@
 import BenchmarkTools as Bt
 
+# the code in this file is meant to serve as a programming exercise only
+# and it may not act correctly
+
 const Vec = Vector
 
 # problem description section

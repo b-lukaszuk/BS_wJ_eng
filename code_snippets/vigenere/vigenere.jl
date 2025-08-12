@@ -4,6 +4,9 @@ const Flt = Float64
 const Str = String
 const Vec = Vector
 
+# the code in this file is meant to serve as a programming exercise only
+# and it may not act correctly
+
 # rotBy >= 0 - returns (alphabet, rotatedAlphabet)
 # rotBy < 0 - returns (rotatedAlphabet, alphabet)
 function getAlphabets(rotBy::Int, upper::Bool)::Tuple{Str, Str}

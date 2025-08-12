@@ -6,6 +6,9 @@ const Flt = Float64
 const Str = String
 const Vec = Vector
 
+# the code in this file is meant to serve as a programming exercise only
+# and it may not act correctly
+
 # code for Figure 5
 function getPtCoordinatesOnDisk(angleDeg::Flt,
                                 radius::Flt=0.5)::Tuple{Flt, Flt}

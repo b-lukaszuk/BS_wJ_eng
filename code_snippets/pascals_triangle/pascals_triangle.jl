@@ -1,6 +1,9 @@
 const Str = String
 const Vec = Vector
 
+# the code in this file is meant to serve as a programming exercise only
+# and it may not act correctly
+
 function getSumOfPairs(prevRow::Vec{Int})::Vec{Int}
     @assert all(prevRow .> 0) "every element of prevRow must be > 0"
     return [a + b for (a, b) in zip(prevRow, prevRow[2:end])]

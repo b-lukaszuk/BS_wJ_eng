@@ -1,6 +1,9 @@
 const Vec = Vector
 const Flt = Float64
 
+# the code in this file is meant to serve as a programming exercise only
+# and it may not act correctly
+
 struct Cylinder
     radius::Int
     height::Int

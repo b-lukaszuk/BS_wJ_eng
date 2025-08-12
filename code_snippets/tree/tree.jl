@@ -1,5 +1,8 @@
 const Str = String
 
+# the code in this file is meant to serve as a programming exercise only
+# and it may not act correctly
+
 function printCatalogTree!(path::Str, pad::Str, count::Dict{Str, Int})
     newPad::Str = pad * "---"
     for name in readdir(path)

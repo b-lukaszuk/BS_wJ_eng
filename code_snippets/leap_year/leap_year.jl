@@ -1,5 +1,8 @@
 import Test
 
+# the code in this file is meant to serve as a programming exercise only
+# and it may not act correctly
+
 # the Gregorian Calendar was introduced in 1582
 # that year: 4th October, was followed by 15th October
 # before there was the Julian calendar

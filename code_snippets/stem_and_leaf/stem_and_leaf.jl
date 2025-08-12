@@ -2,6 +2,9 @@ const Flt = Float64
 const Str = String
 const Vec = Vector
 
+# the code in this file is meant to serve as a programming exercise only
+# and it may not act correctly
+
 # numbers for testing our stem-and-leaf plot
 # prime numbers below 100
 stemLeafTest1 = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37,
