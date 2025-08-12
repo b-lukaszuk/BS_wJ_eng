@@ -392,12 +392,12 @@ And voila. You can `playGame`. Test it, e.g., with the following sequence of
 moves: 2, 3, 7, 6, 9 - you win; 2, 3, 6, 8 - computer wins; 7, 2, 4, 6, 9 -
 draw.
 
-There are a couple of things to improve on (if you want to). You could add a
-`sleep` statement into `getComputerMove` so that the user got time to read the
-message with move declaration (`println("Computer plays: ", move)`). Moreover,
-as for now the algorithm generating move in `getComputerMove` is great for
-testing, but gets boring pretty quickly, feel free to change it (or try to beat
-a slightly more challenging algorithm found in [the code
+There are a couple of things to improve on (if you want to). For instance, you
+could add a `sleep` statement into `getComputerMove` so that the user got time
+to read the message with move declaration (`println("Computer plays: ", move)`).
+Moreover, as for now the algorithm generating move in `getComputerMove` is great
+for testing, but gets boring pretty quickly, feel free to change it (or try to
+beat a slightly more challenging algorithm found in [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/tic_tac_toe)).
 
 Lastly, like in @sec:progress_bar_solution you could also add the functionality
