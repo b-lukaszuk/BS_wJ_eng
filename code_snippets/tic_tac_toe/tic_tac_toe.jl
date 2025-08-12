@@ -43,9 +43,19 @@ function colorFieldNumbers(board::Vec{Str})::Vec{Str}
     return result
 end
 
+function isNPlayerMarks(n::Int, v::Vec{Str})::Bool
+    @assert 0 <= n "n must be >= 0 "
+    for player in players
+        if count(==(player), v) == n
+            return true
+        end
+    end
+    return false
+end
+
 function isTriplet(v::Vec{Str})::Bool
     @assert length(v) == 3 "length(v) must be equal 3"
-    return join(v) == "XXX" || join(v) == "OOO"
+    return isNPlayerMarks(3, v)
 end
 
 function colorFirstTriplet(board::Vec{Str})::Vec{Str}
@@ -104,14 +114,31 @@ function getUserMove(gameBoard::Vec{Str})::Int
     return parse(Int, input)
 end
 
-function getComputerMove(board::Vec{Str})::Int
+function getFreeFields(board::Vec{Str})::Vec{Int}
+    return parse.(Int, filter(isFree2Take, board))
+end
+
+function isDoublet(v::Vec{Str})::Bool
+    @assert length(v) == 3 "length(v) must be equal 3"
+    freeFieldsOK::Bool = length(getFreeFields(v)) == 1
+    return isNPlayerMarks(2, v) && freeFieldsOK
+end
+
+# ind to block, or make a triplet of your own
+function getIndToBlockOrWin(board::Vec{Str})::Int
     move::Int = 0
-    for i in eachindex(board)
-        if isFree2Take(board[i])
-            move = i
+    for line in lines
+        if isDoublet(board[line])
+            move = parse.(Int, filter(isFree2Take, board[line])) |> first
             break
         end
     end
+    return move
+end
+
+function getComputerMove(board::Vec{Str})::Int
+    move::Int = getIndToBlockOrWin(board)
+    move = move == 0 ? rand(getFreeFields(board)) : move
     println("Computer plays: ", move)
     return move
 end
