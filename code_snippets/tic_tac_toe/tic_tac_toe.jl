@@ -2,6 +2,7 @@ const Str = String
 const Vec = Vector
 
 const players = ["X", "O"]
+# lines[1:3] - rows, lines[4:6] - columns, lines[7:8] - diagonals
 const lines = [
     [1, 2, 3],
     [4, 5, 6],
@@ -61,7 +62,7 @@ end
 function colorFirstTriplet(board::Vec{Str})::Vec{Str}
     result::Vec{Str} = copy(board)
     for line in lines
-        if isTriplet(result[line])
+        if isTriplet(board[line])
             result[line] = getRed.(result[line])
             return result
         end
@@ -184,11 +185,6 @@ function isGameOver(board::Vec{Str})::Bool
     return isGameWon(board) || isNoMoreMoves(board)
 end
 
-function togglePlayer(player::Str)::Str
-    @assert player in players "player must be X or O"
-    return player == "X" ? "O" : "X"
-end
-
 function displayGameOverScreen(player::Str, board::Vec{Str})
     @assert player in players "player must be X or O"
     printBoard(board)
@@ -197,6 +193,11 @@ function displayGameOverScreen(player::Str, board::Vec{Str})
         println(player == "X" ? "You" : "Computer", " won.") :
         println("Draw.")
     return nothing
+end
+
+function togglePlayer(player::Str)::Str
+    @assert player in players "player must be X or O"
+    return player == "X" ? "O" : "X"
 end
 
 function playGame()

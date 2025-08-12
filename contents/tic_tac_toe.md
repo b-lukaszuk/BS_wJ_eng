@@ -41,6 +41,7 @@ Next, we'll define a few constants that will be helpful later on.
 ```jl
 s = """
 players = ["X", "O"]
+# lines[1:3] - rows, lines[4:6] - columns, lines[7:8] - diagonals
 lines = [
 	[1, 2, 3],
 	[4, 5, 6],
@@ -52,7 +53,7 @@ lines = [
 	[3, 5, 7]
 ]
 """
-replace(sc(s), r"\bplayers" => "const players", r"\blines" => "const lines")
+replace(sc(s), r"\bplayers" => "const players", r"\blines " => "const lines")
 ```
 
 > Note. Using `const` with mutable containers like vectors or dictionaries
@@ -106,7 +107,7 @@ stop and get some help). Anyway, a field not taken by one of the players
 (`isFree2Take`) will be colored by `colorFieldNumbers`.
 
 Personally, I would also opt to add the function for the triplets detection
-(`isTriplet`). which we will use to color them (the first we find based on
+(`isTriplet`). which we will use to color them (first one we find based on
 `lines`) with `colorFirstTriplet`. This should allow us for easier visual
 determination when the game is over (later on we will also use it in
 `isGameWon`).
@@ -128,7 +129,7 @@ end
 function colorFirstTriplet(board::Vec{Str})::Vec{Str}
     result::Vec{Str} = copy(board)
     for line in lines
-        if isTriplet(result[line])
+        if isTriplet(board[line])
             result[line] = getRed.(result[line])
             return result
         end
@@ -179,7 +180,7 @@ defined functions and move row by row (`lines[1:3]` contains the indices for
 the three rows). We `join` the contents of a row together
 (we glue them with `" | "`) and print it (`println`).
 We follow it by a row separator (`println("---+---+---")`). Once we're finished
-we remove the last row separator (`"---+---+---"`) (we do not want it, but it
+we remove the last row separator with `clearLines(1)` (we do not want it, but it
 was printed because we were too lazy to add an if statement in our for loop).
 
 So far, so good, time to handle a human player's (aka user's) move.
@@ -214,6 +215,11 @@ end
 sc(s)
 ```
 
+> Note. Using `while` loop always carries a risk of it being infinite, that's
+> why it is worth to know that you can always press
+> [Ctrl+C](https://en.wikipedia.org/wiki/Control-C) that should terminate the
+> program execution.
+
 We begin with `getUserInput` a function that takes the `prompt` (its argument,
 it tells the user what to do), prints it, and accepts the user's input
 (`readline`) that is returned as a result (after `strip`ing it from
@@ -226,26 +232,22 @@ the player's mark (`isFree2Take(board[num])`). Notice, the use of `try` and
 `catch` construct. First we `try` to make an integer out of the string obtained
 from the user (`parse(Int, move)`). This may fail (e.g., because we got the
 letter `"a"` instead of the number `"2"`). Such a failure, will result in an
-error that will terminate the program execution. We don't want that to happen,
-so we `catch` a possible error and instead of terminating the program, we just
-`return false`. If the `try` succeeds, we skip the `catch` part and go straight
-to the next statement after the `try`-`catch` block
+error that would normally terminate the program execution. We don't want that to
+happen, so we `catch` a possible error and instead of terminating the program,
+we just `return false`. If the `try` succeeds, we skip the `catch` part and go
+straight to the next statement after the `try`-`catch` block
 (`return (num in eachindex(board)) && isFree2Take(board[num])`) that we already
 discussed.
 
-Finally, we declare `getUserMove` a function that asks the user for a move and
+Finally, we declare `getUserMove`, a function that asks the user for a move and
 is quite persistent about it. If the user gives a correct move the first time
 (`input::Str = getUserInput("Enter your move: ")`) then the while loop condition
 (`!isMoveLegal(input, gameBoard)`) is false and the loop isn't executed at all
 (we move to the return statement). However, if the user plays tricks on us and
-want to smuggle an illegal move (or maybe the just did it absent-mindedly) then
-the condition (`!isMoveLegal(input, gameBoard)`) is true and `while` it is we
-nag them for a correct move (`"Illegal move. Try again. Enter your move: "`).
-
-> Note. Using `while` loop always carries a risk of it being infinite, that's
-> why it is worth to know that you can always press
-> [Ctrl+C](https://en.wikipedia.org/wiki/Control-C) that should terminate the
-> program execution.
+wants to smuggle an illegal move (or maybe they just did it absent-mindedly)
+then the condition (`!isMoveLegal(input, gameBoard)`) is true and `while` it is
+we nag the user for a correct move
+(`"Illegal move. Try again. Enter your move: "`).
 
 OK, and how about a computer move.
 
@@ -289,13 +291,13 @@ end
 sc(s)
 ```
 
-For that we just take the `move`, a `player` for whom we place a mark and the
+For that we just take the `move`, a `player` for whom we place the mark, and the
 game `board` that we will modify. If a given field isn't taken (or to put it
 differently, it's free to take, hence `if isFree2Take(board[move])`) we just put
 the mark for a player there (`board[move] = player`).
 
-Time to write `playMove`, a function that will handle a player move and its
-display on the screen.
+Time to write `playMove`, a function that will handle a player, their move and
+its display on the screen.
 
 ```jl
 s = """
@@ -365,10 +367,15 @@ end
 sc(s)
 ```
 
-And finally, we're ready to play a game.
+And finally, we're ready to play the game.
 
 ```jl
 s = """
+function togglePlayer(player::Str)::Str
+    @assert player in players "player must be X or O"
+    return player == "X" ? "O" : "X"
+end
+
 function playGame()
     board::Vec{Str} = getNewGameBoard()
     player::Str = "O"
@@ -384,8 +391,8 @@ end
 sc(s)
 ```
 
-We begin by initializing `board` and the `player` on a move. Next, while the
-game isn't over (`while !isGameOver(board)`), we toggle the player
+Inside `playGame` we initialize `board` and the `player` on a move. Next, while
+the game isn't over (`while !isGameOver(board)`), we toggle the player
 (`togglePlayer(player)`), `playMove` and clear the display (`clearLines(5)`)
 before another move. When the game is finished we just `displayGameOverScreen`.
 And voila. You can `playGame`. Test it, e.g., with the following sequence of
