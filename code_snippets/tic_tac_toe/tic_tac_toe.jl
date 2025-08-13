@@ -1,3 +1,5 @@
+import Random as Rand
+
 const Str = String
 const Vec = Vector
 
@@ -131,7 +133,7 @@ end
 # ind to block, or make a triplet of your own
 function getIndToBlockOrWin(board::Vec{Str})::Int
     move::Int = 0
-    for line in lines
+    for line in lines[Rand.randperm(length(lines))]
         if isDoublet(board[line])
             move = parse.(Int, filter(isFree2Take, board[line])) |> first
             break
@@ -142,7 +144,7 @@ end
 
 function getComputerMove(board::Vec{Str})::Int
     move::Int = getIndToBlockOrWin(board)
-    move = move == 0 ? rand(getFreeFields(board)) : move
+    move = move != 0 ? move : Rand.rand(getFreeFields(board))
     println("Computer plays: ", move)
     return move
 end
