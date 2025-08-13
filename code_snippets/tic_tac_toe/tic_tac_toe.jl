@@ -144,7 +144,11 @@ end
 
 function getComputerMove(board::Vec{Str})::Int
     move::Int = getIndToBlockOrWin(board)
-    move = move != 0 ? move : Rand.rand(getFreeFields(board))
+    # if you want to win more often, change to:
+    # move = (move != 0) ? move : Rand.rand(getFreeFields(board))
+    move = (move != 0) ? move :
+        isFree2Take(board[5]) ? 5 :
+        Rand.rand(getFreeFields(board))
     println("Computer plays: ", move)
     return move
 end
