@@ -14,6 +14,7 @@ contents = [
     "tree",
     "roman_numerals",
     "cheque",
+    "binary",
     "leap_year",
     "calendar",
     "prime_numbers",
