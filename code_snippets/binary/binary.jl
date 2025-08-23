@@ -28,3 +28,25 @@ end
 
 string(15, base=2) |> fmtBin
 string(113, base=2) |> fmtBin
+
+function dec2bin(dec::Int)::Str
+    @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
+    rest::Int = dec
+    result::Str = dec == 0 ? "0" : ""
+    while dec != 0
+        dec, rest = divrem(dec, 2)
+        result *= string(rest)
+    end
+    return reverse(result)
+end
+
+for i in 0:1024
+    if dec2bin(i) != string(i, base=2)
+        print("failed for ", i)
+        break;
+    end
+end
+print("all tests passed")
+
+tests = [dec2bin(i) == string(i, base=2) for i in 0:1024]
+all(tests)
