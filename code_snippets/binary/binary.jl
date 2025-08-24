@@ -1,20 +1,15 @@
-# TODO: the solution goes here
-
 const Str = String
 
-# built-ins
-# decimal to binary
-string(113, base=2)
-# binary to decimal
-parse(Int, string(113, base=2), base=2)
+# the code in this file is meant to serve as a programming exercise only
+# and it may not act correctly
 
-# fmt from overpayment, modified
+# fmt from overpayment.jl, modified
 function fmtBin(binNum::Str)::Str
     result::Str = ""
     counter::Int = 0
     padLen::Int = length(binNum) % 4
     padLen = padLen == 0 ? padLen : 4 - padLen
-    for binDigit in reverse(binNum) # binDigit is a single binDigit (type Char)
+    for binDigit in reverse(binNum) # binDigit is a single digit (type Char)
         if counter == 4
             result = " " * result
             counter = 0
@@ -40,7 +35,11 @@ function dec2bin(dec::Int)::Str
 end
 
 tests = [dec2bin(i) == string(i, base=2) for i in 0:1024]
+# or
+tests = map(x -> dec2bin(x) == string(x, base=2), 0:1024)
 all(tests)
+# or just
+dec2bin.(0:1024) == string.(0:1024, base=2)
 
 function bin2dec(bin::Str)::Int
     pwr::Int = length(bin) - 1
@@ -53,4 +52,8 @@ function bin2dec(bin::Str)::Int
 end
 
 tests = [bin2dec(string(i, base=2)) == i for i in 0:1024]
+# or
+tests = map(x -> bin2dec(string(x, base=2)) == x, 0:1024)
 all(tests)
+# or just
+bin2dec.(string.(0:1024, base=2)) == 0:1024
