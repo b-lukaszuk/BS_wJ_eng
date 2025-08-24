@@ -8,7 +8,6 @@ string(113, base=2)
 # binary to decimal
 parse(Int, string(113, base=2), base=2)
 
-
 # fmt from overpayment, modified
 function fmtBin(binNum::Str)::Str
     result::Str = ""
@@ -40,13 +39,18 @@ function dec2bin(dec::Int)::Str
     return reverse(result)
 end
 
-for i in 0:1024
-    if dec2bin(i) != string(i, base=2)
-        print("failed for ", i)
-        break;
-    end
-end
-print("all tests passed")
-
 tests = [dec2bin(i) == string(i, base=2) for i in 0:1024]
+all(tests)
+
+function bin2dec(bin::Str)::Int
+    pwr::Int = length(bin) - 1
+    result::Int = 0
+    for b in bin
+        result += b == '1' ? 2^pwr : 0
+        pwr -= 1
+    end
+    return result
+end
+
+tests = [bin2dec(string(i, base=2)) == i for i in 0:1024]
 all(tests)
