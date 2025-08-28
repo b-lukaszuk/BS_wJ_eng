@@ -71,4 +71,4 @@ function getFmtPascTriangle(n::Int, k::Int)::Str
 end
 
 println(getFmtPascTriangle(9, 5))
-binomial.(9, 0:9) # compare with last row of printout
+binomial.(9, 0:9) # compare with last row of the printout

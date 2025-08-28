@@ -28,7 +28,7 @@ function drawLogo()::Cmk.Figure
     centersXs::Vec{Flt} = [1, 5.5, 10]
     centersYs::Vec{Flt} = [1, 6, 1]
     colors::Vec{Str} = ["red", "green", "purple"]
-	numOfPoints::Int = 3000
+    numOfPoints::Int = 3000
     fig::Cmk.Figure = Cmk.Figure()
     ax::Cmk.Axis = Cmk.Axis(fig[1, 1])
     for i in eachindex(colors)
