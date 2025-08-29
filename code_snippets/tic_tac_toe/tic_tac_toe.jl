@@ -18,6 +18,7 @@ const lines = [
     [1, 5, 9],
     [3, 5, 7],
 ]
+const centerField = 5
 
 function getNewGameBoard()::Vec{Str}
     return string.(1:9)
@@ -147,7 +148,7 @@ function getComputerMove(board::Vec{Str})::Int
     # if you want to win more often, change to:
     # move = (move != 0) ? move : Rnd.rand(getFreeFields(board))
     move = (move != 0) ? move :
-        isFree2Take(board[5]) ? 5 :
+        isFree2Take(board[centerField]) ? centerField :
         Rnd.rand(getFreeFields(board))
     println("Computer plays: ", move)
     return move
