@@ -136,7 +136,7 @@ function getIndToBlockOrWin(board::Vec{Str})::Int
     move::Int = 0
     for line in lines[Rnd.randperm(length(lines))]
         if isDoublet(board[line])
-            move = parse.(Int, filter(isFree2Take, board[line])) |> first
+            move = getFreeFields(board[line]) |> first
             break
         end
     end
