@@ -113,10 +113,10 @@ function isMoveLegal(move::Str, board::Vec{Str})::Bool
 end
 
 function getUserMove(gameBoard::Vec{Str})::Int
-    input::Str = getUserInput("Enter your move: ")
+    input::Str = getUserInput("Enter your move [1-9]: ")
     while !isMoveLegal(input, gameBoard)
         clearLines(1)
-        input = getUserInput("Illegal move. Try again. Enter your move: ")
+        input = getUserInput("Illegal move. Try again. Enter your move [1-9]: ")
     end
     return parse(Int, input)
 end
@@ -145,8 +145,6 @@ end
 
 function getComputerMove(board::Vec{Str})::Int
     move::Int = getIndToBlockOrWin(board)
-    # if you want to win more often, change to:
-    # move = (move != 0) ? move : Rnd.rand(getFreeFields(board))
     move = (move != 0) ? move :
         isFree2Take(board[centerField]) ? centerField :
         Rnd.rand(getFreeFields(board))

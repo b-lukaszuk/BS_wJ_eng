@@ -404,7 +404,7 @@ could add a `sleep` statement into `getComputerMove` so that the user got time
 to read the message with move declaration (`println("Computer plays: ", move)`).
 Moreover, as for now the algorithm generating move in `getComputerMove` is great
 for testing, but gets boring pretty quickly, feel free to change it (or try to
-beat a more challenging algorithm found in [the code
+beat a somewhat more challenging algorithm found in [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/tic_tac_toe)).
 
 Lastly, like in @sec:progress_bar_solution you could also add the functionality
