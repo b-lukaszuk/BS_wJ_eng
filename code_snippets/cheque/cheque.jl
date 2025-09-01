@@ -4,7 +4,7 @@ const Str = String
 # and it may not act correctly
 
 # https://en.wikipedia.org/wiki/English_numerals
-const unitsAndTeens = Dict(0 => "zero", 1 => "one",
+const UNITS_AND_TEENS = Dict(0 => "zero", 1 => "one",
                            2 => "two", 3 => "three", 4 => "four",
                            5 => "five", 6 => "six", 7 => "seven",
                            8 => "eight", 9 => "nine", 10 => "ten",
@@ -14,19 +14,19 @@ const unitsAndTeens = Dict(0 => "zero", 1 => "one",
                            17 => "seventeen", 18 => "eighteen",
                            19 => "nineteen")
 
-const tens = Dict(20 => "twenty", 30 => "thrity",
+const TENS = Dict(20 => "twenty", 30 => "thrity",
                   40 => "forty", 50 => "fifty", 60 => "sixty",
                   70 => "seventy", 80 => "eigthy", 90 => "ninety")
 
 function getEngNumeralUpto99(n::Int)::Str
     @assert 0 <= n <= 99 "n must be in range [0-99]"
     if n < 20
-        return unitsAndTeens[n]
+        return UNITS_AND_TEENS[n]
     end
     u::Int = rem(n, 10) # u - units
-    result::Str = tens[n-u]
+    result::Str = TENS[n-u]
     if u != 0
-        result *= "-" * unitsAndTeens[u]
+        result *= "-" * UNITS_AND_TEENS[u]
     end
     return result
 end
@@ -39,7 +39,7 @@ function getEngNumeralUpto999(n::Int)::Str
     if n < 100
         return getEngNumeralUpto99(n)
     end
-    h::Int, t::Int = divrem(n, 100) # h - hundreds, t - tens
+    h::Int, t::Int = divrem(n, 100) # h - hundreds, t - TENS
     result::Str = getEngNumeralUpto99(h) * " hundred"
     if t != 0
         result *= " and " * getEngNumeralUpto99(t)

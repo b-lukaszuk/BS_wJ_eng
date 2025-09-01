@@ -6,9 +6,9 @@ const Vec = Vector
 # the code in this file is meant to serve as a programming exercise only
 # and it may not act correctly
 
-const players = ["X", "O"]
-# lines[1:3] - rows, lines[4:6] - columns, lines[7:8] - diagonals
-const lines = [
+const PLAYERS = ["X", "O"]
+# LINES[1:3] - rows, LINES[4:6] - columns, LINES[7:8] - diagonals
+const LINES = [
     [1, 2, 3],
     [4, 5, 6],
     [7, 8, 9],
@@ -18,7 +18,7 @@ const lines = [
     [1, 5, 9],
     [3, 5, 7],
 ]
-const centerField = 5
+const CENTER_FIELD = 5
 
 function getNewGameBoard()::Vec{Str}
     return string.(1:9)
@@ -32,7 +32,7 @@ function getGray(s::Str)::Str
 end
 
 function isFree2Take(field::Str)::Bool
-    return !(field in players)
+    return !(field in PLAYERS)
 end
 
 function getRed(s::Str)::Str
@@ -52,7 +52,7 @@ end
 
 function isNPlayerMarks(n::Int, v::Vec{Str})::Bool
     @assert 0 <= n "n must be >= 0 "
-    for player in players
+    for player in PLAYERS
         if count(==(player), v) == n
             return true
         end
@@ -67,7 +67,7 @@ end
 
 function colorFirstTriplet(board::Vec{Str})::Vec{Str}
     result::Vec{Str} = copy(board)
-    for line in lines
+    for line in LINES
         if isTriplet(board[line])
             result[line] = getRed.(result[line])
             return result
@@ -78,7 +78,7 @@ end
 
 function clearLines(nLines::Int)
     @assert 0 < nLines "nLines must be a positive integer"
-    # "\033[xxxA" - xxx moves cursor up xxx lines
+    # "\033[xxxA" - xxx moves cursor up xxx LINES
     print("\033[" * string(nLines) * "A")
     # "\033[0J" - clears from cursor position till the end of the screen
     print("\033[0J")
@@ -88,7 +88,7 @@ end
 function printBoard(board::Vec{Str})
     bd::Vec{Str} = colorFieldNumbers(board)
     bd = colorFirstTriplet(bd)
-    for row in lines[1:3]
+    for row in LINES[1:3]
         println(" ", join(bd[row], " | "))
         println("---+---+---")
     end
@@ -121,6 +121,7 @@ function getUserMove(gameBoard::Vec{Str})::Int
     return parse(Int, input)
 end
 
+# insides of playGame fn prevent it from returning an empty vector
 function getFreeFields(board::Vec{Str})::Vec{Int}
     return parse.(Int, filter(isFree2Take, board))
 end
@@ -134,7 +135,7 @@ end
 # ind to block, or make a triplet of your own
 function getIndToBlockOrWin(board::Vec{Str})::Int
     move::Int = 0
-    for line in lines[Rnd.randperm(length(lines))]
+    for line in LINES[Rnd.randperm(length(LINES))]
         if isDoublet(board[line])
             move = getFreeFields(board[line]) |> first
             break
@@ -146,7 +147,7 @@ end
 function getComputerMove(board::Vec{Str})::Int
     move::Int = getIndToBlockOrWin(board)
     move = (move != 0) ? move :
-        isFree2Take(board[centerField]) ? centerField :
+        isFree2Take(board[CENTER_FIELD]) ? CENTER_FIELD :
         Rnd.rand(getFreeFields(board))
     println("Computer plays: ", move)
     return move
@@ -154,7 +155,7 @@ end
 
 function makeMove!(move::Int, player::Str, board::Vec{Str})
     @assert move in eachindex(board) "move must be in range [1-9]"
-    @assert player in players "player must be X or O"
+    @assert player in PLAYERS "player must be X or O"
     if isFree2Take(board[move])
         board[move] = player
     end
@@ -162,7 +163,7 @@ function makeMove!(move::Int, player::Str, board::Vec{Str})
 end
 
 function playMove!(player::Str, board::Vec{Str})
-    @assert player in players "player must be X or O"
+    @assert player in PLAYERS "player must be X or O"
     printBoard(board)
     move::Int = (player == "X") ? getUserMove(board) : getComputerMove(board)
     makeMove!(move, player, board)
@@ -172,7 +173,7 @@ function playMove!(player::Str, board::Vec{Str})
 end
 
 function isGameWon(board::Vec{Str})::Bool
-    for line in lines
+    for line in LINES
         if isTriplet(board[line])
             return true
         end
@@ -194,7 +195,7 @@ function isGameOver(board::Vec{Str})::Bool
 end
 
 function displayGameOverScreen(player::Str, board::Vec{Str})
-    @assert player in players "player must be X or O"
+    @assert player in PLAYERS "player must be X or O"
     printBoard(board)
     print("Game Over. ")
     isGameWon(board) ?
@@ -204,7 +205,7 @@ function displayGameOverScreen(player::Str, board::Vec{Str})
 end
 
 function togglePlayer(player::Str)::Str
-    @assert player in players "player must be X or O"
+    @assert player in PLAYERS "player must be X or O"
     return player == "X" ? "O" : "X"
 end
 
