@@ -4,11 +4,11 @@ const Vec = Vector
 # the code in this file is meant to serve as a programming exercise only
 # and it may not act correctly
 
-const ARABIC_TEST = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+arabicTest = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
               11, 12, 39, 246, 789, 2421, 160, 207, 1009, 1066,
               3999, 1776, 1918, 1944, 2025,
               1900, 1912]
-const ROMAN_TEST = ["I", "II", "III", "IV", "V",
+romanTest = ["I", "II", "III", "IV", "V",
              "VI", "VII", "VIII", "IX", "X",
              "XI", "XII", "XXXIX", "CCXLVI", "DCCLXXXIX",
              "MMCDXXI", "CLX", "CCVII", "MIX", "MLXVI",
@@ -35,7 +35,7 @@ function getRoman(arabic::Int)::Str
 end
 
 # test
-getRoman.(ARABIC_TEST) == ROMAN_TEST
+getRoman.(arabicTest) == romanTest
 
 const ROMAN_TOKENS = map(first, ROMAN_2_ARABIC)
 
@@ -80,8 +80,8 @@ function getArabic(roman::Str)::Int
 end
 
 # tests
-getArabic.(ROMAN_TEST) == ARABIC_TEST
+getArabic.(romanTest) == arabicTest
 
-getArabic.(getRoman.(ARABIC_TEST)) == ARABIC_TEST
+getArabic.(getRoman.(arabicTest)) == arabicTest
 
-getRoman.(getArabic.(ROMAN_TEST)) == ROMAN_TEST
+getRoman.(getArabic.(romanTest)) == romanTest

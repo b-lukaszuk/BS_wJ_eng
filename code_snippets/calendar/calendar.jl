@@ -6,20 +6,18 @@ const Vec = Vector
 # the code in this file is meant to serve as a programming exercise only
 # and it may not act correctly
 
-const DAYS_PER_WEEK::Int = 7
-const DAYS_PER_MONTH::Vec{Int} = [31, 28, 31, 30, 31, 30, 31, 31,
-                                  30, 31, 30, 31]
-const DAYS_PER_MONTH_LEAP::Vec{Int} = [31, 29, 31, 30, 31, 30, 31, 31,
-                                       30, 31, 30, 31]
-const SHIFT_YR::Int = 365
-const SHIFT_YR_LEAP::Int = 366
-const WEEKDAYS_NAMES::Vec{Str} = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
-const MONTHS_NUM_2_NAME::Dict{Int, Str} = Dict(
+const DAYS_PER_WEEK = 7
+const DAYS_PER_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+const DAYS_PER_MONTH_LEAP = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+const SHIFT_YR = 365
+const SHIFT_YR_LEAP = 366
+const WEEKDAYS_NAMES = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+const MONTHS_NUM_2_NAME = Dict(
     1 => "January", 2 => "February", 3 => "March",
     4 => "April", 5 => "May", 6 => "June", 7 => "July",
     8 => "August", 9 => "September", 10 => "October",
     11 => "November", 12 => "December")
-const MONTHS_NAME_2_NUM::Dict{Str, Int} = Dict(
+const MONTHS_NAME_2_NUM = Dict(
      "Jan" => 1, "Feb" => 2, "Mar" => 3,
     "Apr" => 4, "May" => 5, "Jun" => 6, "Jul" => 7,
     "Aug" => 8, "Sep" => 9, "Oct" => 10,

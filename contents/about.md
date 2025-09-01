@@ -40,7 +40,9 @@ sc(s)
 This will allow for a shorter code when type declarations are used,
 e.g. `Vec{Int}` instead `Vector{Int}`. Notice, that the type synonyms are
 declared with `const` keyword, since they will not change for as long as a
-program runs.
+program runs. Nevertheless, the naming convention is similar to the name of a
+data type (first letter is uppercased, the rest of the characters are
+lowercased).
 
 If, for any reason, this book is not to your taste then feel free to visit,
 e.g. Adam Wysokinski's the [Big Book of

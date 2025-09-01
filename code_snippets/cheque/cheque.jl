@@ -39,7 +39,7 @@ function getEngNumeralUpto999(n::Int)::Str
     if n < 100
         return getEngNumeralUpto99(n)
     end
-    h::Int, t::Int = divrem(n, 100) # h - hundreds, t - TENS
+    h::Int, t::Int = divrem(n, 100) # h - hundreds, t - tens
     result::Str = getEngNumeralUpto99(h) * " hundred"
     if t != 0
         result *= " and " * getEngNumeralUpto99(t)
