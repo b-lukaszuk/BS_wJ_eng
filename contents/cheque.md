@@ -24,7 +24,7 @@ We begin by defining a few constants that will be useful later on.
 
 ```jl
 s = """
-unitsAndTeens = Dict(0 => "zero", 1 => "one",
+UNITS_AND_TEENS = Dict(0 => "zero", 1 => "one",
                      2 => "two", 3 => "three", 4 => "four",
                      5 => "five", 6 => "six", 7 => "seven",
                      8 => "eight", 9 => "nine", 10 => "ten",
@@ -34,18 +34,20 @@ unitsAndTeens = Dict(0 => "zero", 1 => "one",
                      17 => "seventeen", 18 => "eighteen",
                      19 => "nineteen")
 
-tens = Dict(20 => "twenty", 30 => "thrity",
+TENS = Dict(20 => "twenty", 30 => "thrity",
             40 => "forty", 50 => "fifty", 60 => "sixty",
             70 => "seventy", 80 => "eigthy", 90 => "ninety")
 """
-replace(sc(s), r"\bunits" => "const units", r"\btens " => "const tens ")
+replace(sc(s), r"\bUNITS" => "const UNITS", r"\bTENS " => "const TENS ")
 ```
 
 > Note. Using `const` with mutable containers like vectors or dictionaries
 > allows to change their contents in the future, e.g., with `push!`. So the
 > `const` used here is more like a convention, a signal that we do not plan to
 > change the containers in the future. If we really wanted an immutable
-> container then we should consider a(n) (immutable) tuple.
+> container then we should consider a(n) (immutable) tuple. Anyway, some
+> programming languages suggest that `const` names should be declared using all
+> uppercase characters to make them stand out. Here, I follow this convention.
 
 The above are just mappings between the necessary basic key ingredients of our
 number soup. Let's use them to get the transcript for numbers in the range of 0
@@ -56,12 +58,12 @@ s = """
 function getEngNumeralUpto99(n::Int)::Str
     @assert 0 <= n <= 99 "n must be in range [0-99]"
     if n < 20
-        return unitsAndTeens[n]
+        return UNITS_AND_TEENS[n]
     end
     u::Int = rem(n, 10) # u - units
-    result::Str = tens[n-u]
+    result::Str = TENS[n-u]
     if u != 0
-        result *= "-" * unitsAndTeens[u]
+        result *= "-" * UNITS_AND_TEENS[u]
     end
     return result
 end
@@ -70,11 +72,11 @@ sc(s)
 ```
 
 Whenever a number (`n`) is below 20 (`if n < 20`) we just return its
-representation from the `unitsAndTeens` dictionary. Alternatively, for `n` in
-the `tens`, first we obtain the units (`u`) part, which is a reminder of
+representation from the `UNITS_AND_TEENS` dictionary. Alternatively, for `n` in
+the `TENS`, first we obtain the units (`u`) part, which is a reminder of
 dividing `n` by `10` (`rem(n, 10)`). We use it (`u`), to obtain the transcript
-for the tens (`tens[n-u]`). It becomes our `result` to which we attach the
-transcript for units separated by a hyphen (`"-" * unitsAndTeens[u]`), but only
+for the TENS (`TENS[n-u]`). It becomes our `result` to which we attach the
+transcript for units separated by a hyphen (`"-" * UNITS_AND_TEENS[u]`), but only
 if the unit is different than zero (`if u != 0`).
 
 Time for a test ride.
@@ -116,10 +118,10 @@ The previously defined `getEngNumeralUpto99` is an important building block of
 that new function. If a number (`n`) is smaller than 100 (`if n < 100`) we just
 transcribe it as we did in the previous code snippet
 (`return getEngNumeralUpto99(n)`).
-Otherwise we split it into hundreds (`h`) and tens part (`t`, actually it may
+Otherwise we split it into hundreds (`h`) and TENS part (`t`, actually it may
 also contain units and teens). We start building our `result` by transcribing
 the hundreds part (`result::Str = getEngNumeralUpto99(n) * " hundred"`). When
-appropriate (`t != 0`) we append the transcript for the tens separated with
+appropriate (`t != 0`) we append the transcript for the TENS separated with
 `"and"` (British English convention) to our `result`.
 
 Time for a test.

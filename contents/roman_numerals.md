@@ -45,14 +45,14 @@ Arabic counterparts.
 
 ```jl
 s = """
-roman2arabic = [("M", 1000), ("CM", 900),
+ROMAN_2_ARABIC = [("M", 1000), ("CM", 900),
                 ("D", 500), ("CD", 400),
                 ("C", 100), ("XC", 90),
                 ("L", 50), ("XL", 40),
                 ("X", 10), ("IX", 9), ("V", 5),
                 ("IV", 4), ("I", 1)]
 """
-replace(sc(s), r"\broman" => "const roman")
+replace(sc(s), r"\bROMAN" => "const ROMAN")
 ```
 
 The mapping is defined with (`const`) keyword to signal that we do
@@ -65,7 +65,9 @@ of subtractive notation (e.g. `("CM", 900)` or `("IV", 4)`).
 > allows to change their contents in the future, e.g., with `push!`. So the
 > `const` used here is more like a convention, a signal that we do not plan to
 > change the containers in the future. If we really wanted an immutable
-> container then we should consider a(n) (immutable) tuple.
+> container then we should consider a(n) (immutable) tuple. Anyway, some
+> programming languages suggest that `const` names should be declared using all
+> uppercase characters to make them stand out. Here, I follow this convention.
 
 Now, we are ready to take the next step.
 
@@ -74,7 +76,7 @@ s = """
 function getRoman(arabic::Int)::Str
     @assert 0 < arabic < 4000
     roman::Str = ""
-    for (r, a) in roman2arabic
+    for (r, a) in ROMAN_2_ARABIC
         while(arabic >= a)
             roman *= r
             arabic -= a
@@ -88,7 +90,7 @@ sc(s)
 
 We will build our Roman numeral bit by bit starting from an empty string
 (`roman::Str = ""`). For that we traverse all our Roman and Arabic landmarks
-(`for (r, a) in roman2arabic`). For each of them (starting from the highest number),
+(`for (r, a) in ROMAN_2_ARABIC`). For each of them (starting from the highest number),
 we check if the currently examined Arabic landmark (`a`) is lower than the
 Arabic number we got to translate (`arabic`). As long as it is
 (`while(arabic >= a)`) we append the parallel Roman landmark (`r`) to our
@@ -130,14 +132,14 @@ number.
 
 ```jl
 s = """
-romanTokens = map(first, roman2arabic)
+ROMAN_TOKENS = map(first, ROMAN_2_ARABIC)
 # equivalent to
-romanTokens = map(tuple -> tuple[1], roman2arabic)
+# ROMAN_TOKENS = map(tuple -> tuple[1], ROMAN_2_ARABIC)
 
 function getTokenAndRest(roman::Str)::Tuple{Str, Str}
     if length(roman) <= 1
         return (roman, "")
-    elseif roman[1:2] in romanTokens
+    elseif roman[1:2] in ROMAN_TOKENS
         return (roman[1:2], string(roman[3:end]))
     else
         return (string(roman[1]), string(roman[2:end]))
@@ -154,10 +156,10 @@ function getTokens(roman::Str)::Vec{Str}
     return allTokens
 end
 """
-replace(sc(s), r"\bromanTokens =" => "const romanTokens =")
+replace(sc(s), r"\bROMAN_TOKENS =" => "const ROMAN_TOKENS =")
 ```
 
-First, we extract `romanTokens` with `map` and
+First, we extract `ROMAN_TOKENS` with `map` and
 [first](https://docs.julialang.org/en/v1/base/collections/#Base.first). Next,
 we use `getTokenAndRest` to split a Roman numeral into a key token (first on the
 left, either one or two characters long) and the rest of the
@@ -180,7 +182,7 @@ function getArabic(roman::Str)::Int
     tokens::Vec{Str} = getTokens(roman)
     sum::Int = 0
     for curToken in tokens
-        sum += getVal(roman2arabic, curToken, 0)
+        sum += getVal(ROMAN_2_ARABIC, curToken, 0)
     end
     return sum
 end
@@ -192,7 +194,7 @@ Notice, that before we moved to `getArabic` we wrote `getVal` that will provide
 us with an Arabic number for a given Roman numeral token. The above was not
 strictly necessary, as we could have just use the built-in
 [get](https://docs.julialang.org/en/v1/base/collections/#Base.get) for that
-purpose (e.g. with `get(Dict(roman2arabic), key, default)`). Anyway, to get the
+purpose (e.g. with `get(Dict(ROMAN_2_ARABIC), key, default)`). Anyway, to get the
 Arabic number for a given Roman numeral (`roman`), first we split it into a
 vector of `tokens` and traverse them one by one (`curToken`) with the `for`
 loop. We translate `curToken` to an Arabic numeral and add it to `sum` which we

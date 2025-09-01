@@ -70,33 +70,33 @@ that we will use throughout our program.
 
 ```jl
 s = """
-daysPerWeek::Int = 7
-daysPerMonth::Vec{Int} = [31, 28, 31, 30, 31, 30, 31,
-	31, 30, 31, 30, 31]
-daysPerMonthLeap::Vec{Int} = [31, 29, 31, 30, 31, 30, 31,
-	31, 30, 31, 30, 31]
-shiftYr::Int = 365
-shiftYrLeap::Int = 366
-weekdaysNames::Vec{Str} = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
-monthsNum2Name::Dict{Int, Str} = Dict(
+DAYS_PER_WEEK = 7
+DAYS_PER_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+DAYS_PER_MONTH_LEAP = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+SHIFT_YR = 365
+SHIFT_YR_LEAP = 366
+WEEKDAYS_NAMES = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+MONTHS_NUM_2_NAME = Dict(
     1 => "January", 2 => "February", 3 => "March",
     4 => "April", 5 => "May", 6 => "June", 7 => "July",
     8 => "August", 9 => "September", 10 => "October",
     11 => "November", 12 => "December")
-monthsName2Num::Dict{Str, Int} = Dict(
+MONTHS_NAME_2_NUM = Dict(
     "Jan" => 1, "Feb" => 2, "Mar" => 3,
     "Apr" => 4, "May" => 5, "Jun" => 6, "Jul" => 7,
     "Aug" => 8, "Sep" => 9, "Oct" => 10,
     "Nov" => 11, "Dec" => 12)
 """
-replace(sc(s), r"\bd" => "const d", r"\bs" => "const s", r"\bm" => "const m", r"\bweek" => "const week")
+replace(sc(s), r"\bDA" => "const DA", r"\bSH" => "const SH", r"\bM" => "const M", r"\bWEEK" => "const WEEK")
 ```
 
 > Note. Using `const` with mutable containers like vectors or dictionaries
 > allows to change their contents in the future, e.g., with `push!`. So the
 > `const` used here is more like a convention, a signal that we do not plan to
 > change the containers in the future. If we really wanted an immutable
-> container then we should consider a(n) (immutable) tuple.
+> container then we should consider a(n) (immutable) tuple. Anyway, some
+> programming languages suggest that `const` names should be declared using all
+> uppercase characters to make them stand out. Here, I follow this convention.
 
 As you can see from the output of `cal Jan 2025` (see @sec:calendar_problem) we
 get a rectangular printout with 7 columns and `x` rows. Clearly, the number of
@@ -135,7 +135,7 @@ s = """
 # 1 - Sunday, 7 - Saturday
 function getPaddedDays(nDays::Int, fstDay::Int)::Vec{Int}
     daysFront::Int = fstDay - 1
-    days::Vec{Int} = zeros(getMultOfYGtEqX(nDays+daysFront, daysPerWeek))
+    days::Vec{Int} = zeros(getMultOfYGtEqX(nDays+daysFront, DAYS_PER_WEEK))
     days[fstDay:(fstDay+nDays-1)] = 1:nDays
     return days
 end
@@ -165,12 +165,12 @@ All that we need for that is to know the number of days in a given month
 (`nDays`) and what is the first day (`fstDay`, where 1 is Sunday and 7 is
 Saturday). We use the above as the arguments to `getPaddedDays`. The function
 creates a vector of `zeros` that contains number of elements that is a multiple
-of 7 (`daysPerWeek`). The vector length is determined by `getMultOfYGtEqX` and
+of 7 (`DAYS_PER_WEEK`). The vector length is determined by `getMultOfYGtEqX` and
 is at least `nDays+daysFront` long. We fill the vector (starting at `fstDay`)
 with digits for all the days (`1:nDays`). Finally, we return `days`.
 
 Afterwards, we want to put the vector (result of `getPaddedDays`) into a matrix
-with 7 columns (`daysPerWeek`) and the appropriate number of rows. For that we
+with 7 columns (`DAYS_PER_WEEK`) and the appropriate number of rows. For that we
 wrote `vec2matrix`, that unlike the built in
 [reshape](https://docs.julialang.org/en/v1/base/arrays/#Base.reshape), will
 allow us to put the vector (`v`) into the matrix (`m`) row by row
@@ -181,7 +181,8 @@ Let's see how it works for January 2025.
 ```jl
 s = """
 jan2025 = getPaddedDays(31, 4)
-vec2matrix(jan2025, Int(length(jan2025) / daysPerWeek), daysPerWeek, true)
+vec2matrix(jan2025, Int(length(jan2025) / DAYS_PER_WEEK),
+	DAYS_PER_WEEK, true)
 """
 sco(s)
 ```
@@ -191,7 +192,8 @@ Pretty good, and how about this month (June 2025).
 ```jl
 s = """
 jun2025 = getPaddedDays(30, 1)
-vec2matrix(jun2025, Int(length(jun2025) / daysPerWeek), daysPerWeek, true)
+vec2matrix(jun2025, Int(length(jun2025) / DAYS_PER_WEEK),
+	DAYS_PER_WEEK, true)
 """
 sco(s)
 ```
@@ -209,13 +211,13 @@ function getFmtMonth(fstDayMonth::Int, nDaysMonth::Int,
     @assert 28 <= nDaysMonth <= 31 "nDaysMonth must be in range [28-31]"
     @assert 1 <= month <= 12 "month must be in range [1-12]"
     @assert 1 <= year <= 4000 "year must be in range [1-4000]"
-    topRow2::Str = join(weekdaysNames, " ")
+    topRow2::Str = join(WEEKDAYS_NAMES, " ")
     topRow1::Str = center(
-        string(monthsNum2Name[month], " ", year), length(topRow2))
+        string(MONTHS_NUM_2_NAME[month], " ", year), length(topRow2))
     days::Vec{Str} = string.(getPaddedDays(nDaysMonth, fstDayMonth))
     days = replace(days, "0" => " ")
     m::Matrix{Str} = vec2matrix(
-        days, Int(length(days)/daysPerWeek), daysPerWeek, true)
+        days, Int(length(days)/daysPerWeek), DAYS_PER_WEEK, true)
     fmtDay(day) = lpad(day, 2)
     fmtRow(row) = join(map(fmtDay, row), " ")
     result::Str = ""
@@ -229,9 +231,9 @@ sc(s)
 ```
 
 We begin with a couple of sanity checks (`@assert` statements). Next, we `join`
-`weekdaysNames` into a one long string separated with spaces (`" "`) to get a
+`WEEKDAYS_NAMES` into a one long string separated with spaces (`" "`) to get a
 row just on top of the days (`topRow2`). Above that (`topRow1`) we will place a
-month name (`monthsNum2Name[month]`) and a `year` (like `"January 2025"`), which
+month name (`MONTHS_NUM_2_NAME[month]`) and a `year` (like `"January 2025"`), which
 we `center` with the function developed in @sec:pascals_triangle_solution.
 Finally, the consecutive rows will be occupied by `days`
 written with the Arabic numerals and expressed as vector of strings
@@ -280,7 +282,7 @@ s = """
 function getShiftedDay(curDay::Int, by::Int)::Int
     @assert 1 <= curDay <= 7 "curDay not in range [1-7]"
     newDay::Int = curDay
-    shift::Int = abs(by) % daysPerWeek
+    shift::Int = abs(by) % DAYS_PER_WEEK
     move::Int = by < 0 ? -1 : 1
     for _ in 1:shift
         newDay += move
@@ -319,7 +321,7 @@ function getMonthData(dayJan1::Int, month::Int, leap::Bool)::Tuple{Int, Int}
     @assert 1 <= dayJan1 <= 7 "day not in range [1-7]"
     @assert 1 <= month <= 12 "month not in range [1-12]"
     curDay::Int = dayJan1
-    daysInMonths::Vec{Int} = leap ? daysPerMonthLeap : daysPerMonth
+    daysInMonths::Vec{Int} = leap ? DAYS_PER_MONTH_LEAP : DAYS_PER_MONTH
     if month == 1
         return (dayJan1, daysInMonths[month])
     end
@@ -352,7 +354,7 @@ function getMonthData(yr::Int, month::Int)::Tuple{Int, Int}
     step::Int = yr <= 2025 ? -1 : 1
     yrShift::Int = 0
     for y in start:step:yr
-        yrShift = isLeap(y) ? shiftYrLeap : shiftYr
+        yrShift = isLeap(y) ? SHIFT_YR_LEAP : SHIFT_YR
         curDay = getShiftedDay(curDay,  yrShift * step)
     end
     return getMonthData(curDay, month, isLeap(yr))

@@ -40,9 +40,9 @@ Next, we'll define a few constants that will be helpful later on.
 
 ```jl
 s = """
-players = ["X", "O"]
-# lines[1:3] - rows, lines[4:6] - columns, lines[7:8] - diagonals
-lines = [
+PLAYERS = ["X", "O"]
+# LINES[1:3] - rows, LINES[4:6] - columns, LINES[7:8] - diagonals
+LINES = [
 	[1, 2, 3],
 	[4, 5, 6],
 	[7, 8, 9],
@@ -53,17 +53,19 @@ lines = [
 	[3, 5, 7]
 ]
 """
-replace(sc(s), r"\bplayers" => "const players", r"\blines " => "const lines")
+replace(sc(s), r"\bPLAYERS" => "const PLAYERS", r"\bLINES " => "const LINES")
 ```
 
 > Note. Using `const` with mutable containers like vectors or dictionaries
 > allows to change their contents in the future, e.g., with `push!`. So the
 > `const` used here is more like a convention, a signal that we do not plan to
 > change the containers in the future. If we really wanted an immutable
-> container then we should consider a(n) (immutable) tuple.
+> container then we should consider a(n) (immutable) tuple. Anyway, some
+> programming languages suggest that `const` names should be declared using all
+> uppercase characters to make them stand out. Here, I follow this convention.
 
-The two are: `players`, a vector with marks used by each of the players (`"X"` -
-human, `"O"` - computer) and the coordinates of `lines` in our game board that
+The two are: `PLAYERS`, a vector with marks used by each of the players (`"X"` -
+human, `"O"` - computer) and the coordinates of `LINES` in our game board that
 we need to check to see if a player won the game. You could probably be more
 clever and use
 [enums](https://docs.julialang.org/en/v1/base/base/#Base.Enums.Enum) for the
@@ -83,7 +85,7 @@ function getGray(s::Str)::Str
 end
 
 function isFree2Take(field::Str)::Bool
-    return !(field in players)
+    return !(field in PLAYERS)
 end
 
 function colorFieldNumbers(board::Vec{Str})::Vec{Str}
@@ -108,7 +110,7 @@ stop and get some help). Anyway, a field not taken by one of the players
 
 Personally, I would also opt to add the function for the triplets detection
 (`isTriplet`). which we will use to color them (first one we find based on
-`lines`) with `colorFirstTriplet`. This should allow us for easier visual
+`LINES`) with `colorFirstTriplet`. This should allow us for easier visual
 determination when the game is over (later on we will also use it in
 `isGameWon`).
 
@@ -128,7 +130,7 @@ end
 
 function colorFirstTriplet(board::Vec{Str})::Vec{Str}
     result::Vec{Str} = copy(board)
-    for line in lines
+    for line in LINES
         if isTriplet(board[line])
             result[line] = getRed.(result[line])
             return result
@@ -152,7 +154,7 @@ s = """
 # https://en.wikipedia.org/wiki/ANSI_escape_code
 function clearLines(nLines::Int)
     @assert 0 < nLines "nLines must be a positive integer"
-    # "\\033[xxxA" - xxx moves cursor up xxx lines
+    # "\\033[xxxA" - xxx moves cursor up xxx LINES
     print("\\033[", nLines, "A")
     # "\\033[0J" - clears from cursor position till the end of the screen
     print("\\033[0J")
@@ -162,7 +164,7 @@ end
 function printBoard(board::Vec{Str})
     bd::Vec{Str} = colorFieldNumbers(board)
     bd = colorFirstTriplet(bd)
-    for row in lines[1:3] # first 3 lines are for rows
+    for row in LINES[1:3] # first 3 LINES are for rows
         println(" ", join(bd[row], " | "))
         println("---+---+---")
     end
@@ -176,7 +178,7 @@ sc(s)
 First, we declare `clearLines`, it will help us to tidy the printout (e.g.,
 while playing the game we will have to redraw the game board a couple of times).
 Next, we proceed with `printBoard`. We color the board with the previously
-defined functions and move row by row (`lines[1:3]` contains the indices for
+defined functions and move row by row (`LINES[1:3]` contains the indices for
 the three rows). We `join` the contents of a row together
 (we glue them with `" | "`) and print it (`println`).
 We follow it by a row separator (`println("---+---+---")`). Once we're finished
@@ -281,7 +283,7 @@ Time to actually make a move that we obtained for a player.
 s = """
 function makeMove!(move::Int, player::Str, board::Vec{Str})
     @assert move in eachindex(board) "move must be in range [1-9]"
-    @assert player in players "player must be X or O"
+    @assert player in PLAYERS "player must be X or O"
     if isFree2Take(board[move])
         board[move] = player
     end
@@ -302,7 +304,7 @@ its display on the screen.
 ```jl
 s = """
 function playMove!(player::Str, board::Vec{Str})
-    @assert player in players "player must be X or O"
+    @assert player in PLAYERS "player must be X or O"
     printBoard(board)
     move::Int = (player=="X") ? getUserMove(board) : getComputerMove(board)
     makeMove!(move, player, board)
@@ -326,7 +328,7 @@ why. This can be simply achieved with the following snippet.
 ```jl
 s = """
 function isGameWon(board::Vec{Str})::Bool
-    for line in lines
+    for line in LINES
         if isTriplet(board[line])
             return true
         end
@@ -355,7 +357,7 @@ Once the game is over we display an appropriate info.
 ```jl
 s = """
 function displayGameOverScreen(player::Str, board::Vec{Str})
-    @assert player in players "player must be X or O"
+    @assert player in PLAYERS "player must be X or O"
     printBoard(board)
     print("Game Over. ")
     isGameWon(board) ?
@@ -372,7 +374,7 @@ And finally, we're ready to play the game.
 ```jl
 s = """
 function togglePlayer(player::Str)::Str
-    @assert player in players "player must be X or O"
+    @assert player in PLAYERS "player must be X or O"
     return player == "X" ? "O" : "X"
 end
 
