@@ -3,13 +3,22 @@ const Str = String
 # the code in this file is meant to serve as a programming exercise only
 # and it may not act correctly
 
+function isBin(bin::Char)::Bool
+    return bin in ['0', '1']
+end
+
+function isBin(bin::Str)::Bool
+    return isBin.(collect(bin)) |> all
+end
+
 # fmt from overpayment.jl, modified
-function fmtBin(binNum::Str)::Str
+function fmtBin(bin::Str)::Str
+    @assert isBin(bin) "bin is not a binary number"
     result::Str = ""
     counter::Int = 0
-    padLen::Int = length(binNum) % 4
+    padLen::Int = length(bin) % 4
     padLen = padLen == 0 ? padLen : 4 - padLen
-    for binDigit in reverse(binNum) # binDigit is a single digit (type Char)
+    for binDigit in reverse(bin) # binDigit is a single digit (type Char)
         if counter == 4
             result = " " * result
             counter = 0
@@ -42,6 +51,7 @@ all(tests)
 dec2bin.(0:1024) == string.(0:1024, base=2)
 
 function bin2dec(bin::Str)::Int
+    @assert isBin(bin) "bin is not a binary number"
     pwr::Int = length(bin) - 1
     result::Int = 0
     for b in bin
