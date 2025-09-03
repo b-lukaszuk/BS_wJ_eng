@@ -80,10 +80,8 @@ function add(bin1::Char, bin2::Char)::Tuple{Char, Char}
 end
 
 function getEqlLenBins(bin1::Str, bin2::Str)::Tuple{Str, Str}
-    len1::Int = length(bin1)
-    len2::Int = length(bin2)
-    if len1 >= len2
-        return (bin1, lpad(bin2, len1, "0"))
+    if length(bin1) >= length(bin2)
+        return (bin1, lpad(bin2, length(bin1), "0"))
     else
         return getEqlLenBins(bin2, bin1)
     end
@@ -116,5 +114,13 @@ function add(bin1::Str, bin2::Str)::Str
     end
 end
 
-tests = [add(dec2bin(a), dec2bin(b)) == dec2bin(a+b) for (a, b) in zip(0:512, 0:512)]
-all(tests)
+binSum1 = ""
+binSum2 = ""
+for a in 0:512, b in 0:512
+    binSum1 = add(dec2bin(a), dec2bin(b))
+    binSum2 = dec2bin(a+b)
+    binSum1, binSum2 = getEqlLenBins(binSum1, binSum2)
+    if binSum1 != binSum1
+        println("Operation failed for ", a, " and ", b)
+    end
+end
