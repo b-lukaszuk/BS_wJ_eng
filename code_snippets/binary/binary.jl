@@ -69,14 +69,23 @@ all(tests)
 bin2dec.(string.(0:1024, base=2)) == 0:1024
 
 function add(bin1::Char, bin2::Char)::Tuple{Char, Char}
-    @assert bin1 in ['0', '1']
-    @assert bin2 in ['0', '1']
+    @assert isBin(bin1) && isBin(bin2) "both inputs must be binary bits"
     if bin1 == '1' && bin2 == '1'
         return ('1', '0')
     elseif bin1 == '0' && bin2 == '0'
         return ('0', '0')
     else
         return ('0', '1')
+    end
+end
+
+function getEqlLenBins(bin1::Str, bin2::Str)::Tuple{Str, Str}
+    len1::Int = length(bin1)
+    len2::Int = length(bin2)
+    if len1 >= len2
+        return (bin1, lpad(bin2, len1, "0"))
+    else
+        return getEqlLenBins(bin2, bin1)
     end
 end
 
@@ -89,15 +98,10 @@ function isZero(bin::Str)::Bool
 end
 
 function add(bin1::Str, bin2::Str)::Str
-    len1::Int = length(bin1)
-    len2::Int = length(bin2)
-    if len1 > len2
-        bin2 = lpad(bin2, len1, "0")
-    else
-        bin1 = lpad(bin1, len2, "0")
-    end
-    cb::Char = '0'
-    rb::Char = '0'
+    @assert isBin(bin1) && isBin(bin2) "both inputs must be binary numbers"
+    bin1, bin2 = getEqlLenBins(bin1, bin2)
+    cb::Char = '0' # carry bit
+    rb::Char = '0' # running bit, or right bit
     runningBits::Str = ""
     carryBits::Str = "0"
     for (b1, b2) in zip(reverse(bin1), reverse(bin2))
