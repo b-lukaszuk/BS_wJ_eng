@@ -144,3 +144,12 @@ function multiply(bin1::Str, bin2::Str)::Str
     end
     return total
 end
+
+for a in 0:32, b in 0:32
+    binProd1 = multiply(dec2bin(a), dec2bin(b))
+    binProd2 = dec2bin(a*b)
+    binProd1, binProd2 = getEqlLenBins(binProd1, binProd2)
+    if binProd1 != binProd2
+        println("Operation failed for ", a, " and ", b)
+    end
+end
