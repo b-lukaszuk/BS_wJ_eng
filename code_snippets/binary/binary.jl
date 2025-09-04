@@ -114,8 +114,6 @@ function add(bin1::Str, bin2::Str)::Str
     end
 end
 
-binSum1 = ""
-binSum2 = ""
 for a in 0:512, b in 0:512
     binSum1 = add(dec2bin(a), dec2bin(b))
     binSum2 = dec2bin(a+b)
@@ -124,7 +122,6 @@ for a in 0:512, b in 0:512
         println("Operation failed for ", a, " and ", b)
     end
 end
-
 
 function multiply(bin1::Char, bin2::Char)::Char
     @assert isBin(bin1) && isBin(bin2) "both inputs must be binary bits"
