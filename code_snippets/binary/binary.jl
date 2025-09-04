@@ -124,3 +124,26 @@ for a in 0:512, b in 0:512
         println("Operation failed for ", a, " and ", b)
     end
 end
+
+
+function multiply(bin1::Char, bin2::Char)::Char
+    @assert isBin(bin1) && isBin(bin2) "both inputs must be binary bits"
+    if bin1 == '1' && bin2 == '1'
+        return '1'
+    else
+        return '0'
+    end
+end
+
+function multiply(bin1::Str, bin2::Str)::Str
+    @assert isBin(bin1) && isBin(bin2) "both inputs must be binary numbers"
+    total::Str = "0"
+    curProd::Str = "1"
+    zerosToPad::Int = 0
+    for b in reverse(bin2)
+        curProd = multiply.(b, collect(bin1)) |> join
+        total = add(total, curProd * "0"^zerosToPad)
+        zerosToPad += 1
+    end
+    return total
+end
