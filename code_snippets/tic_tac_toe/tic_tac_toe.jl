@@ -121,7 +121,6 @@ function getUserMove(gameBoard::Vec{Str})::Int
     return parse(Int, input)
 end
 
-# insides of playGame fn prevent it from returning an empty vector
 function getFreeFields(board::Vec{Str})::Vec{Int}
     return parse.(Int, filter(isFree2Take, board))
 end
@@ -132,7 +131,6 @@ function isDoublet(v::Vec{Str})::Bool
     return isNPlayerMarks(2, v) && freeFieldsOK
 end
 
-# ind to block, or make a triplet of your own
 function getIndToBlockOrWin(board::Vec{Str})::Int
     move::Int = 0
     for line in LINES[Rnd.randperm(length(LINES))]
