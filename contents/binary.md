@@ -13,17 +13,17 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/binary
 
 Numbers, or information in general, can be represented in different forms. The
 most basic one, and the only one that is actually understood by a computer, is
-represent in a binary form.  Usually, it represented by a sequence of 1s and 0s,
-but it could be anything really, that can take two separate states. The once
-common [CDs](https://en.wikipedia.org/wiki/Compact_disc) or
+represent in a binary form.  Usually, it is depicted by a sequence of 1s and 0s,
+but it could be anything really. Anything, that can take two separate states.
+The once common [CDs](https://en.wikipedia.org/wiki/Compact_disc) or
 [DVDs](https://en.wikipedia.org/wiki/DVD) are a sequence of laser burns (tiny
 pits) in a spiral track (burn - 1, no burn - 0). The [hard disk
-drives](https://en.wikipedia.org/wiki/Hard_disk_drive) stored data as magnetized
+drives](https://en.wikipedia.org/wiki/Hard_disk_drive) store data as magnetized
 spots, whereas [SSD drives](https://en.wikipedia.org/wiki/Solid-state_drive)
-store data as electrons trapped in tiny transistors. The data can be read into
-into memory (RAM) and send to the processor for calculations.
+cashe it as electrons trapped in tiny transistors. The data can be read into
+into memory (RAM) and send to a processor for calculations.
 
-So here is a task for you, read about [binary
+Here is a task for you, read about [binary
 numbers](https://en.wikipedia.org/wiki/Binary_number) or watch some online
 videos (e.g. from [Khan
 Academy](https://www.youtube.com/watch?v=ku4KOFQ-bB4&list=PLS---sZ5WJJvsjaAQZKwTwxl910xUdO98))
@@ -33,6 +33,9 @@ on the topic. Next, to get a better grasp of the subject, write:
 - a function that transforms a decimal number to its binary counterpart
 - a function that adds two binary numbers
 - a function that multiplies two binary numbers
+
+For simplicity, assume that the functions will operate only on natural numbers
+in the range [0-1024] (in decimal).
 
 ## Solution {#sec:binary_solution}
 
