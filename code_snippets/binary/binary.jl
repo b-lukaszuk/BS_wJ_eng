@@ -93,12 +93,13 @@ function add(bin1::Str, bin2::Str)::Str
     end
 end
 
-# binFn(Int, Int) -> Str, decFn(Int, Int) -> Int
+# binFn(Str, Str) -> Str, decFn(Int, Int) -> Int
 function doesBinFnWork(n1::Int, n2::Int,
                        binFn::Function, decFn::Function)::Bool
     bin1::Str = binFn(dec2bin(n1), dec2bin(n2))
     bin2::Str = string(decFn(n1, n2), base=2)
-    return lstrip(bin1, ['0']) == lstrip(bin2, ['0'])
+    bin1, bin2 = getEqlLenBins(bin1, bin2)
+    return bin1 == bin2
 end
 
 # running this test may take a few seconds (513x513 matrix)
