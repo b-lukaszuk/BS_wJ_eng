@@ -22,9 +22,9 @@ function dec2bin(dec::Int)::Str
     return reverse(result)
 end
 
-tests = [dec2bin(i) == string(i, base=2) for i in 0:1024]
+tests = [dec2bin(i) == string(i, base=2) for i in 0:1024];
 # or
-tests = map(x -> dec2bin(x) == string(x, base=2), 0:1024)
+tests = map(x -> dec2bin(x) == string(x, base=2), 0:1024);
 all(tests)
 # or just
 dec2bin.(0:1024) == string.(0:1024, base=2)
@@ -40,9 +40,9 @@ function bin2dec(bin::Str)::Int
     return result
 end
 
-tests = [bin2dec(string(i, base=2)) == i for i in 0:1024]
+tests = [bin2dec(string(i, base=2)) == i for i in 0:1024];
 # or
-tests = map(x -> bin2dec(string(x, base=2)) == x, 0:1024)
+tests = map(x -> bin2dec(string(x, base=2)) == x, 0:1024);
 all(tests)
 # or just
 bin2dec.(string.(0:1024, base=2)) == 0:1024
@@ -93,17 +93,16 @@ function add(bin1::Str, bin2::Str)::Str
     end
 end
 
-function doesAddWork(n1::Int, n2::Int)::Bool
-    @assert (0 <= n1 <= 512) &&
-        (0 <= n2 <= 512) "n1 and n2 must be in range [0-512]"
-    bin1::Str = add(dec2bin(n1), dec2bin(n2))
-    bin2::Str = string(n1+n2, base=2)
-    bin1, bin2 = getEqlLenBins(bin1, bin2)
-    return bin1 == bin2
+# binFn(Int, Int) -> Str, decFn(Int, Int) -> Int
+function doesBinFnWork(n1::Int, n2::Int,
+                       binFn::Function, decFn::Function)::Bool
+    bin1::Str = binFn(dec2bin(n1), dec2bin(n2))
+    bin2::Str = string(decFn(n1, n2), base=2)
+    return lstrip(bin1, ['0']) == lstrip(bin2, ['0'])
 end
 
 # running this test may take a few seconds (513x513 matrix)
-tests = [doesAddWork(a, b) for a in 0:512, b in 0:512];
+tests = [doesBinFnWork(a, b, add, +) for a in 0:512, b in 0:512];
 all(tests)
 
 function multiply(bin1::Char, bin2::Char)::Char
@@ -128,15 +127,6 @@ function multiply(bin1::Str, bin2::Str)::Str
     return total
 end
 
-function doesMultiplyWork(n1::Int, n2::Int)::Bool
-    @assert (0 <= n1 <= 32) &&
-        (0 <= n2 <= 32) "n1 and n2 must be in range [0-512]"
-    bin1::Str = multiply(dec2bin(n1), dec2bin(n2))
-    bin2::Str = string(n1*n2, base=2)
-    bin1, bin2 = getEqlLenBins(bin1, bin2)
-    return bin1 == bin2
-end
-
 # 33x33 matrix
-tests = [doesMultiplyWork(a, b) for a in 0:32, b in 0:32];
+tests = [doesBinFnWork(a, b, multiply, *) for a in 0:32, b in 0:32];
 all(tests)
