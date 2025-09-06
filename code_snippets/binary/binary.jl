@@ -11,27 +11,6 @@ function isBin(bin::Str)::Bool
     return isBin.(collect(bin)) |> all
 end
 
-# fmt from overpayment.jl, modified
-function fmtBin(bin::Str)::Str
-    @assert isBin(bin) "bin is not a binary number"
-    result::Str = ""
-    counter::Int = 0
-    padLen::Int = length(bin) % 4
-    padLen = padLen == 0 ? padLen : 4 - padLen
-    for binDigit in reverse(bin) # binDigit is a single digit (type Char)
-        if counter == 4
-            result = " " * result
-            counter = 0
-        end
-        result = binDigit * result
-        counter += 1
-    end
-    return "0" ^ padLen * result
-end
-
-string(15, base=2) |> fmtBin
-string(113, base=2) |> fmtBin
-
 function dec2bin(dec::Int)::Str
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
     rest::Int = dec
@@ -114,14 +93,18 @@ function add(bin1::Str, bin2::Str)::Str
     end
 end
 
-for a in 0:512, b in 0:512
-    binSum1 = add(dec2bin(a), dec2bin(b))
-    binSum2 = dec2bin(a+b)
-    binSum1, binSum2 = getEqlLenBins(binSum1, binSum2)
-    if binSum1 != binSum1
-        println("Operation failed for ", a, " and ", b)
-    end
+function doesAddWork(n1::Int, n2::Int)::Bool
+    @assert (0 <= n1 <= 512) &&
+        (0 <= n2 <= 512) "n1 and n2 must be in range [0-512]"
+    bin1::Str = add(dec2bin(n1), dec2bin(n2))
+    bin2::Str = string(n1+n2, base=2)
+    bin1, bin2 = getEqlLenBins(bin1, bin2)
+    return bin1 == bin2
 end
+
+# running this test may take a few seconds (513x513 matrix)
+tests = [doesAddWork(a, b) for a in 0:512, b in 0:512];
+all(tests)
 
 function multiply(bin1::Char, bin2::Char)::Char
     @assert isBin(bin1) && isBin(bin2) "both inputs must be binary bits"
@@ -145,11 +128,15 @@ function multiply(bin1::Str, bin2::Str)::Str
     return total
 end
 
-for a in 0:32, b in 0:32
-    binProd1 = multiply(dec2bin(a), dec2bin(b))
-    binProd2 = dec2bin(a*b)
-    binProd1, binProd2 = getEqlLenBins(binProd1, binProd2)
-    if binProd1 != binProd2
-        println("Operation failed for ", a, " and ", b)
-    end
+function doesMultiplyWork(n1::Int, n2::Int)::Bool
+    @assert (0 <= n1 <= 32) &&
+        (0 <= n2 <= 32) "n1 and n2 must be in range [0-512]"
+    bin1::Str = multiply(dec2bin(n1), dec2bin(n2))
+    bin2::Str = string(n1*n2, base=2)
+    bin1, bin2 = getEqlLenBins(bin1, bin2)
+    return bin1 == bin2
 end
+
+# 33x33 matrix
+tests = [doesMultiplyWork(a, b) for a in 0:32, b in 0:32];
+all(tests)
