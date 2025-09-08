@@ -3,23 +3,15 @@ const Str = String
 # the code in this file is meant to serve as a programming exercise only
 # and it may not act correctly
 
-function isBin(bin::Char)::Bool
-    return bin in ['0', '1']
-end
-
-function isBin(bin::Str)::Bool
-    return isBin.(collect(bin)) |> all
-end
-
 function dec2bin(dec::Int)::Str
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
     rest::Int = dec
     result::Str = dec == 0 ? "0" : ""
     while dec != 0
         dec, rest = divrem(dec, 2)
-        result *= string(rest)
+        result = string(rest) * result
     end
-    return reverse(result)
+    return result
 end
 
 tests = [dec2bin(i) == string(i, base=2) for i in 0:1024];
@@ -28,6 +20,14 @@ tests = map(x -> dec2bin(x) == string(x, base=2), 0:1024);
 all(tests)
 # or just
 dec2bin.(0:1024) == string.(0:1024, base=2)
+
+function isBin(bin::Char)::Bool
+    return bin in ['0', '1']
+end
+
+function isBin(bin::Str)::Bool
+    return isBin.(collect(bin)) |> all
+end
 
 function bin2dec(bin::Str)::Int
     @assert isBin(bin) "bin is not a binary number"
