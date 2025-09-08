@@ -11,11 +11,11 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/binary
 
 ## Problem {#sec:binary_problem}
 
-Numbers, or information in general, can be represented in different forms. The
+Numbers, or information in general, can be written down in different forms. The
 most basic one, and the only one that is actually understood by a computer, is
-represent in a binary form.  Usually, it is depicted by a sequence of 1s and 0s,
-but it could be anything really. Anything, that can take two separate states.
-The once common [CDs](https://en.wikipedia.org/wiki/Compact_disc) or
+as a binary. Usually, it is depicted by a sequence of 1s and 0s, but it could be
+anything really. Anything, that can take two separate states. The once common
+[CDs](https://en.wikipedia.org/wiki/Compact_disc) or
 [DVDs](https://en.wikipedia.org/wiki/DVD) are a sequence of laser burns (tiny
 pits) in a spiral track (burn - 1, no burn - 0). The [hard disk
 drives](https://en.wikipedia.org/wiki/Hard_disk_drive) store data as magnetized
@@ -35,7 +35,10 @@ on the topic. Next, to get a better grasp of the subject, write:
 - a function that multiplies two binary numbers
 
 For simplicity, assume that the functions will operate only on natural numbers
-in the range [0-1024] (in decimal).
+in the range of let's say 0 to 1024 (in decimal). You may check your functions
+against the built-in `string` and `parse` functions. For instance,
+`string(3, base=2)` converts the decimal (3) to its binary representation and
+`parse(Int, "11", base=2)` performs the opposite action.
 
 ## Solution {#sec:binary_solution}
 
