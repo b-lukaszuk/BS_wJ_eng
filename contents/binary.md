@@ -42,4 +42,38 @@ against the built-in `string` and `parse` functions. For instance,
 
 ## Solution {#sec:binary_solution}
 
-The solution goes here.
+Let's start with our `dec2bin` converter.
+
+```jl
+s = """
+function dec2bin(dec::Int)::Str
+    @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
+    rest::Int = dec
+    result::Str = dec == 0 ? "0" : ""
+    while dec != 0
+        dec, rest = divrem(dec, 2)
+        result = string(rest) * result
+    end
+    return result
+end
+"""
+sc(s)
+```
+
+In order to convert a number in decimal to its binary form all we have to do it
+to divide it by 2 until it is equal 0, which is accomplished with
+`while dec != 0`. For that we use `divrem` that returns two numbers: 1) quotient
+- the number that remains after the division; and 2) the reminder - 0 for even
+division and 1 for uneven. Those two will be stored in `dec` and `rest`
+variables, respectively. Moreover, each time we prepend the reminder
+(`string(rest)`) to our `result` and voila. Let's see how we did.
+
+```jl
+s = """
+dec2bin.(0:1024) == string.(0:1024, base=2)
+"""
+sco(s)
+```
+
+It appears we did just fine, as the function produces the same results as the
+built-in `string`.
