@@ -105,27 +105,23 @@ many elements should be in our rectangle.
 
 ```jl
 s = """
-function getMultOfYGtEqX(x::Int, y::Int=daysPerWeek)::Int
+function getMultOfYGtEqX(x::Int, y::Int=DAYS_PER_WEEK)::Int
     @assert x > 0 && y > 0 "x and y must be > 0"
     @assert x >= y "x must be >= y"
-    if x % y == 0
-        return x
-    else
-        return round(Int, ceil(x / y)) * y
-    end
+    q::Int, r::Int = divrem(x, y) # quotient, reminder
+    return r == 0 ? x : y*(q+1)
 end
 """
 sc(s)
 ```
 
 To that end we wrote `getMultOfYGtEqX` that, as its name implies, returns the
-multiple of `y` that is greater than or equal to `x`. Briefly, if `x` is evenly
-divisible by `y` (`x % y == 0`) then we return `x`. Otherwise, we divide `x` by
-`y` (`x / y`), round it up to the next full number with `ceil` and represent it
-as an integer (`round(Int, ...`) . We return that last number multiplied by `y`.
-The above functionality could be also implemented with the built-in
-[divrem](https://docs.julialang.org/en/v1/base/math/#Base.divrem) (see [the code
-snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/calendar)).
+multiple of `y` that is greater than or equal to `x`. First, thanks to `divrem`
+function, we get the quotient (`q` - the number of 'full' `y`s is inside of `x`)
+and the reminder (`r` - the rest after the integer division) after dividing `x`
+by `y`. If `x` is evenly divisible by `y` (`r == 0 ?`) then our result is just
+`x` (`x` is the multiple of `y`). Otherwise, we multiply `y` by the quotient
+plus 1 (`y*(q+1)`).
 
 We will use it (`getMultOfYGtEqX`) to get our days for a given month padded with
 zeros.

@@ -27,11 +27,8 @@ const MONTHS_NAME_2_NUM = Dict(
 function getMultOfYGtEqX(x::Int, y::Int=DAYS_PER_WEEK)::Int
     @assert x > 0 && y > 0 "x and y must be > 0"
     @assert x >= y "x must be >= y"
-    if x % y == 0
-        return x
-    else
-        return round(Int, ceil(x / y)) * y
-    end
+    q::Int, r::Int = divrem(x, y) # quotient, reminder
+    return r == 0 ? x : y*(q+1)
 end
 
 # or
