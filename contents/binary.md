@@ -42,7 +42,27 @@ against the built-in `string` and `parse` functions. For instance,
 
 ## Solution {#sec:binary_solution}
 
-Let's start with our `dec2bin` converter.
+Let's start with our `dec2bin` converter, we'll base it on the [Khan Academy
+videos](https://www.youtube.com/watch?v=ku4KOFQ-bB4&list=PLS---sZ5WJJvsjaAQZKwTwxl910xUdO98)
+and similarities with the decimal number system.
+
+A decimal system operates on base 10. A number, let's say: one hundred and
+twenty-three (123), can be written with digits ([0-9]) placed in three slots. We
+know this because three slots allow us to write $10^3 = 1000$ numbers ([0-999]),
+whereas two slots are good only for $10^2 = 100$ numbers ([0-99], compare also
+with the [exercise
+1](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_exercises.html#sec:statistics_intro_exercise1)
+and [its
+solution](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_exercises_solutions.html#sec:statistics_intro_exercise1_solution).
+The number 123 is actually a sum of one hundred, two tens, and three units
+($1*100 + 2*10 + 3*1$ = `sum([1*100, 2*10, 3*1])` = `jl sum([1*100, 2*10, 3*1])`).
+Equivalently, this can be written with the consecutive powers of ten
+($10^x$ = `10^x` in Julia's code, where x starts at 0), i.e.
+$1*10^2 + 2*10^1 + 3*10^0$ =
+`sum([1*10^2, 2*10^1, 3*10^0])` = `jl sum([1*10^2, 2*10^1, 3*10^0])`. Pause for
+a moment and make sure you got that.
+
+OK,
 
 ```jl
 s = """
