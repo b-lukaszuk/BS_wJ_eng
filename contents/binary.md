@@ -62,7 +62,16 @@ $1*10^2 + 2*10^1 + 3*10^0$ =
 `sum([1*10^2, 2*10^1, 3*10^0])` = `jl sum([1*10^2, 2*10^1, 3*10^0])`. Pause for
 a moment and make sure you got that.
 
-OK,
+Similar reasoning applies to binary number, but here we operate on the powers of
+two. The number, let's say: fourteen (14) can be written with digits ([0-1])
+placed in four slots. This is because $2^4$ allows us to write down 16 numbers
+(in binary: [0000-1111]), whereas $2^3$ suffices for ony 8 numbers (in binary:
+[000-111]). Each slot (from left to right) represents subsequent powers of two,
+i.e. ones ($2^0 = 1$), twos ($2^1 = 2$), fours ($2^2 = 4$), and eights ($2^3 =
+8$). Once again we sum the digits to get our encoded number `1110` =
+$1*2^3 + 1*2^2 + 1*2^1 + 1*2^0$ = $1*8 + 1*4 + 1*2 + 1*0$ =
+`sum([1*8, 1*4, 1*2, 1*0])` = `jl sum([1*8, 1*4, 1*2, 1*0])`. Time to put that
+knowledge to good use by writing our `dec2bin`.
 
 ```jl
 s = """
