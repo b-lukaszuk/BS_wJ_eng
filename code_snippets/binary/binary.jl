@@ -1,7 +1,33 @@
 const Str = String
+const Vec = Vector
 
 # the code in this file is meant to serve as a programming exercise only
 # and it may not act correctly
+
+function getNumOfBits2codeDec(dec::Int)::Int
+    @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
+    for i in 1:dec
+        if 2^i > dec
+            return i
+        end
+    end
+    return 0 # should never happen
+end
+
+function dec2bin(dec::Int)::Str
+    @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
+    nBits::Int = getNumOfBits2codeDec(dec)
+    result::Vec{Int} = zeros(nBits)
+    bitDec::Int = 2^(nBits-1)
+    for i in eachindex(result)
+        if bitDec <= dec
+            result[i] = 1
+            dec -= bitDec
+        end
+    bitDec = bitDec < 2 ? 0 : bitDec/2
+    end
+    return join(string.(result))
+end
 
 function dec2bin(dec::Int)::Str
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
