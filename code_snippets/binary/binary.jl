@@ -6,6 +6,7 @@ const Vec = Vector
 
 function getNumOfBits2codeDec(dec::Int)::Int
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
+    dec = (dec == 0) ? 1 : dec
     for i in 1:dec
         if 2^i > dec
             return i
@@ -17,16 +18,16 @@ end
 function dec2bin(dec::Int)::Str
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
     nBits::Int = getNumOfBits2codeDec(dec)
-    result::Vec{Int} = zeros(nBits)
+    result::Vec{Char} = fill('0', nBits)
     bitDec::Int = 2^(nBits-1)
     for i in eachindex(result)
         if bitDec <= dec
-            result[i] = 1
+            result[i] = '1'
             dec -= bitDec
         end
-    bitDec = bitDec < 2 ? 0 : bitDec/2
+        bitDec = (bitDec < 2) ? 0 : bitDec/2
     end
-    return join(string.(result))
+    return join(result)
 end
 
 function dec2bin(dec::Int)::Str
@@ -41,6 +42,7 @@ function dec2bin(dec::Int)::Str
 end
 
 tests = [dec2bin(i) == string(i, base=2) for i in 0:1024];
+all(tests)
 # or
 tests = map(x -> dec2bin(x) == string(x, base=2), 0:1024);
 all(tests)
