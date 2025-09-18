@@ -20,7 +20,7 @@ anything really. Anything, that can take two separate states. The once common
 pits) in a spiral track (burn - 1, no burn - 0). The [hard disk
 drives](https://en.wikipedia.org/wiki/Hard_disk_drive) store data as magnetized
 spots, whereas [SSD drives](https://en.wikipedia.org/wiki/Solid-state_drive)
-cashe it as electrons trapped in tiny transistors. The data can be read into
+cash it as electrons trapped in tiny transistors. The data can be read into
 into memory (RAM) and send to a processor for calculations.
 
 Here is a task for you, read about [binary
@@ -65,7 +65,7 @@ a moment and make sure you got that.
 Similar reasoning applies to binary number, but here we operate on the powers of
 two. The number, let's say: fourteen (14) can be written with digits ([0-1])
 placed in four slots. This is because $2^4$ allows us to write down 16 numbers
-(in binary: [0000-1111]), whereas $2^3$ suffices for ony 8 numbers (in binary:
+(in binary: [0000-1111]), whereas $2^3$ suffices for only 8 numbers (in binary:
 [000-111]). Each slot (from left to right) represents subsequent powers of two,
 i.e. ones ($2^0 = 1$), twos ($2^1 = 2$), fours ($2^2 = 4$), and eights ($2^3 =
 8$). Once again we sum the digits to get our encoded number `1110` =
@@ -75,27 +75,41 @@ knowledge to good use by writing our `dec2bin`.
 
 ```jl
 s = """
+function getNumOfBits2codeDec(dec::Int)::Int
+    @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
+    dec = (dec == 0) ? 1 : dec
+    for i in 1:dec
+        if 2^i > dec
+            return i
+        end
+    end
+    return 0 # should never happen
+end
+
 function dec2bin(dec::Int)::Str
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
-    rest::Int = dec
-    result::Str = dec == 0 ? "0" : ""
-    while dec != 0
-        dec, rest = divrem(dec, 2)
-        result = string(rest) * result
+    nBits::Int = getNumOfBits2codeDec(dec)
+    result::Vec{Char} = fill('0', nBits)
+    bitDec::Int = 2^(nBits-1)
+    for i in eachindex(result)
+        if bitDec <= dec
+            result[i] = '1'
+            dec -= bitDec
+        end
+        bitDec = (bitDec < 2) ? 0 : bitDec/2
     end
-    return result
+    return join(result)
 end
 """
 sc(s)
 ```
 
-In order to convert a number in decimal to its binary form all we have to do it
-to divide it by 2 until it is equal 0, which is accomplished with
-`while dec != 0`. For that we use `divrem` that returns two numbers: 1) quotient
-- the number that remains after the division; and 2) the reminder - 0 for even
-division and 1 for uneven. Those two will be stored in `dec` and `rest`
-variables, respectively. Moreover, each time we prepend the reminder
-(`string(rest)`) to our `result` and voila. Let's see how we did.
+We begin by declaring `getNumOfBits2codeDec`, a function that will help us to
+find how many bits (slots) we need in order to code a given decimal as a
+binary number. It does so by using a 'brute force' approach (`for i in 1:dec`)
+with an early stop mechanism (`if 2^i > dec`). As an alternative we could
+consider to use the `log2` function, but the approach just seemed so natural and
+in line with the previous explanations.
 
 ```jl
 s = """
