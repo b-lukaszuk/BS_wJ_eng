@@ -53,20 +53,20 @@ whereas two slots are good only for $10^2 = 100$ numbers ([0-99], compare also
 with the [exercise
 1](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_exercises.html#sec:statistics_intro_exercise1)
 and [its
-solution](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_exercises_solutions.html#sec:statistics_intro_exercise1_solution).
+solution](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_exercises_solutions.html#sec:statistics_intro_exercise1_solution)).
 The number 123 is actually a sum of one hundred, two tens, and three units
 ($1*100 + 2*10 + 3*1$ = `sum([1*100, 2*10, 3*1])` = `jl sum([1*100, 2*10, 3*1])`).
 Equivalently, this can be written with the consecutive powers of ten
-($10^x$ = `10^x` in Julia's code, where x starts at 0), i.e.
+($10^x$ = `10^x` in Julia's code, where x starts from the right and at 0), i.e.
 $1*10^2 + 2*10^1 + 3*10^0$ =
 `sum([1*10^2, 2*10^1, 3*10^0])` = `jl sum([1*10^2, 2*10^1, 3*10^0])`. Pause for
 a moment and make sure you got that.
 
-Similar reasoning applies to binary number, but here we operate on the powers of
-two. The number, let's say: fourteen (14) can be written with digits ([0-1])
+Similar reasoning applies to binary numbers, but here we operate on the powers
+of two. A number, let's say: fourteen (14), can be written with digits ([0-1])
 placed in four slots. This is because $2^4$ allows us to write down 16 numbers
 (in binary: [0000-1111]), whereas $2^3$ suffices for only 8 numbers (in binary:
-[000-111]). Each slot (from left to right) represents subsequent powers of two,
+[000-111]). Each slot (from right to left) represents subsequent powers of two,
 i.e. ones ($2^0 = 1$), twos ($2^1 = 2$), fours ($2^2 = 4$), and eights ($2^3 =
 8$). Once again we sum the digits to get our encoded number `1110` =
 $1*2^3 + 1*2^2 + 1*2^1 + 1*2^0$ = $1*8 + 1*4 + 1*2 + 1*0$ =
@@ -105,11 +105,11 @@ sc(s)
 ```
 
 We begin by declaring `getNumOfBits2codeDec`, a function that will help us to
-find how many bits (slots) we need in order to code a given decimal as a
-binary number. It does so by using a 'brute force' approach (`for i in 1:dec`)
-with an early stop mechanism (`if 2^i > dec`). As an alternative we could
-consider to use the `log2` function, but the approach just seemed so natural and
-in line with the previous explanations.
+find how many bits (slots) we need in order to code a given decimal as a binary
+number. It does so by using a 'brute force' approach (`for i in 1:dec`) with an
+early stop mechanism (`if 2^i > dec`). As an alternative we could consider to
+use the built-in `log2` function, but the approach presented here just seemed so
+natural and in line with the previous explanations that I just couldn't resist.
 
 ```jl
 s = """
