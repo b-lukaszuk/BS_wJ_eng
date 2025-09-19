@@ -15,6 +15,13 @@ function getNumOfBits2codeDec(dec::Int)::Int
     return 0 # should never happen
 end
 
+# or
+function getNumOfBits2codeDec(dec::Int)::Int
+    @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
+    twoPwr::Int = (dec < 2) ? 1 : ceil(Int, log2(dec))
+    return (2^twoPwr > dec) ? twoPwr : twoPwr+1
+end
+
 function dec2bin(dec::Int)::Str
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
     nBits::Int = getNumOfBits2codeDec(dec)
@@ -30,15 +37,16 @@ function dec2bin(dec::Int)::Str
     return join(result)
 end
 
+# or
 function dec2bin(dec::Int)::Str
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
     rest::Int = dec
     result::Str = dec == 0 ? "0" : ""
     while dec != 0
         dec, rest = divrem(dec, 2)
-        result = string(rest) * result
+        result *= string(rest)
     end
-    return result
+    return reverse(result)
 end
 
 tests = [dec2bin(i) == string(i, base=2) for i in 0:1024];
