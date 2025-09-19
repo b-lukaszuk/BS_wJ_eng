@@ -117,7 +117,7 @@ As for the `dec2bin` function we start by declaring a few helper variables:
 `bitDec` - a variable that will store the consecutive powers of 2 (expressed in
 decimal). Next, we traverse the bits/slots of our `result` from left to
 right. When the current power of two is smaller or equal to the decimal we still
-got to endocde (`if bitDec <= dec`) then we set that particular bit to 1
+got to encode (`if bitDec <= dec`) then we set that particular bit to 1
 (`result[i] = '1'`) and reduce the decimal we need to encode by that value
 (`dec -= bitDec`). Moreover, we update (reduce) our consecutive powers of two
 (`bitDec`) by using the 2 divisor (`bitDec/2`, since in the array: $2^4 = 16,
@@ -135,14 +135,16 @@ lpad.(dec2bin.(0:8), 4, '0')
 replace(sco(s), "\", " => "\",\n", "[" => "[\n", "]" => "\n]")
 ```
 
-OK
+Time for a benchmark vs. the built-in `string` function.
 
 ```jl
 s = """
+all([dec2bin(i) == string(i, base=2) for i in 0:1024]) # python like
+# or simply, more julia style
 dec2bin.(0:1024) == string.(0:1024, base=2)
 """
 sco(s)
 ```
 
-It appears we did just fine, as the function produces the same results as the
-built-in `string`.
+It appears we did just fine, as the function produces the same results as
+`string`.
