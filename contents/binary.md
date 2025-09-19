@@ -90,7 +90,7 @@ function dec2bin(dec::Int)::Str
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
     nBits::Int = getNumOfBits2codeDec(dec)
     result::Vec{Char} = fill('0', nBits)
-    bitDec::Int = 2^(nBits-1)
+    bitDec::Int = 2^(nBits-1) # -1, because powers of 2 start at 0
     for i in eachindex(result)
         if bitDec <= dec
             result[i] = '1'
@@ -107,9 +107,35 @@ sc(s)
 We begin by declaring `getNumOfBits2codeDec`, a function that will help us to
 find how many bits (slots) we need in order to code a given decimal as a binary
 number. It does so by using a 'brute force' approach (`for i in 1:dec`) with an
-early stop mechanism (`if 2^i > dec`). As an alternative we could consider to
+early stop mechanism (`if 2^i > dec`). As an alternative we may consider to
 use the built-in `log2` function, but the approach presented here just seemed so
 natural and in line with the previous explanations that I just couldn't resist.
+
+As for the `dec2bin` function we start by declaring a few helper variables:
+`nBits` - number of bits/slots we need to fill in order to code our number,
+`result` - a vector that will hold our final binary representation, and
+`bitDec` - a variable that will store the consecutive powers of 2 (expressed in
+decimal). Next, we traverse the bits/slots of our `result` from left to
+right. When the current power of two is smaller or equal to the decimal we still
+got to endocde (`if bitDec <= dec`) then we set that particular bit to 1
+(`result[i] = '1'`) and reduce the decimal we need to encode by that value
+(`dec -= bitDec`). Moreover, we update (reduce) our consecutive powers of two
+(`bitDec`) by using the 2 divisor (`bitDec/2`, since in the array: $2^4 = 16,
+2^3 = 8, 2^2 = 4, 2^1 = 2, 2^0 = 1$ each number gets two times smaller). The
+`(bitDec < 2) ? 0` protects us from the case when the integer division by 2 is
+not possible (when in the last turnover of the loop `bitDec` will be equal to
+`1`).
+
+Let's see how it works with a couple of numbers.
+
+```jl
+s = """
+lpad.(dec2bin.(0:8), 4, '0')
+"""
+replace(sco(s), "\", " => "\",\n", "[" => "[\n", "]" => "\n]")
+```
+
+OK
 
 ```jl
 s = """
