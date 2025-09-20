@@ -26,7 +26,7 @@ function dec2bin(dec::Int)::Str
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
     nBits::Int = getNumOfBits2codeDec(dec)
     result::Vec{Char} = fill('0', nBits)
-    bitDec::Int = 2^(nBits-1) # -1, because powers of 2 start at 0
+    bitDec::Int = 2^(nBits-1) # -1, because powers of 2 start at 0 not 1
     for i in eachindex(result)
         if bitDec <= dec
             result[i] = '1'
@@ -37,24 +37,9 @@ function dec2bin(dec::Int)::Str
     return join(result)
 end
 
-# or
-function dec2bin(dec::Int)::Str
-    @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
-    rest::Int = dec
-    result::Str = dec == 0 ? "0" : ""
-    while dec != 0
-        dec, rest = divrem(dec, 2)
-        result *= string(rest)
-    end
-    return reverse(result)
-end
 
-tests = [dec2bin(i) == string(i, base=2) for i in 0:1024];
-all(tests)
-# or
-tests = map(x -> dec2bin(x) == string(x, base=2), 0:1024);
-all(tests)
-# or just
+all([dec2bin(i) == string(i, base=2) for i in 0:1024]) # python like
+# or simply, more julia style
 dec2bin.(0:1024) == string.(0:1024, base=2)
 
 function isBin(bin::Char)::Bool
@@ -67,20 +52,15 @@ end
 
 function bin2dec(bin::Str)::Int
     @assert isBin(bin) "bin is not a binary number"
-    pwr::Int = length(bin) - 1
+    pwr::Int = length(bin) - 1 # -1, because powers of 2 start at 0 not 1
     result::Int = 0
     for b in bin
-        result += b == '1' ? 2^pwr : 0
+        result += (b == '1') ? 2^pwr : 0
         pwr -= 1
     end
     return result
 end
 
-tests = [bin2dec(string(i, base=2)) == i for i in 0:1024];
-# or
-tests = map(x -> bin2dec(string(x, base=2)) == x, 0:1024);
-all(tests)
-# or just
 bin2dec.(string.(0:1024, base=2)) == 0:1024
 
 function add(bin1::Char, bin2::Char)::Tuple{Char, Char}
