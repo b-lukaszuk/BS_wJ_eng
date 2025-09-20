@@ -32,7 +32,7 @@ function dec2bin(dec::Int)::Str
             result[i] = '1'
             dec -= bitDec
         end
-        bitDec = (bitDec < 2) ? 0 : bitDec/2
+        bitDec = div(bitDec, 2)
     end
     return join(result)
 end

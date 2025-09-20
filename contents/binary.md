@@ -96,7 +96,7 @@ function dec2bin(dec::Int)::Str
             result[i] = '1'
             dec -= bitDec
         end
-        bitDec = (bitDec < 2) ? 0 : bitDec/2
+        bitDec = div(bitDec, 2)
     end
     return join(result)
 end
@@ -115,16 +115,17 @@ As for the `dec2bin` function we start by declaring a few helper variables:
 `nBits` - number of bits/slots we need to fill in order to code our number,
 `result` - a vector that will hold our final binary representation, and
 `bitDec` - a variable that will store the consecutive powers of 2 (expressed in
-decimal). Next, we traverse the bits/slots of our `result` from left to
-right. When the current power of two is smaller or equal to the decimal we still
-got to encode (`if bitDec <= dec`) then we set that particular bit to 1
-(`result[i] = '1'`) and reduce the decimal we need to encode by that value
-(`dec -= bitDec`). Moreover, we update (reduce) our consecutive powers of two
-(`bitDec`) by using the 2 divisor (`bitDec/2`, since in the array: $2^4 = 16,
-2^3 = 8, 2^2 = 4, 2^1 = 2, 2^0 = 1$ each number gets two times smaller). The
-`(bitDec < 2) ? 0` protects us from the case when the integer division by 2 is
-not possible (when in the last turnover of the loop `bitDec` will be equal to
-`1`).
+decimal) coded by a given bit. Next, we traverse the bits/slots of our `result`
+from left to right. When the current power of two is smaller or equal to the
+decimal we got to encode (`if bitDec <= dec`) then we set that particular bit to
+1 (`result[i] = '1'`) and reduce the decimal we still need to encode by that
+value (`dec -= bitDec`). Moreover, we update (reduce) our consecutive powers of
+two (`bitDec`) by using the 2 divisor (`div(bitDec, 2)`). `div` performs an
+integer division (that drops the decimal part of the quotient). We use it
+because in the array of the powers of two: $2^4 = 16, 2^3 = 8, 2^2 = 4, 2^1 = 2,
+2^0 = 1$ each number gets two times smaller. The `div(bitDec, 2)` protects us
+from the case when the integer division by 2 with standard `bitDec/2` would not
+be possible (in the last turnover of the loop `bitDec` will be equal to `1`).
 
 Let's see how it works with a couple of numbers.
 
@@ -135,7 +136,7 @@ lpad.(dec2bin.(0:8), 4, '0')
 replace(sco(s), "\", " => "\",\n", "[" => "[\n", "]" => "\n]")
 ```
 
-Time for a benchmark vs. the built-in `string` function.
+Time for a benchmark against the built-in `string` function.
 
 ```jl
 s = """
@@ -146,5 +147,5 @@ dec2bin.(0:1024) == string.(0:1024, base=2)
 sco(s)
 ```
 
-It appears we did just fine, as the function produces the same results as
+It appears we did just fine as the function produces the same results as
 `string`.
