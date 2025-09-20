@@ -90,7 +90,7 @@ function dec2bin(dec::Int)::Str
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
     nBits::Int = getNumOfBits2codeDec(dec)
     result::Vec{Char} = fill('0', nBits)
-    bitDec::Int = 2^(nBits-1) # -1, because powers of 2 start at 0
+    bitDec::Int = 2^(nBits-1) # -1, because powers of 2 start at 0 not 1
     for i in eachindex(result)
         if bitDec <= dec
             result[i] = '1'
@@ -149,3 +149,57 @@ sco(s)
 
 It appears we did just fine as the function produces the same results as
 `string`.
+
+Once we got it reversing the process should be a breeze.
+
+```jl
+s = """
+function isBin(bin::Char)::Bool
+    return bin in ['0', '1']
+end
+
+function isBin(bin::Str)::Bool
+    return isBin.(collect(bin)) |> all
+end
+
+function bin2dec(bin::Str)::Int
+    @assert isBin(bin) "bin is not a binary number"
+    pwr::Int = length(bin) - 1 # -1, because powers of 2 start at 0 not 1
+    result::Int = 0
+    for b in bin
+        result += (b == '1') ? 2^pwr : 0
+        pwr -= 1
+    end
+    return result
+end
+"""
+sc(s)
+```
+
+Once again, we we start our main function (`bin2dec`) with the definition of a
+few helper variables: `pwr` - which holds a power of the current bit which is in
+range from `0` to `length(bin)-1` (from the rightmost to the leftmost bit), and
+`result` which is just a sum of all bits expressed in decimal system. We build
+the sum (`result +=`) bit by bit (`for b in bin`), but only for the bits equal
+`'1'` (`(b == `1`) ? 2^pwr`) while reducing the power for the next bit as we
+shift right (`pwr -= 1`). Finally, all that's left is to `return` the `result`.
+
+Let's see how we did.
+
+```jl
+s = """
+lpad.(dec2bin.(0:8), 4, '0') .|> bin2dec
+"""
+sco(s)
+```
+
+It looks good, and now for a more comprehensive benchmark.
+
+```jl
+s = """
+bin2dec.(string.(0:1024, base=2)) == 0:1024
+"""
+sco(s)
+```
+
+Again, it seems that we can't complain.
