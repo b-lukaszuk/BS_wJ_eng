@@ -203,3 +203,53 @@ sco(s)
 ```
 
 Again, it seems that we can't complain.
+
+OK, time to add two binaries.
+
+```jl
+s = """
+# returns (carried bit, running bit)
+function add(bin1::Char, bin2::Char)::Tuple{Char, Char}
+    @assert isBin(bin1) && isBin(bin2) "both inputs must be binary bits"
+    if bin1 == '1' && bin2 == '1'
+        return ('1', '0')
+    elseif bin1 == '0' && bin2 == '0'
+        return ('0', '0')
+    else
+        return ('0', '1')
+    end
+end
+
+function getEqlLenBins(bin1::Str, bin2::Str)::Tuple{Str, Str}
+    if length(bin1) >= length(bin2)
+        return (bin1, lpad(bin2, length(bin1), '0'))
+    else
+        return getEqlLenBins(bin2, bin1)
+    end
+end
+"""
+sc(s)
+```
+
+In order to add two binary numbers we need to define how to add two binary
+digits (`bin1::Char` and `bin2::Char`). Just like in the decimal system we need
+to handle the overflow, e.g. when we add $16 + 8$, first we add 8 and 6 to
+get 14. Of the last number 4 becomes the running bit and 1 becomes a carried bit
+that we add to 1 (first digit in 16) to get our final score which is 24. By
+analogy, `add(bin1::Char, bin2::Char)` returns a tuple with the running and
+carried bit.
+
+Additionally, we defined `getEqlLenBins` that makes sure two numbers are of
+equal length. This is because the upcoming `add(bin1::Str, bin2::Str)` will rely
+on the above `add(bin1::Char, bin2::Char)`, that's why the shorter number will
+be padded on the left with zeros (by `lpad`), which is a neutral digit in
+addition (in decimal adding 16+8 is the same as adding 16+08). Two points of
+notice. First of all, make sure to use `>=` and not `>` in the first `if`
+statement otherwise you will end with an infinite recursion (see @sec:recursion)
+and [stack overflow](https://en.wikipedia.org/wiki/Stack_overflow) error in some
+cases (test yourself and explain why it will happen for `getEqlLenBins("01",
+"10")`). Secondly, the recursive call `getEqlLenBins(bin2, bin1)` effectively
+swaps the numbers. This is a neat trick and makes no difference here (since
+addition and multiplication are
+[commutative](https://en.wikipedia.org/wiki/Commutative_property)), but may
+cause troubles otherwise.
