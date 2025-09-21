@@ -15,7 +15,7 @@ function getNumOfBits2codeDec(dec::Int)::Int
     return 0 # should never happen
 end
 
-# or
+# or with log2 function
 function getNumOfBits2codeDec(dec::Int)::Int
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
     twoPwr::Int = (dec < 2) ? 1 : ceil(Int, log2(dec))
@@ -36,7 +36,6 @@ function dec2bin(dec::Int)::Str
     end
     return join(result)
 end
-
 
 all([dec2bin(i) == string(i, base=2) for i in 0:1024]) # python like
 # or simply, more julia style
@@ -76,7 +75,7 @@ end
 
 function getEqlLenBins(bin1::Str, bin2::Str)::Tuple{Str, Str}
     if length(bin1) >= length(bin2)
-        return (bin1, lpad(bin2, length(bin1), "0"))
+        return (bin1, lpad(bin2, length(bin1), '0'))
     else
         return getEqlLenBins(bin2, bin1)
     end
@@ -92,20 +91,20 @@ end
 
 function add(bin1::Str, bin2::Str)::Str
     @assert isBin(bin1) && isBin(bin2) "both inputs must be binary numbers"
-    bin1, bin2 = getEqlLenBins(bin1, bin2)
-    cb::Char = '0' # carry bit
-    rb::Char = '0' # running bit, or right bit
+    bin1::Str, bin2::Str = getEqlLenBins(bin1, bin2)
+    carriedBit::Char = '0'
+    runningBit::Char = '0'
     runningBits::Str = ""
-    carryBits::Str = "0"
+    carriedBits::Str = "0"
     for (b1, b2) in zip(reverse(bin1), reverse(bin2))
-        cb, rb = add(b1, b2)
-        runningBits = rb * runningBits
-        carryBits = cb * carryBits
+        carriedBit, runningBit = add(b1, b2)
+        runningBits = runningBit * runningBits
+        carriedBits = carriedBit * carriedBits
     end
-    if isZero(carryBits)
-        return runningBits
+    if isZero(carriedBits)
+        return isZero(runningBits) ? "0" : lstrip(isZero, runningBits)
     else
-        return add(runningBits, carryBits)
+        return add(runningBits, carriedBits)
     end
 end
 
@@ -114,7 +113,6 @@ function doesBinFnWork(n1::Int, n2::Int,
                        binFn::Function, decFn::Function)::Bool
     bin1::Str = binFn(dec2bin(n1), dec2bin(n2))
     bin2::Str = string(decFn(n1, n2), base=2)
-    bin1, bin2 = getEqlLenBins(bin1, bin2)
     return bin1 == bin2
 end
 
