@@ -53,3 +53,32 @@ binomial(8, 4)
 s = getSums(5)
 filter(y -> isEqlTarget(y, (5, -5)), s) |> length
 binomial(10, 5)
+
+function makeOneStep(prevPaths::Vec{Vec{Tup{Int, Int}}})::Vec{Vec{Tup{Int, Int}}}
+    @assert !isempty(prevPaths) "prevPaths cannot be empty"
+    result::Vec{Vec{Tup{Int, Int}}} = []
+    for path in prevPaths
+        step1::Tup{Int, Int} = add(path[end], RIGHT)
+        push!(result, [path..., step1])
+        step2::Tup{Int, Int} = add(path[end], DOWN)
+        push!(result, [path..., step2])
+    end
+    return result
+end
+
+function getPaths(nRows::Int=2)::Vec{Vec{Tup{Int, Int}}}
+    @assert 0 < nRows < 6 "nRows must be in the range [1-5]"
+    result::Vec{Vec{Tup{Int, Int}}} = [[(0, 0)]]
+    for _ in 1:(nRows*2) # - *2 - because of columns
+        result = makeOneStep(result)
+    end
+    return result
+end
+
+ps = getPaths(2)
+ps = filter(v -> v[end] == (2, -2), ps)
+binomial(4, 2)
+
+ps = getPaths(3)
+ps = filter(v -> v[end] == (3, -3), ps)
+binomial(6, 3)
