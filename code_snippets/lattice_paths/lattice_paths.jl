@@ -1,6 +1,9 @@
 const Vec = Vector
 const Tup = Tuple
 
+const RIGHT = (1, 0)
+const DOWN = (0, -1)
+
 # the code in this file is meant to serve as a programming exercise only
 # and it may not act correctly
 
@@ -8,7 +11,6 @@ const Tup = Tuple
 function add(position::Tup{Int, Int}, move::Tup{Int, Int})::Tup{Int, Int}
     return (position[1]+move[1], position[2]+move[2])
 end
-
 
 function add(positions::Vec{Tup{Int, Int}},
              moves::Vec{Tup{Int, Int}})::Vec{Tup{Int, Int}}
@@ -21,10 +23,10 @@ function add(positions::Vec{Tup{Int, Int}},
     return result
 end
 
-function getSums(nRows::Int = 2)::Vec{Tup{Int, Int}}
-    @assert 0 < nRows < 6 "nRows must be in range [1-5]"
+function getSums(nRows::Int=2)::Vec{Tup{Int, Int}}
+    @assert 0 < nRows < 6 "nRows must be in the range [1-5]"
     sums::Vec{Tup{Int, Int}} = [(0, 0)]
-    moves::Vec{Tup{Int, Int}} = [(1, 0), (0, -1)]
+    moves::Vec{Tup{Int, Int}} = [RIGHT, DOWN]
     for _ in 1:(nRows*2) # - *2 - because of columns
         sums = add(sums, moves)
     end
