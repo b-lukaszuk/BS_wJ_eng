@@ -232,22 +232,24 @@ sc(s)
 ```
 
 In order to add two binary numbers we need to define how to add two binary
-digits (`bin1::Char` and `bin2::Char`). Just like in the decimal system we need
-to handle the overflow, e.g. when we add $16 + 8$, first we add 8 and 6 to
-get 14. Of the last number 4 becomes the running bit and 1 becomes a carried bit
-that we add to 1 (first digit in 16) to get our final score which is 24. By
-analogy, `add(bin1::Char, bin2::Char)` returns a tuple with the running and
-carried bit.
+digits (`bin1::Char` and `bin2::Char`) first. Just like in the decimal system we
+need to handle the overflow, e.g. when we add $26 + 8$, first we add 8 and 6 to
+get 14. Four (the second digit of 14) becomes the running bit and 1 (the first
+digit of 14) becomes a carried bit that we add to 2 (the first digit in 26) to
+get our final score which is 34. By analogy, `add(bin1::Char, bin2::Char)`
+returns a tuple (`Tuple{Int, Int}`) with the carried and running bit,
+respectively.
 
-Additionally, we defined `getEqlLenBins` that makes sure two numbers are of
-equal length. This is because the upcoming `add(bin1::Str, bin2::Str)` will rely
-on the above `add(bin1::Char, bin2::Char)`, that's why the shorter number will
-be padded on the left with zeros (by `lpad`), which is a neutral digit in
-addition (in decimal adding 16+8 is the same as adding 16+08). Two points of
-notice. First of all, make sure to use `>=` and not `>` in the first `if`
-statement otherwise you will end with an infinite recursion (see @sec:recursion)
-and [stack overflow](https://en.wikipedia.org/wiki/Stack_overflow) error in some
-cases (test yourself and explain why it will happen for `getEqlLenBins("01",
+Additionally, we defined `getEqlLenBins` that makes sure the two numbers (`bin1`
+and `bin2`) are of equal length. This is because the upcoming `add(bin1::Str,
+bin2::Str)` will rely on the above `add(bin1::Char, bin2::Char)`, that's why the
+shorter number will be padded on the left with zeros (by `lpad`), which is a
+neutral digit in addition (in decimal adding 26+8 is the same as adding
+26+08). Two points of notice. First of all, make sure to use `>=` and not `>` in
+the first `if` statement otherwise you will end up with an infinite recursion
+(see @sec:recursion) and [stack
+overflow](https://en.wikipedia.org/wiki/Stack_overflow) error in some cases
+(test yourself and explain why it will happen for `getEqlLenBins("01",
 "10")`). Secondly, the recursive call `getEqlLenBins(bin2, bin1)` effectively
 swaps the numbers. This is a neat trick and makes no difference here (since
 addition and multiplication are
@@ -266,7 +268,7 @@ end
 
 function add(bin1::Str, bin2::Str)::Str
     @assert isBin(bin1) && isBin(bin2) "both inputs must be binary numbers"
-    bin1::Str, bin2::Str = getEqlLenBins(bin1, bin2)
+    bin1, bin2 = getEqlLenBins(bin1, bin2)
     carriedBit::Char = '0'
     runningBit::Char = '0'
     runningBits::Str = ""
@@ -290,23 +292,24 @@ The key function is rather simple. First, we align the binaries to contain the
 same number of bits/slots (`getEqlLenBins`) and declare (and initialize) a few
 helper variables. Next, we move from right to left (`reverse` functions) by the
 corresponding bits (`b1`, `b2`) of our binary numbers (`bin1` and `bin2`). We
-add the bits together (`add(b1, b2)`) and prepend (`*`) the obtained
-`runningBit` and `carriedBit` to `runningBits` and `carriedBits`, respectively.
-Once we traveled every bit of `bin1` and `bin2` (thanks to the `for` loop). We
-check if the `carriedBits` is equal to zero (i.e. all bits are equal `0`). If so
-(`if isZero(carriedBits)`), then we `return` our `runningBits` but without the
-excessive zeros (`lstrip(isZero, runningBits)`) that might have been produced on
-the left site (since e.g. the binary `010` is the same as `10`, just like the
-decimal `03` is the same as `3`). However, if `runningBits` is equal zero
-(`isZero(runningBits)`) we return `"0"` (because in this case `lstrip` would
-return an empty string, i.e. `""`). Otherwise (`else`), we just add the carried
-bits to the running bits (recursive `add(runningBits, carriedBits)`
-call). Notice, that in order for the last statement to work `carriiedBits` need
-to be moved by 1 to the left with respect to the `runningBits`. That is why, we
-initialized them with `"0"` and not an empty string `""` in the first place
-(`carriedBits::Str = "0"`). If the last statement is not clear, then go ahead
-take a pen and paper and add two simple decimals with the carry (like in the
-primary school). Then you will see that the carried bit is moved to the left.
+add the bits together (`add(b1, b2)`) and prepend (`*` - glues `Char`s and
+`String`s together) the obtained `runningBit` and `carriedBit` to `runningBits`
+and `carriedBits`, respectively.  Once we traveled every bit of `bin1` and
+`bin2` (thanks to the `for` loop). We check if the `carriedBits` is equal to
+zero (i.e. all bits are equal `0`). If so (`if isZero(carriedBits)`), then we
+`return` our `runningBits` but without the excessive zeros (`lstrip(isZero,
+runningBits)`) that might have been produced on the left site (since e.g. the
+binary `010` is the same as `10`, just like the decimal `03` is the same as
+`3`). However, if `runningBits` is equal zero (`isZero(runningBits)`) we return
+`"0"` (because in this case `lstrip` would return an empty string,
+i.e. `""`). Otherwise (`else`), we just add the carried bits to the running bits
+(recursive `add(runningBits, carriedBits)` call). Notice, that in order for the
+last statement to work `carriiedBits` need to be moved by 1 to the left with
+respect to the `runningBits`. That is why, we initialized them with `"0"` and
+not an empty string `""` in the first place (`carriedBits::Str = "0"`). If the
+last two sentences are not clear, then go ahead take a pen and paper and add two
+simple decimals with the carry (like in the primary school). Then you will see
+that the carried bit is moved to the left.
 
 Again, some test would be in order. And here is our testing powerhouse.
 
@@ -323,11 +326,11 @@ end
 sc(s)
 ```
 
-`doesBinFnWork` accepts two decimals `dec1` and `dec2` and two functions `binFn`
-and `decFn` as its arguments. Each of the functions should accept two arguments
-(`binFn` binaries, and `decFn` decimals) and perform the same operation on
-them. Notice, that inside of `doesBinFnWork` both `dec1` and `dec2` are
-converted to binaries and send to `binFn`, whereas the result of
+`doesBinFnWork` accepts two decimals (`dec1`, `dec2`) and two functions
+(`binFn`, `decFn`) as its arguments. Each of the functions should accept two
+arguments (`binFn` binaries, and `decFn` decimals) and perform the same
+operation on them. Notice, that inside of `doesBinFnWork` both `dec1` and `dec2`
+are converted to binaries and send to `binFn`, whereas the result of
 `decFn(dec1, dec2)` is converted to binary. In the end `bin1` and `bin2` are
 compared to make sure that they are mathematically equal. All set, time for a
 test.
@@ -335,10 +338,10 @@ test.
 ```jl
 s = """
 # running this test may take a few seconds (513x513 matrix)
-tests = [doesBinFnWork(a, b, add, +) for a in 0:51, b in 0:51];
+tests = [doesBinFnWork(a, b, add, +) for a in 0:52, b in 0:52];
 all(tests)
 """
-replace(sco(s), "51" => "512")
+replace(sco(s), "52" => "512")
 ```
 
 Another day, another dollar. Good for us.
