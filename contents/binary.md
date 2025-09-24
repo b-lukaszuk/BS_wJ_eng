@@ -256,6 +256,14 @@ cause troubles otherwise. Anyway, time for `add(bin1::Str, bin2::Str)`.
 
 ```jl
 s = """
+function isZero(bin::Char)::Bool
+    return bin == '0'
+end
+
+function isZero(bin::Str)::Bool
+    return isZero.(collect(bin)) |> all
+end
+
 function add(bin1::Str, bin2::Str)::Str
     @assert isBin(bin1) && isBin(bin2) "both inputs must be binary numbers"
     bin1::Str, bin2::Str = getEqlLenBins(bin1, bin2)
@@ -278,9 +286,9 @@ end
 sc(s)
 ```
 
-The function is rather simple. First, we align the binaries to contain the same
-number of bits/slots (`getEqlLenBins`) and declare (and initialize) a few helper
-variables. Next, we move from right to left (`reverse` functions) by the
+The key function is rather simple. First, we align the binaries to contain the
+same number of bits/slots (`getEqlLenBins`) and declare (and initialize) a few
+helper variables. Next, we move from right to left (`reverse` functions) by the
 corresponding bits (`b1`, `b2`) of our binary numbers (`bin1` and `bin2`). We
 add the bits together (`add(b1, b2)`) and prepend (`*`) the obtained
 `runningBit` and `carriedBit` to `runningBits` and `carriedBits`, respectively.
@@ -299,3 +307,38 @@ initialized them with `"0"` and not an empty string `""` in the first place
 (`carriedBits::Str = "0"`). If the last statement is not clear, then go ahead
 take a pen and paper and add two simple decimals with the carry (like in the
 primary school). Then you will see that the carried bit is moved to the left.
+
+Again, some test would be in order. And here is our testing powerhouse.
+
+```jl
+s = """
+# binFn(Str, Str) -> Str, decFn(Int, Int) -> Int
+function doesBinFnWork(dec1::Int, dec2::Int,
+                       binFn::Function, decFn::Function)::Bool
+    bin1::Str = binFn(dec2bin(dec1), dec2bin(dec2))
+    bin2::Str = string(decFn(dec1, dec2), base=2)
+    return bin1 == bin2
+end
+"""
+sc(s)
+```
+
+`doesBinFnWork` accepts two decimals `dec1` and `dec2` and two functions `binFn`
+and `decFn` as its arguments. Each of the functions should accept two arguments
+(`binFn` binaries, and `decFn` decimals) and perform the same operation on
+them. Notice, that inside of `doesBinFnWork` both `dec1` and `dec2` are
+converted to binaries and send to `binFn`, whereas the result of
+`decFn(dec1, dec2)` is converted to binary. In the end `bin1` and `bin2` are
+compared to make sure that they are mathematically equal. All set, time for a
+test.
+
+```jl
+s = """
+# running this test may take a few seconds (513x513 matrix)
+tests = [doesBinFnWork(a, b, add, +) for a in 0:51, b in 0:51];
+all(tests)
+"""
+replace(sco(s), "51" => "512")
+```
+
+Another day, another dollar. Good for us.
