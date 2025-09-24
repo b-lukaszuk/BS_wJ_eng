@@ -252,4 +252,50 @@ cases (test yourself and explain why it will happen for `getEqlLenBins("01",
 swaps the numbers. This is a neat trick and makes no difference here (since
 addition and multiplication are
 [commutative](https://en.wikipedia.org/wiki/Commutative_property)), but may
-cause troubles otherwise.
+cause troubles otherwise. Anyway, time for `add(bin1::Str, bin2::Str)`.
+
+```jl
+s = """
+function add(bin1::Str, bin2::Str)::Str
+    @assert isBin(bin1) && isBin(bin2) "both inputs must be binary numbers"
+    bin1::Str, bin2::Str = getEqlLenBins(bin1, bin2)
+    carriedBit::Char = '0'
+    runningBit::Char = '0'
+    runningBits::Str = ""
+    carriedBits::Str = "0"
+    for (b1, b2) in zip(reverse(bin1), reverse(bin2))
+        carriedBit, runningBit = add(b1, b2)
+        runningBits = runningBit * runningBits
+        carriedBits = carriedBit * carriedBits
+    end
+    if isZero(carriedBits)
+        return isZero(runningBits) ? "0" : lstrip(isZero, runningBits)
+    else
+        return add(runningBits, carriedBits)
+    end
+end
+"""
+sc(s)
+```
+
+The function is rather simple. First, we align the binaries to contain the same
+number of bits/slots (`getEqlLenBins`) and declare (and initialize) a few helper
+variables. Next, we move from right to left (`reverse` functions) by the
+corresponding bits (`b1`, `b2`) of our binary numbers (`bin1` and `bin2`). We
+add the bits together (`add(b1, b2)`) and prepend (`*`) the obtained
+`runningBit` and `carriedBit` to `runningBits` and `carriedBits`, respectively.
+Once we traveled every bit of `bin1` and `bin2` (thanks to the `for` loop). We
+check if the `carriedBits` is equal to zero (i.e. all bits are equal `0`). If so
+(`if isZero(carriedBits)`), then we `return` our `runningBits` but without the
+excessive zeros (`lstrip(isZero, runningBits)`) that might have been produced on
+the left site (since e.g. the binary `010` is the same as `10`, just like the
+decimal `03` is the same as `3`). However, if `runningBits` is equal zero
+(`isZero(runningBits)`) we return `"0"` (because in this case `lstrip` would
+return an empty string, i.e. `""`). Otherwise (`else`), we just add the carried
+bits to the running bits (recursive `add(runningBits, carriedBits)`
+call). Notice, that in order for the last statement to work `carriiedBits` need
+to be moved by 1 to the left with respect to the `runningBits`. That is why, we
+initialized them with `"0"` and not an empty string `""` in the first place
+(`carriedBits::Str = "0"`). If the last statement is not clear, then go ahead
+take a pen and paper and add two simple decimals with the carry (like in the
+primary school). Then you will see that the carried bit is moved to the left.
