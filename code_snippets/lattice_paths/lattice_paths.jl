@@ -1,3 +1,6 @@
+# inspired by:
+# https://projecteuler.net/problem=15
+
 import CairoMakie as Cmk
 
 const Vec = Vector
@@ -11,18 +14,16 @@ const DOWN = (0, -1)
 # the code in this file is meant to serve as a programming exercise only
 # and it may not act correctly
 
-# https://projecteuler.net/problem=15
 function add(position::Pos, move::Pos)::Pos
-    return (position[1]+move[1], position[2]+move[2])
+    return position .+ move
 end
 
-function add(positions::Vec{Pos},
-             moves::Vec{Pos})::Vec{Pos}
+function add(positions::Vec{Pos}, moves::Vec{Pos})::Vec{Pos}
+    @assert !isempty(positions) "positions cannot be empty"
+    @assert !isempty(moves) "moves cannot be empty"
     result::Vec{Pos} = []
-    for p in positions
-        for m in moves
-            push!(result, add(p, m))
-        end
+    for p in positions, m in moves
+        push!(result, add(p, m))
     end
     return result
 end
@@ -85,13 +86,13 @@ ps = filter(v -> v[end] == (4, -4), ps)
 binomial(8, 4)
 
 function getDirection(p1::Pos, p2::Pos)::Pos
-    return (p2[1]-p1[1], p2[2]-p1[2])
+    return p2 .- p1
 end
 
-function getDirections(path::Vec{Tuple{Int, Int}})::Vec{Tuple{Int, Int}}
-    directions::Vec{Tuple{Int, Int}} = []
-    for (startPoint, endPoint) in zip(path, path[2:end])
-        push!(directions, getDirection(startPoint, endPoint))
+function getDirections(path::Path)::Vec{Pos}
+    directions::Vec{Pos} = []
+    for i in eachindex(path)[1:end-1]
+        push!(directions, getDirection(path[i], path[i+1]))
     end
     return directions
 end
@@ -110,10 +111,8 @@ function addGrid!(ax::Cmk.Axis,
     return nothing
 end
 
-function drawPaths(paths::Vec{Path},
-                   xmin::Int, xmax::Int,
-                   ymin::Int, ymax::Int,
-                   nCols::Int)::Cmk.Figure
+function drawPaths(paths::Vec{Path}, xmin::Int, xmax::Int,
+                   ymin::Int, ymax::Int, nCols::Int)::Cmk.Figure
     fig::Cmk.Figure = Cmk.Figure(size=(800, 800))
     r::Int, c::Int = 1, 1
     xCuts::Vec{Int} = collect(xmin:xmax)
@@ -124,7 +123,7 @@ function drawPaths(paths::Vec{Path},
                       aspect=1)
         Cmk.hidespines!(ax)
         Cmk.hidedecorations!(ax)
-        directions::Path = getDirections(path)
+        directions::Vec{Pos} = getDirections(path)
         addGrid!(ax, xmin, xmax, xCuts, ymin, ymax, yCuts)
         Cmk.arrows2d!(ax, path[1:end-1], directions)
         if c == nCols
