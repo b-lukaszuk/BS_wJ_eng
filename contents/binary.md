@@ -338,7 +338,7 @@ test.
 ```jl
 s = """
 # running this test may take a few seconds (513x513 matrix)
-tests = [doesBinFnWork(a, b, add, +) for a in 0:52, b in 0:52];
+tests = [doesBinFnWork(a, b, add, +) for a in 0:52, b in 0:52]
 all(tests)
 """
 replace(sco(s), "52" => "512")
@@ -382,4 +382,15 @@ number (`for b in reverse(bin2)`) by the bits in the first number
 (`curProd`) of `b` times `bin1` is summed
 (`add(total, curProd * "0"^zerosToPad`)) into a grand `total`. Just like in the
 decimal system, `curProd` is shifted to left every time we do that, which is why
-we defined and increase `zerosToPad` variable.
+we defined and increase `zerosToPad` variable. Let's test it out.
+
+```jl
+s = """
+# 33x33 matrix so it should be relatively fast
+tests = [doesBinFnWork(a, b, multiply, *) for a in 0:32, b in 0:32]
+all(tests)
+"""
+sco(s)
+```
+
+I guess we did it again. Good for us.

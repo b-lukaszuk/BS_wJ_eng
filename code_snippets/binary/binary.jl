@@ -142,6 +142,6 @@ function multiply(bin1::Str, bin2::Str)::Str
     return total
 end
 
-# 33x33 matrix
+# 33x33 matrix so it should be relatively fast
 tests = [doesBinFnWork(a, b, multiply, *) for a in 0:32, b in 0:32];
 all(tests)
