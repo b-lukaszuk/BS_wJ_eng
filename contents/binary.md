@@ -13,7 +13,7 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/binary
 
 Numbers, or information in general, can be written down in different forms. The
 most basic one, and the only one that is actually understood by a computer, is
-as a binary. Usually, it is depicted by a sequence of 1s and 0s, but it could be
+a binary. Usually, it is depicted by a sequence of 1s and 0s, but it could be
 anything really. Anything, that can take two separate states. The once common
 [CDs](https://en.wikipedia.org/wiki/Compact_disc) or
 [DVDs](https://en.wikipedia.org/wiki/DVD) are a sequence of laser burns (tiny
@@ -21,12 +21,12 @@ pits) in a spiral track (burn - 1, no burn - 0). The [hard disk
 drives](https://en.wikipedia.org/wiki/Hard_disk_drive) store data as magnetized
 spots, whereas [SSD drives](https://en.wikipedia.org/wiki/Solid-state_drive)
 cash it as electrons trapped in tiny transistors. The data can be read into
-into memory (RAM) and send to a processor for calculations.
+memory (RAM) and send to a processor for calculations.
 
-Here is a task for you, read about [binary
-numbers](https://en.wikipedia.org/wiki/Binary_number) or watch some online
+This time you task is to read about the [binary
+numbers](https://en.wikipedia.org/wiki/Binary_number), or watch some online
 videos (e.g. from [Khan
-Academy](https://www.youtube.com/watch?v=ku4KOFQ-bB4&list=PLS---sZ5WJJvsjaAQZKwTwxl910xUdO98))
+Academy](https://www.youtube.com/watch?v=ku4KOFQ-bB4&list=PLS---sZ5WJJvsjaAQZKwTwxl910xUdO98)),
 on the topic. Next, to get a better grasp of the subject, write:
 
 - a function that transforms a binary number to its decimal counterpart
@@ -46,11 +46,11 @@ Let's start with our `dec2bin` converter, we'll base it on the [Khan Academy
 videos](https://www.youtube.com/watch?v=ku4KOFQ-bB4&list=PLS---sZ5WJJvsjaAQZKwTwxl910xUdO98)
 and similarities with the decimal number system.
 
-A decimal system operates on base 10. A number, let's say: one hundred and
-twenty-three (123), can be written with digits ([0-9]) placed in three slots. We
-know this because three slots allow us to write $10^3 = 1000$ numbers ([0-999]),
-whereas two slots are good only for $10^2 = 100$ numbers ([0-99], compare also
-with the [exercise
+[The decimal system](https://en.wikipedia.org/wiki/Decimal) operates on
+base 10. A number, let's say: one hundred and twenty-three (123), can be written
+with digits ([0-9]) placed in three slots. We know this because three slots
+allow us to write $10^3 = 1000$ numbers ([0-999]), whereas two slots are good
+only for $10^2 = 100$ numbers ([0-99], compare also with the [exercise
 1](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_exercises.html#sec:statistics_intro_exercise1)
 and [its
 solution](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_exercises_solutions.html#sec:statistics_intro_exercise1_solution)).
@@ -63,12 +63,13 @@ $1*10^2 + 2*10^1 + 3*10^0$ =
 a moment and make sure you got that.
 
 Similar reasoning applies to binary numbers, but here we operate on the powers
-of two. A number, let's say: fourteen (14), can be written with digits ([0-1])
-placed in four slots. This is because $2^4$ allows us to write down 16 numbers
-(in binary: [0000-1111]), whereas $2^3$ suffices for only 8 numbers (in binary:
-[000-111]). Each slot (from right to left) represents subsequent powers of two,
-i.e. ones ($2^0 = 1$), twos ($2^1 = 2$), fours ($2^2 = 4$), and eights ($2^3 =
-8$). Once again we sum the digits to get our encoded number `1110` =
+of two. A decimal number, let's say: fourteen (14), can be written with digits
+([0-1]) placed in four slots. This is because $2^4$ allows us to write down 16
+numbers (in binary: [0000-1111], in decimal: [0-15]), whereas $2^3$ suffices
+only for 8 numbers (in binary: [000-111], in decimal: [0-7]). Each slot (from
+right to left) represents subsequent powers of two, i.e. ones ($2^0 = 1$), twos
+($2^1 = 2$), fours ($2^2 = 4$), and eights ($2^3 = 8$). Once again we sum the
+digits to get our encoded number `1110` =
 $1*2^3 + 1*2^2 + 1*2^1 + 1*2^0$ = $1*8 + 1*4 + 1*2 + 1*0$ =
 `sum([1*8, 1*4, 1*2, 1*0])` = `jl sum([1*8, 1*4, 1*2, 1*0])`. Time to put that
 knowledge to good use by writing our `dec2bin`.
@@ -178,11 +179,12 @@ sc(s)
 
 Once again, we we start our main function (`bin2dec`) with the definition of a
 few helper variables: `pwr` - which holds a power of the current bit which is in
-range from `0` to `length(bin)-1` (from the rightmost to the leftmost bit), and
-`result` which is just a sum of all bits expressed in decimal system. We build
-the sum (`result +=`) bit by bit (`for b in bin`), but only for the bits equal
-`'1'` (`(b == `1`) ? 2^pwr`) while reducing the power for the next bit as we
-shift right (`pwr -= 1`). Finally, all that's left is to `return` the `result`.
+the range from `length(bin)-1` to `0` (from the leftmost to the rightmost bit),
+and `result` which is just a sum of all bits expressed in decimal system. We
+build the sum (`result +=`) bit by bit (`for b in bin`), but only for the bits
+equal `'1'` (`(b == `1`) ? 2^pwr`) while reducing the power for the next bit as
+we shift right (`pwr -= 1`). Finally, all that's left to do is to `return` the
+`result`.
 
 Let's see how we did.
 
@@ -205,6 +207,10 @@ sco(s)
 Again, it seems that we can't complain.
 
 OK, time to add two binaries.
+
+> **_Note:_** Before you move further, I suggest you take a pen and paper and do
+> the addition and multiplication for some decimals and binaries to get a better
+> grasp of the process that we will translate into Julia's code.
 
 ```jl
 s = """
@@ -289,19 +295,19 @@ sc(s)
 ```
 
 The key function is rather simple. First, we align the binaries to contain the
-same number of bits/slots (`getEqlLenBins`) and declare (and initialize) a few
+same number of bits/slots (`getEqlLenBins`) and declare (+ initialize) a few
 helper variables. Next, we move from right to left (`reverse` functions) by the
 corresponding bits (`b1`, `b2`) of our binary numbers (`bin1` and `bin2`). We
 add the bits together (`add(b1, b2)`) and prepend (`*` - glues `Char`s and
 `String`s together) the obtained `runningBit` and `carriedBit` to `runningBits`
-and `carriedBits`, respectively.  Once we traveled every bit of `bin1` and
+and `carriedBits`, respectively. Once we traveled every bit of `bin1` and
 `bin2` (thanks to the `for` loop). We check if the `carriedBits` is equal to
 zero (i.e. all bits are equal `0`). If so (`if isZero(carriedBits)`), then we
 `return` our `runningBits` but without the excessive zeros (`lstrip(isZero,
 runningBits)`) that might have been produced on the left site (since e.g. the
 binary `010` is the same as `10`, just like the decimal `03` is the same as
-`3`). However, if `runningBits` is equal zero (`isZero(runningBits)`) we return
-`"0"` (because in this case `lstrip` would return an empty string,
+`3`). However, if `runningBits` is equal zero (`isZero(runningBits) ?`) we
+return `"0"` (because in this case `lstrip` would have returned an empty string,
 i.e. `""`). Otherwise (`else`), we just add the carried bits to the running bits
 (recursive `add(runningBits, carriedBits)` call). Notice, that in order for the
 last statement to work `carriiedBits` need to be moved by 1 to the left with
@@ -311,7 +317,7 @@ last two sentences are not clear, then go ahead take a pen and paper and add two
 simple decimals with the carry (like in the primary school). Then you will see
 that the carried bit is moved to the left.
 
-Again, some test would be in order. And here is our testing powerhouse.
+Some test would be in order. And here is our testing powerhouse.
 
 ```jl
 s = """
@@ -360,7 +366,7 @@ end
 function multiply(bin1::Str, bin2::Str)::Str
     @assert isBin(bin1) && isBin(bin2) "both inputs must be binary numbers"
     total::Str = "0"
-    curProd::Str = "1"
+    curProd::Str = "0"
     zerosToPad::Int = 0
     for b in reverse(bin2)
         curProd = multiply.(b, collect(bin1)) |> join
@@ -374,7 +380,7 @@ sc(s)
 ```
 
 Again, we begin by defining how to multiply two individual bits, and again it
-resembles the multiplication in the decimal system). Once we got it, we move to
+resembles the multiplication in the decimal system. Once we got it, we move to
 multiply the whole numbers (`mulitply(bin1::Str, bin2::Str`)). Just like in the
 decimal system we multiply all the bits (from right to left) from the second
 number (`for b in reverse(bin2)`) by the bits in the first number
@@ -382,7 +388,7 @@ number (`for b in reverse(bin2)`) by the bits in the first number
 (`curProd`) of `b` times `bin1` is summed
 (`add(total, curProd * "0"^zerosToPad`)) into a grand `total`. Just like in the
 decimal system, `curProd` is shifted to left every time we do that, which is why
-we defined and increase `zerosToPad` variable. Let's test it out.
+we defined and increased `zerosToPad` variable. Let's test it out.
 
 ```jl
 s = """
