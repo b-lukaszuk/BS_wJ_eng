@@ -344,4 +344,42 @@ all(tests)
 replace(sco(s), "52" => "512")
 ```
 
-Another day, another dollar. Good for us.
+Another day, another dollar. Time for the multiplication.
+
+```jl
+s = """
+function multiply(bin1::Char, bin2::Char)::Char
+    @assert isBin(bin1) && isBin(bin2) "both inputs must be binary bits"
+    if bin1 == '1' && bin2 == '1'
+        return '1'
+    else
+        return '0'
+    end
+end
+
+function multiply(bin1::Str, bin2::Str)::Str
+    @assert isBin(bin1) && isBin(bin2) "both inputs must be binary numbers"
+    total::Str = "0"
+    curProd::Str = "1"
+    zerosToPad::Int = 0
+    for b in reverse(bin2)
+        curProd = multiply.(b, collect(bin1)) |> join
+        total = add(total, curProd * "0"^zerosToPad)
+        zerosToPad += 1
+    end
+    return total
+end
+"""
+sc(s)
+```
+
+Again, we begin by defining how to multiply two individual bits, and again it
+resembles the multiplication in the decimal system). Once we got it, we move to
+multiply the whole numbers (`mulitply(bin1::Str, bin2::Str`)). Just like in the
+decimal system we multiply all the bits (from right to left) from the second
+number (`for b in reverse(bin2)`) by the bits in the first number
+(`multiply.(b, collect(bin1)) |> join`). After each multiplication the product
+(`curProd`) of `b` times `bin1` is summed
+(`add(total, curProd * "0"^zerosToPad`)) into a grand `total`. Just like in the
+decimal system, `curProd` is shifted to left every time we do that, which is why
+we defined and increase `zerosToPad` variable.
