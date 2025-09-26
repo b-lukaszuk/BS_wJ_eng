@@ -1,8 +1,13 @@
 # Lattice Paths {#sec:lattice_paths}
 
-In this chapter I will not use any external libraries. Still, once you read the
-problem description you may decide to do otherwise. In that case don't let me
-stop you.
+In this chapter you may or may not use the following external libraries.
+
+```jl
+s24 = """
+import CairoMakie as Cmk
+"""
+sc(s24)
+```
 
 You may compare your own solution with the one in this chapter (with
 explanations) or with [the code
@@ -16,7 +21,8 @@ Project problem](https://projecteuler.net/problem=15), but modified by me.
 
 Take a look at @fig:latticePaths2x2 below. You will find a big square build of
 2x2 smaller squares. Your task is to start at the top left corner of the big
-square and go to the bottom right corner of it using only right and down arrows.
+square and go to the bottom right corner of it using only right and down arrows
+(as few as possible).
 
 ![Lattice paths on a 2x2 grid.](./images/latticePaths2x2.png){#fig:latticePaths2x2}
 
