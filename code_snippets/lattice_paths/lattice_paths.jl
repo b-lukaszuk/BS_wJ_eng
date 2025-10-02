@@ -1,12 +1,11 @@
-# inspired by:
-# https://projecteuler.net/problem=15
-
 import CairoMakie as Cmk
 
 const Vec = Vector
+const Flt = Float64
 
 const Pos = Tuple{Int, Int}
-const Path = Vec{Pos}
+const Mov = Tuple{Int, Int}
+const Path = Vector{Pos}
 
 const RIGHT = (1, 0)
 const DOWN = (0, -1)
@@ -14,11 +13,11 @@ const DOWN = (0, -1)
 # the code in this file is meant to serve as a programming exercise only
 # and it may not act correctly
 
-function add(position::Pos, move::Pos)::Pos
+function add(position::Pos, move::Mov)::Pos
     return position .+ move
 end
 
-function add(positions::Vec{Pos}, moves::Vec{Pos})::Vec{Pos}
+function add(positions::Vec{Pos}, moves::Vec{Mov})::Vec{Pos}
     @assert !isempty(positions) "positions cannot be empty"
     @assert !isempty(moves) "moves cannot be empty"
     result::Vec{Pos} = []
@@ -28,27 +27,25 @@ function add(positions::Vec{Pos}, moves::Vec{Pos})::Vec{Pos}
     return result
 end
 
-function getSums(nRows::Int=2)::Vec{Pos}
+function getFinalPositions(nRows::Int)::Vec{Pos}
     @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
     sums::Vec{Pos} = [(0, 0)]
-    moves::Vec{Pos} = [RIGHT, DOWN]
+    moves::Vec{Mov} = [RIGHT, DOWN]
     for _ in 1:(nRows*2) # - *2 - because of columns
         sums = add(sums, moves)
     end
     return sums
 end
 
-s = getSums(2)
-filter(y -> y == (2, -2), s) |> length
-binomial(4, 2)
+function getNumOfPaths(nRows::Int)::Int
+    @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
+    target::Pos = (nRows, -nRows)
+    positions::Vec{Pos} = getFinalPositions(nRows)
+    return filter(x -> x == target, positions) |> length
+end
 
-s = getSums(3)
-filter(y -> y == (3, -3), s) |> length
-binomial(6, 3)
-
-s = getSums(4)
-filter(y -> y == (4, -4), s) |> length
-binomial(8, 4)
+getNumOfPaths.(1:4)
+all([getNumOfPaths(i) == binomial(2*i, i) for i in 1:4])
 
 function makeOneStep(prevPaths::Vec{Path})::Vec{Path}
     @assert !isempty(prevPaths) "prevPaths cannot be empty"
@@ -64,7 +61,7 @@ function makeOneStep(prevPaths::Vec{Path})::Vec{Path}
     return result
 end
 
-function getPaths(nRows::Int=2)::Vec{Path}
+function getPaths(nRows::Int)::Vec{Path}
     @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
     result::Vec{Path} = [[(0, 0)]]
     for _ in 1:(nRows*2) # - *2 - because of columns
@@ -72,6 +69,10 @@ function getPaths(nRows::Int=2)::Vec{Path}
     end
     return result
 end
+
+ps = getPaths(1)
+ps = filter(v -> v[end] == (1, -1), ps)
+binomial(2, 1)
 
 ps = getPaths(2)
 ps = filter(v -> v[end] == (2, -2), ps)
@@ -85,12 +86,12 @@ ps = getPaths(4)
 ps = filter(v -> v[end] == (4, -4), ps)
 binomial(8, 4)
 
-function getDirection(p1::Pos, p2::Pos)::Pos
+function getDirection(p1::Pos, p2::Pos)::Mov
     return p2 .- p1
 end
 
-function getDirections(path::Path)::Vec{Pos}
-    directions::Vec{Pos} = []
+function getDirections(path::Path)::Vec{Mov}
+    directions::Vec{Mov} = []
     for i in eachindex(path)[1:end-1]
         push!(directions, getDirection(path[i], path[i+1]))
     end
@@ -98,10 +99,10 @@ function getDirections(path::Path)::Vec{Pos}
 end
 
 function addGrid!(ax::Cmk.Axis,
-                  xmin::Int=0, xmax::Int=2,
-                  xCuts::Vec{Int}=[0, 1, 2],
-                  ymin::Int=0, ymax::Int=-2,
-                  yCuts::Vec{Int}=[0, -1, -2])
+                  xmin::Int=0, xmax::Int=2, xCuts::Vec{Int}=[0, 1, 2],
+                  ymin::Int=0, ymax::Int=-2, yCuts::Vec{Int}=[0, -1, -2])
+    @assert xmin < xmax "xmin must be < xmax"
+    @assert ymin < ymax "ymin must be < ymax"
     for yCut in yCuts
         Cmk.lines!(ax, [xmin, xmax], [yCut, yCut], color=:blue, linewidth=1)
     end
@@ -113,13 +114,16 @@ end
 
 function drawPaths(paths::Vec{Path}, xmin::Int, xmax::Int,
                    ymin::Int, ymax::Int, nCols::Int)::Cmk.Figure
-    fig::Cmk.Figure = Cmk.Figure(size=(800, 800))
+    @assert length(paths) % nCols == 0 "nCols is not multiple of length(paths)"
+    # fig::Cmk.Figure = Cmk.Figure(size=(1000, 800))
+    fig::Cmk.Figure = Cmk.Figure()
     r::Int, c::Int = 1, 1
     xCuts::Vec{Int} = collect(xmin:xmax)
     yCuts::Vec{Int} = collect(ymin:ymax)
+    sp::Flt = 0.5 # extra space for better outlook
     for path in paths
         ax = Cmk.Axis(fig[r, c],
-                      limits=(xmin-0.25, xmax+0.25, ymin-0.25, ymax+0.25),
+                      limits=(xmin-sp, xmax+sp, ymin-sp, ymax+sp),
                       aspect=1)
         Cmk.hidespines!(ax)
         Cmk.hidedecorations!(ax)
@@ -133,10 +137,14 @@ function drawPaths(paths::Vec{Path}, xmin::Int, xmax::Int,
             c += 1
         end
     end
-    Cmk.rowgap!(fig.layout, -10)
-    Cmk.colgap!(fig.layout, -10)
+    # Cmk.rowgap!(fig.layout, Cmk.Fixed(1))
+    # Cmk.colgap!(fig.layout, Cmk.Fixed(1))
     return fig
 end
+
+ps = getPaths(1)
+ps = filter(v -> v[end] == (1, -1), ps)
+drawPaths(ps, 0, 1, -1, 0, 2)
 
 ps = getPaths(2)
 ps = filter(v -> v[end] == (2, -2), ps)
@@ -145,3 +153,9 @@ drawPaths(ps, 0, 2, -2, 0, 3)
 ps = getPaths(3)
 ps = filter(v -> v[end] == (3, -3), ps)
 drawPaths(ps, 0, 3, -3, 0, 4)
+drawPaths(ps, 0, 3, -3, 0, 5)
+
+ps = getPaths(4)
+ps = filter(v -> v[end] == (4, -4), ps)
+drawPaths(ps, 0, 4, -4, 0, 7)
+drawPaths(ps, 0, 4, -4, 0, 10)
