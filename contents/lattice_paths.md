@@ -47,8 +47,8 @@ Still, for practical reasons I like to use computer calculations to help me with
 my understanding. Let's start small, first, analyze the pictures in
 @fig:latticePaths1x1 and the previously depicted @fig:latticePaths2x2.
 
-> **_Note:_** The solution presented here is practical only up to 4x4 lattice
-> (70 paths to calculate and to draw). [The original
+> **_Note:_** The solution presented here is practical only fors small girds (up
+> to 4x4 lattice, 70 paths to calculate and to draw). [The original
 > problem](https://projecteuler.net/problem=15) (20x20 grid) got `binomial(40,
 > 20)` = `jl binomial(40, 20)` possible routes between the top-left and
 > bottom-right corner. That's far too many to calculate with the presented
@@ -69,3 +69,41 @@ length = 1);
 each path and it is equal to nRows+nCols (or nRows*2);
 
 Equipped with this knowledge, we can finally do something useful.
+
+```
+const Pos = Tuple{Int, Int}
+const Mov = Tuple{Int, Int}
+
+const RIGHT = (1, 0)
+const DOWN = (0, -1)
+
+function add(position::Pos, move::Mov)::Pos
+    return position .+ move
+end
+
+function add(positions::Vec{Pos}, moves::Vec{Mov})::Vec{Pos}
+    @assert !isempty(positions) "positions cannot be empty"
+    @assert !isempty(moves) "moves cannot be empty"
+    result::Vec{Pos} = []
+    for p in positions, m in moves
+        push!(result, add(p, m))
+    end
+    return result
+end
+```
+
+We begin by defining a few constants. The type synonyms: `Pos` (shortcut for
+position), `Mov` (shortcut for move) will save us some typing later on.
+Whereas, `RIGHT` (shift by 1 unit along X-axis) and `DOWN` (shift by 1 unit along
+Y-axis) are the arrow coordinates in the Cartesian coordinate system.
+
+Next, we define the `add` function. Its first version, aka method, allows to add
+a position (like a starting point, top left corner (0, 0)) to a move (like the
+move to the `RIGHT`). In some programming languages we would have to type
+something like `return (position[1] + move[1], position[2] + move[2])` but in
+Julia we just use a broadcasting operator `.+` to add the tuples
+element-wise. The second version of `add` takes a vector of any starting
+`positions` and any possible `moves` and adds each move to each starting
+position (using simplified nested for loop syntax we met in
+@sec:mat_multip_solution) to get the new positions (places on the grid) after
+the moves.
