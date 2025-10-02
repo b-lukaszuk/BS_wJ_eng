@@ -107,3 +107,41 @@ element-wise. The second version of `add` takes a vector of any starting
 position (using simplified nested for loop syntax we met in
 @sec:mat_multip_solution) to get the new positions (places on the grid) after
 the moves.
+
+Let's put the above functions to good use.
+
+```
+function getFinalPositions(nRows::Int)::Vec{Pos}
+    @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
+    sums::Vec{Pos} = [(0, 0)]
+    moves::Vec{Mov} = [RIGHT, DOWN]
+    for _ in 1:(nRows*2) # - *2 - because of columns
+        sums = add(sums, moves)
+    end
+    return sums
+end
+
+function getNumOfPaths(nRows::Int)::Int
+    @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
+    target::Pos = (nRows, -nRows)
+    positions::Vec{Pos} = getFinalPositions(nRows)
+    return filter(x -> x == target, positions) |> length
+end
+
+getNumOfPaths(3) # the same result as: binomial(6, 3)
+```
+
+```
+20
+```
+
+`getFinalPositions` accepts `nRows` which is the number of small squares in a
+column of, e.g. @fig:latticePaths2x2. Next, it starts at the top left corner
+(`sums::Vec{Pos} = [(0, 0)]`) and `moves` away from it. The number of moves is
+equal to `nRows*2` (see point 3 in the points of notice above), and we always go
+in both directions (`RIGHT` and `DOWN` which are in `moves`) thanks to the
+previously defined `add` function. Finally, we return the final positions
+(`return sums`) that we get after we made all the possible moves. Next, in
+`getNumOfPaths`, we choose only those `positions` that land us in the bottom
+right corner (`target`, see point 2 in the points of notice above) by using
+`filter`. The `length` of our vector is the number of paths we were looking for.
