@@ -30,7 +30,7 @@ end
 
 function getFinalPositions(nRows::Int)::Vec{Pos}
     @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
-    sums::Vec{Pos} = [(0, 0)]
+    sums::Vec{Pos} = [(0, 0)] # top left corner
     for _ in 1:(nRows*2) # - *2 - because of columns
         sums = add(sums, MOVES)
     end
@@ -39,9 +39,9 @@ end
 
 function getNumOfPaths(nRows::Int)::Int
     @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
-    target::Pos = (nRows, -nRows)
+    target::Pos = (nRows, -nRows) # bottom right corner
     positions::Vec{Pos} = getFinalPositions(nRows)
-    return filter(x -> x == target, positions) |> length
+    return filter(pos -> pos == target, positions) |> length
 end
 
 getNumOfPaths.(1:4)
@@ -59,8 +59,8 @@ end
 
 function getPaths(nRows::Int)::Vec{Path}
     @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
-    target::Pos = (nRows, -nRows)
-    result::Vec{Path} = [[(0, 0)]]
+    target::Pos = (nRows, -nRows) # bottom right corner
+    result::Vec{Path} = [[(0, 0)]] # top left corner
     for _ in 1:(nRows*2) # - *2 - because of columns
         result = makeOneStep(result, MOVES)
     end
