@@ -45,7 +45,8 @@ entry](https://en.wikipedia.org/wiki/Lattice_path#Combinations_and_NE_lattice_pa
 
 Still, for practical reasons I like to use computer calculations to help me with
 my understanding. Let's start small, first, analyze the pictures in
-@fig:latticePaths1x1 and the previously depicted @fig:latticePaths2x2.
+@fig:latticePaths1x1wCoordinates and the previously depicted
+@fig:latticePaths2x2wCoordinates.
 
 > **_Note:_** The solution presented here is practical only fors small girds (up
 > to 4x4 lattice, 70 paths to calculate and to draw). [The original
@@ -54,17 +55,20 @@ my understanding. Let's start small, first, analyze the pictures in
 > bottom-right corner. That's far too many to calculate with the presented
 > method and to draw in one figure.
 
-![Lattice paths on a 1x1 grid in Cartesian coordinate system.](./images/latticePaths1x1.png){#fig:latticePaths1x1}
+![Lattice paths on a 1x1 grid in Cartesian coordinate system.](./images/latticePaths1x1wCoordinates.png){#fig:latticePaths1x1wCoordinates}
 
-A few points of notice (make sure they agree on @fig:latticePaths2x2 and
-@fig:latticePaths1x1):
+![Lattice paths on a 2x2 grid in Cartesian coordinate system.](./images/latticePaths2x2wCoordinates.png){#fig:latticePaths2x2wCoordinates}
+
+A few points of notice (make sure they agree on @fig:latticePaths2x2wCoordinates
+and @fig:latticePaths1x1wCoordinates):
 
 1) the top left corner could be considered to be the center of our [Cartesian
 coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system)
 with the location (0, 0);
 2) the bottom right corner could be located within that system at position
-(nRows, -nCols) of our grid (each small square in @fig:latticePaths2x2 got side
-length = 1);
+(nRows, -nCols) of our grid (each small square in
+@fig:latticePaths1x1wCoordinates and @fig:latticePaths2x2wCoordinates got side
+length = 1 and builds rows and columns of a large square);
 3) The number of arrows used to reach the destination is always the same for
 each path and it is equal to nRows+nCols (or nRows*2);
 
@@ -136,11 +140,11 @@ getNumOfPaths(3) # the same result as: binomial(6, 3)
 ```
 
 `getFinalPositions` accepts `nRows` which is the number of small squares in a
-column of, e.g. @fig:latticePaths2x2. Next, it starts at the top left corner
-(`sums::Vec{Pos} = [(0, 0)]`) and `moves` away from it. The number of moves is
-equal to `nRows*2` (see point 3 in the points of notice above), and we always go
-in both directions (`RIGHT` and `DOWN` which are in `moves`) thanks to the
-previously defined `add` function. Finally, we return the final positions
+column of, e.g. @fig:latticePaths2x2wCoordinates. Next, it starts at the top
+left corner (`sums::Vec{Pos} = [(0, 0)]`) and `moves` away from it. The number
+of moves is equal to `nRows*2` (see point 3 in the points of notice above), and
+we always go in both directions (`RIGHT` and `DOWN` which are in `moves`) thanks
+to the previously defined `add` function. Finally, we return the final positions
 (`return sums`) that we get after we made all the possible moves. Next, in
 `getNumOfPaths`, we choose only those `positions` that land us in the bottom
 right corner (`target`, see point 2 in the points of notice above) by using
