@@ -6,9 +6,9 @@ Hi, I'm Bart and this is my second open access book entitled:
 
 The book contains a set of challenges of varying level of complexity (most
 likely in the range of easy to moderate). The exercises are for the problems
-that, for whatever reason, I found interesting. The tasks are accompanied by
-exemplary solutions in [Julia](https://julialang.org/) (with explanations).
-Still, I recommend you try to solve the tasks on your own.
+that, for whatever reason, I found interesting and/or suitable. The tasks are
+accompanied by exemplary solutions in [Julia](https://julialang.org/) (with
+explanations). Still, I recommend you try to solve the tasks on your own.
 
 For practical reasons, I will assume this book to be read by curious readers of
 non-mathematical (i.e. resembling mine) background. Moreover, I expect that the
