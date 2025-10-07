@@ -54,9 +54,9 @@ my understanding. Let's start small. First, analyze the pictures in
 > bottom-right corner. That's far too many to calculate with the presented
 > method and to draw in one figure.
 
-![Lattice paths on a 1x1 grid in Cartesian coordinate system.](./images/latticePaths1x1wCoordinates.png){#fig:latticePaths1x1wCoordinates}
+![Lattice paths on a 1x1 grid in Cartesian coordinate system. Blue lines designate individual small squares.](./images/latticePaths1x1wCoordinates.png){#fig:latticePaths1x1wCoordinates}
 
-![Lattice paths on a 2x2 grid in Cartesian coordinate system.](./images/latticePaths2x2wCoordinates.png){#fig:latticePaths2x2wCoordinates}
+![Lattice paths on a 2x2 grid in Cartesian coordinate system. Blue lines designate individual small squares](./images/latticePaths2x2wCoordinates.png){#fig:latticePaths2x2wCoordinates}
 
 A few points of notice (make sure they agree on @fig:latticePaths1x1wCoordinates
 and @fig:latticePaths2x2wCoordinates):
@@ -65,11 +65,11 @@ and @fig:latticePaths2x2wCoordinates):
 coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system)
 with the location (0, 0);
 2) the bottom right corner could be located within that system at position
-(nRows, -nCols) of our grid (each small square in
-@fig:latticePaths1x1wCoordinates and @fig:latticePaths2x2wCoordinates got side
-length = 1 and builds rows and columns of a large square);
-3) The number of arrows used to reach the destination is always the same for
-each path and it is equal to nRows+nCols (or nRows*2);
+(nRows, -nCols) or (nRows, -nRows) of our grid (each small square in
+@fig:latticePaths1x1wCoordinates and @fig:latticePaths2x2wCoordinates got the
+side length = 1 and builds rows and columns of a large square);
+3) The number of arrows used to reach the destination (the bottom right corner)
+is always the same for each path and it is equal to nRows+nCols (or nRows*2);
 
 Equipped with this knowledge, we can finally do something useful.
 
@@ -118,7 +118,7 @@ Let's put the above functions to good use.
 ```
 function getFinalPositions(nRows::Int)::Vec{Pos}
     @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
-    sums::Vec{Pos} = [(0, 0)]
+    sums::Vec{Pos} = [(0, 0)] # top left corner
     for _ in 1:(nRows*2) # - *2 - because of columns
         sums = add(sums, MOVES)
     end
@@ -127,9 +127,9 @@ end
 
 function getNumOfPaths(nRows::Int)::Int
     @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
-    target::Pos = (nRows, -nRows)
+    target::Pos = (nRows, -nRows) # bottom right corner
     positions::Vec{Pos} = getFinalPositions(nRows)
-    return filter(x -> x == target, positions) |> length
+    return filter(pos -> pos == target, positions) |> length
 end
 
 getNumOfPaths(3) # the same result as: binomial(6, 3)
@@ -149,3 +149,59 @@ to the previously defined `add` function. Finally, we return the final positions
 `getNumOfPaths`, we choose only those `positions` that land us in the bottom
 right corner (`target`, see point 2 in the points of notice above) by using
 `filter`. The `length` of our vector is the number of paths we were looking for.
+
+OK, now let's think how to draw it. For once, we could reuse the already written
+functions (`add` and `getFinalPositions`) like so (we will modify the functions
+a little bit):
+
+```
+function makeOneStep(prevPaths::Vec{Path}, moves::Vec{Mov}=MOVES)::Vec{Path}
+    @assert !isempty(prevPaths) "prevPaths cannot be empty"
+    @assert !isempty(moves) "moves cannot be empty"
+    result::Vec{Path} = []
+    for path in prevPaths, move in moves
+        push!(result, [path..., add(path[end], move)])
+    end
+    return result
+end
+
+function getPaths(nRows::Int)::Vec{Path}
+    @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
+    target::Pos = (nRows, -nRows) # bottom right corner
+    result::Vec{Path} = [[(0, 0)]] # top left corner
+    for _ in 1:(nRows*2) # - *2 - because of columns
+        result = makeOneStep(result, MOVES)
+    end
+    return filter(path -> path[end] == target, result)
+end
+```
+
+We begin with `makeOneStep` (analogue to `add(positions, moves)`) a function
+that makes every possible step (`moves`) from the last known location of every
+path in `prevPaths`. BTW, notice how defining the type synonyms paid
+off. Without them `Vec{Mov}` would be `Vector{Tuple{Int, Int}}` (it isn't all
+that bad), but `Vec{Path}` would grow to `Vector{Vector{Tuple{Int, Int}}}`,
+which is a little monster. Anyway, thanks to the double `for` loop we `add`
+every possible `move` (here `RIGHT` or `DOWN`) to the last know location of a
+`path` (`path[end]`, which is a `Pos`)) and append it (`push!`) to the `result`
+(`path...` copies the previous vector).
+
+Once we know how to `makeOneStep` (remember we test both directions, `moves` at
+once, so we branch our paths into two separate paths at each step we take) time
+to take `nRows*2` steps (with `for`) and see which ones will eventually create
+the paths that will lead us to our final position (`path[end] == target`). As
+you have guessed this is exactly what `getPaths` does.
+
+Let's see how we did so far (simple minimal test, locate the points depicted
+with tuples on @fig:latticePaths1x1wCoordinates).
+
+```
+getPaths(1)
+```
+
+```
+ [(0, 0), (1, 0), (1, -1)]
+ [(0, 0), (0, -1), (1, -1)]
+```
+
+I don't know about you, but I'm pretty satisfied with the result.
