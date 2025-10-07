@@ -44,9 +44,8 @@ mathematician, then for a detailed explanation I refer you to [this Wikipedia's
 entry](https://en.wikipedia.org/wiki/Lattice_path#Combinations_and_NE_lattice_paths).
 
 Still, for practical reasons I like to use computer calculations to help me with
-my understanding. Let's start small, first, analyze the pictures in
-@fig:latticePaths1x1wCoordinates and the previously depicted
-@fig:latticePaths2x2wCoordinates.
+my understanding. Let's start small. First, analyze the pictures in
+@fig:latticePaths1x1wCoordinates and @fig:latticePaths2x2wCoordinates.
 
 > **_Note:_** The solution presented here is practical only fors small girds (up
 > to 4x4 lattice, 70 paths to calculate and to draw). [The original
@@ -59,8 +58,8 @@ my understanding. Let's start small, first, analyze the pictures in
 
 ![Lattice paths on a 2x2 grid in Cartesian coordinate system.](./images/latticePaths2x2wCoordinates.png){#fig:latticePaths2x2wCoordinates}
 
-A few points of notice (make sure they agree on @fig:latticePaths2x2wCoordinates
-and @fig:latticePaths1x1wCoordinates):
+A few points of notice (make sure they agree on @fig:latticePaths1x1wCoordinates
+and @fig:latticePaths2x2wCoordinates):
 
 1) the top left corner could be considered to be the center of our [Cartesian
 coordinate system](https://en.wikipedia.org/wiki/Cartesian_coordinate_system)
@@ -80,12 +79,13 @@ const Mov = Tuple{Int, Int}
 
 const RIGHT = (1, 0)
 const DOWN = (0, -1)
+const MOVES = [RIGHT, DOWN]
 
 function add(position::Pos, move::Mov)::Pos
     return position .+ move
 end
 
-function add(positions::Vec{Pos}, moves::Vec{Mov})::Vec{Pos}
+function add(positions::Vec{Pos}, moves::Vec{Mov}=MOVES)::Vec{Pos}
     @assert !isempty(positions) "positions cannot be empty"
     @assert !isempty(moves) "moves cannot be empty"
     result::Vec{Pos} = []
@@ -98,8 +98,9 @@ end
 
 We begin by defining a few constants. The type synonyms: `Pos` (shortcut for
 position), `Mov` (shortcut for move) will save us some typing later on.
-Whereas, `RIGHT` (shift by 1 unit along X-axis) and `DOWN` (shift by 1 unit along
-Y-axis) are the arrow coordinates in the Cartesian coordinate system.
+Whereas, `RIGHT` (shift by 1 unit along X-axis) and `DOWN` (shift by 1 unit
+along Y-axis) are the arrow coordinates in the Cartesian coordinate system,
+which together form a vector of available `MOVES`.
 
 Next, we define the `add` function. Its first version, aka method, allows to add
 a position (like a starting point, top left corner (0, 0)) to a move (like the
@@ -118,9 +119,8 @@ Let's put the above functions to good use.
 function getFinalPositions(nRows::Int)::Vec{Pos}
     @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
     sums::Vec{Pos} = [(0, 0)]
-    moves::Vec{Mov} = [RIGHT, DOWN]
     for _ in 1:(nRows*2) # - *2 - because of columns
-        sums = add(sums, moves)
+        sums = add(sums, MOVES)
     end
     return sums
 end
