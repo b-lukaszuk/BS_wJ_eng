@@ -80,6 +80,7 @@ const Mov = Tuple{Int, Int}
 const RIGHT = (1, 0)
 const DOWN = (0, -1)
 const MOVES = [RIGHT, DOWN]
+const STARTPOINT = (0, 0)
 
 function add(position::Pos, move::Mov)::Pos
     return position .+ move
@@ -99,12 +100,13 @@ end
 We begin by defining a few constants. The type synonyms: `Pos` (shortcut for
 position), `Mov` (shortcut for move) will save us some typing later on.
 Whereas, `RIGHT` (shift by 1 unit along X-axis) and `DOWN` (shift by 1 unit
-along Y-axis) are the arrow coordinates in the Cartesian coordinate system,
-which together form a vector of available `MOVES`.
+along Y-axis) are the arrow coordinates in the Cartesian coordinate system (its
+`STARTPOINT` or top left corner is (0,0)), which together form a vector of
+available `MOVES`.
 
 Next, we define the `add` function. Its first version, aka method, allows to add
-a position (like a starting point, top left corner (0, 0)) to a move (like the
-move to the `RIGHT`). In some programming languages we would have to type
+a position (like our `STARTPOINT`) to a move (like the move to the `RIGHT`). In
+some programming languages we would have to type
 something like `return (position[1] + move[1], position[2] + move[2])` but in
 Julia we just use a broadcasting operator `.+` to add the tuples
 element-wise. The second version of `add` takes a vector of any starting
@@ -118,7 +120,7 @@ Let's put the above functions to good use.
 ```
 function getFinalPositions(nRows::Int)::Vec{Pos}
     @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
-    sums::Vec{Pos} = [(0, 0)] # top left corner
+    sums::Vec{Pos} = [STARTPOINT] # top left corner
     for _ in 1:(nRows*2) # - *2 - because of columns
         sums = add(sums, MOVES)
     end
@@ -141,14 +143,15 @@ getNumOfPaths(3) # the same result as: binomial(6, 3)
 
 `getFinalPositions` accepts `nRows` which is the number of small squares in a
 column of, e.g. @fig:latticePaths2x2wCoordinates. Next, it starts at the top
-left corner (`sums::Vec{Pos} = [(0, 0)]`) and `moves` away from it. The number
-of moves is equal to `nRows*2` (see point 3 in the points of notice above), and
-we always go in both directions (`RIGHT` and `DOWN` which are in `moves`) thanks
-to the previously defined `add` function. Finally, we return the final positions
-(`return sums`) that we get after we made all the possible moves. Next, in
-`getNumOfPaths`, we choose only those `positions` that land us in the bottom
-right corner (`target`, see point 2 in the points of notice above) by using
-`filter`. The `length` of our vector is the number of paths we were looking for.
+left corner (`sums::Vec{Pos} = [STARTPOINT]`) and `moves` away from it. The
+number of moves is equal to `nRows*2` (see point 3 in the points of notice
+above), and we always go in both directions (`RIGHT` and `DOWN` which are in
+`moves`) thanks to the previously defined `add` function. Finally, we return the
+final positions (`return sums`) that we get after we made all the possible
+moves. Next, in `getNumOfPaths`, we choose only those `positions` that land us
+in the bottom right corner (`target`, see point 2 in the points of notice above)
+by using `filter`. The `length` of our vector is the number of paths we were
+looking for.
 
 OK, now let's think how to draw it. For once, we could reuse the already written
 functions (`add` and `getFinalPositions`) like so (we will modify the functions
@@ -168,7 +171,7 @@ end
 function getPaths(nRows::Int)::Vec{Path}
     @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
     target::Pos = (nRows, -nRows) # bottom right corner
-    result::Vec{Path} = [[(0, 0)]] # top left corner
+    result::Vec{Path} = [[STARTPOINT]] # top left corner
     for _ in 1:(nRows*2) # - *2 - because of columns
         result = makeOneStep(result, MOVES)
     end
