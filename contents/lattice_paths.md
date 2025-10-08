@@ -240,3 +240,70 @@ order to `getDirections` we do that for all the points. The last function's body
 map(getDirection, path[1:end-1], path[2:end])` (similar to what we did in
 @sec:mat_multip_solution). Feel free to choose the version whose meaning is
 clearer to you.
+
+Finally, time to draw.
+
+```
+function addGrid!(ax::Cmk.Axis, xmin::Int=0, xmax::Int=2,
+                  ymin::Int=-2, ymax::Int=0)
+    @assert xmin < xmax "xmin must be < xmax"
+    @assert ymin < ymax "ymin must be < ymax"
+    for yCut in ymin:ymax
+        Cmk.lines!(ax, [xmin, xmax], [yCut, yCut], color=:blue, linewidth=1)
+    end
+    for xCut in xmin:xmax
+        Cmk.lines!(ax, [xCut, xCut], [ymin, ymax], color=:blue, linewidth=1)
+    end
+    return nothing
+end
+
+function drawPaths(paths::Vec{Path}, nCols::Int)::Cmk.Figure
+    @assert length(paths) % nCols == 0 "length(paths) % nCols is not 0"
+    r::Int, c::Int = 1, 1 # r - row, c - column of subFig on Figure
+    sp::Flt = 0.5 # extra space on X/Y axis for better outlook
+    xmin::Int, xmax::Int = paths[1][1][1], paths[1][end][1]
+    ymax::Int, ymin::Int = paths[1][1][2], paths[1][end][2]
+    fig::Cmk.Figure = Cmk.Figure()
+    for path in paths
+        ax = Cmk.Axis(fig[r, c],
+                      limits=(xmin-sp, xmax+sp, ymin-sp, ymax+sp),
+                      aspect=1, xticklabelsize=10, yticklabelsize=10)
+        Cmk.hidespines!(ax)
+        Cmk.hidedecorations!(ax)
+        directions::Vec{Mov} = getDirections(path)
+        points::Vec{Pos} = path[1:end-1]
+        addGrid!(ax, xmin, xmax, ymin, ymax)
+        Cmk.arrows2d!(ax, points, directions)
+        if c == nCols
+            r += 1
+            c = 1
+        else
+            c += 1
+        end
+    end
+    Cmk.rowgap!(fig.layout, Cmk.Fixed(1))
+    Cmk.colgap!(fig.layout, Cmk.Fixed(1))
+    return fig
+end
+```
+
+We begin with a helper function `addGrid!` that does what it promises (draws
+blue lines in sub-figures of our main figure, see
+@fig:latticePaths2x2wCoordinates). Then we move to `drawPaths` that draws each
+`path` of `paths` (`for path in paths`) on a separate sub-figure (its location
+is specified by `fig[r, c]`). A `path` is depicted with a set of arrows
+(`arrows2d!`) on the blue grid (`addGrid!`). We hid the Cartesian coordinate
+system (`Cmk.hidespines!` and `Cmk.hidedecorations!`) because in the end we
+don't care about it that much. Moreover, we narrowed the empty space between the
+sub-figures (`Cmk.rowgap!` and `Cmk.colgap!`). The rest of the code in this
+snippet is just the necessary, but boring, housekeeping that helps us achieve
+our goal, which is depicted below.
+
+```
+paths = getPaths(3)
+drawPaths(paths, 5)
+```
+
+![Lattice paths on a 3x3 grid.](./images/latticePaths3x3.png){#fig:latticePaths3x3}
+
+All is revealed. Behold the twenty paths on a 3x3 grid.
