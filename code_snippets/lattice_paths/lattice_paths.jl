@@ -69,16 +69,16 @@ function getPaths(nRows::Int)::Vec{Path}
 end
 
 # some tests
-ps = getPaths(1)
+paths = getPaths(1)
 binomial(2, 1)
 
-ps = getPaths(2)
+paths = getPaths(2)
 binomial(4, 2)
 
-ps = getPaths(3)
+paths = getPaths(3)
 binomial(6, 3)
 
-ps = getPaths(4)
+paths = getPaths(4)
 binomial(8, 4)
 
 function getDirection(p1::Pos, p2::Pos)::Mov
@@ -90,7 +90,7 @@ function getDirections(path::Path)::Vec{Mov}
 end
 
 function addGrid!(ax::Cmk.Axis, xmin::Int=0, xmax::Int=2,
-                  ymin::Int=0, ymax::Int=-2)
+                  ymin::Int=-2, ymax::Int=0)
     @assert xmin < xmax "xmin must be < xmax"
     @assert ymin < ymax "ymin must be < ymax"
     for yCut in ymin:ymax
@@ -104,11 +104,11 @@ end
 
 function drawPaths(paths::Vec{Path}, nCols::Int)::Cmk.Figure
     @assert length(paths) % nCols == 0 "length(paths) % nCols is not 0"
-    fig::Cmk.Figure = Cmk.Figure()
     r::Int, c::Int = 1, 1 # r - row, c - column of subFig on Figure
     sp::Flt = 0.5 # extra space on X/Y axis for better outlook
     xmin::Int, xmax::Int = paths[1][1][1], paths[1][end][1]
     ymax::Int, ymin::Int = paths[1][1][2], paths[1][end][2]
+    fig::Cmk.Figure = Cmk.Figure()
     for path in paths
         ax = Cmk.Axis(fig[r, c],
                       limits=(xmin-sp, xmax+sp, ymin-sp, ymax+sp),
@@ -132,16 +132,16 @@ function drawPaths(paths::Vec{Path}, nCols::Int)::Cmk.Figure
 end
 
 # some tests (figures may take a few seconds to be drawn)
-ps = getPaths(1)
-drawPaths(ps, 2)
+paths = getPaths(1)
+drawPaths(paths, 2)
 
-ps = getPaths(2)
-drawPaths(ps, 3)
+paths = getPaths(2)
+drawPaths(paths, 3)
 
-ps = getPaths(3)
-drawPaths(ps, 4)
-drawPaths(ps, 5)
+paths = getPaths(3)
+drawPaths(paths, 4)
+drawPaths(paths, 5)
 
-ps = getPaths(4)
-drawPaths(ps, 7)
-drawPaths(ps, 10)
+paths = getPaths(4)
+drawPaths(paths, 7)
+drawPaths(paths, 10)
