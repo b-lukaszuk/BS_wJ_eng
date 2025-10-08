@@ -86,44 +86,39 @@ function getDirection(p1::Pos, p2::Pos)::Mov
 end
 
 function getDirections(path::Path)::Vec{Mov}
-    directions::Vec{Mov} = []
-    for i in eachindex(path)[1:end-1]
-        push!(directions, getDirection(path[i], path[i+1]))
-    end
-    return directions
+    return map(getDirection, path[1:end-1], path[2:end])
 end
 
-function addGrid!(ax::Cmk.Axis,
-                  xmin::Int=0, xmax::Int=2, xCuts::Vec{Int}=[0, 1, 2],
-                  ymin::Int=0, ymax::Int=-2, yCuts::Vec{Int}=[0, -1, -2])
+function addGrid!(ax::Cmk.Axis, xmin::Int=0, xmax::Int=2,
+                  ymin::Int=0, ymax::Int=-2)
     @assert xmin < xmax "xmin must be < xmax"
     @assert ymin < ymax "ymin must be < ymax"
-    for yCut in yCuts
+    for yCut in ymin:ymax
         Cmk.lines!(ax, [xmin, xmax], [yCut, yCut], color=:blue, linewidth=1)
     end
-    for xCut in xCuts
+    for xCut in xmin:xmax
         Cmk.lines!(ax, [xCut, xCut], [ymin, ymax], color=:blue, linewidth=1)
     end
     return nothing
 end
 
-function drawPaths(paths::Vec{Path}, xmin::Int, xmax::Int,
-                   ymin::Int, ymax::Int, nCols::Int)::Cmk.Figure
-    @assert length(paths) % nCols == 0 "nCols is not multiple of length(paths)"
+function drawPaths(paths::Vec{Path}, nCols::Int)::Cmk.Figure
+    @assert length(paths) % nCols == 0 "length(paths) % nCols is not 0"
     fig::Cmk.Figure = Cmk.Figure()
-    r::Int, c::Int = 1, 1
-    xCuts::Vec{Int} = collect(xmin:xmax)
-    yCuts::Vec{Int} = collect(ymin:ymax)
+    r::Int, c::Int = 1, 1 # r - row, c - column of subFig on Figure
     sp::Flt = 0.5 # extra space on X/Y axis for better outlook
+    xmin::Int, xmax::Int = paths[1][1][1], paths[1][end][1]
+    ymax::Int, ymin::Int = paths[1][1][2], paths[1][end][2]
     for path in paths
         ax = Cmk.Axis(fig[r, c],
                       limits=(xmin-sp, xmax+sp, ymin-sp, ymax+sp),
                       aspect=1, xticklabelsize=10, yticklabelsize=10)
         Cmk.hidespines!(ax)
         Cmk.hidedecorations!(ax)
-        directions::Vec{Pos} = getDirections(path)
-        addGrid!(ax, xmin, xmax, xCuts, ymin, ymax, yCuts)
-        Cmk.arrows2d!(ax, path[1:end-1], directions)
+        directions::Vec{Mov} = getDirections(path)
+        points::Vec{Pos} = path[1:end-1]
+        addGrid!(ax, xmin, xmax, ymin, ymax)
+        Cmk.arrows2d!(ax, points, directions)
         if c == nCols
             r += 1
             c = 1
@@ -138,15 +133,15 @@ end
 
 # some tests (figures may take a few seconds to be drawn)
 ps = getPaths(1)
-drawPaths(ps, 0, 1, -1, 0, 2)
+drawPaths(ps, 2)
 
 ps = getPaths(2)
-drawPaths(ps, 0, 2, -2, 0, 3)
+drawPaths(ps, 3)
 
 ps = getPaths(3)
-drawPaths(ps, 0, 3, -3, 0, 4)
-drawPaths(ps, 0, 3, -3, 0, 5)
+drawPaths(ps, 4)
+drawPaths(ps, 5)
 
 ps = getPaths(4)
-drawPaths(ps, 0, 4, -4, 0, 7)
-drawPaths(ps, 0, 4, -4, 0, 10)
+drawPaths(ps, 7)
+drawPaths(ps, 10)
