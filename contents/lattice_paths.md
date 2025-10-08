@@ -208,3 +208,35 @@ getPaths(1)
 ```
 
 I don't know about you, but I'm pretty satisfied with the result.
+
+OK, once we got the path, i.e. the stop points between which we draw the lines,
+making a Figure that depicts them should be a breeze.
+This could be done with, e.g. CairoMakie's
+[arrows2d](https://docs.makie.org/stable/reference/plots/arrows#arrows)
+function. However, there's a small problem here, one look at the documentation
+and we see that the function requires two arguments, namely `points` (start
+points) and `directions` (like `RIGHT` and `DOWN`) and not a `path` which is
+starting point, pit stop, pit stop, end point. No biggie, we can get the
+directions in no time.
+
+```
+function getDirection(p1::Pos, p2::Pos)::Mov
+    return p2 .- p1
+end
+
+function getDirections(path::Path)::Vec{Mov}
+    directions::Vec{Mov} = []
+    for i in eachindex(path)[1:end-1]
+        push!(directions, getDirection(path[i], path[i+1]))
+    end
+    return directions
+end
+```
+
+To `getDirection` we just subtract the position of a previous point on the line
+(`p1`) from the position of a next point on it (`p1`). By extension, in
+order to `getDirections` we do that for all the points. The last function's body
+(`getDirections`) could be also replaced with the following one liner: `return
+map(getDirection, path[1:end-1], path[2:end])` (similar to what we did in
+@sec:mat_multip_solution). Feel free to choose the version whose meaning is
+clearer to you.
