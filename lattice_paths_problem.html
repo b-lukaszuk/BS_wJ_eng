@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Matrix Multiplication - Build SH*T with Julia</title>
+  <title>Problem - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -145,16 +145,22 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h1 data-number="2" id="sec:mat_multip"><span class="header-section-number">2</span> Matrix Multiplication</h1>
-<p>In this chapter I will not use any external libraries. Still, once you read the problem description you may decide to do otherwise. In that case don’t let me stop you.</p>
-<p>You may compare your own solution with the one in this chapter (with explanations) or with <a href="https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/matrix_multiplication">the code snippets</a> (without explanations).</p>
+<h2 data-number="22.1" id="sec:lattice_paths_problem"><span class="header-section-number">22.1</span> Problem</h2>
+<p>This exercise was inspired by <a href="https://projecteuler.net/problem=15">the following Euler Project problem</a>, but it was modified by me.</p>
+<p>Take a look at Figure <a href="#fig:latticePaths2x2">12</a> below. You will find a big square build of 2x2 smaller squares. Your task is to start at the top left corner of the big square and go to the bottom right corner of it using only right and down arrows (as few as possible) that span a small square side length.</p>
+<figure id="fig:latticePaths2x2">
+<img src="./images/latticePaths2x2.png" alt="Figure 12: Lattice paths on a 2x2 grid." />
+<figcaption aria-hidden="true">Figure 12: Lattice paths on a 2x2 grid.</figcaption>
+</figure>
+<p>For the said problem there are exactly 6 paths (as depicted in Figure <a href="#fig:latticePaths2x2">12</a>). But think about a big square composed of 3x3 little squares.</p>
+<p>How many different paths are there? Can you draw these paths? Well, use Julia to find out.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./about.html"><b>1</b> About</a> <kbd>←</kbd>
+        <a class="menu-level-1" href="./lattice_paths.html"><b>22</b> Lattice Paths</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./mat_multip_problem.html"><b>2.1</b> Problem</a>
+            <kbd>→</kbd> <a class="menu-level-2" href="./lattice_paths_solution.html"><b>22.2</b> Solution</a>
         </span>
     </p>
 </div>
