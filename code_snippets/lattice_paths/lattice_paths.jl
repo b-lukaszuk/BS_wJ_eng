@@ -31,11 +31,11 @@ end
 
 function getFinalPositions(nRows::Int)::Vec{Pos}
     @assert 0 < nRows < 5 "nRows must be in the range [1-4]"
-    sums::Vec{Pos} = [STARTPOINT] # top left corner
+    finalPositions::Vec{Pos} = [STARTPOINT] # top left corner
     for _ in 1:(nRows*2) # - *2 - because of columns
-        sums = add(sums, MOVES)
+        finalPositions = add(finalPositions, MOVES)
     end
-    return sums
+    return finalPositions
 end
 
 function getNumOfPaths(nRows::Int)::Int
@@ -89,8 +89,8 @@ function getDirections(path::Path)::Vec{Mov}
     return map(getDirection, path[1:end-1], path[2:end])
 end
 
-function addGrid!(ax::Cmk.Axis, xmin::Int=0, xmax::Int=2,
-                  ymin::Int=-2, ymax::Int=0)
+function addGrid!(ax::Cmk.Axis,
+                  xmin::Int=0, xmax::Int=2, ymin::Int=-2, ymax::Int=0)
     @assert xmin < xmax "xmin must be < xmax"
     @assert ymin < ymax "ymin must be < ymax"
     for yCut in ymin:ymax
@@ -139,9 +139,9 @@ paths = getPaths(2)
 drawPaths(paths, 3)
 
 paths = getPaths(3)
-drawPaths(paths, 4)
+# drawPaths(paths, 4)
 drawPaths(paths, 5)
 
 paths = getPaths(4)
-drawPaths(paths, 7)
+# drawPaths(paths, 7)
 drawPaths(paths, 10)
