@@ -1,11 +1,12 @@
 # Pascal's triangle {#sec:pascals_triangle}
 
-In this chapter I will not use any external libraries. Still, once you read the
+In this chapter I did not use any external libraries. Still, once you read the
 problem description you may decide to do otherwise. In that case don't let me
 stop you.
 
-You may compare your own solution with the one in this chapter (with
-explanations) or with [the code
+I recommend you try to solve the task on your own first. Once you finish you may
+compare your own solution with the one in this chapter (with explanations) or
+with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/pascals_triangle)
 (without explanations).
 
