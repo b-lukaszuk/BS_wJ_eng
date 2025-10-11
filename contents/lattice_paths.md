@@ -1,6 +1,7 @@
 # Lattice Paths {#sec:lattice_paths}
 
-In this chapter you may or may not use the following external libraries.
+In this chapter I used the following libraries. Still, once you read the problem
+description you may decide to do otherwise.
 
 ```jl
 s24 = """
@@ -9,8 +10,9 @@ import CairoMakie as Cmk
 sc(s24)
 ```
 
-You may compare your own solution with the one in this chapter (with
-explanations) or with [the code
+I recommend you try to solve the task on your own first. Once you finish you may
+compare your own solution with the one in this chapter (with explanations) or
+with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/lattice_paths)
 (without explanations).
 
