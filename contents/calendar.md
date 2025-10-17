@@ -377,12 +377,12 @@ use.
 s = """
 function getCal(month::Int, yr::Int)::Str
 	# ... - unpacks tuple into separate values
-    getFmtMonth(getMonthData(yr, month)..., month, yr)
+    return getFmtMonth(getMonthData(yr, month)..., month, yr)
 end
 
 function getCal(month::Str, yr::Int)::Str
     m::Int = monthsName2Num[month]
-    getCal(m, yr)
+    return getCal(m, yr)
 end
 """
 sc(s)

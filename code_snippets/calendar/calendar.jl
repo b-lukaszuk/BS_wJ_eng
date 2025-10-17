@@ -169,12 +169,12 @@ end
 
 function getCal(month::Int, yr::Int)::Str
     # ... - unpacks tuple into separate values
-    getFmtMonth(getMonthData(yr, month)..., month, yr)
+    return getFmtMonth(getMonthData(yr, month)..., month, yr)
 end
 
 function getCal(month::Str, yr::Int)::Str
     m::Int = MONTHS_NAME_2_NUM[month]
-    getCal(m, yr)
+    return getCal(m, yr)
 end
 
 getCal("Jan", 2025) |> print
