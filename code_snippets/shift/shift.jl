@@ -117,6 +117,7 @@ codedLetFreqs = getFreqs(codedTxt)
 function drawFreqComparison(
     freq2compare::Dict{Char, Flt},
     ylab::Str)::Cmk.Figure
+
     shift::Int = 13
     alphabet::Str = join('A':'Z')
     len::Int = length(alphabet)
@@ -152,6 +153,7 @@ function drawFreqComparison(
     Cmk.Legend(fig[1, 2],
                [bp1, bp11], ["plain\nEnglish", replace(ylab, " " => "\n")],
                "Letter Frequencies")
+
     return fig
 end
 
