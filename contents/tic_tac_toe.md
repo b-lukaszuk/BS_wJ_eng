@@ -427,6 +427,8 @@ function main()
     end
 
     println("\\nThat's all. Goodbye!")
+
+    return nothing
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
