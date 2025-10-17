@@ -18,6 +18,7 @@ function clearPrintout()
     print("\033[1A")
     # clears from cursor position till end of display
     print("\033[J")
+    return nothing
 end
 
 function animateProgressBar()
@@ -48,6 +49,8 @@ function main()
     end
 
     println("\nThat's all. Goodbye!")
+
+    return nothing
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__
