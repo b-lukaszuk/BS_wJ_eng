@@ -38,7 +38,7 @@ getPrimesV1(100) == primesFromWiki
 #                       version 2: sieve of Eratosthenes                      #
 ###############################################################################
 # https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes
-function getPrimesV2(upTo::Int)
+function getPrimesV2(upTo::Int)::Vec{Int}
     @assert upTo > 1 "upTo must be > 1"
     nums::Vec{Int} = 1:upTo |> collect
     isPrimeTests::Vec{Bool} = ones(Bool, upTo)

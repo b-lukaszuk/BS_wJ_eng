@@ -101,7 +101,7 @@ Let's get down to it.
 
 ```jl
 s = """
-function getPrimesV2(upTo::Int)
+function getPrimesV2(upTo::Int)::Vec{Int}
     @assert upTo > 1 "upTo must be > 1"
     nums::Vec{Int} = 1:upTo |> collect
     isPrimeTests::Vec{Bool} = ones(Bool, upTo)
