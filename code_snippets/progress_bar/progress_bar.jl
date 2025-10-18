@@ -27,7 +27,7 @@ function animateProgressBar()
     ind::Int = 1
     for p in 0:100
         delayMs = rand(100:250)
-        println(getProgressBar(p), fans[ind])
+        println(getProgressBar(p), " ", fans[ind])
         sleep(delayMs / 1000) # sleep accepts delay in seconds
         clearPrintout()
         ind = (ind == length(fans)) ? 1 : ind + 1
