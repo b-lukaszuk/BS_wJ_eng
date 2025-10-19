@@ -240,6 +240,7 @@ like so:
 s = """
 function recFib!(n::Int, lookup::Dict{Int, Int})::Int
     @assert 0 <= n <= 40 "n must be in range [0-40]"
+    @assert haskey(lookup, 0) && haskey(lookup, 1) "lookup must have base cases"
     if !haskey(lookup, n)
         lookup[n] = recFib!(n-2, lookup) + recFib!(n-1, lookup)
     end
