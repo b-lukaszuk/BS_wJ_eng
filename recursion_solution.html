@@ -209,6 +209,7 @@ recFib(10)</code></pre>
 <p>Therefore we may improve our last function by using lookup tables/dictionaries like so:</p>
 <pre class="language-julia"><code>function recFib!(n::Int, lookup::Dict{Int, Int})::Int
     @assert 0 &lt;= n &lt;= 40 &quot;n must be in range [0-40]&quot;
+    @assert haskey(lookup, 0) &amp;&amp; haskey(lookup, 1) &quot;lookup must have base cases&quot;
     if !haskey(lookup, n)
         lookup[n] = recFib!(n-2, lookup) + recFib!(n-1, lookup)
     end

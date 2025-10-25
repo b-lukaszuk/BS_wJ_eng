@@ -350,7 +350,7 @@ function playGame()
     return nothing
 end</code></pre>
 <p>Inside <code>playGame</code> we initialize <code>board</code> and the <code>player</code> on a move. Next, while the game isn’t over (<code>while !isGameOver(board)</code>), we toggle the player (<code>togglePlayer(player)</code>), <code>playMove</code> and clear the display (<code>clearLines(5)</code>) before another move. When the game is finished we just <code>displayGameOverScreen</code>. And voila. You can <code>playGame</code>. Test it, e.g., with the following sequence of moves: 2, 3, 7, 6, 9 - you win; 2, 3, 6, 8 - computer wins; 7, 2, 4, 6, 9 - draw.</p>
-<p>There are a couple of things to improve on (if you want to). For instance, you could add a <code>sleep</code> statement into <code>getComputerMove</code> so that the user got time to read the message with move declaration (<code>println("Computer plays: ", move)</code>). Moreover, as for now the algorithm generating move in <code>getComputerMove</code> is great for testing, but gets boring pretty quickly, feel free to change it (or try to beat a somewhat more challenging algorithm found in <a href="https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/tic_tac_toe">the code snippets</a>).</p>
+<p>There are a couple of things to improve on (if you want to). For instance, you could add a <code>sleep</code> statement into <code>getComputerMove</code> so that the user got time to read the message with move declaration (<code>println("Computer plays: ", move)</code>). Moreover, as for now the algorithm generating move in <code>getComputerMove</code> is great for testing, but gets boring pretty quickly, feel free to change it (or try to beat a slightly more challenging algorithm found in <a href="https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/tic_tac_toe">the code snippets</a>).</p>
 <p>Lastly, like in Section <a href="./progress_bar_solution.html#sec:progress_bar_solution">8.2</a> you could also add the functionality to run the game from a terminal (with <code>julia tic_tac_toe.jl</code>).</p>
 <pre class="language-julia"><code>function main()
     println(&quot;This is a toy program to play a tic-tac-toe game.&quot;)
@@ -364,6 +364,8 @@ end</code></pre>
     end
 
     println(&quot;\nThat&#39;s all. Goodbye!&quot;)
+
+    return nothing
 end
 
 if abspath(PROGRAM_FILE) == @__FILE__

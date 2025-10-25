@@ -317,12 +317,12 @@ end</code></pre>
 <p>All that’s left to do is to pack it all into <code>getCal</code> wrapper for the ease of use.</p>
 <pre class="language-julia"><code>function getCal(month::Int, yr::Int)::Str
     # ... - unpacks tuple into separate values
-    getFmtMonth(getMonthData(yr, month)..., month, yr)
+    return getFmtMonth(getMonthData(yr, month)..., month, yr)
 end
 
 function getCal(month::Str, yr::Int)::Str
     m::Int = monthsName2Num[month]
-    getCal(m, yr)
+    return getCal(m, yr)
 end</code></pre>
 <p>Time for the first swing.</p>
 <pre><code>getCal(&quot;Jan&quot;, 2025)

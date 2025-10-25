@@ -162,13 +162,8 @@ function getSurfaceArea(s::Sphere)::Flt
     return 4 * pi * s.radius^2
 end</code></pre>
 <p>Now, let’s define a big lipid droplet with a radius of, let’s say, 10 [μm].</p>
-<pre class="language-julia"><code>bigS = Sphere(10.0) # 10 um
-bigV = getVolume(bigS)
-bigA = getSurfaceArea(bigS)
-
-bigV</code></pre>
-<p>4188.790204786391</p>
-<p>In the next step we will split this big droplet into a few smaller ones of equal sizes. Splitting the volume is easy, we just divide <code>bigV</code> by <code>n</code> droplets. However, we need a way to determine the size (<code>radius</code>) of each small droplet. Let’s try to transform the formula for a sphere’s volume and see if we can get radius from that.</p>
+<pre class="language-julia"><code>referenceDroplet = Sphere(10.0)</code></pre>
+<p>In the next step we will split this big droplet into a few smaller ones of equal sizes. Splitting the volume is easy, we just divide it by the number of droplets. However, we need a way to determine the size (<code>radius</code>) of each small droplet. Let’s try to transform the formula for a sphere’s volume and see if we can get a radius from that.</p>
 <p><span id="eq:sphere1"><span class="math display">\[ v = \frac{4}{3} * \pi * r^3 \qquad{(4)}\]</span></span></p>
 <p>If a = b, then b = a, so we may swap sides.</p>
 <p><span id="eq:sphere2"><span class="math display">\[ \frac{4}{3} * \pi * r^3 = v \qquad{(5)}\]</span></span></p>
@@ -186,7 +181,7 @@ Sym.@variables fraction p r3 v
 Sym.symbolic_linear_solve(fraction * p * r3 ~ v, r3)</code></pre>
 <p>v / (fraction*p)</p>
 <p>So, instead of writing the formula as it is, we just named our variables <code>fraction</code>, <code>p</code>, <code>r3</code> and <code>v</code>. Anyway, according to <code>Sym.symbolic_linear_solve</code> <span class="math inline">\(r^3 = v / (\frac{4}{3} * \pi)\)</span>, which is actually the same as Equation <a href="#eq:sphere4">7</a> above [since e.g. 18 / 2 / 3 == 18 / (2 * 3)]. Ergo, we may be fairly certain we correctly solved Equation <a href="#eq:sphere4">7</a> and therefore Equation <a href="#eq:sphere5">8</a>.</p>
-<p>Once, we confimed the validity of the formula in Equation <a href="#eq:sphere5">8</a>, all that’s left to do is to translate it into Julia code.</p>
+<p>Once, we confirmed the validity of the formula in Equation <a href="#eq:sphere5">8</a>, all that’s left to do is to translate it into Julia code.</p>
 <pre class="language-julia"><code>function getSphere(volume::Flt)::Sphere
     # cbrt - fn that calculates cube root of a number
     radius::Flt = cbrt(volume / (4/3) / pi)
@@ -195,37 +190,16 @@ end</code></pre>
 <blockquote>
 <p><strong><em>Note:</em></strong> If there were no function for <span class="math inline">\(\sqrt[3]{x}\)</span> you could easily define it yourself with: <code>getCbrt(x) = x^(1/3)</code> (here I used a <a href="https://en.wikibooks.org/wiki/Introducing_Julia/Functions#Single_expression_functions">single expression function</a> for brevity) since <span class="math inline">\(\sqrt[n]{x} = x^{1/n}\)</span>.</p>
 </blockquote>
-<p>Time to test how it works. Let’s see if we can divide <code>bigS</code> (actually its volume: <code>bigV</code>) into 4 smaller drops of total volume equal to <code>bigV</code>.</p>
-<pre class="language-julia"><code># isapprox compares variables for equality
-# accounts for possible rounding error
-isapprox(
-    getSphere(bigV / 4) |&gt; getVolume,
-    bigV / 4
-)</code></pre>
-<p>true</p>
-<p>Once we got that working, we evaluate the total area of the droplets of different size.</p>
-<pre class="language-julia"><code>sumsOfAreas = [bigA]
-sumsOfVolumes = [bigV]
-radii = [bigS.radius]
-
-numsOfDroplets = collect(4:4:12)
-for nDrops in numsOfDroplets
-    # local variables smallS, smallV, smallA, sumSmallAs, sumSmallVs
-    # visible only in for loop
-    smallS = getSphere(bigV / nDrops)
-    smallV = getVolume(smallS)
-    smallA = getSurfaceArea(smallS)
-    sumSmallAs = smallA * nDrops
-    sumSmallVs = smallV * nDrops
-    push!(sumsOfAreas, sumSmallAs)
-    push!(sumsOfVolumes, sumSmallVs)
-    push!(radii, smallS.radius)
-end
-
-prepend!(numsOfDroplets, 1)</code></pre>
-<p>We begin by initializing vectors that will hold the <code>sumsOfAreas</code>, <code>sumsOfvolumes</code>, and <code>radii</code> of our lipid droplets. Then we define the number of droplets that we want to split our big droplet into (<code>numsOfDroplets</code>). For each of those (<code>for nDrops in numsOfDroplets</code>) we determine the radius (<code>smallS = getSphere</code>), volume (<code>smallV</code>) and surface area (<code>smallA</code>) of a single small droplet as well as total area (<code>sumSmallAs</code>) and total volume (<code>sumSmallVs</code>) of <code>nDrops</code>. We add the total area, total volume and radius of a single droplet to the <code>sumsOfAreas</code>, <code>sumsOfVolumes</code>, and <code>radii</code> vectors, respectively. In the end we <code>prepend</code> 1 to the <code>numOfDroplets</code>, since we started with one big droplet (<code>bigS</code>).</p>
-<p>BTW. Notice that <code>smallS</code>, <code>smallV</code>, <code>smallA</code>, <code>sumSmallAs</code>, <code>sumSmallVs</code> are all local variables defined for the first time in the <code>for</code> loop and visible only inside of it. If you try to print out their values outside of the loop you will get an error like <code>ERROR: UndefVarError: 'smallS' not defined</code>.</p>
-<p>Anyway, now, we can either examine the vectors (<code>sumsOfAreas</code>, <code>sumsOfVolumes</code>, <code>radii</code>, <code>numOfDroplets</code>) one by one, or do one better and present them on a graph with e.g. CairoMakie (I’m not going to explain the code below, for reference see <a href="https://b-lukaszuk.github.io/RJ_BS_eng/">my previous book</a> or <a href="https://docs.makie.org/stable/tutorials/getting-started">CairoMakie tutorial</a>).</p>
+<p>Once we got that figured out, we evaluate the total area of the droplets of different size.</p>
+<pre class="language-julia"><code>nDroplets = [1, 4, 8, 12]
+totalVolumes = repeat([getVolume(referenceDroplet)], length(nDroplets))
+individualVolumes = totalVolumes ./ nDroplets
+droplets = getSphere.(individualVolumes)
+radii = map(s -&gt; s.radius, droplets)
+individualSurfaceAreas = getSurfaceArea.(droplets)
+totalSurfaceAreas = individualSurfaceAreas .* nDroplets</code></pre>
+<p>This seemed like a breeze thanks to the <a href="https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_repetition.html#sec:julia_language_dot_functions">dot operators</a>. We begin by by defining the <code>nDroplets</code>, i.e. the number of droplets that we will consider. Next, we divide their <code>totalVolumes</code> by their numbers (<code>nDroplets</code>) to get a volume of an individual droplet (<code>individualVolumes</code>). Based on the individual volumes we create the <code>droplets</code> of the appropriate radius (<code>getSphere.(individualVolumes)</code>). We also extract the <code>radii</code> for future use (the draw function below). Now, we calculate <code>individualSurfaceAreas</code> of our small droplets (<code>getSurfaceArea.(droplets)</code>) and then their <code>totalSurfaceAreas</code>. And we were able to achieve all that in only 7 lines of code.</p>
+<p>Anyway, now, we can either examine the vectors (<code>totalSurfaceAreas</code>, <code>radii</code>, <code>nDroplets</code>, <code>individualVolumes</code>) one by one, or do one better and present them on a graph with e.g. CairoMakie (I’m not going to explain the code below, for reference see <a href="https://b-lukaszuk.github.io/RJ_BS_eng/">my previous book</a> or <a href="https://docs.makie.org/stable/tutorials/getting-started">CairoMakie tutorial</a>).</p>
 <pre><code>import CairoMakie as Cmk
 
 fig = Cmk.Figure();
@@ -233,19 +207,19 @@ ax = Cmk.Axis(fig[1, 1],
               title=&quot;Lipid droplet size vs. summaric surface area&quot;,
               xlabel=&quot;number of lipid droplets&quot;,
               ylabel=&quot;total surface area [μm²]&quot;, xticks=0:13);
-Cmk.scatter!(ax, numsOfDroplets, sumsOfAreas, markersize=radii .* 5,
+Cmk.scatter!(ax, nDroplets, totalSurfaceAreas, markersize=radii .* 5,
              color=&quot;gold1&quot;, strokecolor=&quot;black&quot;);
 Cmk.xlims!(ax, -3, 16);
 Cmk.ylims!(ax, 800, 3000);
-Cmk.text!(ax, numsOfDroplets, sumsOfAreas .- 150,
+Cmk.text!(ax, nDroplets, totalSurfaceAreas .- 150,
     text=map(r -&gt; &quot;single droplet radius = $(round(r, digits=2)) [μm]&quot;,
              radii),
     fontsize=12, align=(:center, :center)
 );
-Cmk.text!(ax, numsOfDroplets, sumsOfAreas .- 250,
-    text=map((v, n) -&gt;
-    &quot;volume ($n droplet/s) = $(round(v, digits=2)) [μm³]&quot;,
-    sumsOfVolumes, numsOfDroplets),
+Cmk.text!(ax, nDroplets, totalSurfaceAreas .- 250,
+          text=map((v, n) -&gt;
+              &quot;volume ($n droplet/s) = $(round(Int, v)) [μm³]&quot;,
+                   totalVolumes, nDroplets),
     fontsize=12, align=(:center, :center)
 );
 fig</code></pre>

@@ -184,7 +184,7 @@ getPrimesV1(100) == primesFromWiki</code></pre>
 </blockquote>
 <p>(see the Wikipedia’s page from the link above).</p>
 <p>Let’s get down to it.</p>
-<pre class="language-julia"><code>function getPrimesV2(upTo::Int)
+<pre class="language-julia"><code>function getPrimesV2(upTo::Int)::Vec{Int}
     @assert upTo &gt; 1 &quot;upTo must be &gt; 1&quot;
     nums::Vec{Int} = 1:upTo |&gt; collect
     isPrimeTests::Vec{Bool} = ones(Bool, upTo)
