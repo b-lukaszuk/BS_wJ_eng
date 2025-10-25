@@ -3,10 +3,8 @@ uuid = "e42fe5d1-4fb0-43be-a37a-550a5dfe4970"
 authors = ["Bartlomiej Lukaszuk"]
 version = "0.1.0"
 
-[compat]
-julia = "1.10.10"
-
 [deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
 Books = "939d5c6b-51ae-42e7-97ca-7564d0d4ad91"
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
@@ -14,3 +12,6 @@ DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
 Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
+
+[compat]
+julia = "1.10.10"
