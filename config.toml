@@ -19,6 +19,7 @@ contents = [
     "calendar",
     "prime_numbers",
     "tic_tac_toe",
+    "birthday",
     "compound_interest",
     "mortgage",
     "overpayment",
