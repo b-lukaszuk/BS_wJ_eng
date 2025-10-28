@@ -1,3 +1,4 @@
+import CairoMakie as Cmk
 import Random as Rnd
 
 const Flt = Float64
@@ -46,5 +47,17 @@ end
 # running a simulation may take a while
 # reducing nSimulations will shorten the time and lower the precision of prob. estimation
 Rnd.seed!(101)
-probsAnySameBdays = Dict(i => getProbSuccess(i, anySameBdays) for i in 5:30)
-probsMyBday = Dict(i => getProbSuccess(i, anyMyBday) for i in 5:30)
+peopleAtParty = 5:30
+probsAnySameBdays = [getProbSuccess(n, anySameBdays) for n in peopleAtParty]
+probsMyBday = [getProbSuccess(n, anyMyBday) for n in peopleAtParty]
+
+fig = Cmk.Figure()
+ax = Cmk.Axis(fig[1, 1:5], limits=(0, 31, 0, 0.75),
+              title="Birthday paradox",
+              xlabel="Number of people at a party", ylabel="Probability")
+lin1 = Cmk.lines!(ax, peopleAtParty, probsAnySameBdays, color=:blue)
+lin2 = Cmk.lines!(ax, peopleAtParty, probsMyBday, color=:orange)
+Cmk.Legend(fig[1, 6],
+           [lin1, lin2],
+           ["any 2 people\nsame birthday", "same birthday\nas me"])
+fig
