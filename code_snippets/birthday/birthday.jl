@@ -7,10 +7,6 @@ const Vec = Vector
 # the code in this file is meant to serve as a programming exercise only
 # and it may not act correctly
 
-const BIRTHDAYS = 1:365
-const N_SIMULATIONS = 100_000
-const MY_BDAY = 1
-
 function getCounts(v::Vector{T})::Dict{T,Int} where T
     counts::Dict{T,Int} = Dict()
     for elt in v
@@ -19,42 +15,42 @@ function getCounts(v::Vector{T})::Dict{T,Int} where T
     return counts
 end
 
-function getBdaysOfPeopleAtParty(nPeopleAtParty::Int)::Vec{Int}
-    @assert nPeopleAtParty > 3 "at least 4 people must be at a party"
-    return Rand.rand(BIRTHDAYS, nPeopleAtParty)
+function getBdaysAtParty(nPeople::Int)::Vec{Int}
+    @assert 3 < nPeople < 366 "nPeople must be in range [4-365]"
+    return Rand.rand(1:365, nPeople)
 end
 
-function any2peopleBornSameDay(nPeopleAtParty::Int)::Bool
-    @assert nPeopleAtParty > 3 "at least 4 people must be at a party"
-    peopleBdays::Vec{Int} = getBdaysOfPeopleAtParty(nPeopleAtParty)
+function areAnyBornSameDay(nPeople::Int)::Bool
+    @assert 3 < nPeople < 366 "nPeople must be in range [4-365]"
+    peopleBdays::Vec{Int} = getBdaysAtParty(nPeople)
     counts::Dict{Int, Int} = getCounts(peopleBdays)
     sameBday::Union{Int, Nothing} = findfirst((>)(1), counts)
     return isnothing(sameBday) ? false : true
 end
 
-function getProbAny2SameBdays(nPeopleAtParty::Int, nSimulations::Int=N_SIMULATIONS)::Flt
-    @assert nPeopleAtParty > 3 "at least 4 people must be at a party"
-    @assert 10_000 <= nSimulations <= 1_000_000 "nSimulations must be in range [1e4-1e6]"
+function getProbAny2SameBdays(nPeople::Int, nSimulations::Int=100_000)::Flt
+    @assert 3 < nPeople < 366 "nPeople must be in range [4-365]"
+    @assert 1e4 <= nSimulations <= 1e6 "nSimulations not in range [1e4-1e6]"
     sameBdays::Vec{Bool} = Vec{Bool}(undef, nSimulations)
     for i in 1:nSimulations
-        sameBdays[i] = any2peopleBornSameDay(nPeopleAtParty)
+        sameBdays[i] = areAnyBornSameDay(nPeople)
     end
     return sum(sameBdays)/nSimulations
 end
 
-function anyBdayEqMyBday(nPeopleAtParty::Int, myBday::Int = MY_BDAY)::Bool
-    @assert nPeopleAtParty > 3 "at least 4 people must be at a party"
-    peopleBdays::Vec{Int} = getBdaysOfPeopleAtParty(nPeopleAtParty)
+function anyBdayEqMyBday(nPeople::Int, myBday::Int=1)::Bool
+    @assert 3 < nPeople < 366 "nPeople must be in range [4-365]"
+    peopleBdays::Vec{Int} = getBdaysAtParty(nPeople)
     counts::Dict{Int, Int} = getCounts(peopleBdays)
     return haskey(counts, myBday)
 end
 
-function getProbMyBday(nPeopleAtParty::Int, myBday::Int=MY_BDAY, nSimulations::Int=N_SIMULATIONS)::Flt
-    @assert nPeopleAtParty > 3 "at least 4 people must be at a party"
-    @assert 10_000 <= nSimulations <= 1_000_000 "nSimulations must be in range [1e4-1e6]"
+function getProbMyBday(nPeople::Int, myBday::Int=1, nSimulations::Int=1000_000)::Flt
+    @assert 3 < nPeople < 366 "nPeople must be in range [4-365]"
+    @assert 1e4 <= nSimulations <= 1e6 "nSimulations not in range [1e4-1e6]"
     sameMyBdays::Vec{Bool} = Vec{Bool}(undef, nSimulations)
     for i in 1:nSimulations
-        sameMyBdays[i] = anyBdayEqMyBday(nPeopleAtParty-1, myBday)
+        sameMyBdays[i] = anyBdayEqMyBday(nPeople, myBday)
     end
     return sum(sameMyBdays)/nSimulations
 end
