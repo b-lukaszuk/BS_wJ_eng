@@ -29,4 +29,14 @@ let's say in the range [4-30].
 
 ## Solution {#sec:birthday_solution}
 
-The solution goes here.
+The following solution is based on a computer simulation and relies on a few
+assumptions, namely:
+
+1) there are always exactly 365 days in a year (no country for leap years)
+2) a person got equal chance to be born on any day of a year (no seasonal and
+yearly patterns, etc.)
+3) the birth date of one person does not influence the birth date of another
+person (not twins, siblings, etc.)
+
+None of the above is exactly true, still, those are some reasonable assumptions
+that will allow us to knack the problem.
