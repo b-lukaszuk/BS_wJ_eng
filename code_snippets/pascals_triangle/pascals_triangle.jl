@@ -37,13 +37,13 @@ function getMaxNumLen(v::Vec{Int})::Int
     return map(getNumLen, v) |> maximum
 end
 
-function center(sth::A, totLen::Int)::Str where A<:Union{Int, Str}
+function center(sth::A, endLength::Int)::Str where A<:Union{Int, Str}
     s::Str = string(sth)
     len::Int = length(s)
-    @assert totLen > 0 && len > 0 "both totLen and len must be > 0"
-    @assert totLen >= len "totLen must be >= len"
-    diff::Int = totLen - len
-    leftSpaceLen::Int = round(Int, diff / 2)
+    @assert endLength > 0 && len > 0 "both endLength and len must be > 0"
+    @assert endLength >= len "endLength must be >= len"
+    diff::Int = endLength - len
+    leftSpaceLen::Int = div(diff, 2)
     rightSpaceLen::Int = diff - leftSpaceLen
     return " " ^ leftSpaceLen * s * " " ^ rightSpaceLen
 end

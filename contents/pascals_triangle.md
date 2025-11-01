@@ -158,13 +158,13 @@ string).
 
 ```jl
 s = """
-function center(sth::A, totLen::Int)::Str where A<:Union{Int, Str}
+function center(sth::A, endLength::Int)::Str where A<:Union{Int, Str}
     s::Str = string(sth)
     len::Int = length(s)
-    @assert totLen > 0 && len > 0 "both totLen and len must be > 0"
-    @assert totLen >= len "totLen must be >= len"
-    diff::Int = totLen - len
-    leftSpaceLen::Int = round(Int, diff / 2)
+    @assert endLength > 0 && len > 0 "both endLength and len must be > 0"
+    @assert endLength >= len "endLength must be >= len"
+    diff::Int = endLength - len
+    leftSpaceLen::Int = div(diff, 2) # divide by 2, round down
     rightSpaceLen::Int = diff - leftSpaceLen
     return " " ^ leftSpaceLen * s * " " ^ rightSpaceLen
 end
@@ -172,14 +172,14 @@ end
 sc(s)
 ```
 
-In order to center its input (`sth` - an integer or a string) the function
-determines the difference (`diff`) between the length (`totLen`) of the desired
-result and the actual length of `s`. The difference is split roughly in half
-(`leftSpaceLen` and `rightSpaceLen`) and glued together with `s` using string
-concatenation (`*`) and exponentiation (`^`) that we met in
-@sec:progress_bar_solution. Due to the limited resolution offered by the text
-display of a terminal the result is expected to be slightly off on printout, but
-I think we can live with that.
+In order to center its input (`sth` - an integer or a string, as stated in
+`A<:Union{Int, Str}`) the function determines the difference (`diff`) between
+the length of the desired result (`endLength`) and the actual length of `s`
+(`len`). The difference is split roughly in half (`leftSpaceLen` and
+`rightSpaceLen`) and glued together with `s` using string concatenation (`*`)
+and exponentiation (`^`) that we met in @sec:progress_bar_solution. Due to the
+limited resolution offered by the text display of a terminal the result is
+expected to be slightly off on printout, but I think we can live with that.
 
 Time to format a row.
 
