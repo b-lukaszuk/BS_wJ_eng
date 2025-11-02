@@ -40,3 +40,34 @@ person (not twins, siblings, etc.)
 
 None of the above is exactly true, still, those are some reasonable assumptions
 that will allow us to knack the problem.
+
+OK, let's begin.
+
+```jl
+s = """
+import Random as Rnd
+
+function getBdaysAtParty(nPeople::Int)::Vec{Int}
+    @assert 3 < nPeople < 366 "nPeople must be in range [4-365]"
+    return Rnd.rand(1:365, nPeople)
+end
+
+function getCounts(v::Vector{T})::Dict{T,Int} where T
+    counts::Dict{T,Int} = Dict()
+    for elt in v
+        counts[elt] = get(counts, elt, 0) + 1
+    end
+    return counts
+end
+"""
+sc(s)
+```
+
+We start by defining two simple functions. `getBdaysAtParty` returns a random
+set of birthdays (`Vec{Int}`) drawn from all the possible days in a year
+(`1:365`, with possible repetitions). On the other hand, `getCounts` is a
+function that I copied-pasted from [my previous
+book](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_prob_theor_practice.html).
+It does what it promises, i.e. it returns a summary statistics (`counts`) that
+tells us how many times a given day in the birthdays (result of
+`getBdaysAtParty`) appears.
