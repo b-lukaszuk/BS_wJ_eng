@@ -240,6 +240,8 @@ total payment and total interest) we'll use a [pie
 chart](https://docs.makie.org/v0.21/reference/plots/pie).
 
 ```
+import CairoMakie as Cmk
+
 function addPieChart!(m::Mortgage, fig::Cmk.Figure, ax::Cmk.Axis, col::Int)
     installment::Flt = getInstallment(m)
     totalInterest::Flt = installment * m.numMonths - m.principal

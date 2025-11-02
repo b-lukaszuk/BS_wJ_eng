@@ -248,6 +248,8 @@ clearer to you.
 Finally, time to draw.
 
 ```
+import CairoMakie as Cmk
+
 function addGrid!(ax::Cmk.Axis,
                   xmin::Int=0, xmax::Int=2, ymin::Int=-2, ymax::Int=0)
     @assert xmin < xmax "xmin must be < xmax"
