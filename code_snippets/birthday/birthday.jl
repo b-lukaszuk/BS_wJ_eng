@@ -21,8 +21,8 @@ function getCounts(v::Vector{T})::Dict{T,Int} where T
     return counts
 end
 
-function anySameBdays(counts::Dict{Int, Int})::Bool
-    return isnothing(findfirst((>)(1), counts)) ? false : true
+function nSameBdays(counts::Dict{Int, Int}, n::Int=2)::Bool
+    return !isnothing(findfirst((>=)(n), counts))
 end
 
 function anyMyBday(counts::Dict{Int, Int}, myBday::Int=1)::Bool
@@ -45,10 +45,10 @@ function getProbSuccess(nPeople::Int, isEventFn::Function,
 end
 
 # running a simulation may take a while
-# reducing nSimulations will shorten the time and lower the precision of prob. estimation
+# reducing nSimulations will shorten the time but lower the precision of prob. estimation
 Rnd.seed!(101)
 peopleAtParty = 5:30
-probsAnySameBdays = [getProbSuccess(n, anySameBdays) for n in peopleAtParty]
+probsAnySameBdays = [getProbSuccess(n, nSameBdays) for n in peopleAtParty]
 probsMyBday = [getProbSuccess(n, anyMyBday) for n in peopleAtParty]
 
 fig = Cmk.Figure()
