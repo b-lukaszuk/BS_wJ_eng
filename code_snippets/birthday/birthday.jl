@@ -1,5 +1,6 @@
 import CairoMakie as Cmk
 import Random as Rnd
+import Statistics as St
 
 const Flt = Float64
 const Str = String
@@ -51,13 +52,18 @@ peopleAtParty = 5:30
 probsAnySameBdays = [getProbSuccess(n, nSameBdays) for n in peopleAtParty]
 probsMyBday = [getProbSuccess(n, anyMyBday) for n in peopleAtParty]
 
+probsMyBdayTheor = (1/365).*peopleAtParty
+(probsMyBday .- probsMyBdayTheor) .|> abs |> St.mean
+
+
 fig = Cmk.Figure()
-ax = Cmk.Axis(fig[1, 1:5], limits=(0, 31, 0, 0.75),
+ax = Cmk.Axis(fig[1, 1], limits=(0, 31, 0, 0.75),
               title="Birthday paradox",
               xlabel="Number of people at a party", ylabel="Probability")
 lin1 = Cmk.lines!(ax, peopleAtParty, probsAnySameBdays, color=:blue)
 lin2 = Cmk.lines!(ax, peopleAtParty, probsMyBday, color=:orange)
-Cmk.Legend(fig[1, 6],
-           [lin1, lin2],
-           ["any 2 people\nsame birthday", "same birthday\nas me"])
+Cmk.axislegend(ax,
+               [lin1, lin2],
+               ["any 2 people same birthday", "same birthday as me"],
+               position=:lt)
 fig

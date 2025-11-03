@@ -1,8 +1,15 @@
 # Birthday {#sec:birthday}
 
-In this chapter I did not use any external libraries. Still, once you read the
-problem description you may decide to do otherwise. In that case don't let me
-stop you.
+In this chapter I used the following libraries. Still, once you read the problem
+description you may decide to do otherwise.
+
+```jl
+s2 = """
+import Random as Rnd
+import Statistics as St
+"""
+sc(s2)
+```
 
 I recommend you try to solve the task on your own first. Once you finish you may
 compare your own solution with the one in this chapter (with explanations) or
@@ -173,7 +180,7 @@ sc(s)
 ![Birthday paradox probabilities.](./images/birthday.png){#fig:birthday}
 
 So, with 23 people at a party the probability that any 2 of them have a birthday
-at the same day is roughly 50% or 0.5. The probability, that any person was born
+on the same day is roughly 50% or 0.5. The probability, that any person was born
 the same day that I did is around 8% or 0.08 for 30 people at a party.
 Actually, this last probability is fairly straightforward to calculate. For the
 reasons explained
@@ -193,3 +200,6 @@ sco(s)
 ```
 
 which isn't all that bad.
+
+As an exercise you may tweak the code a little and estimate the probability
+that any 3 people at a party were born on the same day.
