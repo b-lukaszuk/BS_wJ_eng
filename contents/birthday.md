@@ -157,3 +157,39 @@ test did the event that we consider a success occurred that time (with
 of `successes`. All that's left to do is to calculate the probability. The `sum`
 function treats any `true` as `1` and `false` as 0, hence it returns the number
 of successes, which we divide by the number of simulations.
+
+Let's see how it works.
+
+```jl
+s = """
+Rnd.seed!(101)
+peopleAtParty = 5:30
+probsAnySameBdays = [getProbSuccess(n, nSameBdays) for n in peopleAtParty]
+probsMyBday = [getProbSuccess(n, anyMyBday) for n in peopleAtParty]
+"""
+sc(s)
+```
+
+![Birthday paradox probabilities.](./images/birthday.png){#fig:birthday}
+
+So, with 23 people at a party the probability that any 2 of them have a birthday
+at the same day is roughly 50% or 0.5. The probability, that any person was born
+the same day that I did is around 8% or 0.08 for 30 people at a party.
+Actually, this last probability is fairly straightforward to calculate. For the
+reasons explained
+[here](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_probability_properties.html)
+it is just $\frac{1}{365}*{n\ people\ at\ party}$ so our [mean absolute
+error](https://en.wikipedia.org/wiki/Mean_absolute_error) is roughly equal to:
+
+
+```jl
+s = """
+import Statistics as St
+
+probsMyBdayTheor = (1/365).*peopleAtParty
+(probsMyBday .- probsMyBdayTheor) .|> abs |> St.mean
+"""
+sco(s)
+```
+
+which isn't all that bad.
