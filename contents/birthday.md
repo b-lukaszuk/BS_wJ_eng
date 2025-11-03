@@ -120,3 +120,40 @@ check if our day of birth occurred in the birthdays of the guests on our party
 were born on the first or 365th day of the year. Go ahead, check the default
 value to your actual day of birth and compare the result with the one provided
 later in this chapter.
+
+OK, time to estimate the probability of success, i.e. the ratio between the
+number of times the event took place to the total trials (number of
+simulations).
+
+```jl
+s = """
+# isEventFn(Dict{Int, Int}) -> Bool
+function getProbSuccess(nPeople::Int, isEventFn::Function,
+                        nSimulations::Int=100_000)::Flt
+    @assert 3 < nPeople < 366 "nPeople must be in range [4-365]"
+    @assert 1e4 <= nSimulations <= 1e6 "nSimulations not in range [1e4-1e6]"
+    successes::Vec{Bool} = Vec{Bool}(undef, nSimulations)
+    for i in 1:nSimulations
+        peopleBdays::Vec{Int} = getBdaysAtParty(nPeople)
+        counts::Dict{Int, Int} = getCounts(peopleBdays)
+        eventOccured::Bool = isEventFn(counts)
+        successes[i] = eventOccured
+    end
+    return sum(successes)/nSimulations
+end
+"""
+sc(s)
+```
+
+First, we initialize the vector that will hold the results of our simulations
+(`successes`). The `Vec{Bool}(undef, nSimulations)` creates a vector of size
+specified in `nSimulations` that is currently occupied by some unspecified
+(`undef` like undefined) values (basically some garbage that is currently in
+some specific place of our computer's memory). We fill the `successes` with the
+values of interest in the for loop. For each simulation, we throw a party and
+get the guests' birthdays (`peopleBdays`). We obtained `count`s for them and
+test did the event that we consider a success occurred that time (with
+`isEventFn`). We place the occurrence into the proper spot (`[i]`) of our vector
+of `successes`. All that's left to do is to calculate the probability. The `sum`
+function treats any `true` as `1` and `false` as 0, hence it returns the number
+of successes, which we divide by the number of simulations.
