@@ -148,89 +148,82 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="7.2" id="sec:recursion_solution"><span class="header-section-number">7.2</span> Solution</h2>
-<p>Factorial is an interesting little function with a set of practical applications, one of them I explained <a href="https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_exercises.html#sec:statistics_intro_exercise2">here</a>.</p>
-<p>Factorial recursive implementation follows closely its mathematical definition (see below, where <code>n!</code> is a factorial of a number n).</p>
-<p><span class="math display">\[
-\begin{align*}
-n! = \left\{
-    \begin {aligned}
-         &amp; 1 \quad &amp; \text{if } n = 1 \\
-         &amp; n \times (n-1)! \quad &amp; \text{otherwise}
-    \end{aligned}
-\right.
-\end{align*}
-\]</span></p>
-<p>Which can be translated into Julia’s:</p>
-<pre class="language-julia"><code>function recFactorial(n::Int)::Int
-    @assert 1 &lt;= n &lt;= 20 &quot;n must be in range [1-20]&quot;
-    if n == 1
-        return 1
-    else
-        return n * recFactorial(n-1)
-    end
-end</code></pre>
-<p>In general, factorial is well defined for positive integers and it grows very quickly (n &gt; 20 would produce <a href="https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Overflow-behavior">overflow</a>, to resolve it we could use <code>BigInt</code> instead of <code>Int</code>) hence the <code>@assert</code> line. Next, for <code>n</code> equal 1 we return 1, otherwise we multiply <code>n</code> by <code>recFactorial(n-1)</code>. Go ahead, follow the execution of the program for small inputs like <code>recFactorial(3)</code> in your head (similarly to <code>recSum</code> from Section <a href="./recursion_problem.html#sec:recursion_problem">7.1</a>).</p>
-<p>To get you a better feel for recursion in Julia, here are two other equivalent implementations of <code>recFactorial</code>.</p>
-<pre class="language-julia"><code>function recFactorialV2(n::Int)::Int
-    @assert 1 &lt;= n &lt;= 20 &quot;n must be in range [1-20]&quot;
-    return n == 1 ? 1 : n * recFactorialV2(n-1)
-end</code></pre>
-<p>and</p>
-<pre class="language-julia"><code>function recFactorialV3(n::Int, acc::Int=1)::Int
-    @assert 1 &lt;= n &lt;= 20 &quot;n must be in range [1-20]&quot;
-    return n == 1 ? acc : recFactorialV3(n-1, n * acc)
-end</code></pre>
-<p>The second version (<code>recFactorialV2</code>) uses <a href="https://docs.julialang.org/en/v1/base/base/#?:">ternary operator</a> instead of more verbose <code>if else</code> statements. The third version (<code>recFactorialV3</code>) relies on a so called accumulator (<code>acc</code>) that stores the result of a previous calculation (if any). <code>recFactorialV3</code> is a tail-recursive function that is recommended in some programming languages, like <a href="https://en.wikipedia.org/wiki/Haskell">Haskell</a> and <a href="https://en.wikipedia.org/wiki/Scala_(programming_language)">Scala</a>, that can take advantage of this kind of code to produce (internally) effective function implementation.</p>
-<p>Let’s go to the Fibonacci sequence. When I was a student, they said that dinners in the student’s canteen are like Figonacci numbers, i.e. each dinner is the sum of the two previous ones. To put it more mathematically, we get</p>
-<p><span class="math display">\[
-\begin{align*}
-fib(n) = \left\{
-    \begin {aligned}
-         &amp; 0 \quad &amp; \text{if } n = 0 \\
-         &amp; 1 \quad &amp; \text{if } n = 1 \\
-         &amp; fib(n-2) + fib(n-1) \quad &amp; \text{otherwise}
-    \end{aligned}
-\right.
-\end{align*}
-\]</span></p>
-<p>Which expressed in Julia’s language give us:</p>
-<pre class="language-julia"><code>function recFib(n::Int)::Int
-    @assert 0 &lt;= n &lt;= 40 &quot;n must be in range [0-40]&quot;
-    if n == 0
-        return 0
-    elseif n == 1
-        return 1
-    else
-        return recFib(n - 2) + recFib(n - 1)
-    end
+<h2 data-number="18.2" id="sec:birthday_solution"><span class="header-section-number">18.2</span> Solution</h2>
+<p>The following solution is based on a computer simulation and relies on a few assumptions, namely:</p>
+<ol type="1">
+<li>there are always exactly 365 days in a year (no country for leap years)</li>
+<li>a person is equally likely to have been born on any day of a year (no seasonal, yearly and other patterns, etc.)</li>
+<li>the birth date of one person does not influence the birth date of another person (not twins, siblings, etc.)</li>
+</ol>
+<p>None of the above is exactly true, still, those are some reasonable assumptions that will allow us to knack the problem.</p>
+<p>OK, let’s begin.</p>
+<pre class="language-julia"><code>import Random as Rnd
+
+function getBdaysAtParty(nPeople::Int)::Vec{Int}
+    @assert 3 &lt; nPeople &lt; 366 &quot;nPeople must be in range [4-365]&quot;
+    return Rnd.rand(1:365, nPeople)
 end
 
-recFib(10)</code></pre>
-<p>55</p>
-<p>The numbers do not grow as fast as <code>factorial</code>s, but the algorithm, although simple, is very inefficient. For instance, for <code>recFib(3)</code> I have to calculate <code>recFib(1) + recFib(2)</code>, but <code>recFib(2)</code> will calculate <code>recFib(1)</code> inside of it as well. For greater numbers (inputs) the duplicated operations threaten to throttle the processor. On my laptop the computation for <code>recFib(40)</code> takes roughly 600-700 [ms], so more than half a second, a delay noticed even by a human.</p>
-<p>Therefore we may improve our last function by using lookup tables/dictionaries like so:</p>
-<pre class="language-julia"><code>function recFib!(n::Int, lookup::Dict{Int, Int})::Int
-    @assert 0 &lt;= n &lt;= 40 &quot;n must be in range [0-40]&quot;
-    @assert haskey(lookup, 0) &amp;&amp; haskey(lookup, 1) &quot;lookup must have base cases&quot;
-    if !haskey(lookup, n)
-        lookup[n] = recFib!(n-2, lookup) + recFib!(n-1, lookup)
+function getCounts(v::Vector{T})::Dict{T,Int} where T
+    counts::Dict{T,Int} = Dict()
+    for elt in v
+        counts[elt] = get(counts, elt, 0) + 1
     end
-    return lookup[n]
+    return counts
 end</code></pre>
-<p>Notice that the function modifies <code>lookup</code> (hence <code>!</code> appended to its name, per Julia’s convention). Inside we check if there is a value for a Fibonacci’s number in <code>lookup</code>. If not (<code>!haskey(lookup, n)</code>) then we calculate it using the known formula and insert it in <code>lookup</code>. Otherwise we just return the found value.</p>
-<p>The last function (<code>recFib!</code>) is more performant, as:</p>
-<pre class="language-julia"><code>fibs = Dict(0 =&gt; 0, 1 =&gt; 1)
-recFib!(40, fibs)</code></pre>
-<p>102334155</p>
-<p>takes only microseconds on its first execution (like a hundred times faster). Interestingly, running <code>recFib!(40, fibs)</code> for the second time reduces the time to nanoseconds (a million times faster) since there are no calculations performed the second time, just reading the number from the previously modified <code>lookup</code>). Run <code>recFib(40)</code> twice to convince yourself that it takes roughly the same amount of time every time it runs with the same <code>n</code>.</p>
+<p>We start by defining two simple functions. <code>getBdaysAtParty</code> returns a random set of birthdays (<code>Vec{Int}</code>) drawn from all the possible days in a year (<code>1:365</code>, with possible repetitions). On the other hand, <code>getCounts</code> is a function that I copied-pasted from <a href="https://b-lukaszuk.github.io/RJ_BS_eng/statistics_prob_theor_practice.html">my previous book</a>. It does what it promises, i.e. it returns a summary statistics (<code>counts</code>) that tells us how many times a given day in the birthdays (result of <code>getBdaysAtParty</code>) appears.</p>
+<p>Time to find a way to determine does the event that we are looking for occured during the party.</p>
+<pre class="language-julia"><code>function nSameBdays(counts::Dict{Int, Int}, n::Int=2)::Bool
+    @assert 1 &lt; n &lt; 366 &quot;n must be in range [2-365]&quot;
+    return isnothing(findfirst((&gt;=)(n), counts)) ? false : true
+end
+
+function anyMyBday(counts::Dict{Int, Int}, myBday::Int=1)::Bool
+    @assert 0 &lt; myBday &lt; 366 &quot;myBDay must be in range [1-365]&quot;
+    return haskey(counts, myBday)
+end</code></pre>
+<p>First, we check for <code>nSameBdays</code> with the build in <a href="https://docs.julialang.org/en/v1/base/arrays/#Base.findfirst-Tuple%7BFunction,%20Any%7D">findfirst</a>. That last function accepts a predicate and a collection (like a vector or a dictionary). The predicate is a function that takes an element of a collection (for a dictionary one of its values) as an input and returns a <code>Bool</code>. <code>findfirst</code> brings back the first index (for vectors) or the first key (for dictionaries) for which <code>predicate(vector's element)</code> or <code>predicate(dictionary's value)</code> is <code>true</code>, respectively. Often a predicate is just an <a href="https://docs.julialang.org/en/v1/manual/functions/#man-anonymous-functions">anonymous function</a>, which in our case could be <code>key -&gt; key &gt;= n</code>. Instead, here I used a <a href="https://bkamins.github.io/julialang/2024/02/23/fix.html">partial function application</a>. The <code>(&gt;=)(n)</code> is an equivalent of the <code>&gt;= n</code> mentioned in the previous sentence. It is just a function applied to one argument. The function still lacks an argument on its left site, just before the <code>&gt;</code>. This missing argument will be any element of our collection that is currently being tested. Anyway, one more point to notice, if <code>findfirst</code> finds no element for which the predicate is <code>true</code> then it returns <a href="https://docs.julialang.org/en/v1/base/constants/#Core.nothing">nothing</a>. Therefore, to get our final answer we send the possible result through <a href="https://docs.julialang.org/en/v1/base/base/#Base.isnothing">isnothing</a> and <a href="https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_decision_making.html#sec:ternary_expression">a ternary expression</a> . Technically, we could have shorten the last line to <code>return !isnothing(firndfirst((&gt;=)(n), counts))</code> (or even without the return), but I thought that this might be too much condensation for a one line of code.</p>
+<p>Our second function, <code>anyMyBday</code>, is much simpler. It just uses <code>haskey</code> to check if our day of birth occurred in the birthdays of the guests at our party (<code>counts</code>). Fun, fact, under our assumptions, it does not matter whether you were born on the first or 365th day of the year. Go ahead, change the default value to your actual day of birth and compare the result with the one provided later in this chapter.</p>
+<p>OK, time to estimate the probability of success, i.e. the ratio between the number of times the event took place to the total trials (number of simulations).</p>
+<pre class="language-julia"><code># isEventFn(Dict{Int, Int}) -&gt; Bool
+function getProbSuccess(nPeople::Int, isEventFn::Function,
+                        nSimulations::Int=100_000)::Flt
+    @assert 3 &lt; nPeople &lt; 366 &quot;nPeople must be in range [4-365]&quot;
+    @assert 1e4 &lt;= nSimulations &lt;= 1e6 &quot;nSimulations not in range [1e4-1e6]&quot;
+    successes::Vec{Bool} = Vec{Bool}(undef, nSimulations)
+    for i in 1:nSimulations
+        peopleBdays = getBdaysAtParty(nPeople)
+        counts = getCounts(peopleBdays)
+        eventOccured = isEventFn(counts)
+        successes[i] = eventOccured
+    end
+    return sum(successes)/nSimulations
+end</code></pre>
+<p>First, we initialize the vector that will hold the results of our simulations (<code>successes</code>). The <code>Vec{Bool}(undef, nSimulations)</code> creates a vector of size specified in <code>nSimulations</code> that is currently occupied by some unspecified (<code>undef</code> like undefined) values (basically garbage that is currently in a specific place of our computer’s memory). We will fill the <code>successes</code> with the values of interest in the for loop. For each simulation, we throw a party and get the guests’ birthdays (<code>peopleBdays</code>). We obtain <code>count</code>s for them and test did the event that we consider a success occurred that time (with <code>isEventFn</code>). We place the occurrence into the proper spot (<code>[i]</code>) of our vector of <code>successes</code>. Notice, that here <code>peopleBdays</code>, <code>counts</code>, and <code>eventOccured</code> are local (helper) variables that are visible only in the for loop. Anyway, all that’s left to do is to calculate the probability. The <code>sum</code> function treats any <code>true</code> as <code>1</code> and <code>false</code> as 0, hence it returns the number of successes, which we divide by the number of simulations.</p>
+<p>Let’s see how it works.</p>
+<pre class="language-julia"><code>Rnd.seed!(101)
+peopleAtParty = 5:30
+probsAnySameBdays = [getProbSuccess(n, nSameBdays) for n in peopleAtParty]
+probsMyBday = [getProbSuccess(n, anyMyBday) for n in peopleAtParty]</code></pre>
+<figure id="fig:birthday">
+<img src="./images/birthday.png" alt="Figure 5: Birthday paradox probabilities." />
+<figcaption aria-hidden="true">Figure 5: Birthday paradox probabilities.</figcaption>
+</figure>
+<p>So, with 23 people at a party the probability that any 2 of them have a birthday on the same day is roughly 50% or 0.5. The probability, that any person was born the same day that I have been born is around 8% or 0.08 for 30 people at a party. Actually, this last probability is fairly straightforward to calculate. For the reasons explained <a href="https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_probability_properties.html">here</a> it is just <span class="math inline">\(\frac{1}{365}*{n\ people\ at\ party}\)</span> so our <a href="https://en.wikipedia.org/wiki/Mean_absolute_error">mean absolute error</a> is roughly equal to:</p>
+<pre class="language-julia"><code>import Statistics as St
+
+probsMyBdayTheor = (1/365) .* peopleAtParty
+(probsMyBday .- probsMyBdayTheor) .|&gt; abs |&gt; St.mean</code></pre>
+<p>0.0013415015806111702</p>
+<p>which isn’t all that bad (we differ by a tenth part of a percent).</p>
+<p>As a mini-exercise you may tweak the code a little and estimate the probability that any 3 people at a party were born on the same day.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-2" href="./recursion_problem.html"><b>7.1</b> Problem</a> <kbd>←</kbd>
+        <a class="menu-level-2" href="./birthday_problem.html"><b>18.1</b> Problem</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-1" href="./progress_bar.html"><b>8</b> Progress Bar</a>
+            <kbd>→</kbd> <a class="menu-level-1" href="./compound_interest.html"><b>19</b> Compound interest</a>
         </span>
     </p>
 </div>
