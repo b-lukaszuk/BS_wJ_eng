@@ -2,7 +2,7 @@ const Str = String
 const Vec = Vector
 
 # the code in this file is meant to serve as a programming exercise only
-# and it may not act correctly
+# it may not act correctly
 
 arabicTest = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
               11, 12, 39, 246, 789, 2421, 160, 207, 1009, 1066,

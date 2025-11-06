@@ -1,7 +1,7 @@
 const Str = String
 
 # the code in this file is meant to serve as a programming exercise only
-# and it may not act correctly
+# it may not act correctly
 
 filePath = "./dna_seq_template_strand.txt"
 filesize(filePath)

@@ -4,7 +4,7 @@ const Str = String
 const Vec = Vector
 
 # the code in this file is meant to serve as a programming exercise only
-# and it may not act correctly
+# it may not act correctly
 
 const DAYS_PER_WEEK = 7
 const DAYS_PER_MONTH = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]

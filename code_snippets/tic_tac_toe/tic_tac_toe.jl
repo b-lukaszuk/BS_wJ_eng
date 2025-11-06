@@ -4,7 +4,7 @@ const Str = String
 const Vec = Vector
 
 # the code in this file is meant to serve as a programming exercise only
-# and it may not act correctly
+# it may not act correctly
 
 const PLAYERS = ["X", "O"]
 # LINES[1:3] - rows, LINES[4:6] - columns, LINES[7:8] - diagonals

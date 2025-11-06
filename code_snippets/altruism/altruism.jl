@@ -5,7 +5,7 @@ const Flt = Float64
 const Vec = Vector
 
 # the code in this file is meant to serve as a programming exercise only
-# and it may not act correctly
+# it may not act correctly
 
 @enum Player naive gullible unforgiving paybacker unfriendly abusive egoist
 @enum Choice cooperate=0 betray=1

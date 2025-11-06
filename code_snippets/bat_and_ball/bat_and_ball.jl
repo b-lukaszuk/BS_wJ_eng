@@ -1,7 +1,7 @@
 import Symbolics as Sym
 
 # the code in this file is meant to serve as a programming exercise only
-# and it may not act correctly
+# it may not act correctly
 
 # solution with build in matrix algebra
 variables = [

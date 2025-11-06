@@ -8,7 +8,7 @@ const Str = String
 const Vec = Vector
 
 # the code in this file is meant to serve as a programming exercise only
-# and it may not act correctly
+# it may not act correctly
 
 # attempt 1
 function drawLogo()::Cmk.Figure

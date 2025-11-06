@@ -1,7 +1,7 @@
 const Str = String
 
 # the code in this file is meant to serve as a programming exercise only
-# and it may not act correctly
+# it may not act correctly
 
 # https://en.wikipedia.org/wiki/English_numerals
 const UNITS_AND_TEENS = Dict(0 => "zero", 1 => "one",

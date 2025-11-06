@@ -2,7 +2,7 @@ const Str = String
 const Vec = Vector
 
 # the code in this file is meant to serve as a programming exercise only
-# and it may not act correctly
+# it may not act correctly
 
 function getNumOfBits2codeDec(dec::Int)::Int
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"

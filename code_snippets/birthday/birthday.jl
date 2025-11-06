@@ -7,7 +7,7 @@ const Str = String
 const Vec = Vector
 
 # the code in this file is meant to serve as a programming exercise only
-# and it may not act correctly
+# it may not act correctly
 
 function getBdaysAtParty(nPeople::Int)::Vec{Int}
     @assert 3 < nPeople < 366 "nPeople must be in range [4-365]"
