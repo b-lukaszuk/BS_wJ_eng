@@ -41,10 +41,13 @@ function getRand(::Type{Flt})::Flt
     return getRand() / m
 end
 
-# 0-9, uniform?
-function getRand(::Type{Int})::Int
-    return floor(getRand(Flt) * 10)
+# uniform?
+function getRand(uptoExcl::Int)::Int
+    @assert 0 < uptoExcl
+    return floor(getRand(Flt) * uptoExcl)
 end
 
-x = [getRand(Int) for i in 1:1_000_000]
+x = [getRand(5) for i in 1:100_000]
+getCounts(x)
+x = [getRand(7) for i in 1:100_000]
 getCounts(x)
