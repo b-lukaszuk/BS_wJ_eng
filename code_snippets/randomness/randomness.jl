@@ -11,6 +11,8 @@
 
 import Dates as Dt
 
+const Flt = Float64
+
 a = 1664525
 c = 1013904223
 m = 2^32
@@ -26,3 +28,23 @@ function getRand()::Int
     setSeed!(newSeed)
     return newSeed
 end
+
+function getCounts(v::Vector{T})::Dict{T,Int} where T
+    counts::Dict{T,Int} = Dict()
+    for elt in v
+        counts[elt] = get(counts, elt, 0) + 1
+    end
+    return counts
+end
+
+function getRand(::Type{Flt})::Flt
+    return getRand() / m
+end
+
+# 0-9, uniform?
+function getRand(::Type{Int})::Int
+    return floor(getRand(Flt) * 10)
+end
+
+x = [getRand(Int) for i in 1:1_000_000]
+getCounts(x)
