@@ -5,7 +5,6 @@
 # https://en.wikipedia.org/wiki/Linear_congruential_generator
 # https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform
 
-
 # the code in this file is meant to serve as a programming exercise only
 # it may not act correctly
 
@@ -43,11 +42,24 @@ end
 
 # uniform?
 function getRand(uptoExcl::Int)::Int
-    @assert 0 < uptoExcl
+    @assert 0 < uptoExcl "uptoExcl must be greater than 0"
     return floor(getRand(Flt) * uptoExcl)
 end
 
+# uniform?
 x = [getRand(5) for i in 1:100_000]
 getCounts(x)
 x = [getRand(7) for i in 1:100_000]
+getCounts(x)
+
+# uniform?
+function getRand(minIncl::Int, maxIncl::Int)::Int
+    @assert 0 < minIncl < maxIncl "must get: 0 < minIncl < maxIncl"
+    return minIncl + getRand(maxIncl-minIncl+1)
+end
+
+# uniform?
+x = [getRand(1, 5) for i in 1:100_000]
+getCounts(x)
+x = [getRand(2, 7) for i in 1:100_000]
 getCounts(x)
