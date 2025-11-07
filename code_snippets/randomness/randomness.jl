@@ -10,8 +10,6 @@
 
 import Dates as Dt
 
-const Flt = Float64
-
 a = 1664525
 c = 1013904223
 m = 2^32
@@ -36,14 +34,14 @@ function getCounts(v::Vector{T})::Dict{T,Int} where T
     return counts
 end
 
-function getRand(::Type{Flt})::Flt
+function getRand(::Type{Float64})::Float64
     return getRand() / m
 end
 
 # uniform?
 function getRand(uptoExcl::Int)::Int
     @assert 0 < uptoExcl "uptoExcl must be greater than 0"
-    return floor(getRand(Flt) * uptoExcl)
+    return floor(getRand(Float64) * uptoExcl)
 end
 
 # uniform?
