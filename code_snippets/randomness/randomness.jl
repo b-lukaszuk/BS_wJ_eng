@@ -10,6 +10,9 @@
 
 import Dates as Dt
 
+const Flt = Float64
+const Vec = Vector
+
 a = 1664525
 c = 1013904223
 m = 2^32
@@ -61,3 +64,29 @@ x = [getRand(1, 5) for i in 1:100_000]
 getCounts(x)
 x = [getRand(2, 7) for i in 1:100_000]
 getCounts(x)
+
+function getRandn()::Tuple{Flt, Flt}
+    theta::Flt = 2 * pi * getRand(Flt)
+    R::Flt = sqrt(-2 * log(getRand(Flt)))
+    x::Flt = R * cos(theta)
+    y::Flt = R * sin(theta)
+    return (x, y)
+end
+
+function flatten(randnNums::Vec{Tuple{A, A}})::Vec{Flt} where A
+    len::Int = length(randnNums) * 2
+    result::Vec{A} = Vec{A}(undef, len)
+    i::Int = 1
+    for (x, y) in randnNums
+        result[i] = x
+        result[i+1] = y
+        i += 2
+    end
+    return result
+end
+
+function getRandn(n::Int)::Vec{Flt}
+    @assert n > 0 "n must be greater than 0"
+    roughlyHalf::Int = cld(n, 2)
+    return flatten([getRandn() for _ in 1:roughlyHalf])[1:n]
+end
