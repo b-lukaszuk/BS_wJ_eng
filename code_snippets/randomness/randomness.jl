@@ -96,3 +96,10 @@ end
 x = getRandn(100)
 St.mean(x)
 St.std(x)
+
+function getRandn(n::Int, mean::Flt, std::Flt)::Vec{Flt}
+    return mean .+ std .* getRandn(n)
+end
+x = getRandn(100, 100.0, 16.0)
+St.mean(x)
+St.std(x)
