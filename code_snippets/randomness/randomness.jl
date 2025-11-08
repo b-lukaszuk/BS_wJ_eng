@@ -24,7 +24,7 @@ function setSeed!(newSeed)
     return nothing
 end
 
-function getRand()::Int
+function getRandFromLCG()::Int
     newSeed::Int = (a * seed + c) % m
     setSeed!(newSeed)
     return newSeed
@@ -38,14 +38,14 @@ function getCounts(v::Vector{T})::Dict{T,Int} where T
     return counts
 end
 
-function getRand(::Type{Float64})::Float64
-    return getRand() / m
+function getRand()::Flt
+    return getRandFromLCG() / m
 end
 
 # uniform?
 function getRand(uptoExcl::Int)::Int
     @assert 0 < uptoExcl "uptoExcl must be greater than 0"
-    return floor(getRand(Float64) * uptoExcl)
+    return floor(getRand() * uptoExcl)
 end
 
 # uniform?
@@ -67,8 +67,8 @@ x = [getRand(2, 7) for i in 1:100_000]
 getCounts(x)
 
 function getRandn()::Tuple{Flt, Flt}
-    theta::Flt = 2 * pi * getRand(Flt)
-    R::Flt = sqrt(-2 * log(getRand(Flt)))
+    theta::Flt = 2 * pi * getRand()
+    R::Flt = sqrt(-2 * log(getRand()))
     x::Flt = R * cos(theta)
     y::Flt = R * sin(theta)
     return (x, y)
