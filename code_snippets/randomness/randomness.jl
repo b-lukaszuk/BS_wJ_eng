@@ -9,6 +9,7 @@
 # it may not act correctly
 
 import Dates as Dt
+import Statistics as St
 
 const Flt = Float64
 const Vec = Vector
@@ -90,3 +91,8 @@ function getRandn(n::Int)::Vec{Flt}
     roughlyHalf::Int = cld(n, 2)
     return flatten([getRandn() for _ in 1:roughlyHalf])[1:n]
 end
+
+# test, mean ≈ 0, std ≈ 1
+x = getRandn(100)
+St.mean(x)
+St.std(x)
