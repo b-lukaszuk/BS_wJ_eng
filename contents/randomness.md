@@ -78,7 +78,7 @@ First, pick a random number generator that is easy enough to implement
 ([LCG](https://en.wikipedia.org/wiki/Linear_congruential_generator) seems to be
 good enough, but it's up to you). The `seed` is often initialized with [epoch
 time](https://en.wikipedia.org/wiki/Epoch_(computing)), e.g. the number of
-milliseconds that passed since 1 January 1970, which is kind of
+seconds that passed since 1 January 1970, which is kind of
 unpredictable. You should be able to get it out of
 [Dates](https://docs.julialang.org/en/v1/stdlib/Dates/) module. Use the LCG to
 write `getRand` that returns a random `Float64` in the range `[0-1)`
@@ -97,9 +97,55 @@ deviation.
 
 If the above feels overwhelming, then do as much as you can one step at a
 time. Remember you need to understand this stuff enough to implement it in code,
-leave the mathematical proofs to mathematicians and trust that they did they
+leave the theorems and proofs to mathematicians and trust that they did they
 jobs right.
 
 ## Solution {#sec:randomness_solution}
 
-The solution goes here.
+We start by definig a few global variables required by LCG as well a a way to
+set our `seed` to a desired value.
+
+```jl
+s = """
+import Dates as Dt
+
+a = 1664525
+c = 1013904223
+m = 2^32
+seed = round(Int, Dt.now() |> Dt.datetime2unix)
+
+function setSeed!(newSeed)
+    global seed = newSeed
+    return nothing
+end
+"""
+sc(s)
+```
+
+The values were chosen based on [this table from
+Wikipedia](https://en.wikipedia.org/wiki/Linear_congruential_generator#Parameters_in_common_use).
+
+Time to translate the LCG algorithm to Julia's code.
+
+```jl
+s = """
+function getRandFromLCG()::Int
+    newSeed::Int = (a * seed + c) % m
+    setSeed!(newSeed)
+    return newSeed
+end
+"""
+sc(s)
+```
+
+Let's see how it works.
+
+```jl
+s = """
+[getRandFromLCG() for _ in 1:6]
+"""
+sco(s)
+```
+
+A small victory, in result we got some integers that are very hard to predict
+for a human brain alone.
