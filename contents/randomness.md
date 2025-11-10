@@ -102,7 +102,7 @@ jobs right.
 
 ## Solution {#sec:randomness_solution}
 
-We start by definig a few global variables required by LCG as well a a way to
+We start by defining a few global variables required by LCG as well a a way to
 set our `seed` to a desired value.
 
 ```jl
@@ -149,3 +149,32 @@ sco(s)
 
 A small victory, in result we got some integers that are very hard to predict
 for a human brain alone.
+
+Still, the numbers are unwieldy and look quite odd, how can we transform them
+into a function that returns `Float64` from the range `[0-1)`? The key is the
+modulo operator (`%` equivalent to `rem` function) in `getRandFromLCG` which is
+a reminder after division. It has an interesting property, the remainder of `i`
+divided by `m` is always in the range 0 to `m-1`, see the example below.
+
+```jl
+s = """
+[i % 3 for i in 1:7]
+"""
+sco(s)
+```
+
+If so then all we have to do is to divide our `seed` by `m` to bet the desired
+`Float64` value.
+
+```jl
+s = """
+function getRand()::Flt
+    return getRandFromLCG() / m
+end
+
+[getRand() for _ in 1:3]
+"""
+sco(s)
+```
+
+Much better, we reached the first checkpoint.
