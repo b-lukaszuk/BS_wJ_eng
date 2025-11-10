@@ -177,4 +177,49 @@ end
 sco(s)
 ```
 
-Much better, we reached the first checkpoint.
+Much better, we reached the first checkpoint. OK, now how to convert it to an
+random integer generator. Let's try one step at a time, the `getRand()` returns
+a `Float64` in the range `[0-1)` so if we multiply it by some integer and round
+it (`floor` returns the nearest integer greater than or equal to a `Float64`) we
+should get a value from 0 almost up to that integer (since the max is slightly
+below 1).
+
+```jl
+s = """
+function getRand(upToExcl::Int)::Int
+    @assert 0 < upToExcl "upToExcl must be greater than 0"
+    return floor(getRand() * upToExcl)
+end
+"""
+sc(s)
+```
+
+Time, for a test. If we did our job right we should get a sequence of random
+values each equally likely to occur (`getCounts` was developed and explained
+[here](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_prob_theor_practice.html)).
+
+```jl
+s = """
+function getCounts(v::Vector{T})::Dict{T,Int} where T
+    counts::Dict{T,Int} = Dict()
+    for elt in v
+        counts[elt] = get(counts, elt, 0) + 1
+    end
+    return counts
+end
+
+[getRand(3) for _ in 1:100_000] |> getCounts
+"""
+sco(s)
+```
+
+Yep, roughly equal counts. One, more swing with a different range.
+
+```jl
+s = """
+[getRand(5) for _ in 1:100_000] |> getCounts
+"""
+sco(s)
+```
+
+Ladies and gentlemen, we got it.
