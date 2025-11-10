@@ -200,7 +200,7 @@ values each equally likely to occur (`getCounts` was developed and explained
 
 ```jl
 s = """
-function getCounts(v::Vector{T})::Dict{T,Int} where T
+function getCounts(v::Vec{T})::Dict{T,Int} where T
     counts::Dict{T,Int} = Dict()
     for elt in v
         counts[elt] = get(counts, elt, 0) + 1
@@ -222,4 +222,43 @@ s = """
 sco(s)
 ```
 
-Ladies and gentlemen, we got it.
+Ladies and gentlemen, we got it. Now, time to tweak a bit so that we can get an
+integer in the desired range.
+
+```jl
+s = """
+function getRand(minIncl::Int, maxIncl::Int)::Int
+    @assert 0 < minIncl < maxIncl "must get: 0 < minIncl < maxIncl"
+    return minIncl + getRand(maxIncl-minIncl+1)
+end
+
+function getRand(n::Int, minIncl::Int, maxIncl::Int)::Vec{Int}
+    @assert 0 < n "n must be greater than 0"
+    return [getRand(minIncl, maxIncl) for _ in 1:n]
+end
+"""
+sc(s)
+```
+
+For that we just generated an `Int` from 0 up to one more than the span of our
+range (`maxIncl-minIncl+1`) and added `minIncl` so that the range starts at that
+value and not at zero. Let's check it out.
+
+```jl
+s = """
+getRand(100_000, 1, 4) |> getCounts
+"""
+sco(s)
+```
+
+Looks good, roughly equal counts was what we were looking for. One more time,
+just to be sure.
+
+```jl
+s = """
+getRand(100_000, 3, 7) |> getCounts
+"""
+sco(s)
+```
+
+Another checkpoint reached.
