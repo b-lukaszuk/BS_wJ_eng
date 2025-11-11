@@ -116,8 +116,8 @@ did their jobs right.
 
 ## Solution {#sec:randomness_solution}
 
-We start by defining a few global variables required by LCG as well a a way to
-set our `seed` to a desired value.
+We start by defining a few global variables required by LCG as well as a a way
+to set our `seed` to a desired value.
 
 ```jl
 s = """
@@ -152,6 +152,13 @@ end
 sc(s)
 ```
 
+> **_Note:_** In general a function should not rely on global variables, but
+> only on the arguments that were send to it. Relying on global variables
+> although convenient and tempting could lead to bugs that are hard to pinpoint
+> and eliminate. That's why in the rest of this book I will try to avoid this
+> style with the exception of global constant variables seen, e.g. in
+> @sec:calendar_solution.
+
 Let's see how it works.
 
 ```jl
@@ -161,10 +168,10 @@ s = """
 sco(s)
 ```
 
-A small victory, in result we got some integers that are very hard to predict
+A small victory. In result we got some integers that are very hard to predict
 for a human brain alone.
 
-Still, the numbers are unwieldy and look quite odd, how can we transform them
+Still, the numbers are unwieldy and look quite odd. How can we transform them
 into a function that returns `Float64` from the range `[0-1)`? The key is the
 modulo operator (`%` equivalent to `rem` function) in `getRandFromLCG` which is
 a reminder after division. It has an interesting property, the remainder of `i`
@@ -193,10 +200,9 @@ sco(s)
 
 Much better, we reached the first checkpoint. OK, now how to convert it to an
 random integer generator. Let's try one step at a time, the `getRand()` returns
-a `Float64` in the range `[0-1)` so if we multiply it by some integer and round
-it (`floor` returns the nearest integer greater than or equal to a `Float64`) we
-should get a value from 0 almost up to that integer (since the max is slightly
-below 1).
+a `Float64` in the range `[0-1)`. So, if we were to multiply 1 by let's say 5 we
+would get 5, and 0 times 5 would get us zero. Hence, the following code (`floor`
+returns the nearest integer smaller than or equal to a `Float64`).
 
 ```jl
 s = """
@@ -222,6 +228,7 @@ function getCounts(v::Vec{T})::Dict{T,Int} where T
     return counts
 end
 
+setSeed!(1111)
 [getRand(3) for _ in 1:100_000] |> getCounts
 """
 sco(s)
@@ -231,13 +238,14 @@ Yep, roughly equal counts. One, more swing with a different range.
 
 ```jl
 s = """
+setSeed!(1111)
 [getRand(5) for _ in 1:100_000] |> getCounts
 """
 sco(s)
 ```
 
-Ladies and gentlemen, we got it. Now, time to tweak a bit so that we can get an
-integer in the desired range.
+Ladies and gentlemen, we got it. Now, time to tweak it a bit so that we can get
+an integer in the desired range.
 
 ```jl
 s = """
@@ -260,6 +268,7 @@ value and not at zero. Let's check it out.
 
 ```jl
 s = """
+setSeed!(2222)
 getRand(100_000, 1, 4) |> getCounts
 """
 sco(s)
@@ -270,6 +279,7 @@ just to be sure.
 
 ```jl
 s = """
+setSeed!(2222)
 getRand(100_000, 3, 7) |> getCounts
 """
 sco(s)
@@ -277,10 +287,10 @@ sco(s)
 
 Another checkpoint reached.
 
-As for the Box-Mueller transform there is a small problem, the Wikipedia
+As for the Box-Mueller transform there is a small problem. The Wikipedia's page
 contains [the algorithm implementation in
 Julia](https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform#Julia). So for
-a change, what we will do here is take the [JavaScript
+a change we will take the [JavaScript
 version](https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform#JavaScript)
 and translate it to Julia.
 
@@ -298,17 +308,17 @@ end
 sc(s)
 ```
 
-And voila, the only differnce is that instead of a vector we return a tuple with
-each element being a value from a normal distribution with mean = 0 and standard
-deviation = 1. However, in general we would be interested in a function that
-returns any number of normally distributed values (and not only two), hence the
-following code.
+And voila, the only difference is that instead of a vector we return a tuple
+with each element being a value from a normal distribution with the mean = 0 and
+the standard deviation = 1. However, in general we would be interested in a
+function that returns any number of normally distributed values (and not only
+two in `Tuple{Flt, Flt}`), hence the following code.
 
 ```jl
 s = """
-function flatten(randnNums::Vec{Tuple{A, A}})::Vec{A} where A
+function flatten(randnNums::Vec{Tuple{Flt, Flt}})::Vec{Flt}
     len::Int = length(randnNums) * 2
-    result::Vec{A} = Vec{A}(undef, len)
+    result::Vec{Flt} = Vec{Flt}(undef, len)
     i::Int = 1
     for (a, b) in randnNums
         result[i] = a
@@ -327,18 +337,21 @@ end
 sc(s)
 ```
 
-In `getRandn(n::Int)` generates a vector of tuples using comprehensions. The
-length of the vector is determined using `cld`, which divides n by two, and
-returns the smallest integer equal to or greater than the result of that
-division. The vector of tuples (in this case `Vec{Tuple{Flt, Flt}}`) is
-`flatten`ed before being returned from `getRandn(n::Int)` as a regular vector of
-floats (`Vec{Flt}`). Let's see how we did.
+`getRandn(n::Int)` generates a vector of tuples using comprehensions. The length
+of the vector is determined using `cld`, which divides n by 2, and returns the
+smallest integer equal to or greater than the result of that division. The
+vector of tuples (in this case `Vec{Tuple{Flt, Flt}}`) is `flatten`ed before
+being returned from `getRandn(n::Int)` as a regular vector of floats
+(`Vec{Flt}`). Notice, that if `n` is an odd number then we return all but the
+last element (`[1:n]`) of the vector (since `flatten` returns a vector of even
+length). Anyway, let's see how we did.
 
 ```jl
 s = """
 import Statistics as St
 
-# test, mean ≈ 0, std ≈ 1
+# test, mean ≈ 0.0, std ≈ 1.0
+setSeed!(3333)
 x = getRandn(100)
 
 St.mean(x), St.std(x)
@@ -346,19 +359,23 @@ St.mean(x), St.std(x)
 sco(s)
 ```
 
-I would say we did a pretty good job. OK, time for the last step, let's
-transform it to a function that provides a normal distribution of a specified
-mean and standard deviation. That's fairly simple. Since the 'original' std is
-equal 1, then if we multiply the numbers by let's say 16, then we will get a
-distribution with the mean 0 and standard deviation equal to 16. So how do we
-make a mean equal, let's say 100? It's easy we just add 100 to every number from
-a distribution.
+I would say we did a pretty good job.
+
+Time for the last step, let's transform `getRandn` to a function that provides a
+normal distribution with a specified mean and standard deviation. That's fairly
+simple. Since the 'original' deviation is 1, then if we multiply the numbers by
+let's say 16, then we will get a distribution with the mean 0 and standard
+deviation equal to 16. So how do we make a mean equal, let's say 100? It's easy
+as well, we just add 100 to every number from a distribution.
 
 ```jl
 s = """
 function getRandn(n::Int, mean::Flt, std::Flt)::Vec{Flt}
     return mean .+ std .* getRandn(n)
 end
+
+# test, mean ≈ 100.0, std ≈ 16.0
+setSeed!(3333)
 x = getRandn(100, 100.0, 16.0)
 
 St.mean(x), St.std(x)
@@ -366,5 +383,7 @@ St.mean(x), St.std(x)
 sco(s)
 ```
 
-That seems to be it, we reached the end of this task. You may take a break now,
-you deserve it.
+That seems to be it, we reached the end of this task. Together we developed a
+simplified library for random numbers generation and it wasn't that bad, was it?
+Still, for practical reasons I would go with the baptized in fire
+[Random.jl](https://docs.julialang.org/en/v1/stdlib/Random/).
