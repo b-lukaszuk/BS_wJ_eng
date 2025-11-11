@@ -318,4 +318,38 @@ length of the vector is determined using `cld`, which divides n by two, and
 returns the smallest integer equal to or greater than the result of that
 division. The vector of tuples (in this case `Vec{Tuple{Flt, Flt}}`) is
 `flatten`ed vefore being returned from `getRandn(n::Int)` as a regular vector of
-floats (`Vec{Flt}`).
+floats (`Vec{Flt}`). Let's see how we did.
+
+```jl
+s = """
+import Statistics as St
+
+# test, mean ≈ 0, std ≈ 1
+x = getRandn(100)
+St.mean(x), St.std(x)
+"""
+sco(s)
+```
+
+I would say we did a pretty good job. OK, time for the last step, let's
+transform it to a function that provides a normal distribution of a specified
+mean and standard deviation. That's fairly simple. Since the 'original' std is
+equal 1, then if we multiply the numbers by let's say 16, then we will get a
+distribution with the mean 0 and standard deviation equal to 16. So how do we
+make a mean equal, let's say 100? It's easy we just add 100 to every number from
+a distribution.
+
+```jl
+s = """
+function getRandn(n::Int, mean::Flt, std::Flt)::Vec{Flt}
+    return mean .+ std .* getRandn(n)
+end
+x = getRandn(100, 100.0, 16.0)
+
+St.mean(x), St.std(x)
+"""
+sco(s)
+```
+
+That seems to be it, we reached the end of this task. You may take a break now,
+you deserve it.
