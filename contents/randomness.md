@@ -262,3 +262,60 @@ sco(s)
 ```
 
 Another checkpoint reached.
+
+As for the Box-Mueller transform there is a small problem, the Wikipedia
+contains [the algorithm implementation in
+Julia](https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform#Julia). So for
+a change, what we will do here is take the [JavaScript
+version](https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform#JavaScript)
+and translate it to Julia.
+
+```jl
+s = """
+function getRandn()::Tuple{Flt, Flt}
+    theta::Flt = 2 * pi * getRand()
+    R::Flt = sqrt(-2 * log(getRand()))
+    x::Flt = R * cos(theta)
+    y::Flt = R * sin(theta)
+    return (x, y)
+end
+
+"""
+sc(s)
+```
+
+And voila, the only differnce is that instead of a vector we return a tuple with
+each element being a value from a normal distribution with mean = 0 and standard
+deviation = 1. However, in general we would be interested in a function that
+returns any number of normally distributed values (and not only two), hence the
+following code.
+
+```jl
+s = """
+function flatten(randnNums::Vec{Tuple{A, A}})::Vec{A} where A
+    len::Int = length(randnNums) * 2
+    result::Vec{A} = Vec{A}(undef, len)
+    i::Int = 1
+    for (a, b) in randnNums
+        result[i] = a
+        result[i+1] = b
+        i += 2
+    end
+    return result
+end
+
+function getRandn(n::Int)::Vec{Flt}
+    @assert n > 0 "n must be greater than 0"
+    roughlyHalf::Int = cld(n, 2)
+    return flatten([getRandn() for _ in 1:roughlyHalf])[1:n]
+end
+"""
+sc(s)
+```
+
+In `getRandn(n::Int)` generates a vector of tuples using comprehensions. The
+length of the vector is determined using `cld`, which divides n by two, and
+returns the smallest integer equal to or greater than the result of that
+division. The vector of tuples (in this case `Vec{Tuple{Flt, Flt}}`) is
+`flatten`ed vefore being returned from `getRandn(n::Int)` as a regular vector of
+floats (`Vec{Flt}`).
