@@ -13,15 +13,15 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/random
 ## Problem {#sec:randomness_problem}
 
 Random numbers are the numbers that occur, well, at random. Anyway, they are
-quite useful for programming. Chances are you will use them to solve the
-problems in @sec:birthday_problem or @sec:logo_problem.
+quite useful for programming. Chances are you will use them to solve some
+problems like those in @sec:birthday_problem or @sec:logo_problem.
 
-But how do the computers generate them. Surprise, they don't. But then how
-could a Julia's `Random.jl` (part of the standard library) generate one. Hmm,
-it's complicated, but the basic idea could be explained with an example.
+But how do computers generate them. Surprise, they don't. But then how could a
+Julia's `Random.jl` (part of the standard library) generate one. Hmm, it's
+complicated, but the basic idea could be explained with an example.
 
-In a moment I will use a function that generates a random number in the range 1
-to 10. Take a moment and try to guess it.
+In a moment I will use a function that generates a random number in the range of
+1 to 10 (inclusive-inclusive). Take a moment and try to guess it.
 
 Ready, here we go.
 
@@ -57,29 +57,36 @@ function getRand()::Int
 end
 ```
 
-First, we declare some initial, undisclosed and hard to predict value (`seed` -
-a global variable) from which our results will grow. Next, inside `getRand` we
-update the `seed ` using some mathematical formula and return it as our
-result. Moreover, we update the old `seed ` with that new value
-(`global seed = newSeed`), so that the next time we use `getRand` it will return
-us some new value.
+First, we declare a variable called `seed` with an initial, undisclosed and hard
+to predict value. From this `seed` our random numbers will sprout. Next, inside
+`getRand` we update the `seed ` using some mathematical formula and return it as
+our result. Moreover, we update the old `seed ` with that new value
+(`global seed = newSeed`, we use
+[global](https://docs.julialang.org/en/v1/base/base/#global) since here `seed`
+is in the global
+[scope](https://docs.julialang.org/en/v1/manual/variables-and-scoping/#scope-of-variables)).
+Thanks to the update the next time we use `getRand` it will return us some new
+value. Still, the function is purely deterministic as once you know the value of
+`seed` you can accurately predict the random variable you will get.
 
 Surprisingly this is more or less what the [random number
-generators](https://en.wikipedia.org/wiki/List_of_random_number_generators#Pseudorandom_number_generators_(PRNGs))
-do. The idea we got there was not bad, we just need to improve on its
-execution. We need a less obvious starting value, a more chaotic update method,
-and a much longer looping period so that no one sees that the sequence repeats
-itself periodically.
+generators](https://en.wikipedia.org/wiki/Random_number_generation) do. The idea
+we got there was not bad, we just need to improve on its execution. We need a
+less obvious starting value, a more chaotic update method, and a much longer
+looping period so that no one sees that the sequence repeats itself
+periodically.
 
 And here we are. In this chapter we are going to develop a simplified library
 for random numbers generation.
 
-First, pick a random number generator that is easy enough to implement
+First, pick a [random number
+generator](https://en.wikipedia.org/wiki/List_of_random_number_generators#Pseudorandom_number_generators_(PRNGs))
+that is relatively easy to implement
 ([LCG](https://en.wikipedia.org/wiki/Linear_congruential_generator) seems to be
 good enough, but it's up to you). The `seed` is often initialized with [epoch
 time](https://en.wikipedia.org/wiki/Epoch_(computing)), e.g. the number of
-seconds that passed since 1 January 1970, which is kind of
-unpredictable. You should be able to get it out of
+seconds that passed since 1 January 1970, which is kind of unpredictable. You
+should be able to get it out of the
 [Dates](https://docs.julialang.org/en/v1/stdlib/Dates/) module. Use the LCG to
 write `getRand` that returns a random `Float64` in the range `[0-1)`
 (inclusive - exclusive). This is our bread and butter of random number
@@ -91,14 +98,14 @@ transform](https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform) and use
 it to define two `getRandn` methods, one that returns a value from a [standard
 normal
 distribution](https://en.wikipedia.org/wiki/Normal_distribution#Standard_normal_distribution)
-with mean = 0 and standard deviation = 1 (like the `Base.randn`). The other
+with mean = 0 and standard deviation = 1 (like `Base.randn` do). The other
 should return a normal distribution with a specified mean and standard
 deviation.
 
-If the above feels overwhelming, then do as much as you can one step at a
-time. Remember you need to understand this stuff enough to implement it in code,
-leave the theorems and proofs to mathematicians and trust that they did they
-jobs right.
+If the above feels overwhelming, then proceed one step at a time and do as much
+as you can. Remember you need to understand this stuff enough to implement it in
+the code, leave the theorems and proofs to mathematicians and trust that they
+did their jobs right.
 
 ## Solution {#sec:randomness_solution}
 
@@ -317,7 +324,7 @@ In `getRandn(n::Int)` generates a vector of tuples using comprehensions. The
 length of the vector is determined using `cld`, which divides n by two, and
 returns the smallest integer equal to or greater than the result of that
 division. The vector of tuples (in this case `Vec{Tuple{Flt, Flt}}`) is
-`flatten`ed vefore being returned from `getRandn(n::Int)` as a regular vector of
+`flatten`ed before being returned from `getRandn(n::Int)` as a regular vector of
 floats (`Vec{Flt}`). Let's see how we did.
 
 ```jl
@@ -326,6 +333,7 @@ import Statistics as St
 
 # test, mean ≈ 0, std ≈ 1
 x = getRandn(100)
+
 St.mean(x), St.std(x)
 """
 sco(s)
