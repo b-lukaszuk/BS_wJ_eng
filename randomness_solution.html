@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Problem - Build SH*T with Julia</title>
+  <title>Solution - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -151,19 +151,157 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="6.1" id="sec:bile_problem"><span class="header-section-number">6.1</span> Problem</h2>
-<p>There are different types of nutrients to be found in food, but they can be roughly divided into: sugars (carbohydrates), proteins and fats (lipids). Your liver produces <a href="https://en.wikipedia.org/wiki/Bile">bile</a> that is stored in the gallbladder and released to the duodenum (part of the small intestine). As far as I remember my biology classes bile facilitates digestion by breaking large lipid (fat) droplets into smaller ones. Thanks to that it increases the total surface area in contact with digestive enzymes (lipases). So much for the theory, but I always wondered if that’s true.</p>
-<p>Use Julia to demonstrate that the total surface area of a few small lipid droplets is actually greater than the surface area of one big droplet. Of course, the big droplet and small droplets should contain the same volume of lipids.</p>
+<h2 data-number="8.2" id="sec:randomness_solution"><span class="header-section-number">8.2</span> Solution</h2>
+<p>We start by defining a few global variables required by LCG as well as a a way to set our <code>seed</code> to a desired value.</p>
+<pre class="language-julia"><code>import Dates as Dt
+
+a = 1664525
+c = 1013904223
+m = 2^32
+seed = round(Int, Dt.now() |&gt; Dt.datetime2unix)
+
+function setSeed!(newSeed)
+    global seed = newSeed
+    return nothing
+end</code></pre>
+<p>The values were chosen based on <a href="https://en.wikipedia.org/wiki/Linear_congruential_generator#Parameters_in_common_use">this table from Wikipedia</a>.</p>
+<p>Time to translate the LCG algorithm to Julia’s code.</p>
+<pre class="language-julia"><code>function getRandFromLCG()::Int
+    newSeed::Int = (a * seed + c) % m
+    setSeed!(newSeed)
+    return newSeed
+end</code></pre>
 <blockquote>
-<p><strong><em>Hint:</em></strong> You will have to assume the shape of a lipid droplet. If your math is rusty, then choose something simple, like a <a href="https://en.wikipedia.org/wiki/Cube">cube</a>. For instance, as a starting point you may think about the classical <a href="https://en.wikipedia.org/wiki/Rubik%27s_Cube">Rubik’s cube</a> and into how many pieces you could break it. Then continue by calculating the areas and volumes of the big cube and the small cubes.</p>
+<p><strong><em>Note:</em></strong> In general a function should not rely on nor change global variables. Instead it should only depend on the parameters that were send to it as its arguments. Relying on global variables although convenient and tempting could lead to bugs that are hard to pinpoint and eliminate. That’s why in the rest of this book I will try to avoid this style with the exception of global constant variables seen, e.g. in Section <a href="./calendar_solution.html#sec:calendar_solution">16.2</a>.</p>
 </blockquote>
+<p>Let’s see how it works.</p>
+<pre class="language-julia"><code># your numbers will likely differ from mine
+[getRandFromLCG() for _ in 1:6]</code></pre>
+<pre class="output"><code>[1710616289, 3138566860, 1891350459, 2993605086, 657172389, 4254020800]</code></pre>
+<p>A small victory. In result we got some integers that are very hard to predict for a human brain alone.</p>
+<p>Still, the numbers are unwieldy and look quite odd. How can we transform them into a function that returns <code>Float64</code> from the range <code>[0-1)</code>? The key is the modulo operator (<code>%</code> equivalent to <code>rem</code> function) in <code>getRandFromLCG</code> which is a reminder after division. It has an interesting property, the remainder of <code>i</code> divided by <code>m</code> is always in the range 0 to <code>m-1</code>, see the example below.</p>
+<pre class="language-julia"><code>[i % 3 for i in 1:7]</code></pre>
+<pre class="output"><code>[1, 2, 0, 1, 2, 0, 1]</code></pre>
+<p>If so then all we have to do is to divide our <code>seed</code> (that takes values from 0 to <code>m</code>-1) by <code>m</code> to get the desired <code>Float64</code> value.</p>
+<pre class="language-julia"><code>function getRand()::Flt
+    return getRandFromLCG() / m
+end
+
+# your numbers will likely differ from mine
+[getRand() for _ in 1:3]</code></pre>
+<pre class="output"><code>[0.32216078764759004, 0.9211270776577294, 0.28500620485283434]</code></pre>
+<p>Much better, we reached the first checkpoint. OK, now how to convert it to a random integer generator. Let’s try one step at a time. The <code>getRand()</code> returns a <code>Float64</code> in the range <code>[0-1)</code>. So, if we were to multiply 1 (the upper limit) by let’s say 5 we would get 5, and 0 (the lower limit) times 5 would get us zero. Hence, the following code (<code>floor</code> returns the nearest integer smaller than or equal to a <code>Float64</code>).</p>
+<pre class="language-julia"><code>function getRand(upToExcl::Int)::Int
+    @assert 0 &lt; upToExcl &quot;upToExcl must be greater than 0&quot;
+    return floor(getRand() * upToExcl)
+end</code></pre>
+<p>Time, for a test. If we did our job right we should get a sequence of random values each equally likely to occur (<code>getCounts</code> was developed and explained <a href="https://b-lukaszuk.github.io/RJ_BS_eng/statistics_prob_theor_practice.html">here</a>).</p>
+<pre class="language-julia"><code>function getCounts(v::Vec{T})::Dict{T,Int} where T
+    counts::Dict{T,Int} = Dict()
+    for elt in v
+        counts[elt] = get(counts, elt, 0) + 1
+    end
+    return counts
+end
+
+setSeed!(1111) # for reproducibility
+[getRand(3) for _ in 1:100_000] |&gt; getCounts</code></pre>
+<pre class="output"><code>Dict{Int64, Int64} with 3 entries:
+  0 =&gt; 33421
+  2 =&gt; 33054
+  1 =&gt; 33525</code></pre>
+<p>Yep, roughly equal counts. One, more swing with a different range.</p>
+<pre class="language-julia"><code>setSeed!(1111) # for reproducibility
+[getRand(5) for _ in 1:100_000] |&gt; getCounts</code></pre>
+<pre class="output"><code>Dict{Int64, Int64} with 5 entries:
+  0 =&gt; 20046
+  4 =&gt; 19821
+  2 =&gt; 20111
+  3 =&gt; 19882
+  1 =&gt; 20140</code></pre>
+<p>Ladies and gentlemen, we got it. Now, time to tweak it a bit so that we can get an integer in the desired range.</p>
+<pre class="language-julia"><code>function getRand(minIncl::Int, maxIncl::Int)::Int
+    @assert 0 &lt; minIncl &lt; maxIncl &quot;must get: 0 &lt; minIncl &lt; maxIncl&quot;
+    return minIncl + getRand(maxIncl-minIncl+1)
+end
+
+function getRand(n::Int, minIncl::Int, maxIncl::Int)::Vec{Int}
+    @assert 0 &lt; n &quot;n must be greater than 0&quot;
+    return [getRand(minIncl, maxIncl) for _ in 1:n]
+end</code></pre>
+<p>For that we just generated an <code>Int</code> from 0 up to one more than the span of our range (<code>maxIncl-minIncl+1</code>) and added <code>minIncl</code> so that the range starts at that value and not at zero. Let’s check it out.</p>
+<pre class="language-julia"><code>setSeed!(2222)
+getRand(100_000, 1, 4) |&gt; getCounts</code></pre>
+<pre class="output"><code>Dict{Int64, Int64} with 4 entries:
+  4 =&gt; 24969
+  2 =&gt; 24635
+  3 =&gt; 25162
+  1 =&gt; 25234</code></pre>
+<p>Looks good, roughly equal counts was what we were looking for. One more time, just to be sure.</p>
+<pre class="language-julia"><code>setSeed!(2222)
+getRand(100_000, 3, 7) |&gt; getCounts</code></pre>
+<pre class="output"><code>Dict{Int64, Int64} with 5 entries:
+  5 =&gt; 19944
+  4 =&gt; 19722
+  6 =&gt; 20224
+  7 =&gt; 19874
+  3 =&gt; 20236</code></pre>
+<p>Another checkpoint reached.</p>
+<p>As for the Box-Mueller transform there is a small problem. The Wikipedia’s page already contains <a href="https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform#Julia">the algorithm implementation in Julia</a>. So for a change we will take the <a href="https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform#JavaScript">JavaScript version</a> and translate it to Julia.</p>
+<pre class="language-julia"><code>function getRandn()::Tuple{Flt, Flt}
+    theta::Flt = 2 * pi * getRand()
+    R::Flt = sqrt(-2 * log(getRand()))
+    x::Flt = R * cos(theta)
+    y::Flt = R * sin(theta)
+    return (x, y)
+end</code></pre>
+<p>And voila, the only difference is that instead of a vector we return a tuple with each element being a value from the normal distribution with the mean = 0 and the standard deviation = 1. However, we would prefer a function that returns any number of normally distributed values (and not only two in <code>Tuple{Flt, Flt}</code>), hence the following code.</p>
+<pre class="language-julia"><code>function flatten(randnNums::Vec{Tuple{Flt, Flt}})::Vec{Flt}
+    len::Int = length(randnNums) * 2
+    result::Vec{Flt} = Vec{Flt}(undef, len)
+    i::Int = 1
+    for (a, b) in randnNums
+        result[i] = a
+        result[i+1] = b
+        i += 2
+    end
+    return result
+end
+
+function getRandn(n::Int)::Vec{Flt}
+    @assert n &gt; 0 &quot;n must be greater than 0&quot;
+    roughlyHalf::Int = cld(n, 2)
+    return flatten([getRandn() for _ in 1:roughlyHalf])[1:n]
+end</code></pre>
+<p><code>getRandn(n::Int)</code> generates a vector of tuples using comprehensions. The length of the vector is determined using <code>cld</code>, which divides <code>n</code> by 2, and returns the smallest integer equal to or greater than the result of that division. The vector of tuples (in this case <code>Vec{Tuple{Flt, Flt}}</code>) is <code>flatten</code>ed before being returned from <code>getRandn(n::Int)</code>. That’s why we get a regular vector of floats (<code>Vec{Flt}</code>). Notice, that if <code>n</code> is an odd number then we return all but the last element (<code>[1:n]</code>) of the vector (since <code>flatten</code> returns a vector of even length). Anyway, let’s see how we did.</p>
+<pre class="language-julia"><code>import Statistics as St
+
+# test: mean ≈ 0.0, std ≈ 1.0
+setSeed!(401)
+x = getRandn(100)
+
+St.mean(x), St.std(x)</code></pre>
+<pre class="output"><code>(0.050968498407633414, 1.0266071355197548)</code></pre>
+<p>I would say we did a pretty good job.</p>
+<p>Time for the last step, let’s transform <code>getRandn</code> to a function that provides a normal distribution with a specified mean and standard deviation. That’s fairly simple. Since the ‘original’ deviation is 1, then if we multiply the numbers by let’s say 16, then we will get a distribution with the mean 0 and standard deviation equal to 16. So how do we make a mean equal, let’s say 100? It’s easy as well, we just add 100 to every number from a distribution.</p>
+<pre class="language-julia"><code>function getRandn(n::Int, mean::Flt, std::Flt)::Vec{Flt}
+    return mean .+ std .* getRandn(n)
+end
+
+# test: mean ≈ 100.0, std ≈ 16.0
+setSeed!(401)
+x = getRandn(100, 100.0, 16.0)
+
+St.mean(x), St.std(x)</code></pre>
+<pre class="output"><code>(100.81549597452215, 16.425714168316077)</code></pre>
+<p>That seems to be it, we reached the end of this task. Together we developed a simplified library for random numbers generation and it wasn’t all that bad, was it? Still, for practical reasons I would recommend to use the baptized in fire <a href="https://docs.julialang.org/en/v1/stdlib/Random/">Random.jl</a>.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./bile.html"><b>6</b> Bile</a> <kbd>←</kbd>
+        <a class="menu-level-2" href="./randomness_problem.html"><b>8.1</b> Problem</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./bile_solution.html"><b>6.2</b> Solution</a>
+            <kbd>→</kbd> <a class="menu-level-1" href="./progress_bar.html"><b>9</b> Progress Bar</a>
         </span>
     </p>
 </div>

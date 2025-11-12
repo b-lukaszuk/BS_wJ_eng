@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Problem - Build SH*T with Julia</title>
+  <title>Randomness - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -151,19 +151,18 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="6.1" id="sec:bile_problem"><span class="header-section-number">6.1</span> Problem</h2>
-<p>There are different types of nutrients to be found in food, but they can be roughly divided into: sugars (carbohydrates), proteins and fats (lipids). Your liver produces <a href="https://en.wikipedia.org/wiki/Bile">bile</a> that is stored in the gallbladder and released to the duodenum (part of the small intestine). As far as I remember my biology classes bile facilitates digestion by breaking large lipid (fat) droplets into smaller ones. Thanks to that it increases the total surface area in contact with digestive enzymes (lipases). So much for the theory, but I always wondered if that’s true.</p>
-<p>Use Julia to demonstrate that the total surface area of a few small lipid droplets is actually greater than the surface area of one big droplet. Of course, the big droplet and small droplets should contain the same volume of lipids.</p>
-<blockquote>
-<p><strong><em>Hint:</em></strong> You will have to assume the shape of a lipid droplet. If your math is rusty, then choose something simple, like a <a href="https://en.wikipedia.org/wiki/Cube">cube</a>. For instance, as a starting point you may think about the classical <a href="https://en.wikipedia.org/wiki/Rubik%27s_Cube">Rubik’s cube</a> and into how many pieces you could break it. Then continue by calculating the areas and volumes of the big cube and the small cubes.</p>
-</blockquote>
+<h1 data-number="8" id="sec:randomness"><span class="header-section-number">8</span> Randomness</h1>
+<p>In this chapter I used the following libraries. Still, once you read the problem description you may decide to do otherwise.</p>
+<pre class="language-julia"><code>import Dates as Dt
+import Statistics as St</code></pre>
+<p>I recommend you try to solve the task on your own first. Once you finish you may compare your own solution with the one in this chapter (with explanations) or with <a href="https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/randomness">the code snippets</a> (without explanations).</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-1" href="./bile.html"><b>6</b> Bile</a> <kbd>←</kbd>
+        <a class="menu-level-2" href="./recursion_solution.html"><b>7.2</b> Solution</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./bile_solution.html"><b>6.2</b> Solution</a>
+            <kbd>→</kbd> <a class="menu-level-2" href="./randomness_problem.html"><b>8.1</b> Problem</a>
         </span>
     </p>
 </div>
