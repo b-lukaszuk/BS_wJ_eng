@@ -105,8 +105,8 @@ transform](https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform) and use
 it to define two `getRandn` methods, one that returns a value from a [standard
 normal
 distribution](https://en.wikipedia.org/wiki/Normal_distribution#Standard_normal_distribution)
-with mean = 0 and standard deviation = 1 (like `Base.randn` do). The other
-should return a normal distribution with a specified mean and standard
+with the mean = 0 and the standard deviation = 1 (like `Base.randn` do). The
+other should return a normal distribution with a specified mean and standard
 deviation.
 
 If the above feels overwhelming, then proceed one step at a time and do as much
@@ -152,17 +152,18 @@ end
 sc(s)
 ```
 
-> **_Note:_** In general a function should not rely on global variables, but
-> only on the arguments that were send to it. Relying on global variables
-> although convenient and tempting could lead to bugs that are hard to pinpoint
-> and eliminate. That's why in the rest of this book I will try to avoid this
-> style with the exception of global constant variables seen, e.g. in
-> @sec:calendar_solution.
+> **_Note:_** In general a function should not rely on nor change global
+> variables. Instead it should only depend on the parameters that were send to
+> it as its arguments. Relying on global variables although convenient and
+> tempting could lead to bugs that are hard to pinpoint and eliminate. That's
+> why in the rest of this book I will try to avoid this style with the exception
+> of global constant variables seen, e.g. in @sec:calendar_solution.
 
 Let's see how it works.
 
 ```jl
 s = """
+# your numbers will likely differ from mine
 [getRandFromLCG() for _ in 1:6]
 """
 sco(s)
@@ -184,8 +185,8 @@ s = """
 sco(s)
 ```
 
-If so then all we have to do is to divide our `seed` by `m` to bet the desired
-`Float64` value.
+If so then all we have to do is to divide our `seed` (that takes values from 0
+to `m`-1) by `m` to get the desired `Float64` value.
 
 ```jl
 s = """
@@ -193,16 +194,18 @@ function getRand()::Flt
     return getRandFromLCG() / m
 end
 
+# your numbers will likely differ from mine
 [getRand() for _ in 1:3]
 """
 sco(s)
 ```
 
-Much better, we reached the first checkpoint. OK, now how to convert it to an
-random integer generator. Let's try one step at a time, the `getRand()` returns
-a `Float64` in the range `[0-1)`. So, if we were to multiply 1 by let's say 5 we
-would get 5, and 0 times 5 would get us zero. Hence, the following code (`floor`
-returns the nearest integer smaller than or equal to a `Float64`).
+Much better, we reached the first checkpoint. OK, now how to convert it to a
+random integer generator. Let's try one step at a time. The `getRand()` returns
+a `Float64` in the range `[0-1)`. So, if we were to multiply 1 (the upper limit)
+by let's say 5 we would get 5, and 0 (the lower limit) times 5 would get us
+zero. Hence, the following code (`floor` returns the nearest integer smaller
+than or equal to a `Float64`).
 
 ```jl
 s = """
@@ -228,7 +231,7 @@ function getCounts(v::Vec{T})::Dict{T,Int} where T
     return counts
 end
 
-setSeed!(1111)
+setSeed!(1111) # for reproducibility
 [getRand(3) for _ in 1:100_000] |> getCounts
 """
 sco(s)
@@ -238,7 +241,7 @@ Yep, roughly equal counts. One, more swing with a different range.
 
 ```jl
 s = """
-setSeed!(1111)
+setSeed!(1111) # for reproducibility
 [getRand(5) for _ in 1:100_000] |> getCounts
 """
 sco(s)
@@ -288,7 +291,7 @@ sco(s)
 Another checkpoint reached.
 
 As for the Box-Mueller transform there is a small problem. The Wikipedia's page
-contains [the algorithm implementation in
+already contains [the algorithm implementation in
 Julia](https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform#Julia). So for
 a change we will take the [JavaScript
 version](https://en.wikipedia.org/wiki/Box%E2%80%93Muller_transform#JavaScript)
@@ -309,10 +312,10 @@ sc(s)
 ```
 
 And voila, the only difference is that instead of a vector we return a tuple
-with each element being a value from a normal distribution with the mean = 0 and
-the standard deviation = 1. However, in general we would be interested in a
-function that returns any number of normally distributed values (and not only
-two in `Tuple{Flt, Flt}`), hence the following code.
+with each element being a value from the normal distribution with the mean = 0
+and the standard deviation = 1. However, we would prefer a function that returns
+any number of normally distributed values (and not only two in
+`Tuple{Flt, Flt}`), hence the following code.
 
 ```jl
 s = """
@@ -338,20 +341,20 @@ sc(s)
 ```
 
 `getRandn(n::Int)` generates a vector of tuples using comprehensions. The length
-of the vector is determined using `cld`, which divides n by 2, and returns the
+of the vector is determined using `cld`, which divides `n` by 2, and returns the
 smallest integer equal to or greater than the result of that division. The
 vector of tuples (in this case `Vec{Tuple{Flt, Flt}}`) is `flatten`ed before
-being returned from `getRandn(n::Int)` as a regular vector of floats
-(`Vec{Flt}`). Notice, that if `n` is an odd number then we return all but the
-last element (`[1:n]`) of the vector (since `flatten` returns a vector of even
-length). Anyway, let's see how we did.
+being returned from `getRandn(n::Int)`. That's why we get a regular vector of
+floats (`Vec{Flt}`). Notice, that if `n` is an odd number then we return all but
+the last element (`[1:n]`) of the vector (since `flatten` returns a vector of
+even length). Anyway, let's see how we did.
 
 ```jl
 s = """
 import Statistics as St
 
-# test, mean ≈ 0.0, std ≈ 1.0
-setSeed!(3333)
+# test: mean ≈ 0.0, std ≈ 1.0
+setSeed!(401)
 x = getRandn(100)
 
 St.mean(x), St.std(x)
@@ -374,8 +377,8 @@ function getRandn(n::Int, mean::Flt, std::Flt)::Vec{Flt}
     return mean .+ std .* getRandn(n)
 end
 
-# test, mean ≈ 100.0, std ≈ 16.0
-setSeed!(3333)
+# test: mean ≈ 100.0, std ≈ 16.0
+setSeed!(401)
 x = getRandn(100, 100.0, 16.0)
 
 St.mean(x), St.std(x)
@@ -384,6 +387,6 @@ sco(s)
 ```
 
 That seems to be it, we reached the end of this task. Together we developed a
-simplified library for random numbers generation and it wasn't that bad, was it?
-Still, for practical reasons I would go with the baptized in fire
+simplified library for random numbers generation and it wasn't all that bad, was
+it? Still, for practical reasons I would recommend to use the baptized in fire
 [Random.jl](https://docs.julialang.org/en/v1/stdlib/Random/).
