@@ -16,9 +16,10 @@ readers have already mastered the language basics and now are on a lookout for a
 way to hone their newly acquired skills. To that end, I'll imagine you have read
 [my previous open access book](https://b-lukaszuk.github.io/RJ_BS_eng/). I'll do
 this not not because it is the best book in the world (which it is), but because
-of the [DRY principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
-(I'm going to apply similar conventions without delving too much into the
-previously mentioned topics).
+~~I'm lazy and~~ of the [DRY
+principle](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) (I'm going to
+apply similar conventions without delving too much into the previously mentioned
+topics).
 
 For instance, just like in the previous book, here I will use the
 [assert](https://docs.julialang.org/en/v1/base/base/#Base.@assert) macro to
