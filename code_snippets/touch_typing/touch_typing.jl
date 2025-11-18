@@ -43,21 +43,22 @@ function clearLines(nLines::Int)
     return nothing
 end
 
-# more infor on stty, type in the terminal: man stty
+# more info on stty, type in the terminal: man stty
 # display current stty settings with: stty -a (or: stty --all)
 function playTypingGame()
     println("Start typing the text.")
     c::Char = ' '
     typedTxt::Str = ""
     run(`stty raw -echo`) # raw mode - reads single character immediately
+    print(getColoredTxt(typedTxt), "\n")
     for _ in eachindex(TXT)
-        println(getColoredTxt(typedTxt))
-        # println("you typed: $c")
         print("\r")
         c = read(stdin, Char)  # read a character without Enter
         typedTxt *= c
+        print(getColoredTxt(typedTxt), "\n")
         # clearLines(1)
     end
+    print("\r")
     run(`stty cooked echo`) # reset terminal default
 end
 
