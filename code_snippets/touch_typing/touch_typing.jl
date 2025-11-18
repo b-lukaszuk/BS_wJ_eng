@@ -3,7 +3,7 @@
 
 const Str = String
 
-const TXT = "julia is awsome"
+const TXT = "julia is awesome"
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 function getRed(s::Str)::Str
@@ -42,3 +42,23 @@ function clearLines(nLines::Int)
     print("\033[0J")
     return nothing
 end
+
+# more infor on stty, type in the terminal: man stty
+# display current stty settings with: stty -a (or: stty --all)
+function playTypingGame()
+    println("Start typing the text.")
+    c::Char = ' '
+    typedTxt::Str = ""
+    run(`stty raw -echo`) # raw mode - reads single character immediately
+    for _ in eachindex(TXT)
+        println(getColoredTxt(typedTxt))
+        # println("you typed: $c")
+        print("\r")
+        c = read(stdin, Char)  # read a character without Enter
+        typedTxt *= c
+        # clearLines(1)
+    end
+    run(`stty cooked echo`) # reset terminal default
+end
+
+playTypingGame()
