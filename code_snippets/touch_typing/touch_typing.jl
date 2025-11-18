@@ -32,3 +32,13 @@ function getColoredTxt(typedTxt::Str, referenceTxt::Str=TXT)::Str
     end
     return result
 end
+
+# https://en.wikipedia.org/wiki/ANSI_escape_code
+function clearLines(nLines::Int)
+    @assert 0 < nLines "nLines must be a positive integer"
+    # "\033[xxxA" - xxx moves cursor up xxx LINES
+    print("\033[", nLines, "A")
+    # "\033[0J" - clears from cursor position till the end of the screen
+    print("\033[0J")
+    return nothing
+end
