@@ -1,9 +1,8 @@
 # the code in this file is meant to serve as a programming exercise only
 # it may not act correctly
 
+const Flt = Float64
 const Str = String
-
-const TXT = "Julia is awesome. Try it out in 2025, try it out later!"
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 function getRed(s::Str)::Str
@@ -18,7 +17,7 @@ function getGreen(s::Str)::Str
     return "\x1b[32m" * s * "\x1b[0m"
 end
 
-function getColoredTxt(typedTxt::Str, referenceTxt::Str=TXT)::Str
+function getColoredTxt(typedTxt::Str, referenceTxt::Str)::Str
     result::Str = ""
     len::Int = length(typedTxt)
     for i in eachindex(referenceTxt)
@@ -53,14 +52,14 @@ end
 
 # more info on stty, type in the terminal: man stty
 # display current stty settings with: stty -a (or: stty --all)
-function playTypingGame()
+function playTypingGame(text2beTyped::Str)
     c::Char = ' '
     typedTxt::Str = ""
     run(`stty raw -echo`) # raw mode - reads single character immediately
     println("\n")
-    while length(TXT) > length(typedTxt)
+    while length(text2beTyped) > length(typedTxt)
         clearLines()
-        println(getColoredTxt(typedTxt), "\r")
+        println(getColoredTxt(typedTxt, text2beTyped), "\r")
         c = read(stdin, Char)  # read a character without Enter
         if isDelete(c)
             typedTxt = typedTxt[1:(end-1)]
@@ -71,20 +70,40 @@ function playTypingGame()
         end
     end
     clearLines()
-    println(getColoredTxt(typedTxt), "\r")
+    println(getColoredTxt(typedTxt, text2beTyped), "\r")
     run(`stty cooked echo`) # reset terminal default
     return nothing
 end
 
+function printSummary(txt::Str, elapsedTimeSec::Flt)
+    wordLen::Int = 4
+    secsPerMin::Int = 60
+    txtLen::Int = length(txt)
+    cpm::Flt = txtLen / elapsedTimeSec * secsPerMin
+    wpm::Flt = cpm / wordLen
+    println("\n---Summary---")
+    println("Elapsed time: ", round(elapsedTimeSec, digits=2), " seconds")
+    println("CPM: ", round(cpm, digits=1))
+    println("WPM: ", round(wpm, digits=1))
+    return nothing
+end
+
 function main()
+
+    txt2type = "Julia is awesome. Try it out in 2025, try it out later!"
+
     println("Hello. This is a toy program for touch typing.\n")
 
     println("Press Enter (or any key and Enter) and start typing.")
-    println("Press Ctrl-C to abort.")
+    println("Press q to quit.")
     println("Note: your terminal must support ANSI escape codes.")
-    choice::Str = readline() * " "
-    if !isAbort(choice[1])
-        playTypingGame()
+    choice::Str = readline()
+    if lowercase(strip(choice)) != "q"
+        timeStart::Flt = time()
+        playTypingGame(txt2type)
+        timeEnd::Flt = time()
+        elapsedTimeSeconds::Flt = timeEnd - timeStart
+        printSummary(txt2type, elapsedTimeSeconds)
     end
 
     println("\nThat's all. Goodbye!")
