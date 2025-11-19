@@ -3,6 +3,7 @@
 
 const Flt = Float64
 const Str = String
+const Vec = Vector
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 function getRed(s::Str)::Str
@@ -52,7 +53,7 @@ end
 
 # more info on stty, type in the terminal: man stty
 # display current stty settings with: stty -a (or: stty --all)
-function playTypingGame(text2beTyped::Str)
+function playTypingGame(text2beTyped::Str)::Str
     c::Char = ' '
     typedTxt::Str = ""
     run(`stty raw -echo`) # raw mode - reads single character immediately
@@ -72,19 +73,27 @@ function playTypingGame(text2beTyped::Str)
     clearLines()
     println(getColoredTxt(typedTxt, text2beTyped), "\r")
     run(`stty cooked echo`) # reset terminal default
-    return nothing
+    return typedTxt
 end
 
-function printSummary(txt::Str, elapsedTimeSec::Flt)
+function getAccuracy(typedTxt::Str, text2beTyped::Str)::Flt
+    len::Int = length(typedTxt)
+    correctlyTyped::Vec{Bool} = collect(typedTxt) .== collect(text2beTyped)
+    return sum(correctlyTyped) / len
+end
+
+function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
     wordLen::Int = 4
     secsPerMin::Int = 60
-    txtLen::Int = length(txt)
+    txtLen::Int = length(typedTxt)
     cpm::Flt = txtLen / elapsedTimeSec * secsPerMin
     wpm::Flt = cpm / wordLen
+    acc::Flt = getAccuracy(typedTxt, text2beTyped)
     println("\n---Summary---")
     println("Elapsed time: ", round(elapsedTimeSec, digits=2), " seconds")
-    println("CPM: ", round(cpm, digits=1))
-    println("WPM: ", round(wpm, digits=1))
+    println("Characters per minute: ", round(cpm, digits=1))
+    println("Words per minute: ", round(wpm, digits=1))
+    println("Accuracy: ", round(acc * 100, digits=2), "%")
     return nothing
 end
 
@@ -92,18 +101,19 @@ function main()
 
     txt2type = "Julia is awesome. Try it out in 2025, try it out later!"
 
-    println("Hello. This is a toy program for touch typing.\n")
+    println("Hello. This is a toy program for touch typing.")
+    println("To work correctly your terminal must support ANSI escape codes.\n")
 
     println("Press Enter (or any key and Enter) and start typing.")
     println("Press q to quit.")
-    println("Note: your terminal must support ANSI escape codes.")
     choice::Str = readline()
+    typedTxt::Str = ""
     if lowercase(strip(choice)) != "q"
         timeStart::Flt = time()
-        playTypingGame(txt2type)
+        typedTxt = playTypingGame(txt2type)
         timeEnd::Flt = time()
         elapsedTimeSeconds::Flt = timeEnd - timeStart
-        printSummary(txt2type, elapsedTimeSeconds)
+        printSummary(typedTxt, txt2type, elapsedTimeSeconds)
     end
 
     println("\nThat's all. Goodbye!")
