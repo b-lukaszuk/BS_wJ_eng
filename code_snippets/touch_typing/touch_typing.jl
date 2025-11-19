@@ -43,6 +43,14 @@ function clearLines(nLines::Int=1)
     return nothing
 end
 
+function isDelete(c::Char)::Bool
+    return c == '\x08' || c == '\x7F'
+end
+
+function isAbort(c::Char)::Bool
+    return c == '\x03' || c == '\x04'
+end
+
 # more info on stty, type in the terminal: man stty
 # display current stty settings with: stty -a (or: stty --all)
 function playTypingGame()
@@ -54,9 +62,9 @@ function playTypingGame()
         clearLines()
         println(getColoredTxt(typedTxt), "\r")
         c = read(stdin, Char)  # read a character without Enter
-        if c == '\x08' || c == '\x7F'
+        if isDelete(c)
             typedTxt = typedTxt[1:(end-1)]
-        elseif c == '\x03' || c == '\x04'
+        elseif isAbort(c)
             break
         else
             typedTxt *= c
@@ -68,4 +76,22 @@ function playTypingGame()
     return nothing
 end
 
-playTypingGame()
+function main()
+    println("Hello. This is a toy program for touch typing.\n")
+
+    println("Press Enter (or any key and Enter) and start typing.")
+    println("Press Ctrl-C to abort.")
+    println("Note: your terminal must support ANSI escape codes.")
+    choice::Str = readline() * " "
+    if !isAbort(choice[1])
+        playTypingGame()
+    end
+
+    println("\nThat's all. Goodbye!")
+
+    return nothing
+end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
+end
