@@ -6,11 +6,11 @@ const Str = String
 const Vec = Vector
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
-function getRed(s::Str)::Str
+function getRed(s::Char)::Str
     return "\x1b[31m" * s * "\x1b[0m"
 end
 
-function getGreen(s::Str)::Str
+function getGreen(s::Char)::Str
     return "\x1b[32m" * s * "\x1b[0m"
 end
 
@@ -21,9 +21,9 @@ function getColoredTxt(typedTxt::Str, referenceTxt::Str)::Str
         if i > len
             result *= referenceTxt[i]
         elseif typedTxt[i] == referenceTxt[i]
-            result *= getGreen(string(referenceTxt[i]))
+            result *= getGreen(referenceTxt[i])
         else
-            result *= getRed(string(referenceTxt[i]))
+            result *= getRed(referenceTxt[i])
         end
     end
     return result
