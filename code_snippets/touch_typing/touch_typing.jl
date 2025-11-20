@@ -29,14 +29,6 @@ function getColoredTxt(typedTxt::Str, referenceTxt::Str)::Str
     return result
 end
 
-# https://en.wikipedia.org/wiki/ANSI_escape_code
-function clearLines(nLines::Int=1)
-    @assert 0 < nLines "nLines must be a positive integer"
-    print("\033[", nLines, "A")
-    print("\033[0J")
-    return nothing
-end
-
 function isDelete(c::Char)::Bool
     return c == '\x08' || c == '\x7F'
 end
@@ -50,11 +42,11 @@ end
 function playTypingGame(text2beTyped::Str)::Str
     c::Char = ' '
     typedTxt::Str = ""
+    cursorCol::Int = 1
     run(`stty raw -echo`) # raw mode - reads single character immediately
-    println("\n")
     while length(text2beTyped) > length(typedTxt)
-        clearLines()
-        println(getColoredTxt(typedTxt, text2beTyped), "\r")
+        print("\r", getColoredTxt(typedTxt, text2beTyped))
+        print("\r", "\x1b[", cursorCol, "G") # mv curs to cursorCol
         c = read(stdin, Char) # read a character without Enter
         if isDelete(c)
             typedTxt = typedTxt[1:(end-1)]
@@ -63,9 +55,9 @@ function playTypingGame(text2beTyped::Str)::Str
         else
             typedTxt *= c
         end
+        cursorCol = length(typedTxt) + 1
     end
-    clearLines()
-    println(getColoredTxt(typedTxt, text2beTyped), "\r")
+    println("\r", getColoredTxt(typedTxt, text2beTyped))
     run(`stty cooked echo`) # reset to default behavior
     return typedTxt
 end
@@ -73,7 +65,8 @@ end
 function getAccuracy(typedTxt::Str, text2beTyped::Str)::Flt
     len1::Int = length(typedTxt)
     len2::Int = length(text2beTyped)
-    correctlyTyped::Vec{Bool} = zeros(Bool, len2)
+    @assert len1 <= len2 "len1 must be <= len2"
+    correctlyTyped::Vec{Bool} = zeros(Bool, len1)
     for i in 1:len1
         correctlyTyped[i] = typedTxt[i] == text2beTyped[i]
     end
@@ -81,12 +74,11 @@ function getAccuracy(typedTxt::Str, text2beTyped::Str)::Flt
 end
 
 function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
-    len1::Int = length(typedTxt)
-    len2::Int = length(text2beTyped)
     wordLen::Int = 4
     secsPerMin::Int = 60
-    txtLen::Int = length(typedTxt)
-    cpm::Flt = txtLen / elapsedTimeSec * secsPerMin
+    len1::Int = length(typedTxt)
+    len2::Int = length(text2beTyped)
+    cpm::Flt = len1 / elapsedTimeSec * secsPerMin
     wpm::Flt = cpm / wordLen
     acc::Flt = getAccuracy(typedTxt, text2beTyped)
     println("\n---Summary---")
@@ -104,15 +96,13 @@ function main()
     println("It should work well on terminals that support ANSI escape codes.\n")
 
     println("Press Enter (or any key and Enter) and start typing.")
-    println("Or press q and Enter to quit now.")
-
+    println("Press q and Enter to quit now.")
     choice::Str = readline()
-    txt2type = "Julia is awesome. Try it out in 2025 and beyond!"
-    typedTxt::Str = ""
 
     if lowercase(strip(choice)) != "q"
+        txt2type::Str = "Julia is awesome. Try it out in 2025 and beyond!"
         timeStart::Flt = time()
-        typedTxt = playTypingGame(txt2type)
+        typedTxt::Str = playTypingGame(txt2type)
         timeEnd::Flt = time()
         elapsedTimeSeconds::Flt = timeEnd - timeStart
         printSummary(typedTxt, txt2type, elapsedTimeSeconds)
