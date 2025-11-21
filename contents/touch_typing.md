@@ -30,4 +30,36 @@ Latin alphabet encoded by [ASCII](https://en.wikipedia.org/wiki/ASCII).
 
 ## Solution {#sec:touch_typing_solution}
 
-The solution goes here.
+Let's approach the problem one step at a time. First, let's define a printing
+function that takes into account the correctness of our input. To that end we
+will reuse some of the code from the previous chapter (see
+@sec:tic_tac_toe_solution).
+
+```jl
+s = """
+# https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+function getRed(s::Char)::Str
+    return "\x1b[31m" * s * "\x1b[0m"
+end
+
+function getGreen(s::Char)::Str
+    return "\x1b[32m" * s * "\x1b[0m"
+end
+
+function getColoredTxt(typedTxt::Str, referenceTxt::Str)::Str
+    result::Str = ""
+    len::Int = length(typedTxt)
+    for i in eachindex(referenceTxt)
+        if i > len
+            result *= referenceTxt[i]
+        elseif typedTxt[i] == referenceTxt[i]
+            result *= getGreen(referenceTxt[i])
+        else
+            result *= getRed(referenceTxt[i])
+        end
+    end
+    return result
+end
+"""
+sc(s)
+```
