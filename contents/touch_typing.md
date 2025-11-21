@@ -30,10 +30,10 @@ Latin alphabet encoded by [ASCII](https://en.wikipedia.org/wiki/ASCII).
 
 ## Solution {#sec:touch_typing_solution}
 
-Let's approach the problem one step at a time. First, let's define a printing
-function that takes into account the correctness of our input. To that end we
-will reuse some of the code from the previous chapter (see
-@sec:tic_tac_toe_solution).
+Let's approach the problem one step at a time. First, we will define a
+formatting function. The function will base it on the correctness of our
+input. To that end we will reuse some of code (see `getRed` and `getGreen`
+below) from the previous chapter (see @sec:tic_tac_toe_solution).
 
 ```jl
 s = """
@@ -63,3 +63,17 @@ end
 """
 sc(s)
 ```
+
+> **_Note:_** In this chapter we rely on the assumption that we operate on a
+> text composed of standard ASCII charset. In case of other character charsets
+> the indexing may not work as intended (see [the
+> docs](https://docs.julialang.org/en/v1/manual/strings/#Unicode-and-UTF-8))
+
+The code is rather simple, we traverse the `referenceTxt`, i.e. the text we are
+suppose to type, with `for` loop and indexing (`i`). If the text we already
+typed (`typedTxt`) is shorter than the current index (`i`) we just append the
+character of the reference text to the `result` without coloring
+(`result *= referenceTxt[i]`). Otherwise we color the character of our
+`referenceTxt[i]` green (`getGreen`) in case of a match
+(`typedTxt[i] == referenceTxt[i]`) or red (`getRed`) otherwise. Finally, we
+`return` the colored text (`result`) for printout.
