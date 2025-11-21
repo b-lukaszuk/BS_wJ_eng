@@ -30,27 +30,26 @@ Latin alphabet encoded by [ASCII](https://en.wikipedia.org/wiki/ASCII).
 
 ## Solution {#sec:touch_typing_solution}
 
-Let's approach the problem one step at a time. First, we will define a
-formatting function. The function will base it on the correctness of our
-input. To that end we will reuse some of code (see `getRed` and `getGreen`
-below) from the previous chapter (see @sec:tic_tac_toe_solution).
+Let's approach the problem one step at a time. First, a formatting function
+`getColoredTxt`. The function will colorize the letters based on the correctness
+of our input. To that end we will reuse some of the code (see `getRed` and
+`getGreen` below) from the previous chapter (see @sec:tic_tac_toe_solution).
 
 ```jl
 s = """
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 function getRed(s::Char)::Str
-    return "\x1b[31m" * s * "\x1b[0m"
+    return "\\x1b[31m" * s * "\\x1b[0m"
 end
 
 function getGreen(s::Char)::Str
-    return "\x1b[32m" * s * "\x1b[0m"
+    return "\\x1b[32m" * s * "\\x1b[0m"
 end
 
 function getColoredTxt(typedTxt::Str, referenceTxt::Str)::Str
     result::Str = ""
-    len::Int = length(typedTxt)
     for i in eachindex(referenceTxt)
-        if i > len
+        if i > length(typedTxt)
             result *= referenceTxt[i]
         elseif typedTxt[i] == referenceTxt[i]
             result *= getGreen(referenceTxt[i])
@@ -65,14 +64,14 @@ sc(s)
 ```
 
 > **_Note:_** In this chapter we rely on the assumption that we operate on a
-> text composed of standard ASCII charset. In case of other character charsets
-> the indexing may not work as intended (see [the
+> text composed of standard ASCII charset. Be aware that in the case of other
+> charsets the indexing may not work as intended (see [the
 > docs](https://docs.julialang.org/en/v1/manual/strings/#Unicode-and-UTF-8))
 
 The code is rather simple, we traverse the `referenceTxt`, i.e. the text we are
-suppose to type, with `for` loop and indexing (`i`). If the text we already
-typed (`typedTxt`) is shorter than the current index (`i`) we just append the
-character of the reference text to the `result` without coloring
+suppose to type, with a `for` loop and indexing (`i`). If the text we already
+typed (`typedTxt`) is shorter than the current index (`i > length(typedTxt)`) we
+just append the character of the reference text to the `result` without coloring
 (`result *= referenceTxt[i]`). Otherwise we color the character of our
 `referenceTxt[i]` green (`getGreen`) in case of a match
 (`typedTxt[i] == referenceTxt[i]`) or red (`getRed`) otherwise. Finally, we
