@@ -12,9 +12,10 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/touch_
 
 ## Problem {#sec:touch_typing_problem}
 
-In this exercise your job is to write a terminal based application, like the one
-presented in the GIF below (it doesn't have to be exact), that measures your
-(touch) typing speed.
+In this exercise your job is to write a
+[terminal](https://en.wikipedia.org/wiki/Terminal_emulator) based application,
+like the one presented in the GIF below (it doesn't have to be exact), that
+measures your (touch) typing speed.
 
 ![A terminal based application that measures typing speed.](./images/touchTyping.gif){#fig:touchTyping}
 
@@ -76,3 +77,27 @@ just append the character of the reference text to the `result` without coloring
 `referenceTxt[i]` green (`getGreen`) in case of a match
 (`typedTxt[i] == referenceTxt[i]`) or red (`getRed`) otherwise. Finally, we
 `return` the colored text (`result`) for printout.
+
+Now, in order to play our touch typing game we need a way to read a character or
+characters from the
+[terminal](https://en.wikipedia.org/wiki/Terminal_emulator). This could be done
+with [read](https://docs.julialang.org/en/v1/base/io-network/#Base.read) or with
+`readline` that we met in @sec:tic_tac_toe_solution. The problem is that by
+default, those are blocking functions (you need to press Enter for the
+`Char`/`String` to be read into your program). It turns out that an immediate,
+non-blocking readout in Julia isn't trivial to get. One option suggested by the
+[Rosetta
+Code](https://rosettacode.org/wiki/Keyboard_input/Flush_the_keyboard_buffer#Julia)
+website is to use an external library (the Gtk.jl presented in the link above
+seems to be no longer maintained). Other possibility would be to do this in a
+programming language better adjusted for such low level tasks, like C. We could
+therefore, copy-paste [this code
+snippet](https://rosettacode.org/wiki/Keyboard_input/Flush_the_keyboard_buffer#Julia)
+(possibly modifying it) and execute it from Julia (similarly to the suggestions
+found in [this video](https://www.youtube.com/watch?v=obCMGkQ8Y8g)). However, in
+order to keep my solution minimal I will rely on `stty`, a terminal command
+found in unix(-like) systems. If you don't have it on your computer you need to
+find some other way (or just skip this task).
+
+> **_Note:_** Type `man stty` (and press Enter) into your terminal to check do
+> you have the program installed on your system (`q` - closes the man page).
