@@ -46,7 +46,7 @@ function playTypingGame(text2beTyped::Str)::Str
     run(`stty raw -echo`) # raw mode - reads single character immediately
     while length(text2beTyped) > length(typedTxt)
         print("\r", getColoredTxt(typedTxt, text2beTyped))
-        print("\r", "\x1b[", cursorCol, "G") # mv curs to cursorCol
+        print("\x1b[", cursorCol, "G") # mv curs to cursorCol
         c = read(stdin, Char) # read a character without Enter
         if isDelete(c)
             typedTxt = typedTxt[1:(end-1)]
