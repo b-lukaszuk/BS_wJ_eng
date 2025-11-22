@@ -196,7 +196,7 @@ function getAccuracy(typedTxt::Str, text2beTyped::Str)::Flt
     len1::Int = length(typedTxt)
     len2::Int = length(text2beTyped)
     @assert len1 <= len2 "len1 must be <= len2"
-    correctlyTyped::Vec{Bool} = zeros(Bool, len1)
+    correctlyTyped::Vec{Bool} = Vec{Bool}(undef, len1)
     for i in 1:len1
         correctlyTyped[i] = typedTxt[i] == text2beTyped[i]
     end
@@ -221,5 +221,39 @@ function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
 ```
 
 You can choose a different set of statistics, but I picked accuracy (% of
-characters that were typed correctly), character per minute (`cpm`), words per
-minute `wpm`.
+characters that were typed correctly), number of characters per minute (`cpm`),
+and number of words per minute `wpm`.
+
+As before (see @sec:tic_tac_toe_solution) we finish with the main function.
+
+```
+function main()
+
+    println("Hello. This is a toy program for touch typing.")
+    println("To work well you terminal must support ANSI escape codes.\n")
+
+    println("Press Enter (or any key and Enter) and start typing.")
+    println("Press q and Enter to quit now.")
+    choice::Str = readline()
+
+    if lowercase(strip(choice)) != "q"
+        txt2type::Str = "Julia is awesome. Try it out in 2025 and beyond!"
+        timeStart::Flt = time()
+        typedTxt::Str = playTypingGame(txt2type)
+        timeEnd::Flt = time()
+        elapsedTimeSeconds::Flt = timeEnd - timeStart
+        printSummary(typedTxt, txt2type, elapsedTimeSeconds)
+    end
+
+    println("\nThat's all. Goodbye!")
+
+    return nothing
+end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
+end
+```
+
+And voila, everything is ready. Open your terminal, type:
+`julia touch_typing.jl` and test your typing speed.
