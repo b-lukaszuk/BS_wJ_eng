@@ -113,13 +113,13 @@ function playTypingGame(text2beTyped::Str)::Str
     cursorCol::Int = 1
     run(`stty raw -echo`) # raw mode - reads single character immediately
     while length(text2beTyped) > length(typedTxt)
-        print("\\r", getColoredTxt(typedTxt, text2beTyped))
-        print("\\x1b[", cursorCol, "G") # mv curs to cursorCol
+        print("\r", getColoredTxt(typedTxt, text2beTyped))
+        print("\x1b[", cursorCol, "G") # mv curs to cursorCol
         c = read(stdin, Char) # read a character without Enter
         typedTxt *= c
         cursorCol = length(typedTxt) + 1
     end
-    println("\\r", getColoredTxt(typedTxt, text2beTyped))
+    println("\r", getColoredTxt(typedTxt, text2beTyped))
     run(`stty cooked echo`) # reset to default behavior
     return typedTxt
 end
@@ -134,12 +134,13 @@ backticks). Now, for as long (`while`) as we haven't typed the whole
 `text2beTyped` (`length(text2beTyped) > length(typedTxt)`) we print the colored
 text (`\r` moves the cursor to the beginning of the line). Of course, we
 remember to set the cursor in the appropriate column (`"\x1b[", cursorCol,
-"G"`). Next we `read` a character typed by the player (`stdin` means [standard
-input](https://en.wikipedia.org/wiki/Standard_streams) and is a variable defined
-in `Base`). Afterwords, we append the character (`c`) to the `typedTxt` and move
-the cursor by one column. Once we finish, we cleanup. We reprint the whole typed
-text and reset the terminal to its default values with `run`. We return
-`typedTxt` for further usage (by a summary function that will be defined soon).
+"G"`). Next we `read` a character typed by the player
+(`stdin` means [standard input](https://en.wikipedia.org/wiki/Standard_streams)
+and is a variable defined in `Base`). Afterwords, we append the character (`c`)
+to the `typedTxt` and move the cursor by one column. Once we finish, we
+cleanup. We reprint the whole typed text and reset the terminal to its default
+values with `run`. We return `typedTxt` for further usage (by a summary function
+that will be defined soon).
 
 However, there is a small problem with out `playTypingGame`. The raw mode that
 we use will turn off special treatments of key-presses that we are accustomed to.
@@ -149,11 +150,11 @@ either turn on the default mode or fix the problem ourselves.
 
 ```
 function isDelete(c::Char)::Bool
-    return c == '\\x08' || c == '\\x7F' # bacspace or delete
+    return c == '\x08' || c == '\x7F' # bacspace or delete
 end
 
 function isAbort(c::Char)::Bool
-    return c == '\\x03' || c == '\\x04' # Ctrl-C or Ctrl+D
+    return c == '\x03' || c == '\x04' # Ctrl-C or Ctrl+D
 end
 
 # more info on stty, type in the terminal: man stty
@@ -164,8 +165,8 @@ function playTypingGame(text2beTyped::Str)::Str
     cursorCol::Int = 1
     run(`stty raw -echo`) # raw mode - reads single character immediately
     while length(text2beTyped) > length(typedTxt)
-        print("\\r", getColoredTxt(typedTxt, text2beTyped))
-        print("\\x1b[", cursorCol, "G") # mv curs to cursorCol
+        print("\r", getColoredTxt(typedTxt, text2beTyped))
+        print("\x1b[", cursorCol, "G") # mv curs to cursorCol
         c = read(stdin, Char) # read a character without Enter
         if isDelete(c)
             typedTxt = typedTxt[1:(end-1)]
@@ -176,14 +177,49 @@ function playTypingGame(text2beTyped::Str)::Str
         end
         cursorCol = length(typedTxt) + 1
     end
-    println("\\r", getColoredTxt(typedTxt, text2beTyped))
+    println("\r", getColoredTxt(typedTxt, text2beTyped))
     run(`stty cooked echo`) # reset to default behavior
     return typedTxt
 end
 ```
 
-Much better. we just check for the hexadecimal ('\x') [ASCII
+Much better. we just check for the hexadecimal (`\x`) [ASCII
 code](https://pl.wikipedia.org/wiki/ASCII) for the specific characters. When a
 delete key is pressed we remove the last character from the typed text
 (`typedTxt[1:(end-1)]`). When an abort signal is send we just `break` the
 `while` loop and leave early.
+
+Now, we add the summary statistics.
+
+```
+function getAccuracy(typedTxt::Str, text2beTyped::Str)::Flt
+    len1::Int = length(typedTxt)
+    len2::Int = length(text2beTyped)
+    @assert len1 <= len2 "len1 must be <= len2"
+    correctlyTyped::Vec{Bool} = zeros(Bool, len1)
+    for i in 1:len1
+        correctlyTyped[i] = typedTxt[i] == text2beTyped[i]
+    end
+    return sum(correctlyTyped) / len1
+end
+
+function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
+    wordLen::Int = 4
+    secsPerMin::Int = 60
+    len1::Int = length(typedTxt)
+    len2::Int = length(text2beTyped)
+    cpm::Flt = len1 / elapsedTimeSec * secsPerMin
+    wpm::Flt = cpm / wordLen
+    acc::Flt = getAccuracy(typedTxt, text2beTyped)
+    println("\n---Summary---")
+    println("Elapsed time: ", round(elapsedTimeSec, digits=2), " seconds")
+    println("Typed characters: $len1/$len2")
+    println("Characters per minute: ", round(cpm, digits=1))
+    println("Words per minute: ", round(wpm, digits=1))
+    println("Accuracy: ", round(acc * 100, digits=2), "%")
+    return nothing
+```
+
+You can choose a different set of statistics, but I picked accuracy (% of
+characters that were typed correctly), character per minute (`cpm`), words per
+minute `wpm`.
