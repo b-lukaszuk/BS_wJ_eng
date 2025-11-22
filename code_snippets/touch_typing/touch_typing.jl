@@ -22,6 +22,10 @@ function isAbort(c::Char)::Bool
     return c == '\x03' || c == '\x04'
 end
 
+function isEnter(c::Char)::Bool
+    return c == '\x0D'
+end
+
 function clearLines(nLines::Int)
     @assert 0 < nLines "nLines must be a positive integer"
     print("\033[" * string(nLines) * "A")
@@ -31,6 +35,7 @@ end
 
 function printColoredTxt(typedTxt::Str, referenceTxt::Str)
     len::Int = length(typedTxt)
+    print("\r")
     for i in eachindex(referenceTxt)
         if i > len
             print(referenceTxt[i])
@@ -76,6 +81,8 @@ function playTypingGame(text2beTyped::Str)::Str
     c::Char = ' '
     typedTxt::Str = ""
     nLines::Int = getNumOfLines(text2beTyped)
+    print("\x1b[", 2, "J") # clear entire screen
+    print("\x1b[", 1, ";", 1, "H") # mv cursor to top left corner
     println("\r", text2beTyped)
     while length(text2beTyped) > length(typedTxt)
         run(`stty raw -echo`) # raw mode - reads single character immediately
@@ -85,11 +92,17 @@ function playTypingGame(text2beTyped::Str)::Str
             typedTxt = typedTxt[1:(end-1)]
         elseif isAbort(c)
             break
+        elseif isEnter(c)
+            typedTxt *= '\n'
         else
             typedTxt *= c
         end
-        clearLines(nLines)
+        print("\x1b[", 2, "J") # clear entire screen
+        print("\x1b[", 1, ";", 1, "H") # mv cursor to top left corner
         printColoredTxt(typedTxt, text2beTyped)
+        x, y = getXY(typedTxt, text2beTyped)
+        print("\x1b[", y, ";", x, "H") # mv cursor row y, col x
+
     end
     return typedTxt
 end
@@ -113,7 +126,7 @@ function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
     cpm::Flt = len1 / elapsedTimeSec * secsPerMin
     wpm::Flt = cpm / wordLen
     acc::Flt = getAccuracy(typedTxt, text2beTyped)
-    println("\n---Summary---")
+    println("\n\n---Summary---")
     println("Elapsed time: ", round(elapsedTimeSec, digits=2), " seconds")
     println("Typed characters: $len1/$len2")
     println("Characters per minute: ", round(cpm, digits=1))
@@ -136,8 +149,8 @@ function main()
         timeStart::Flt = time()
         typedTxt::Str = playTypingGame(txt2type)
         timeEnd::Flt = time()
-        # elapsedTimeSeconds::Flt = timeEnd - timeStart
-        # printSummary(typedTxt, txt2type, elapsedTimeSeconds)
+        elapsedTimeSeconds::Flt = timeEnd - timeStart
+        printSummary(typedTxt, txt2type, elapsedTimeSeconds)
     end
 
     println("\nThat's all. Goodbye!")
