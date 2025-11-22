@@ -101,3 +101,45 @@ find some other way (or just skip this task).
 
 > **_Note:_** Type `man stty` (and press Enter) into your terminal to check do
 > you have the program installed on your system (`q` - closes the man page).
+
+OK, let's play the game.
+
+```jl
+s = """
+# more info on stty, type in the terminal: man stty
+# display current stty settings with: stty -a (or: stty --all)
+function playTypingGame(text2beTyped::Str)::Str
+    c::Char = ' '
+    typedTxt::Str = ""
+    cursorCol::Int = 1
+    run(`stty raw -echo`) # raw mode - reads single character immediately
+    while length(text2beTyped) > length(typedTxt)
+        print("\r", getColoredTxt(typedTxt, text2beTyped))
+        print("\x1b[", cursorCol, "G") # mv curs to cursorCol
+        c = read(stdin, Char) # read a character without Enter
+        typedTxt *= c
+        cursorCol = length(typedTxt) + 1
+    end
+    println("\r", getColoredTxt(typedTxt, text2beTyped))
+    run(`stty cooked echo`) # reset to default behavior
+    return typedTxt
+end
+"""
+sc(s)
+```
+
+First, we declare and initialize a couple of variables that we will use later
+on: `c` to hold the character typed by the user, `typedTxt` to contain
+everything that the player typed and `cursorCol` which is a cursor position over
+a letter to be typed. Next, we execute a proper terminal command with
+[run](https://docs.julialang.org/en/v1/base/base/#Base.run) (notice the
+backticks). Now, for as long (`while`) as we haven't typed the whole
+`text2beTyped` (`length(text2beTyped) > length(typedTxt)`) we print the colored
+text (`\r` moves the cursor to the beginning of the line). Of course, we
+remember to set the cursor in the appropriate column (`"\x1b[", cursorCol,
+"G"`). Next we `read` a character typed by the player (`stdin` means [standard
+input](https://en.wikipedia.org/wiki/Standard_streams) and is a variable defined
+in `Base`). Afterwords, we append the character (`c`) to the `typedTxt` and move
+the cursor by one column. Once we finish, we cleanup. We reprint the whole typed
+text and reset the terminal to its default values with `run`. We return
+`typedTxt` for further usage (by a summary function that will be defined soon).
