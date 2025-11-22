@@ -14,26 +14,38 @@ function getGreen(s::Char)::Str
     return "\x1b[32m" * s * "\x1b[0m"
 end
 
-function getColoredTxt(typedTxt::Str, referenceTxt::Str)::Str
-    result::Str = ""
-    for i in eachindex(referenceTxt)
-        if i > length(typedTxt)
-            result *= referenceTxt[i]
-        elseif typedTxt[i] == referenceTxt[i]
-            result *= getGreen(referenceTxt[i])
-        else
-            result *= getRed(referenceTxt[i])
-        end
-    end
-    return result
-end
-
 function isDelete(c::Char)::Bool
-    return c == '\x08' || c == '\x7F' # bacspace or delete
+    return c == '\x08' || c == '\x7F'
 end
 
 function isAbort(c::Char)::Bool
-    return c == '\x03' || c == '\x04' # Ctrl-C or Ctrl+D
+    return c == '\x03' || c == '\x04'
+end
+
+function clearLines(nLines::Int)
+    @assert 0 < nLines "nLines must be a positive integer"
+    print("\033[" * string(nLines) * "A")
+    print("\033[0J")
+    return nothing
+end
+
+function printColoredTxt(typedTxt::Str, referenceTxt::Str)
+    len::Int = length(typedTxt)
+    for i in eachindex(referenceTxt)
+        if i > len
+            print(referenceTxt[i])
+        elseif typedTxt[i] == referenceTxt[i]
+            print(getGreen(referenceTxt[i]))
+        else
+            print(getRed(referenceTxt[i]))
+        end
+    end
+    println()
+    return nothing
+end
+
+function getNumOfLines(txt::Str)::Int
+    return length(findall((==)('\n'), txt)) + 1
 end
 
 # more info on stty, type in the terminal: man stty
@@ -41,12 +53,12 @@ end
 function playTypingGame(text2beTyped::Str)::Str
     c::Char = ' '
     typedTxt::Str = ""
-    cursorCol::Int = 1
-    run(`stty raw -echo`) # raw mode - reads single character immediately
+    nLines::Int = getNumOfLines(text2beTyped)
+    println("\r", text2beTyped)
     while length(text2beTyped) > length(typedTxt)
-        print("\r", getColoredTxt(typedTxt, text2beTyped))
-        print("\x1b[", cursorCol, "G") # mv curs to cursorCol
+        run(`stty raw -echo`) # raw mode - reads single character immediately
         c = read(stdin, Char) # read a character without Enter
+        run(`stty cooked echo`) # reset to default behavior
         if isDelete(c)
             typedTxt = typedTxt[1:(end-1)]
         elseif isAbort(c)
@@ -54,10 +66,9 @@ function playTypingGame(text2beTyped::Str)::Str
         else
             typedTxt *= c
         end
-        cursorCol = length(typedTxt) + 1
+        clearLines(nLines)
+        printColoredTxt(typedTxt, text2beTyped)
     end
-    println("\r", getColoredTxt(typedTxt, text2beTyped))
-    run(`stty cooked echo`) # reset to default behavior
     return typedTxt
 end
 
@@ -99,12 +110,12 @@ function main()
     choice::Str = readline()
 
     if lowercase(strip(choice)) != "q"
-        txt2type::Str = "Julia is awesome. Try it out in 2025 and beyond!"
+        txt2type::Str = "Julia is awesome.\nTry it out\nin 2025 and beyond!"
         timeStart::Flt = time()
         typedTxt::Str = playTypingGame(txt2type)
         timeEnd::Flt = time()
-        elapsedTimeSeconds::Flt = timeEnd - timeStart
-        printSummary(typedTxt, txt2type, elapsedTimeSeconds)
+        # elapsedTimeSeconds::Flt = timeEnd - timeStart
+        # printSummary(typedTxt, txt2type, elapsedTimeSeconds)
     end
 
     println("\nThat's all. Goodbye!")
