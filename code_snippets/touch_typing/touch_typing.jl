@@ -16,9 +16,8 @@ end
 
 function getColoredTxt(typedTxt::Str, referenceTxt::Str)::Str
     result::Str = ""
-    len::Int = length(typedTxt)
     for i in eachindex(referenceTxt)
-        if i > len
+        if i > length(typedTxt)
             result *= referenceTxt[i]
         elseif typedTxt[i] == referenceTxt[i]
             result *= getGreen(referenceTxt[i])
@@ -30,11 +29,11 @@ function getColoredTxt(typedTxt::Str, referenceTxt::Str)::Str
 end
 
 function isDelete(c::Char)::Bool
-    return c == '\x08' || c == '\x7F'
+    return c == '\x08' || c == '\x7F' # bacspace or delete
 end
 
 function isAbort(c::Char)::Bool
-    return c == '\x03' || c == '\x04'
+    return c == '\x03' || c == '\x04' # Ctrl-C or Ctrl+D
 end
 
 # more info on stty, type in the terminal: man stty
@@ -66,7 +65,7 @@ function getAccuracy(typedTxt::Str, text2beTyped::Str)::Flt
     len1::Int = length(typedTxt)
     len2::Int = length(text2beTyped)
     @assert len1 <= len2 "len1 must be <= len2"
-    correctlyTyped::Vec{Bool} = zeros(Bool, len1)
+    correctlyTyped::Vec{Bool} = Vec{Bool}(undef, len1)
     for i in 1:len1
         correctlyTyped[i] = typedTxt[i] == text2beTyped[i]
     end
