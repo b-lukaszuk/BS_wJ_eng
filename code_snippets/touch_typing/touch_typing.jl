@@ -48,6 +48,28 @@ function getNumOfLines(txt::Str)::Int
     return length(findall((==)('\n'), txt)) + 1
 end
 
+function getXY(typedTxt::Str, referenceTxt::Str)::Tuple{Int, Int}
+    x::Int = 1
+    y::Int = 1
+    len1::Int = length(typedTxt)
+    for i in eachindex(referenceTxt)
+        if i > len1
+            return (x, y)
+        elseif referenceTxt[i] == '\n'
+            y += 1
+            x = 1
+        else
+            x += 1
+        end
+    end
+    return (x, y)
+end
+
+# s = "Julia is awesome.\nTry it out\nin 2025 and beyond!"
+# for i in eachindex(s)
+#     getXY(s[1:i], s) |> println
+# end
+
 # more info on stty, type in the terminal: man stty
 # display current stty settings with: stty -a (or: stty --all)
 function playTypingGame(text2beTyped::Str)::Str
