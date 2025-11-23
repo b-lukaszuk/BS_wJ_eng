@@ -6,12 +6,12 @@ const Str = String
 const Vec = Vector
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
-function getRed(s::Char)::Str
-    return "\x1b[31m" * s * "\x1b[0m"
+function getRed(c::Char)::Str
+    return "\x1b[31m" * c * "\x1b[0m"
 end
 
-function getGreen(s::Char)::Str
-    return "\x1b[32m" * s * "\x1b[0m"
+function getGreen(c::Char)::Str
+    return "\x1b[32m" * c * "\x1b[0m"
 end
 
 function isDelete(c::Char)::Bool
@@ -26,16 +26,25 @@ function isEnter(c::Char)::Bool
     return c == '\x0D'
 end
 
-function clearLines(nLines::Int)
-    @assert 0 < nLines "nLines must be a positive integer"
-    print("\033[" * string(nLines) * "A")
-    print("\033[0J")
+function setCursor(row::Int=1, col::Int=1)
+    @assert row >= 1 && col >= 1 "both row and col must be >= 1 "
+    print("\x1b[", row, ";", col, "H") # set cursor at row, col (top left; 1, 1)
+    return nothing
+end
+
+# clears terminal printout
+# 1 - clear from cursor to beginning of screen
+# 2 - clear entire screen, move cursor to top left corner
+function clearScreen(n::Int)
+    @assert n in [1, 2] "n must be 1 or 2"
+    print("\x1b[", n, "J")
+    setCursor()
     return nothing
 end
 
 function printColoredTxt(typedTxt::Str, referenceTxt::Str)
     len::Int = length(typedTxt)
-    print("\r")
+    # print("\r")
     for i in eachindex(referenceTxt)
         if i > len
             print(referenceTxt[i])
@@ -49,10 +58,7 @@ function printColoredTxt(typedTxt::Str, referenceTxt::Str)
     return nothing
 end
 
-function getNumOfLines(txt::Str)::Int
-    return length(findall((==)('\n'), txt)) + 1
-end
-
+# get cursor position on XY axis
 function getXY(typedTxt::Str, referenceTxt::Str)::Tuple{Int, Int}
     x::Int = 1
     y::Int = 1
@@ -70,20 +76,14 @@ function getXY(typedTxt::Str, referenceTxt::Str)::Tuple{Int, Int}
     return (x, y)
 end
 
-# s = "Julia is awesome.\nTry it out\nin 2025 and beyond!"
-# for i in eachindex(s)
-#     getXY(s[1:i], s) |> println
-# end
-
 # more info on stty, type in the terminal: man stty
 # display current stty settings with: stty -a (or: stty --all)
 function playTypingGame(text2beTyped::Str)::Str
     c::Char = ' '
     typedTxt::Str = ""
-    nLines::Int = getNumOfLines(text2beTyped)
-    print("\x1b[", 2, "J") # clear entire screen
-    print("\x1b[", 1, ";", 1, "H") # mv cursor to top left corner
-    println("\r", text2beTyped)
+    clearScreen(2)
+    println(text2beTyped)
+    setCursor(1, 1)
     while length(text2beTyped) > length(typedTxt)
         run(`stty raw -echo`) # raw mode - reads single character immediately
         c = read(stdin, Char) # read a character without Enter
@@ -97,12 +97,10 @@ function playTypingGame(text2beTyped::Str)::Str
         else
             typedTxt *= c
         end
-        print("\x1b[", 2, "J") # clear entire screen
-        print("\x1b[", 1, ";", 1, "H") # mv cursor to top left corner
+        clearScreen(1)
         printColoredTxt(typedTxt, text2beTyped)
         x, y = getXY(typedTxt, text2beTyped)
-        print("\x1b[", y, ";", x, "H") # mv cursor row y, col x
-
+        setCursor(y, x)
     end
     return typedTxt
 end
