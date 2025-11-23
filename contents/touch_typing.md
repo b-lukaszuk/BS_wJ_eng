@@ -36,14 +36,13 @@ Let's approach the problem one step at a time. First, a formatting function
 of our input. To that end we will reuse some of the code (see `getRed` and
 `getGreen` below) from the previous chapter (see @sec:tic_tac_toe_solution).
 
-```jl
-s = """
+```
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
-function getRed(s::Char)::Str
+function getRed(c::Char)::Str
     return "\\x1b[31m" * s * "\\x1b[0m"
 end
 
-function getGreen(s::Char)::Str
+function getGreen(c::Char)::Str
     return "\\x1b[32m" * s * "\\x1b[0m"
 end
 
@@ -60,8 +59,6 @@ function getColoredTxt(typedTxt::Str, referenceTxt::Str)::Str
     end
     return result
 end
-"""
-sc(s)
 ```
 
 > **_Note:_** In this chapter we rely on the assumption that we operate on a
@@ -255,5 +252,5 @@ if abspath(PROGRAM_FILE) == @__FILE__
 end
 ```
 
-And voila, everything is ready. Open your terminal, type:
-`julia touch_typing.jl` and test your typing speed.
+And voila, everything is ready in roughly 100 lines of code. You may now open
+your terminal, type: `julia touch_typing.jl` and test your typing speed.
