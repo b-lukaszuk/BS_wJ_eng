@@ -116,7 +116,7 @@ function getAccuracy(typedTxt::Str, text2beTyped::Str)::Flt
 end
 
 function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
-    wordLen::Int = 4
+    wordLen::Int = 5 # avg. word length
     secsPerMin::Int = 60
     len1::Int = length(typedTxt)
     len2::Int = length(text2beTyped)
@@ -132,6 +132,32 @@ function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
     return nothing
 end
 
+function getTxtFromFile(filePath::Str)::Str
+    fileTxt::Str = open(filePath) do file
+        read(file, Str)
+    end
+    return fileTxt
+end
+
+function getTxtFormatedForTyping(txt::Str, lineLen::Int=60)::Str
+    @assert 40 <= lineLen <= 60 "lineLen must be in range [40-60]"
+    words::Vec{Str} = split(txt)
+    result::Str = ""
+    curLineLen::Int = 0
+    wordLen::Int = 0
+    for w in words
+        wordLen = length(w)
+        if (curLineLen + wordLen + 1) >= lineLen
+            result *= '\n' * w
+            curLineLen = wordLen
+        else
+            result *= ' ' * w
+            curLineLen += wordLen + 1
+        end
+    end
+    return result[2:end] # 1st char is ' '
+end
+
 function main()
 
     println("Hello. This is a toy program for touch typing.")
@@ -142,7 +168,8 @@ function main()
     choice::Str = readline()
 
     if lowercase(strip(choice)) != "q"
-        txt2type::Str = "Julia is awesome.\nTry it out\nin 2025 and beyond!"
+        txt2type::Str = getTxtFromFile("./text2beTyped.txt")
+        txt2type = getTxtFormatedForTyping(txt2type)
         timeStart::Flt = time()
         typedTxt::Str = playTypingGame(txt2type)
         timeEnd::Flt = time()

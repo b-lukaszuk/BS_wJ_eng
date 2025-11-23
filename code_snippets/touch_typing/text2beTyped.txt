@@ -1,0 +1,3 @@
+This is an exemplary text2beTyped.	It should be fairly short, let's say 200-500 characters. It should be composed of standard ASCII charset only.
+Usage of different combinations of line lengths, spaces, tabs, word-lengths shouldn't make much of a difference. Still, I wouldn't get too creative about this file's contents.
+Minimal testing was done on my laptop  running GNU/Linux, so you may have to make some adjustments in the *.jl and this *.txt file to make it work in your case as well.
