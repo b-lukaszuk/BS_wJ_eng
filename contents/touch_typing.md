@@ -254,3 +254,8 @@ end
 
 And voila, everything is ready in roughly 100 lines of code. You may now open
 your terminal, type: `julia touch_typing.jl` and test your typing speed.
+
+If you still haven't had enough then feel free to extend the program so that it
+can also handle a bit longer, multi-line texts. Alternatively, you may examine
+such a program in the [code
+snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/touch_typing).
