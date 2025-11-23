@@ -6,45 +6,42 @@ const Str = String
 const Vec = Vector
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
-function getRed(c::Char)::Str
-    return "\x1b[31m" * c * "\x1b[0m"
-end
-
 function getGreen(c::Char)::Str
     return "\x1b[32m" * c * "\x1b[0m"
 end
 
-function isDelete(c::Char)::Bool
-    return c == '\x08' || c == '\x7F'
+function getRed(c::Char)::Str
+    return "\x1b[31m" * c * "\x1b[0m"
 end
 
 function isAbort(c::Char)::Bool
     return c == '\x03' || c == '\x04'
 end
 
+function isDelete(c::Char)::Bool
+    return c == '\x08' || c == '\x7F'
+end
+
 function isEnter(c::Char)::Bool
     return c == '\x0D'
 end
 
+# by default sets cursor at (1, 1), i.e. top left corner
 function setCursor(row::Int=1, col::Int=1)
     @assert row >= 1 && col >= 1 "both row and col must be >= 1 "
-    print("\x1b[", row, ";", col, "H") # set cursor at row, col (top left; 1, 1)
+    print("\x1b[", row, ";", col, "H")
     return nothing
 end
 
-# clears terminal printout
-# 1 - clear from cursor to beginning of screen
-# 2 - clear entire screen, move cursor to top left corner
-function clearScreen(n::Int)
-    @assert n in [1, 2] "n must be 1 or 2"
-    print("\x1b[", n, "J")
+# clears screen, sets cursor at (1, 1), i.e. top left corner
+function clearScreen()
+    print("\x1b[", 1, "J") # clear from cursor to beginning of the screen
     setCursor()
     return nothing
 end
 
 function printColoredTxt(typedTxt::Str, referenceTxt::Str)
     len::Int = length(typedTxt)
-    # print("\r")
     for i in eachindex(referenceTxt)
         if i > len
             print(referenceTxt[i])
@@ -59,13 +56,13 @@ function printColoredTxt(typedTxt::Str, referenceTxt::Str)
 end
 
 # get cursor position on XY axis
-function getXY(typedTxt::Str, referenceTxt::Str)::Tuple{Int, Int}
-    x::Int = 1
-    y::Int = 1
+function getCursRowCol(typedTxt::Str, referenceTxt::Str)::Tuple{Int, Int}
+    x::Int = 1 # position along x axis
+    y::Int = 1 # position along y axis
     len1::Int = length(typedTxt)
     for i in eachindex(referenceTxt)
         if i > len1
-            return (x, y)
+            return (y, x)
         elseif referenceTxt[i] == '\n'
             y += 1
             x = 1
@@ -73,7 +70,7 @@ function getXY(typedTxt::Str, referenceTxt::Str)::Tuple{Int, Int}
             x += 1
         end
     end
-    return (x, y)
+    return (y, x)
 end
 
 # more info on stty, type in the terminal: man stty
@@ -81,9 +78,9 @@ end
 function playTypingGame(text2beTyped::Str)::Str
     c::Char = ' '
     typedTxt::Str = ""
-    clearScreen(2)
+    clearScreen()
     println(text2beTyped)
-    setCursor(1, 1)
+    setCursor()
     while length(text2beTyped) > length(typedTxt)
         run(`stty raw -echo`) # raw mode - reads single character immediately
         c = read(stdin, Char) # read a character without Enter
@@ -97,11 +94,13 @@ function playTypingGame(text2beTyped::Str)::Str
         else
             typedTxt *= c
         end
-        clearScreen(1)
+        clearScreen()
         printColoredTxt(typedTxt, text2beTyped)
-        x, y = getXY(typedTxt, text2beTyped)
-        setCursor(y, x)
+        row, col = getCursRowCol(typedTxt, text2beTyped)
+        setCursor(row, col)
     end
+    setCursor()
+    printColoredTxt(typedTxt, text2beTyped)
     return typedTxt
 end
 
@@ -124,7 +123,7 @@ function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
     cpm::Flt = len1 / elapsedTimeSec * secsPerMin
     wpm::Flt = cpm / wordLen
     acc::Flt = getAccuracy(typedTxt, text2beTyped)
-    println("\n\n---Summary---")
+    println("\n---Summary---")
     println("Elapsed time: ", round(elapsedTimeSec, digits=2), " seconds")
     println("Typed characters: $len1/$len2")
     println("Characters per minute: ", round(cpm, digits=1))
