@@ -55,7 +55,7 @@ function printColoredTxt(typedTxt::Str, referenceTxt::Str)
     return nothing
 end
 
-# get cursor position on XY axis
+# get cursor position
 function getCursRowCol(typedTxt::Str, referenceTxt::Str)::Tuple{Int, Int}
     x::Int = 1 # position along x axis
     y::Int = 1 # position along y axis
@@ -109,14 +109,14 @@ function getAccuracy(typedTxt::Str, text2beTyped::Str)::Flt
     len2::Int = length(text2beTyped)
     @assert len1 <= len2 "len1 must be <= len2"
     correctlyTyped::Vec{Bool} = Vec{Bool}(undef, len1)
-    for i in 1:len1
+    for i in eachindex(correctlyTyped)
         correctlyTyped[i] = typedTxt[i] == text2beTyped[i]
     end
-    return sum(correctlyTyped) / len1
+    return sum(correctlyTyped) / length(correctlyTyped)
 end
 
 function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
-    wordLen::Int = 5 # avg. word length
+    wordLen::Int = 5 # avg. word length in English
     secsPerMin::Int = 60
     len1::Int = length(typedTxt)
     len2::Int = length(text2beTyped)

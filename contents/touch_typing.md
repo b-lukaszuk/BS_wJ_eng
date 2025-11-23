@@ -21,7 +21,7 @@ measures your (touch) typing speed.
 
 Your program should:
 
-- mark the characters in- and correctly typed
+- mark the characters (in)correctly typed
 - allow to delete the (incorrectly) typed characters
 - display some basic summary of the speed (like WPM - words per minute)
 
@@ -39,11 +39,11 @@ of our input. To that end we will reuse some of the code (see `getRed` and
 ```
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 function getRed(c::Char)::Str
-    return "\\x1b[31m" * s * "\\x1b[0m"
+    return "\x1b[31m" * s * "\x1b[0m"
 end
 
 function getGreen(c::Char)::Str
-    return "\\x1b[32m" * s * "\\x1b[0m"
+    return "\x1b[32m" * s * "\x1b[0m"
 end
 
 function getColoredTxt(typedTxt::Str, referenceTxt::Str)::Str
@@ -64,16 +64,16 @@ end
 > **_Note:_** In this chapter we rely on the assumption that we operate on a
 > text composed of standard ASCII charset. Be aware that in the case of other
 > charsets the indexing may not work as intended (see [the
-> docs](https://docs.julialang.org/en/v1/manual/strings/#Unicode-and-UTF-8))
+> docs](https://docs.julialang.org/en/v1/manual/strings/#Unicode-and-UTF-8)).
 
 The code is rather simple, we traverse the `referenceTxt`, i.e. the text we are
 suppose to type, with a `for` loop and indexing (`i`). If the text we already
 typed (`typedTxt`) is shorter than the current index (`i > length(typedTxt)`) we
 just append the character of the reference text to the `result` without coloring
 (`result *= referenceTxt[i]`). Otherwise we color the character of our
-`referenceTxt[i]` green (`getGreen`) in case of a match
-(`typedTxt[i] == referenceTxt[i]`) or red (`getRed`) otherwise. Finally, we
-`return` the colored text (`result`) for printout.
+`referenceTxt[i]` green (`getGreen`) in the case of a match
+(`typedTxt[i] == referenceTxt[i]`) or we color it red (`getRed`)
+otherwise. Finally, we `return` the colored text (`result`) for printout.
 
 Now, in order to play our touch typing game we need a way to read a character or
 characters from the
@@ -87,16 +87,14 @@ non-blocking readout in Julia isn't trivial to get. One option suggested by the
 Code](https://rosettacode.org/wiki/Keyboard_input/Flush_the_keyboard_buffer#Julia)
 website is to use an external library (the Gtk.jl presented in the link above
 seems to be no longer maintained). Other possibility would be to do this in a
-programming language better adjusted for such low level tasks, like C. We could
-therefore, copy-paste [this code
-snippet](https://rosettacode.org/wiki/Keyboard_input/Flush_the_keyboard_buffer#Julia)
-(possibly modifying it) and execute it from Julia (similarly to the suggestions
-found in [this video](https://www.youtube.com/watch?v=obCMGkQ8Y8g)). However, in
-order to keep my solution minimal I will rely on `stty`, a terminal command
-found in unix(-like) systems. If you don't have it on your computer you need to
-find some other way (or just skip this task).
+programming language better adjusted for such low level tasks, like C, and
+execute it from Julia (similarly to the suggestions found in [this
+video](https://www.youtube.com/watch?v=obCMGkQ8Y8g)). However, in order to keep
+the solution minimal I will rely on `stty`, a terminal command found in
+UNIX(like) systems. If you don't have it on your computer you need to find some
+other way (or just skip this task).
 
-> **_Note:_** Type `man stty` (and press Enter) into your terminal to check do
+> **_Note:_** Type `man stty` (and press Enter) into your terminal to check if
 > you have the program installed on your system (`q` - closes the man page).
 
 OK, let's play the game.
@@ -132,18 +130,20 @@ backticks). Now, for as long (`while`) as we haven't typed the whole
 text (`\r` moves the cursor to the beginning of the line). Of course, we
 remember to set the cursor in the appropriate column (`"\x1b[", cursorCol,
 "G"`). Next we `read` a character typed by the player
-(`stdin` means [standard input](https://en.wikipedia.org/wiki/Standard_streams)
-and is a variable defined in `Base`). Afterwords, we append the character (`c`)
-to the `typedTxt` and move the cursor by one column. Once we finish, we
-cleanup. We reprint the whole typed text and reset the terminal to its default
-values with `run`. We return `typedTxt` for further usage (by a summary function
-that will be defined soon).
+(`stdin` means [standard input](https://en.wikipedia.org/wiki/Standard_streams),
+it is a variable defined by
+[Base](https://docs.julialang.org/en/v1/base/base/#Base)). Afterwords, we append
+the character (`c`) to the `typedTxt` and move the cursor by one column. Once we
+finish, we cleanup. We reprint the whole typed text and reset the terminal to
+its default values with `run`. We return `typedTxt` for further usage (by a
+summary function that will be defined soon).
 
-However, there is a small problem with out `playTypingGame`. The raw mode that
-we use will turn off special treatments of key-presses that we are accustomed to.
-For instance, currently there is no way to delete a character, nor terminate a
-program early with customary (Ctrl+C). I order to get this behavior we need to
-either turn on the default mode or fix the problem ourselves.
+The above is a reasonable approach, but there is a small problem with our
+`playTypingGame`. The raw mode that we use will turn off special treatments of
+key-presses that we are accustomed to. For instance, currently there is no way
+to delete a character, nor terminate a program early with customary (Ctrl-C). I
+order to get this behavior we need to either turn off the raw mode or fix the
+problem ourselves.
 
 ```
 function isDelete(c::Char)::Bool
@@ -151,7 +151,7 @@ function isDelete(c::Char)::Bool
 end
 
 function isAbort(c::Char)::Bool
-    return c == '\x03' || c == '\x04' # Ctrl-C or Ctrl+D
+    return c == '\x03' || c == '\x04' # Ctrl-C or Ctrl-D
 end
 
 # more info on stty, type in the terminal: man stty
@@ -183,8 +183,8 @@ end
 Much better. we just check for the hexadecimal (`\x`) [ASCII
 code](https://pl.wikipedia.org/wiki/ASCII) for the specific characters. When a
 delete key is pressed we remove the last character from the typed text
-(`typedTxt[1:(end-1)]`). When an abort signal is send we just `break` the
-`while` loop and leave early.
+(`typedTxt[1:(end-1)]`). When an abort signal is send we just `break` the loop
+and leave early.
 
 Now, we add the summary statistics.
 
@@ -194,14 +194,14 @@ function getAccuracy(typedTxt::Str, text2beTyped::Str)::Flt
     len2::Int = length(text2beTyped)
     @assert len1 <= len2 "len1 must be <= len2"
     correctlyTyped::Vec{Bool} = Vec{Bool}(undef, len1)
-    for i in 1:len1
+    for i in eachindex(correctlyTyped)
         correctlyTyped[i] = typedTxt[i] == text2beTyped[i]
     end
-    return sum(correctlyTyped) / len1
+    return sum(correctlyTyped) / length(correctlyTyped)
 end
 
 function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
-    wordLen::Int = 4
+    wordLen::Int = 5 # avg. word length in English
     secsPerMin::Int = 60
     len1::Int = length(typedTxt)
     len2::Int = length(text2beTyped)
@@ -218,7 +218,7 @@ function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
 ```
 
 You can choose a different set of statistics, but I picked accuracy (% of
-characters that were typed correctly), number of characters per minute (`cpm`),
+characters that were typed correctly), number of characters per minute (`cpm`)
 and number of words per minute `wpm`.
 
 As before (see @sec:tic_tac_toe_solution) we finish with the main function.
