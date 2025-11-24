@@ -94,7 +94,7 @@ function playTypingGame(text2beTyped::Str)::Str
         else
             typedTxt *= c
         end
-        clearScreen()
+        setCursor()
         printColoredTxt(typedTxt, text2beTyped)
         row, col = getCursRowCol(typedTxt, text2beTyped)
         setCursor(row, col)

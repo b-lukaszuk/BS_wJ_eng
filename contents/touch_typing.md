@@ -14,8 +14,8 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/touch_
 
 In this exercise your job is to write a
 [terminal](https://en.wikipedia.org/wiki/Terminal_emulator) based application,
-like the one presented in the GIF below (it doesn't have to be exact), that
-measures your (touch) typing speed.
+similar to the one presented in the GIF below, that measures your (touch) typing
+speed.
 
 ![A terminal based application that measures typing speed.](./images/touchTyping.gif){#fig:touchTyping}
 
@@ -252,8 +252,9 @@ if abspath(PROGRAM_FILE) == @__FILE__
 end
 ```
 
-And voila, everything is ready in roughly 100 lines of code. You may now open
-your terminal, type: `julia touch_typing.jl` and test your typing speed.
+And voila, the task was completed in like a hundred lines of code or so. You may
+now open your terminal, type: `julia touch_typing.jl` and test your typing
+speed.
 
 If you still haven't had enough then feel free to extend the program so that it
 can also handle a bit longer, multi-line texts. Alternatively, you may examine
