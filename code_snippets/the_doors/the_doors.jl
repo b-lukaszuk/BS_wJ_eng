@@ -51,3 +51,23 @@ function didTraderWin(doors::Vec{Door})::Bool
     end
     return false
 end
+
+function getResultOfDoorsGame(shouldSwap::Bool=false)::Bool
+    doors::Vec{Door} = get3RandDoors()
+    openFirstEmptyNonChosenDoor!(doors)
+    if shouldSwap
+        swapChoice!(doors)
+    end
+    return didTraderWin(doors)
+end
+
+function getProb(successes::Vec{Bool})::Flt
+    return sum(successes) / length(successes)
+end
+
+function getProbOfWinningDoorsGame(shouldSwap::Bool=false,
+                                   nSimul::Int = 100_000,)::Flt
+    return [getResultOfDoorsGame(shouldSwap) for _ in 1:nSimul] |> getProb
+end
+
+getProbOfWinningDoorsGame(false), getProbOfWinningDoorsGame(true)
