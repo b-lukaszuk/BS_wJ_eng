@@ -1,12 +1,28 @@
-# https://en.wikipedia.org/wiki/Monty_Hall_problem
+import DataFrames as Dfs
 import Random as Rnd
 
 # the code in this file is meant to serve as a programming exercise only
 # it may not act correctly
-#
+
 const Flt = Float64
 const Vec = Vector
 
+# https://en.wikipedia.org/wiki/Monty_Hall_problem
+# Bayes's Theorem
+# https://allendowney.github.io/ThinkBayes2/chap02.html#the-monty-hall-problem
+function bayesUpdate!(df::Dfs.DataFrame)
+    df.unnorm = df.prior .* df.likelihood
+    df.posterior = df.unnorm ./ sum(df.unnorm)
+    return nothing
+end
+
+df = Dfs.DataFrame(Dict("Door" => 1:3))
+df.prior = [1//3, 1//3, 1//3]
+df.likelihood = [1//2, 1, 0]
+bayesUpdate!(df)
+df
+
+# computer simulation
 mutable struct Door
     isCar::Bool
     isChosen::Bool
