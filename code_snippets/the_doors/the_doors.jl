@@ -10,15 +10,19 @@ const Vec = Vector
 # https://en.wikipedia.org/wiki/Monty_Hall_problem
 # Bayes's Theorem
 # https://allendowney.github.io/ThinkBayes2/chap02.html#the-monty-hall-problem
+df = Dfs.DataFrame(Dict("Door" => 1:3))
+df.prior = repeat([1//3], 3)
+df
+
+df.likelihood = [1//2, 1, 0]
+df
+
 function bayesUpdate!(df::Dfs.DataFrame)
     df.unnorm = df.prior .* df.likelihood
     df.posterior = df.unnorm ./ sum(df.unnorm)
     return nothing
 end
 
-df = Dfs.DataFrame(Dict("Door" => 1:3))
-df.prior = [1//3, 1//3, 1//3]
-df.likelihood = [1//2, 1, 0]
 bayesUpdate!(df)
 df
 
@@ -77,13 +81,13 @@ function getResultOfDoorsGame(shouldSwap::Bool=false)::Bool
     return didTraderWin(doors)
 end
 
-function getProb(successes::Vec{Bool})::Flt
+function getAvg(successes::Vec{Bool})::Flt
     return sum(successes) / length(successes)
 end
 
 function getProbOfWinningDoorsGame(shouldSwap::Bool=false,
-                                   nSimul::Int = 100_000,)::Flt
-    return [getResultOfDoorsGame(shouldSwap) for _ in 1:nSimul] |> getProb
+                                   nSimul::Int = 10_000,)::Flt
+    return [getResultOfDoorsGame(shouldSwap) for _ in 1:nSimul] |> getAvg
 end
 
 getProbOfWinningDoorsGame(false), getProbOfWinningDoorsGame(true)
