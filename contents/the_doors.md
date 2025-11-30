@@ -111,3 +111,100 @@ replace(sco(s), Regex("Options.*") => "", "1//1" => "1", "2//1" => "2", "3//1" =
 Clearly, switching to Door 2 gives the trader a better chance of winning the car
 ($P = \frac{2}{3} \approx 0.66$) than remaining with the original choice ($P =
 \frac{1}{3} \approx 0.33$).
+
+If that doesn't convince you then let's do a computer simulation.
+
+```jl
+s = """
+import Random as Rnd
+
+mutable struct Door
+    isCar::Bool
+    isChosen::Bool
+    isOpen::Bool
+end
+
+function get3RandDoors()::Vec{Door}
+    cars::Vec{Bool} = Rnd.shuffle([true, false, false])
+    chosen::Vec{Bool} = Rnd.shuffle([true, false, false])
+    return [Door(car, chosen, false)
+            for (car, chosen) in zip(cars, chosen)]
+end
+
+function openFirstEmptyNonChosenDoor!(doors::Vec{Door})
+    for d in doors
+        if !d.isCar && !d.isChosen
+            d.isOpen = true
+            break
+        end
+    end
+    return nothing
+end
+
+function swapChoice!(doors::Vec{Door})
+    for d in doors
+        if d.isChosen
+            d.isChosen = false
+            continue
+        end
+        if !d.isChosen && !d.isOpen
+            d.isChosen = true
+        end
+    end
+    return nothing
+end
+"""
+sc(s)
+```
+
+We start by defining a `Door` structure that got all the necessary fields in
+order to simulate our game-show. Notice the `mutable` keywordd, it will allow us
+to change a property of `Door`s inplace. Anyway, we follow the structure with a
+random generator or three doors (`get3RandDoors`) door opener
+`openFirstEmptyNonChosenDoor` and choice `swapChoice`. All the above act per the
+game description.
+
+Now, we only need a way to determine did the player win.
+
+```jl
+s = """
+function didTraderWin(doors::Vec{Door})::Bool
+    for d in doors
+        if d.isChosen && d.isCar
+            return true
+        end
+    end
+    return false
+end
+
+function getResultOfDoorsGame(shouldSwap::Bool=false)::Bool
+    doors::Vec{Door} = get3RandDoors()
+    openFirstEmptyNonChosenDoor!(doors)
+    if shouldSwap
+        swapChoice!(doors)
+    end
+    return didTraderWin(doors)
+end
+"""
+sc(s)
+```
+
+And voila, we are ready to estimate the probability:
+
+```jl
+s = """
+function getAvg(successes::Vec{Bool})::Flt
+    return sum(successes) / length(successes)
+end
+
+function getProbOfWinningDoorsGame(shouldSwap::Bool=false,
+                                   nSimul::Int = 10_000,)::Flt
+    return [getResultOfDoorsGame(shouldSwap) for _ in 1:nSimul] |> getAvg
+end
+
+getProbOfWinningDoorsGame(false), getProbOfWinningDoorsGame(true)
+"""
+sco(s)
+```
+
+which ends up to be equivalent to our theoretical calculations.
