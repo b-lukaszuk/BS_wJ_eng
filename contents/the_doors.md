@@ -96,8 +96,8 @@ we divide it by $P(D)$ (sum of all probabilities) like so:
 ```jl
 s = """
 function bayesUpdate!(df::Dfs.DataFrame)
-    df.unnorm = df.prior .* df.likelihood
-    df.posterior = df.unnorm ./ sum(df.unnorm)
+    unnorm = df.prior .* df.likelihood
+    df.posterior = unnorm ./ sum(unnorm)
     return nothing
 end
 
@@ -202,6 +202,7 @@ function getProbOfWinningDoorsGame(shouldSwap::Bool=false,
     return [getResultOfDoorsGame(shouldSwap) for _ in 1:nSimul] |> getAvg
 end
 
+Rnd.seed!(1492)
 getProbOfWinningDoorsGame(false), getProbOfWinningDoorsGame(true)
 """
 sco(s)
