@@ -18,8 +18,8 @@ df.likelihood = [1//2, 1, 0]
 df
 
 function bayesUpdate!(df::Dfs.DataFrame)
-    df.unnorm = df.prior .* df.likelihood
-    df.posterior = df.unnorm ./ sum(df.unnorm)
+    unnorm = df.prior .* df.likelihood
+    df.posterior = unnorm ./ sum(unnorm)
     return nothing
 end
 
@@ -40,17 +40,17 @@ function get3RandDoors()::Vec{Door}
             for (car, chosen) in zip(cars, chosen)]
 end
 
-function openFirstEmptyNonChosenDoor!(doors::Vec{Door})
+function openFirstEmptyNonChosenDoor!(doors::Vec{Door})::Vec{Door}
     for d in doors
         if !d.isCar && !d.isChosen
             d.isOpen = true
             break
         end
     end
-    return nothing
+    return doors
 end
 
-function swapChoice!(doors::Vec{Door})
+function swapChoice!(doors::Vec{Door})::Vec{Door}
     for d in doors
         if d.isChosen
             d.isChosen = false
@@ -60,7 +60,7 @@ function swapChoice!(doors::Vec{Door})
             d.isChosen = true
         end
     end
-    return nothing
+    return doors
 end
 
 function didTraderWin(doors::Vec{Door})::Bool
@@ -91,3 +91,18 @@ function getProbOfWinningDoorsGame(shouldSwap::Bool=false,
 end
 
 getProbOfWinningDoorsGame(false), getProbOfWinningDoorsGame(true)
+
+# just listing all possibilities
+function getAllDoorSets()::Vec{Vec{Door}}
+    allDoorSets::Vec{Vec{Door}} = []
+    for i in 1:3, j in 1:3
+        subset = [Door(false, false, false) for _ in 1:3]
+        subset[i].isCar = true
+        subset[j].isChosen = true
+        push!(allDoorSets, subset)
+    end
+    return allDoorSets
+end
+
+map(didTraderWin, getAllDoorSets()) |> getAvg
+map(didTraderWin ∘ swapChoice!, getAllDoorSets()) |> getAvg
