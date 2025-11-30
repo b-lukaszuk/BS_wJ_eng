@@ -41,9 +41,9 @@ First the theorem:
 
 $P(A|B) = \frac{P(A) * P(B|A)}{P(B)}$
 
-which can be also written as
+which can be also written as:
 
-$P(H|D) = \frac{P(H) * P(D|H)}{P(D)}$
+$$P(H|D) = \frac{P(H) * P(D|H)}{P(D)}$$ {#eq:bayesTheorem}
 
 where:
 
@@ -51,3 +51,63 @@ where:
 - P(H) - probability of a given hypothesis upfront (aka **prior**)
 - P(D|H) - probability of obtaining such data given the discussed hypothesis is true (aka **likelihood**)
 - P(D) - the total probability of the data under all the considered hypothesis.
+
+Regarding the **priors** or P(H), initially it is equally likely for the car to
+be behind any of the three doors. Therefore, the probability that the car is
+behind Door X is: 1 out of 3, so 1/3. This can be represented as:
+
+```jl
+s = """
+import DataFrames as Dfs
+
+df = Dfs.DataFrame(Dict("Door" => 1:3))
+df.prior = repeat([1//3], 3) # 1//3 is Rational (a fraction)
+df
+Options(df, caption="The doors. Priors.", label="theDoorsPriors")
+"""
+replace(sco(s), Regex("Options.*") => "", "1//1" => "1", "2//1" => "2", "3//1" => 3)
+```
+
+Let's move to **likelihood** or P(D|H). If the car was behind Door 1, then the
+host may open either Door 2 or Door 3. Hence, the probability of him opening
+Door 3 (as he did in the problem description) is 1 out of 2, so 1/2 or 0.5. If
+the car was behind Door 2, then the host had no other option but to open Door 3
+(since Door 1 is the trader's choice and he doesn't want to reveal the car
+behind Door 2). Therefore, in this case the probability is equal to 1 (certain
+event). If the car were behind Door 3, then there is no way the host would have
+opened it (since it would reveal the car and spoil the game). So, in this case
+the probability is 0.
+
+Let's add this information to the table.
+
+```jl
+s = """
+df.likelihood = [1//2, 1, 0]
+df
+Options(df, caption="The doors. Likelihoods.", label="theDoorsLikelihood")
+"""
+replace(sco(s), Regex("Options.*") => "", "1//1" => "1", "2//1" => "2", "3//1" => 3)
+```
+
+Now we perform a so called Bayesian update, e.g. per the formula in
+@eq:bayesTheorem: first we multiply $P(H)$ (prior) by $P(D|H)$ (likelihood) then
+we divide it by $P(D)$ (sum of all probabilities) like so:
+
+```jl
+s = """
+function bayesUpdate!(df::Dfs.DataFrame)
+    df.unnorm = df.prior .* df.likelihood
+    df.posterior = df.unnorm ./ sum(df.unnorm)
+    return nothing
+end
+
+bayesUpdate!(df)
+df
+Options(df, caption="The doors. Posteriors.", label="theDoorsPosterior")
+"""
+replace(sco(s), Regex("Options.*") => "", "1//1" => "1", "2//1" => "2", "3//1" => 3)
+```
+
+Clearly, switching to Door 2 gives the trader a better chance of winning the car
+($P = \frac{2}{3} \approx 0.66$) than remaining with the original choice ($P =
+\frac{1}{3} \approx 0.33$).
