@@ -28,4 +28,26 @@ switch? Use Julia to answer that question.
 
 ## Solution {#sec:the_doors_solution}
 
-The solution goes here.
+One way to answer the question is to use the so called Bayes's Theorem, as
+explained by Allen B. Downey
+[here](https://allendowney.github.io/ThinkBayes2/chap02.html#the-monty-hall-problem).
+
+> **_Note:_** Below, you will find a shortened explanation. To understand this
+> topic more satisfactorily you will likely need to read the first two chapters
+> of [Think Bayes](https://allendowney.github.io/ThinkBayes2/index.html) by
+> Allen B. Downey.
+
+First the theorem:
+
+$P(A|B) = \frac{P(A) * P(B|A)}{P(B)}$
+
+which can be also written as
+
+$P(H|D) = \frac{P(H) * P(D|H)}{P(D)}$
+
+where:
+
+- P(H|D) - probability of the hypothesis given the obtained data (aka **posterior**)
+- P(H) - probability of a given hypothesis upfront (aka **prior**)
+- P(D|H) - probability of obtaining such data given the discussed hypothesis is true (aka **likelihood**)
+- P(D) - the total probability of the data under all the considered hypothesis.
