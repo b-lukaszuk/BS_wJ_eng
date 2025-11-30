@@ -8,6 +8,8 @@ const Flt = Float64
 const Vec = Vector
 
 # https://en.wikipedia.org/wiki/Monty_Hall_problem
+
+# Solution 1
 # Bayes's Theorem
 # https://allendowney.github.io/ThinkBayes2/chap02.html#the-monty-hall-problem
 df = Dfs.DataFrame(Dict("Door" => 1:3))
@@ -26,11 +28,14 @@ end
 bayesUpdate!(df)
 df
 
-# computer simulation
+# Solution 2 and 3 common code
 mutable struct Door
     isCar::Bool
     isChosen::Bool
     isOpen::Bool
+
+    Door() = new(false, false, false)
+    Door(car, chosen, open) = new(car, chosen, open)
 end
 
 function get3RandDoors()::Vec{Door}
@@ -72,6 +77,12 @@ function didTraderWin(doors::Vec{Door})::Bool
     return false
 end
 
+function getAvg(successes::Vec{Bool})::Flt
+    return sum(successes) / length(successes)
+end
+
+# Solution 2
+# computer simulation
 function getResultOfDoorsGame(shouldSwap::Bool=false)::Bool
     doors::Vec{Door} = get3RandDoors()
     openFirstEmptyNonChosenDoor!(doors)
@@ -81,22 +92,22 @@ function getResultOfDoorsGame(shouldSwap::Bool=false)::Bool
     return didTraderWin(doors)
 end
 
-function getAvg(successes::Vec{Bool})::Flt
-    return sum(successes) / length(successes)
-end
-
 function getProbOfWinningDoorsGame(shouldSwap::Bool=false,
                                    nSimul::Int = 10_000,)::Flt
     return [getResultOfDoorsGame(shouldSwap) for _ in 1:nSimul] |> getAvg
 end
 
+Rnd.seed!(1492)
 getProbOfWinningDoorsGame(false), getProbOfWinningDoorsGame(true)
 
-# just listing all possibilities
-function getAllDoorSets()::Vec{Vec{Door}}
+# Solution 3
+# list all the possibilities, calculate the probabilities
+function getAllDoorSets(doorsPerSet::Int=3)::Vec{Vec{Door}}
+    @assert 1 < doorsPerSet < 11 "doorsPerSet must in the range [1-10]"
     allDoorSets::Vec{Vec{Door}} = []
-    for i in 1:3, j in 1:3
-        subset = [Door(false, false, false) for _ in 1:3]
+    subset::Vec{Door} = Door[]
+    for i in 1:doorsPerSet, j in 1:doorsPerSet
+        subset = [Door() for _ in 1:doorsPerSet]
         subset[i].isCar = true
         subset[j].isChosen = true
         push!(allDoorSets, subset)
@@ -104,5 +115,6 @@ function getAllDoorSets()::Vec{Vec{Door}}
     return allDoorSets
 end
 
+# to get ∘ (function composition) type \circ and press Tab key
 map(didTraderWin, getAllDoorSets()) |> getAvg
 map(didTraderWin ∘ swapChoice!, getAllDoorSets()) |> getAvg
