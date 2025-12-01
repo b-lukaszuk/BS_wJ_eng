@@ -283,3 +283,7 @@ sco(s)
 
 And that's it. Three methods, three similar results. Time to make that door
 swap.
+
+If you're still not tired and up for challenges, try to tweak the code a bit and
+answer the same question for 5 and 7 door scenario (still 1 car, 1 empty door
+opened).
