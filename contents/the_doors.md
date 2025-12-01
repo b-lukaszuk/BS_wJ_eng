@@ -39,7 +39,7 @@ explained by Allen B. Downey
 
 First the theorem:
 
-$P(A|B) = \frac{P(A) * P(B|A)}{P(B)}$
+$$P(A|B) = \frac{P(A) * P(B|A)}{P(B)}$$
 
 which can be also written as:
 
@@ -198,7 +198,7 @@ function getAvg(successes::Vec{Bool})::Flt
 end
 
 function getProbOfWinningDoorsGame(shouldSwap::Bool=false,
-                                   nSimul::Int = 10_000,)::Flt
+                                   nSimul::Int = 10_000)::Flt
     return [getResultOfDoorsGame(shouldSwap) for _ in 1:nSimul] |> getAvg
 end
 
@@ -209,3 +209,77 @@ sco(s)
 ```
 
 which ends up to be equivalent to our theoretical calculations.
+
+Now, you could argue the doing 10_000 computer simulations to estimate is
+overkill, after all the total number of possibilities cannot be so big for this
+simple case. Well, I guess your right. So, let's try again, this time we will
+list all the possible scenarios and see in how many of them we succeed.
+
+```jl
+s = """
+function getAll3DoorSets()::Vec{Vec{Door}}
+    allDoorSets::Vec{Vec{Door}} = []
+    subset::Vec{Door} = Door[]
+    for i in 1:3, j in 1:3
+        subset = [Door(false, false, false) for _ in 1:3]
+        subset[i].isCar = true
+        subset[j].isChosen = true
+        push!(allDoorSets, subset)
+    end
+    return allDoorSets
+end
+"""
+sc(s)
+```
+
+Now we change the `return` statements in our `openNonChosenDoor!` and `swapChoice`.
+
+```jl
+s = """
+function openNonChosenDoor!(doors::Vec{Door})::Vec{Door}
+    for d in doors
+        if !d.isCar && !d.isChosen
+            d.isOpen = true
+            break
+        end
+    end
+    return doors # instead of: return nothing
+end
+
+function swapChoice!(doors::Vec{Door})
+    for d in doors
+        if d.isChosen
+            d.isChosen = false
+            continue
+        end
+        if !d.isChosen && !d.isOpen
+            d.isChosen = true
+        end
+    end
+    return doors # instead of: return nothing
+end
+"""
+sc(s)
+```
+
+Thanks to this small change we can answer our question with this few-liner.
+
+```jl
+s = """
+map(didTraderWin ∘ openNonChosenDoor!, getAll3DoorSets()) |> getAvg,
+map(didTraderWin ∘ swapChoice! ∘ openNonChosenDoor!,
+	getAll3DoorSets()) |> getAvg
+"""
+sco(s)
+```
+
+> Note. `∘` is a [function composition
+> operator](https://docs.julialang.org/en/v1/manual/functions/#Function-composition-and-piping)
+> that you can obtain by typing `\circ` and pressing Tab. The `map(fn2 ∘ fn1,
+> xs)` means take every `x` of `xs` and send it to `fn1` as an argument. Then
+> send the result of `fn1(x)` as an argument to `fn2`. Finally, present the
+> result of `fn2(fn1(x))` (executed on all `xs`) as a collection of the same
+> type as `xs`.
+
+And that's it. Three methods, three similar results. Time to make that door
+swap.
