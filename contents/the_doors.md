@@ -26,12 +26,12 @@ like this.
 Imagine there is a game-show in which a person may win a new car. The car is
 hidden behind one of three doors. The host chooses a player (called a trader)
 from the people in the studio and asks them to pick one door. The choice is
-Door 1. The host knows what's behind all the doors. He decided to open Door 2,
+Door 1. The host knows what's behind all the doors. He decided to open Door 3,
 behind which there's a goat. Now the trader got a choice: stay with their
 initial choice, or switch to still unopened Door 2.
 
 Imagine you are the trader. What would you do? Is it in your interest to make a
-switch? Use Julia to answer that question.
+switch? Use Julia to figure it out.
 
 ## Solution {#sec:the_doors_solution}
 
@@ -54,9 +54,9 @@ $$P(H|D) = \frac{P(H) * P(D|H)}{P(D)}$$ {#eq:bayesTheorem}
 
 where:
 
-- P(H|D) - probability of the hypothesis given the obtained data (aka **posterior**)
-- P(H) - probability of a given hypothesis upfront (aka **prior**)
-- P(D|H) - probability of obtaining such data given the discussed hypothesis is true (aka **likelihood**)
+- P(H|D) - probability of a hypothesis given the obtained data (aka **posterior**),
+- P(H) - probability of a given hypothesis upfront (aka **prior**),
+- P(D|H) - probability of obtaining such data given the discussed hypothesis is true (aka **likelihood**),
 - P(D) - the total probability of the data under all the considered hypothesis.
 
 Regarding the **priors** or P(H), initially it is equally likely for the car to
@@ -109,7 +109,7 @@ function bayesUpdate!(df::Dfs.DataFrame)
 end
 
 bayesUpdate!(df)
-df
+df # to see Rationals as floats: convert.(Flt, df.posterior)
 Options(df, caption="The doors. Posteriors.", label="theDoorsPosterior")
 """
 replace(sco(s), Regex("Options.*") => "", "1//1" => "1", "2//1" => "2", "3//1" => 3)
@@ -139,7 +139,8 @@ function get3RandDoors()::Vec{Door}
 end
 
 # open first non-chosen, non-car door
-function openFirstEmptyNonChosenDoor!(doors::Vec{Door})
+function openEligibleDoor!(doors::Vec{Door})
+	@assert length(doors) == 3 "need 3 doors"
     for d in doors
         if !d.isCar && !d.isChosen
             d.isOpen = true
@@ -151,6 +152,7 @@ end
 
 # swap to first non-chosen, non-open door
 function swapChoice!(doors::Vec{Door})
+	@assert length(doors) == 3 "need 3 doors"
     for d in doors
         if d.isChosen
             d.isChosen = false
@@ -166,12 +168,11 @@ end
 sc(s)
 ```
 
-We start by defining a `Door` structure that got all the necessary fields in
-order to simulate our game-show. Notice the `mutable` keywordd, it will allow us
-to change a property of `Door`s inplace. Anyway, we follow the structure with a
+We start by defining a `Door` structure that has all the necessary fields in
+order to simulate our game-show. Notice the `mutable` keyword, it will allow us
+to change a property of a `Door` inplace. Anyway, we follow the structure with a
 random generator or three doors (`get3RandDoors`) door opener
-`openFirstEmptyNonChosenDoor` and choice `swapChoice`. All the above act per the
-game description.
+`openEligibleDoor` and `swapChoice`. All the above act per the game description.
 
 Now, we only need a way to determine did the player win.
 
@@ -188,7 +189,7 @@ end
 
 function getResultOfDoorsGame(shouldSwap::Bool=false)::Bool
     doors::Vec{Door} = get3RandDoors()
-    openFirstEmptyNonChosenDoor!(doors)
+    openEligibleDoor!(doors)
     if shouldSwap
         swapChoice!(doors)
     end
@@ -208,7 +209,8 @@ function getAvg(successes::Vec{Bool})::Flt
 end
 
 function getProbOfWinningDoorsGame(shouldSwap::Bool=false,
-                                   nSimul::Int = 10_000)::Flt
+                                   nSimul::Int=10_000)::Flt
+    @assert 1e3 <= nSimul <= 1e5 "nSimul must be in range [1e3 - 1e5]"
     return [getResultOfDoorsGame(shouldSwap) for _ in 1:nSimul] |> getAvg
 end
 
@@ -220,10 +222,11 @@ sco(s)
 
 which ends up to be equivalent to our theoretical calculations.
 
-Now, you could argue the doing 10_000 computer simulations to estimate is
-overkill, after all the total number of possibilities cannot be so big for this
-simple case. Well, I guess your right. So, let's try again, this time we will
-list all the possible scenarios and see in how many of them we succeed.
+Now, you could argue the doing 10,000 computer simulations to estimate the
+probability is overkill, after all the total number of possibilities cannot be
+that big for this simple case. Well, I guess you're right. So, let's try again,
+this time we will list all the possible scenarios and see in how many of them we
+succeed.
 
 ```jl
 s = """
@@ -243,12 +246,14 @@ end
 sc(s)
 ```
 
-Now we change the `return` statements in our `openNonChosenDoor!` and `swapChoice`.
+Now we change the `return` statements in our `openEligibleDoor!` and
+`swapChoice`.
 
 ```jl
 s = """
 # open first non-chosen, non-car door
-function openNonChosenDoor!(doors::Vec{Door})::Vec{Door}
+function openEligibleDoor!(doors::Vec{Door})::Vec{Door}
+	@assert length(doors) == 3 "need 3 doors"
     for d in doors
         if !d.isCar && !d.isChosen
             d.isOpen = true
@@ -260,6 +265,7 @@ end
 
 # swap to first non-chosen, non-open door
 function swapChoice!(doors::Vec{Door})
+	@assert length(doors) == 3 "need 3 doors"
     for d in doors
         if d.isChosen
             d.isChosen = false
@@ -279,8 +285,8 @@ Thanks to this small change we can answer our question with this few-liner.
 
 ```jl
 s = """
-map(didTraderWin ∘ openNonChosenDoor!, getAll3DoorSets()) |> getAvg,
-map(didTraderWin ∘ swapChoice! ∘ openNonChosenDoor!,
+map(didTraderWin ∘ openEligibleDoor!, getAll3DoorSets()) |> getAvg,
+map(didTraderWin ∘ swapChoice! ∘ openEligibleDoor!,
 	getAll3DoorSets()) |> getAvg
 """
 sco(s)
@@ -296,6 +302,9 @@ sco(s)
 And that's it. Three methods, three similar results. Time to make that door
 swap.
 
-If you're still not tired and up for challenges, try to tweak the code a bit and
-answer the same question for 5 and 7 door scenario (still 1 car, 1 empty door
-opened).
+Interestingly, the code presented above will likely work right only for the
+three doors scenario. If you're still not tired and up for challenges try to
+answer the same question for 5 and 7 doors scenarios. Just remember: 1 car in a
+random location, 1 empty door opened at random position, a random switch
+performed). Feel free to modify some (e.g. 1 solution only) or all the code in
+this chapter.

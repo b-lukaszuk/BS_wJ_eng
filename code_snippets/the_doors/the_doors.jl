@@ -94,7 +94,8 @@ function getResultOfDoorsGame(shouldSwap::Bool=false, nDoors::Int=3)::Bool
 end
 
 function getProbOfWinningDoorsGame(nDoors::Int=3, shouldSwap::Bool=false,
-                                   nSimul::Int = 10_000)::Flt
+                                   nSimul::Int=10_000)::Flt
+    @assert 1e4 <= nSimul <= 1e6 "nSimul must be in range [1e4 - 1e6]"
     return [getResultOfDoorsGame(shouldSwap, nDoors) for _ in 1:nSimul] |> getAvg
 end
 
