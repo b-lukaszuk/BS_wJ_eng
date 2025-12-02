@@ -131,6 +131,7 @@ function get3RandDoors()::Vec{Door}
             for (car, chosen) in zip(cars, chosen)]
 end
 
+# open first non-chosen, non-car door
 function openFirstEmptyNonChosenDoor!(doors::Vec{Door})
     for d in doors
         if !d.isCar && !d.isChosen
@@ -141,6 +142,7 @@ function openFirstEmptyNonChosenDoor!(doors::Vec{Door})
     return nothing
 end
 
+# swap to first non-chosen, non-open door
 function swapChoice!(doors::Vec{Door})
     for d in doors
         if d.isChosen
@@ -193,6 +195,7 @@ And voila, we are ready to estimate the probability:
 
 ```jl
 s = """
+# treats: true as 1, false as 0
 function getAvg(successes::Vec{Bool})::Flt
     return sum(successes) / length(successes)
 end
@@ -217,6 +220,7 @@ list all the possible scenarios and see in how many of them we succeed.
 
 ```jl
 s = """
+# list all the possibilities of car location and choice location
 function getAll3DoorSets()::Vec{Vec{Door}}
     allDoorSets::Vec{Vec{Door}} = []
     subset::Vec{Door} = Door[]
@@ -236,6 +240,7 @@ Now we change the `return` statements in our `openNonChosenDoor!` and `swapChoic
 
 ```jl
 s = """
+# open first non-chosen, non-car door
 function openNonChosenDoor!(doors::Vec{Door})::Vec{Door}
     for d in doors
         if !d.isCar && !d.isChosen
@@ -246,6 +251,7 @@ function openNonChosenDoor!(doors::Vec{Door})::Vec{Door}
     return doors # instead of: return nothing
 end
 
+# swap to first non-chosen, non-open door
 function swapChoice!(doors::Vec{Door})
     for d in doors
         if d.isChosen
@@ -273,13 +279,12 @@ map(didTraderWin ∘ swapChoice! ∘ openNonChosenDoor!,
 sco(s)
 ```
 
-> Note. `∘` is a [function composition
+> Note, `∘` is a [function composition
 > operator](https://docs.julialang.org/en/v1/manual/functions/#Function-composition-and-piping)
 > that you can obtain by typing `\circ` and pressing Tab. The `map(fn2 ∘ fn1,
 > xs)` means take every `x` of `xs` and send it to `fn1` as an argument. Then
 > send the result of `fn1(x)` as an argument to `fn2`. Finally, present the
-> result of `fn2(fn1(x))` (executed on all `xs`) as a collection of the same
-> type as `xs`.
+> result of `fn2(fn1(x))` (executed on all `xs`) as a collection.
 
 And that's it. Three methods, three similar results. Time to make that door
 swap.

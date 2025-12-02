@@ -26,7 +26,7 @@ function bayesUpdate!(df::Dfs.DataFrame)
 end
 
 bayesUpdate!(df)
-df
+df # to see as floats: convert.(Flt, df.posterior)
 
 # Solution 2 and 3 common code
 mutable struct Door
@@ -47,19 +47,18 @@ function getNRandDoors(n::Int=3)::Vec{Door}
     return [Door(car, chosen, false) for (car, chosen) in zip(cars, chosen)]
 end
 
-# open first non-chosen, non-car door
-function openNonChosenDoor!(doors::Vec{Door})::Vec{Door}
-    for d in doors
-        if !d.isCar && !d.isChosen
-            d.isOpen = true
-            break
-        end
-    end
+# open random non-chosen, non-car, non-open door
+function openEligibleDoor!(doors::Vec{Door})::Vec{Door}
+    @assert 2 < length(doors) < 11 "must have [3-10] doors"
+    inds2Open::Vec{Int} = findall(d -> !d.isOpen && !d.isChosen && !d.isCar, doors)
+    ind2Open::Int = inds2Open[Rnd.rand(eachindex(inds2Open))]
+    doors[ind2Open].isOpen = true
     return doors
 end
 
 # swap to random non-chosen, non-open door
 function swapChoice!(doors::Vec{Door})::Vec{Door}
+    @assert 2 < length(doors) < 11 "must have [3-10] doors"
     indChosen::Int = findfirst(d -> d.isChosen, doors)
     inds2Swap::Vec{Int} = findall(d -> !d.isOpen && !d.isChosen, doors)
     ind2Swap::Int = inds2Swap[Rnd.rand(eachindex(inds2Swap))]
@@ -77,6 +76,7 @@ function didTraderWin(doors::Vec{Door})::Bool
     return false
 end
 
+# treats: true as 1, false as 0
 function getAvg(successes::Vec{Bool})::Flt
     return sum(successes) / length(successes)
 end
@@ -86,7 +86,7 @@ end
 # single doors game
 function getResultOfDoorsGame(shouldSwap::Bool=false, nDoors::Int=3)::Bool
     doors::Vec{Door} = getNRandDoors(nDoors)
-    openNonChosenDoor!(doors)
+    openEligibleDoor!(doors)
     if shouldSwap
         swapChoice!(doors)
     end
@@ -98,11 +98,10 @@ function getProbOfWinningDoorsGame(nDoors::Int=3, shouldSwap::Bool=false,
     return [getResultOfDoorsGame(shouldSwap, nDoors) for _ in 1:nSimul] |> getAvg
 end
 
-Rnd.seed!(1492)
 getProbOfWinningDoorsGame(3, false), getProbOfWinningDoorsGame(3, true)
 
 # Solution 3
-# list all the possibilities, calculate the probabilities
+# list all the possibilities of car location and choice location
 function getAllDoorSets(doorsPerSet::Int=3)::Vec{Vec{Door}}
     @assert 2 < doorsPerSet < 11 "doorsPerSet must in the range [3-10]"
     allDoorSets::Vec{Vec{Door}} = []
@@ -117,8 +116,8 @@ function getAllDoorSets(doorsPerSet::Int=3)::Vec{Vec{Door}}
 end
 
 # to get ∘ (function composition) type \circ and press Tab key
-map(didTraderWin ∘ openNonChosenDoor!, getAllDoorSets()) |> getAvg
-map(didTraderWin ∘ swapChoice! ∘ openNonChosenDoor!, getAllDoorSets()) |> getAvg
+map(didTraderWin ∘ openEligibleDoor!, getAllDoorSets()) |> getAvg
+map(didTraderWin ∘ swapChoice! ∘ openEligibleDoor!, getAllDoorSets()) |> getAvg
 
 # answers for 5 doors per set
 # with Bayes's theorem
@@ -127,15 +126,15 @@ df.prior = repeat([1//5], 5)
 # no matter which door is opened, no matter where is the car
 df.likelihood = [1//4, 1//3, 1//3, 1//3, 0]
 bayesUpdate!(df)
-df
+df # to see as floats: convert.(Flt, df.posterior)
 
 # with computer simulation
-Rnd.seed!(1492)
 getProbOfWinningDoorsGame(5, false), getProbOfWinningDoorsGame(5, true)
 
 # with listing all possibiilties
-map(didTraderWin ∘ openNonChosenDoor!, getAllDoorSets(5)) |> getAvg
-map(didTraderWin ∘ swapChoice! ∘ openNonChosenDoor!, getAllDoorSets(5)) |> getAvg
+map(didTraderWin ∘ openEligibleDoor!, getAllDoorSets(5)) |> getAvg
+# likely to give the least precise estimate for swap scenario
+map(didTraderWin ∘ swapChoice! ∘ openEligibleDoor!, getAllDoorSets(5)) |> getAvg
 
 
 # answers for 7 doors per set
@@ -145,12 +144,12 @@ df.prior = repeat([1//7], 7)
 # no matter which door is opened, no matter where is the car
 df.likelihood = [1//6, 0, 1//5, 1//5, 1//5, 1//5, 1//5]
 bayesUpdate!(df)
-df
+df # to see as floats: convert.(Flt, df.posterior)
 
 # with computer simulation
-Rnd.seed!(1492)
 getProbOfWinningDoorsGame(7, false), getProbOfWinningDoorsGame(7, true)
 
 # listing all possibiilties
-map(didTraderWin ∘ openNonChosenDoor!, getAllDoorSets(7)) |> getAvg
-map(didTraderWin ∘ swapChoice! ∘ openNonChosenDoor!, getAllDoorSets(7)) |> getAvg
+map(didTraderWin ∘ openEligibleDoor!, getAllDoorSets(7)) |> getAvg
+# likely to give the least precise estimate for swap scenario
+map(didTraderWin ∘ swapChoice! ∘ openEligibleDoor!, getAllDoorSets(7)) |> getAvg
