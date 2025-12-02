@@ -35,7 +35,7 @@ mutable struct Door
     isOpen::Bool
 
     Door() = new(false, false, false)
-    Door(car, chosen, open) = new(car, chosen, open)
+    Door(iscar, ischosen, isopen) = new(iscar, ischosen, isopen)
 end
 
 function getNRandDoors(n::Int=3)::Vec{Door}
@@ -47,7 +47,7 @@ function getNRandDoors(n::Int=3)::Vec{Door}
     return [Door(car, chosen, false) for (car, chosen) in zip(cars, chosen)]
 end
 
-# open first non-chosen, non-car doors
+# open first non-chosen, non-car door
 function openNonChosenDoor!(doors::Vec{Door})::Vec{Door}
     for d in doors
         if !d.isCar && !d.isChosen
@@ -58,24 +58,13 @@ function openNonChosenDoor!(doors::Vec{Door})::Vec{Door}
     return doors
 end
 
-# swap to first non-chosen, non-open door
+# swap to random non-chosen, non-open door
 function swapChoice!(doors::Vec{Door})::Vec{Door}
-    alreadySwapped::Bool = false
-    alreadyUnselected::Bool = false
-    for d in doors
-        if !alreadyUnselected && d.isChosen
-            d.isChosen = false
-            alreadyUnselected = true
-            continue
-        end
-        if !alreadySwapped && !d.isChosen && !d.isOpen
-            d.isChosen = true
-            alreadySwapped = true
-        end
-        if alreadySwapped && alreadyUnselected
-            break
-        end
-    end
+    indChosen::Int = findfirst(d -> d.isChosen, doors)
+    inds2Swap::Vec{Int} = findall(d -> !d.isOpen && !d.isChosen, doors)
+    ind2Swap::Int = inds2Swap[Rnd.rand(eachindex(inds2Swap))]
+    doors[indChosen].isChosen = false
+    doors[ind2Swap].isChosen = true
     return doors
 end
 
@@ -132,15 +121,32 @@ map(didTraderWin ∘ openNonChosenDoor!, getAllDoorSets()) |> getAvg
 map(didTraderWin ∘ swapChoice! ∘ openNonChosenDoor!, getAllDoorSets()) |> getAvg
 
 # answers for 5 doors per set
+# with Bayes's theorem
+df = Dfs.DataFrame(Dict("Door" => 1:5))
+df.prior = repeat([1//5], 5)
+# no matter which door is opened, no matter where is the car
+df.likelihood = [1//4, 1//3, 1//3, 1//3, 0]
+bayesUpdate!(df)
+df
+
 # with computer simulation
 Rnd.seed!(1492)
 getProbOfWinningDoorsGame(5, false), getProbOfWinningDoorsGame(5, true)
 
-# listing all possibiilties
+# with listing all possibiilties
 map(didTraderWin ∘ openNonChosenDoor!, getAllDoorSets(5)) |> getAvg
 map(didTraderWin ∘ swapChoice! ∘ openNonChosenDoor!, getAllDoorSets(5)) |> getAvg
 
+
 # answers for 7 doors per set
+# with Bayes's theorem
+df = Dfs.DataFrame(Dict("Door" => 1:7))
+df.prior = repeat([1//7], 7)
+# no matter which door is opened, no matter where is the car
+df.likelihood = [1//6, 0, 1//5, 1//5, 1//5, 1//5, 1//5]
+bayesUpdate!(df)
+df
+
 # with computer simulation
 Rnd.seed!(1492)
 getProbOfWinningDoorsGame(7, false), getProbOfWinningDoorsGame(7, true)
