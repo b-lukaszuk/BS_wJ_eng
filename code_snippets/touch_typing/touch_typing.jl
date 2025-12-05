@@ -161,7 +161,9 @@ end
 function main()
 
     println("Hello. This is a toy program for touch typing.")
-    println("It should work well on terminals that support ANSI escape codes.\n")
+    println("It should work well on terminals that: ")
+    println("- support ANSI escape codes,")
+    println("- got stty.\n")
 
     println("Press Enter (or any key and Enter) and start typing.")
     println("Press q and Enter to quit now.")
