@@ -7,7 +7,7 @@ const Vec = Vector
 
 canvas = fill(' ', 40, 40) # top-left corner (1, 1)
 
-function printCanvas(cvs::Matrix{Char})
+function printCanvas(cvs::Matrix{Char}=canvas)
     nRows, _ = size(cvs)
     for r in 1:nRows
         println(cvs[r, :] |> join)
@@ -42,3 +42,16 @@ function getVerticalLine(pt1::Pt, pt2::Pt)::Vec{Pt}
     @assert x1 == x2 "the xs are not equal"
     return [(x1, i) for i in y1:y2]
 end
+
+function addLine!(line::Vec{Pt}, cvs::Matrix{Char}=canvas)
+    for pt in line
+        col, row = pt
+        cvs[row, col] = '.'
+    end
+    return nothing
+end
+
+addLine!([(20, i) for i in 1:20], canvas)
+printCanvas()
+addLine!([(i, 20) for i in 20:40], canvas)
+printCanvas()
