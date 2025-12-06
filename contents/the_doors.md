@@ -307,4 +307,7 @@ three doors scenario (since, e.g. we're actually open/swap to the first eligible
 doors). If you're still not tired and up for challenges try to answer the same
 question for 5 and 7 doors scenarios. Just remember: 1 car in a random location,
 1 empty door opened at random position, a random switch performed). Feel free to
-modify some (e.g. 1 solution only) or all the code in this chapter.
+modify some (e.g. 1 solution only) or all the code in this
+chapter. Alternatively, if you are a bit exhausted you may just check the
+exemplary solution in [the code
+snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/the_doors).
