@@ -5,13 +5,18 @@
 const Pt = Tuple{Int, Int} # (x, y)
 const Vec = Vector
 
-canvas = fill(' ', 40, 40) # top-left corner (1, 1)
+canvas = fill(' ', 20, 20) # top-left corner (1, 1)
 
 function printCanvas(cvs::Matrix{Char}=canvas)
     nRows, _ = size(cvs)
     for r in 1:nRows
         println(cvs[r, :] |> join)
     end
+    return nothing
+end
+
+function clearCanvas!(cvs::Matrix{Char}=canvas)
+    cvs .= ' '
     return nothing
 end
 
@@ -43,15 +48,36 @@ function getVerticalLine(pt1::Pt, pt2::Pt)::Vec{Pt}
     return [(x1, i) for i in y1:y2]
 end
 
-function addLine!(line::Vec{Pt}, cvs::Matrix{Char}=canvas)
+function addPoints!(line::Vec{Pt}, cvs::Matrix{Char}=canvas)
     for pt in line
         col, row = pt
-        cvs[row, col] = '.'
+        cvs[row, col] = '*'
     end
     return nothing
 end
 
-addLine!([(20, i) for i in 1:20], canvas)
-printCanvas()
-addLine!([(i, 20) for i in 20:40], canvas)
+# dconf, set default font 2*width and  1*height
+# addPoints!([(10, i) for i in 1:10], canvas)
+# printCanvas()
+# addPoints!([(i, 10) for i in 1:10], canvas)
+# printCanvas()
+
+# clearCanvas!()
+# printCanvas()
+
+function getRectangle(topLeft::Pt, width::Int, height::Int)::Vec{Pt}
+    @assert width >= 2 "width must be >= 2"
+    @assert height >= 2 "height must be >= 2"
+    x::Int, y::Int = topLeft
+    rectangle::Vec{Pt} = [
+        getHorizontalLine(topLeft, (x+width, y))...,
+        getVerticalLine(topLeft, (x, y+height))...,
+        getHorizontalLine((x, y+height), (x+width, y+height) )...,
+        getVerticalLine((x+width, y), (x+width, y+height))...
+    ]
+    return rectangle
+end
+
+clearCanvas!()
+addPoints!(getRectangle((5, 5), 5, 5))
 printCanvas()
