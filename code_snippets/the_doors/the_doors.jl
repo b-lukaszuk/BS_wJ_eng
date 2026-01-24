@@ -120,37 +120,46 @@ end
 map(didTraderWin ∘ openEligibleDoor!, getAllDoorSets()) |> getAvg
 map(didTraderWin ∘ swapChoice! ∘ openEligibleDoor!, getAllDoorSets()) |> getAvg
 
-# answers for 5 doors per set
+
+###############################################################################
+#                               5 doors per set                               #
+###############################################################################
 # with Bayes's theorem
 df = Dfs.DataFrame(Dict("Door" => 1:5))
-df.prior = repeat([1//5], 5)
+df.prior = repeat([1/5], 5)
 # no matter which door is opened, no matter where is the car
-df.likelihood = [1//4, 1//3, 1//3, 1//3, 0]
+# here, trader's choice Door 1, opened Door 5 (without car)
+df.likelihood = [1/4, 1/3, 1/3, 1/3, 0]
 bayesUpdate!(df)
 df # to see as floats: convert.(Flt, df.posterior)
 
-# with computer simulation
+# with a computer simulation
 getProbOfWinningDoorsGame(5, false), getProbOfWinningDoorsGame(5, true)
 
-# with listing all possibiilties
+# with listing all the possibiilties
+# likely to give the least precise estimate
+# (because of randomness in openEligibleDoor! and swapChoice!)
 map(didTraderWin ∘ openEligibleDoor!, getAllDoorSets(5)) |> getAvg
-# likely to give the least precise estimate for swap scenario
 map(didTraderWin ∘ swapChoice! ∘ openEligibleDoor!, getAllDoorSets(5)) |> getAvg
 
 
-# answers for 7 doors per set
+###############################################################################
+#                               7 doors per set                               #
+###############################################################################
 # with Bayes's theorem
 df = Dfs.DataFrame(Dict("Door" => 1:7))
-df.prior = repeat([1//7], 7)
+df.prior = repeat([1/7], 7)
 # no matter which door is opened, no matter where is the car
-df.likelihood = [1//6, 0, 1//5, 1//5, 1//5, 1//5, 1//5]
+# here, trader's choice Door 1, opened Door 2 (without car)
+df.likelihood = [1/6, 0, 1/5, 1/5, 1/5, 1/5, 1/5]
 bayesUpdate!(df)
 df # to see as floats: convert.(Flt, df.posterior)
 
-# with computer simulation
+# with a computer simulation
 getProbOfWinningDoorsGame(7, false), getProbOfWinningDoorsGame(7, true)
 
-# listing all possibiilties
+# with listing all the possibiilties
+# likely to give the least precise estimate
+# (because of randomness in openEligibleDoor! and swapChoice!)
 map(didTraderWin ∘ openEligibleDoor!, getAllDoorSets(7)) |> getAvg
-# likely to give the least precise estimate for swap scenario
 map(didTraderWin ∘ swapChoice! ∘ openEligibleDoor!, getAllDoorSets(7)) |> getAvg

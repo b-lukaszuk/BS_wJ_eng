@@ -82,8 +82,8 @@ the car was behind Door 2, then the host had no other option but to open Door 3
 (since Door 1 is the trader's choice and he doesn't want to reveal the car
 behind Door 2). Therefore, in this case the probability is equal to 1 (certain
 event). If the car were behind Door 3, then there is no way the host would have
-opened it (since it would reveal the car and spoil the game). So, in this case
-the probability is 0.
+opened it (since it would have revealed the car and spoiled the game). So, in
+this case the probability is 0.
 
 Let's add this information to the table.
 
@@ -118,6 +118,9 @@ replace(sco(s), Regex("Options.*") => "", "1//1" => "1", "2//1" => "2", "3//1" =
 Clearly, switching to Door 2 gives the trader a better chance of winning the car
 ($P = \frac{2}{3} \approx 0.66$) than remaining with the original choice ($P =
 \frac{1}{3} \approx 0.33$).
+
+> **_Note:_** To see the posterior as floats you may use, e.g.
+> `convert.(Flt, df.posterior)`.
 
 If that doesn't convince you then let's do a computer simulation.
 
@@ -170,8 +173,8 @@ sc(s)
 
 We start by defining a `Door` structure that has all the necessary fields in
 order to simulate our game-show. Notice the `mutable` keyword, it will allow us
-to change a property of a `Door` inplace. Anyway, we follow the structure with a
-random generator or three doors (`get3RandDoors`) door opener
+to change a property of a `Door` in-place. Anyway, we follow the structure
+definition with a random generator of three doors (`get3RandDoors`) door opener
 `openEligibleDoor` and `swapChoice`. All the above act per the game description.
 
 Now, we only need a way to determine did the player win.
