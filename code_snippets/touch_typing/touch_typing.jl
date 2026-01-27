@@ -133,8 +133,13 @@ function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
 end
 
 function getTxtFromFile(filePath::Str)::Str
-    fileTxt::Str = open(filePath) do file
-        read(file, Str)
+    fileTxt::Str = ""
+    try
+        fileTxt = open(filePath) do file
+            read(file, Str)
+        end
+    catch
+        fileTxt = "Couldn't read '$filePath', please make sure it exists."
     end
     return fileTxt
 end
