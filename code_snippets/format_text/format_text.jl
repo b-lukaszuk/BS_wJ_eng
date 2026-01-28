@@ -57,8 +57,18 @@ function alignRight(txt::Str, targetLineLen::Int=60)::Str
     return join(lines, "\n")
 end
 
+function center(txt::Str, targetLineLen::Int=60)::Str
+    @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
+    lines::Vec{Str} = getLines(txt, targetLineLen)
+    diffs::Vec{Int} = map(l -> targetLineLen - length(l), lines)
+    halfDiffs::Vec{Int} = map(d -> div(d, 2), diffs)
+    lines = [" " ^ d * l for (d, l) in zip(halfDiffs, lines)]
+    return join(lines, "\n")
+end
+
 txtFromFile = getTxtFromFile("./text2beFormatted.txt")
 txtFromFile = getTxtFromFile("./test.txt")
 
 alignLeft(txtFromFile) |> print
 alignRight(txtFromFile) |> print
+center(txtFromFile) |> print
