@@ -37,7 +37,9 @@ function getLines(txt::Str, targetLineLen::Int=60)::Vec{Str}
             curLine = word * " "
         end
     end
-    push!(lines, strip(curLine))
+    if strip(curLine) != ""
+        push!(lines, strip(curLine))
+    end
     return lines
 end
 
@@ -47,7 +49,16 @@ function alignLeft(txt::Str, targetLineLen::Int=60)::Str
     return join(lines, "\n")
 end
 
+function alignRight(txt::Str, targetLineLen::Int=60)::Str
+    @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
+    lines::Vec{Str} = getLines(txt, targetLineLen)
+    diffs::Vec{Int} = map(l -> targetLineLen - length(l), lines)
+    lines = [" " ^ d * l for (d, l) in zip(diffs, lines)]
+    return join(lines, "\n")
+end
+
 txtFromFile = getTxtFromFile("./text2beFormatted.txt")
 txtFromFile = getTxtFromFile("./test.txt")
 
 alignLeft(txtFromFile) |> print
+alignRight(txtFromFile) |> print
