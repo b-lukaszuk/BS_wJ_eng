@@ -19,23 +19,32 @@ function getTxtFromFile(filePath::Str)::Str
     return fileTxt
 end
 
-function alignLeft(txt::Str, lineLen::Int=60)::Str
-    @assert 40 <= lineLen <= 60 "lineLen must be in range [40-60]"
+function getLines(txt::Str, targetLineLen::Int=60)::Vec{Str}
     words::Vec{Str} = split(txt)
-    result::Str = ""
-    curLineLen::Int = 0
-    wordLen::Int = 0
-    for w in words
-        wordLen = length(w)
-        if (curLineLen + wordLen + 1) >= lineLen
-            result *= '\n' * w
-            curLineLen = wordLen
-        else
-            result *= ' ' * w
-            curLineLen += wordLen + 1
+    lines::Vec{Str} = []
+    curLine::Str = ""
+    totalLineLen::Int = 0
+    for word in words
+        totalLineLen = length(curLine) + length(word)
+        if totalLineLen < targetLineLen
+            curLine *= word * " "
+        end
+        if totalLineLen == targetLineLen
+            curLine *= word
+        end
+        if totalLineLen > targetLineLen
+            push!(lines, strip(curLine))
+            curLine = word * " "
         end
     end
-    return result[2:end] # 1st char is ' '
+    push!(lines, strip(curLine))
+    return lines
+end
+
+function alignLeft(txt::Str, targetLineLen::Int=60)::Str
+    @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
+    lines::Vec{Str} = getLines(txt, targetLineLen)
+    return join(lines, "\n")
 end
 
 txtFromFile = getTxtFromFile("./text2beFormatted.txt")
