@@ -43,9 +43,15 @@ function getLines(txt::Str, targetLineLen::Int=60)::Vec{Str}
     return lines
 end
 
+function padLine(line::Str, pad::Char, lPadLen::Int, rPadLen::Int)::Str
+    return pad ^ lPadLen * line * pad ^ rPadLen
+end
+
 function alignLeft(txt::Str, targetLineLen::Int=60)::Str
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
+    diffs::Vec{Int} = map(l -> targetLineLen - length(l), lines)
+    lines = [padLine(l, ' ', 0, d) for (d, l) in zip(diffs, lines)]
     return join(lines, "\n")
 end
 
@@ -53,7 +59,7 @@ function alignRight(txt::Str, targetLineLen::Int=60)::Str
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = map(l -> targetLineLen - length(l), lines)
-    lines = [" " ^ d * l for (d, l) in zip(diffs, lines)]
+    lines = [padLine(l, ' ', d, 0) for (d, l) in zip(diffs, lines)]
     return join(lines, "\n")
 end
 
@@ -61,8 +67,9 @@ function center(txt::Str, targetLineLen::Int=60)::Str
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = map(l -> targetLineLen - length(l), lines)
-    halfDiffs::Vec{Int} = map(d -> div(d, 2), diffs)
-    lines = [" " ^ d * l for (d, l) in zip(halfDiffs, lines)]
+    lDiffs::Vec{Int} = map(d -> div(d, 2), diffs)
+    rDiffs::Vec{Int} = diffs .- lDiffs
+    lines = [padLine(l, ' ', ld, rd) for (ld, rd, l) in zip(lDiffs, rDiffs, lines)]
     return join(lines, "\n")
 end
 
