@@ -43,33 +43,53 @@ function getLines(txt::Str, targetLineLen::Int=60)::Vec{Str}
     return lines
 end
 
-function padLine(line::Str, pad::Char, lPadLen::Int, rPadLen::Int)::Str
+function padLine(line::Str, pad::Str, lPadLen::Int, rPadLen::Int)::Str
     return pad ^ lPadLen * line * pad ^ rPadLen
 end
 
-function alignLeft(txt::Str, targetLineLen::Int=60)::Str
+function addBorder(lines::Vec{Str}, targetLineLen::Int=60)::Vec{Str}
+    lMargin::Str = "|  "
+    rMargin::Str = reverse(lMargin)
+    padLen::Int = length(lMargin) + length(rMargin)
+    result = map(l -> padLine(l, lMargin, 1, 0), lines)
+    result = map(l -> padLine(l, rMargin, 0, 1), result)
+    pushfirst!(result, "-" ^ (targetLineLen + padLen))
+    push!(result, "-" ^ (targetLineLen + padLen))
+    return result
+end
+
+function alignLeft(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = map(l -> targetLineLen - length(l), lines)
-    lines = [padLine(l, ' ', 0, d) for (d, l) in zip(diffs, lines)]
+    lines = [padLine(l, " ", 0, d) for (d, l) in zip(diffs, lines)]
+    if border
+        lines = addBorder(lines)
+    end
     return join(lines, "\n")
 end
 
-function alignRight(txt::Str, targetLineLen::Int=60)::Str
+function alignRight(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = map(l -> targetLineLen - length(l), lines)
-    lines = [padLine(l, ' ', d, 0) for (d, l) in zip(diffs, lines)]
+    lines = [padLine(l, " ", d, 0) for (d, l) in zip(diffs, lines)]
+    if border
+        lines = addBorder(lines)
+    end
     return join(lines, "\n")
 end
 
-function center(txt::Str, targetLineLen::Int=60)::Str
+function center(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = map(l -> targetLineLen - length(l), lines)
     lDiffs::Vec{Int} = map(d -> div(d, 2), diffs)
     rDiffs::Vec{Int} = diffs .- lDiffs
-    lines = [padLine(l, ' ', ld, rd) for (ld, rd, l) in zip(lDiffs, rDiffs, lines)]
+    lines = [padLine(l, " ", ld, rd) for (ld, rd, l) in zip(lDiffs, rDiffs, lines)]
+    if border
+        lines = addBorder(lines)
+    end
     return join(lines, "\n")
 end
 
