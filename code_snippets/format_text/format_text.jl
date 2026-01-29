@@ -1,5 +1,6 @@
 # the code in this file is meant to serve as a programming exercise only
 # it may not act correctly
+import Random as Rnd
 
 const Str = String
 const Vec = Vector
@@ -93,9 +94,42 @@ function center(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
     return join(lines, "\n")
 end
 
+function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
+    result::Str = ""
+    for i in eachindex(v2)
+        result *= v1[i] * v2[i]
+    end
+    return result * v1[end]
+end
+
+function justifyLine(line::Str, targetLineLen::Int=60)::Str
+    words::Vec{Str} = split(line)
+    nWords::Int = length(words)
+    wordsLen::Int = map(length, words) |> sum
+    allSepsLen::Int = targetLineLen - wordsLen
+    nSpaces::Int = nWords - 1
+    sepLen::Int = floor(Int,  allSepsLen / nSpaces)
+    spaces::Vec{Str} = fill(" " ^ sepLen, nSpaces)
+    nExtras::Int = allSepsLen - nSpaces * sepLen
+    spaces[Rnd.shuffle(eachindex(spaces))[1:nExtras]] .*= " "
+    result::Str = intercalate(words, spaces)
+    return result
+end
+
+function justifyTxt(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
+    @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
+    lines::Vec{Str} = getLines(txt, targetLineLen)
+    lines = map(l -> justifyLine(l, targetLineLen), lines)
+    if border
+        lines = addBorder(lines)
+    end
+    return join(lines, "\n")
+end
+
 txtFromFile = getTxtFromFile("./text2beFormatted.txt")
 txtFromFile = getTxtFromFile("./test.txt")
 
 alignLeft(txtFromFile) |> print
 alignRight(txtFromFile) |> print
 center(txtFromFile) |> print
+justifyTxt(txtFromFile, 60) |> print
