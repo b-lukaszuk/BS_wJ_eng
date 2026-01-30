@@ -99,18 +99,20 @@ function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
     return result * v1[end]
 end
 
+function getSample(v::Vec{A}, n::Int)::Vec{A} where A
+    @assert 0 < n < length(v) "n must be in range [1-length(v)]"
+    return Rnd.shuffle(v)[1:n]
+end
+
 function justifyLine(line::Str, targetLineLen::Int=60)::Str
     words::Vec{Str} = split(line)
-    nWords::Int = length(words)
-    wordsLen::Int = map(length, words) |> sum
-    allSepsLen::Int = targetLineLen - wordsLen
-    nSpaces::Int = nWords - 1
-    sepLen::Int = floor(Int,  allSepsLen / nSpaces)
-    spaces::Vec{Str} = fill(" " ^ sepLen, nSpaces)
-    nExtras::Int = allSepsLen - nSpaces * sepLen
-    spaces[Rnd.shuffle(eachindex(spaces))[1:nExtras]] .*= " "
-    result::Str = intercalate(words, spaces)
-    return result
+    nSpacesBtwnWords::Int = length(words) - 1
+    nSpacesTotal::Int = targetLineLen - sum(map(length, words))
+    spaceBtwnWordsLen::Int = floor(Int,  nSpacesTotal / nSpacesBtwnWords)
+    spaces::Vec{Str} = fill(PAD ^ spaceBtwnWordsLen, nSpacesBtwnWords)
+    nExtraSpaces::Int = nSpacesTotal - nSpacesBtwnWords * spaceBtwnWordsLen
+    spaces[getSample(eachindex(spaces), nExtraSpaces)] .*= PAD
+    return intercalate(words, spaces)
 end
 
 function justifyTxt(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
