@@ -5,6 +5,7 @@ import Random as Rnd
 const Str = String
 const Vec = Vector
 
+const PAD = " "
 
 # https://docs.julialang.org/en/v1/base/io-network/#Base.IOStream
 # https://docs.julialang.org/en/v1/base/io-network/#Base.open
@@ -28,14 +29,14 @@ function getLines(txt::Str, targetLineLen::Int=60)::Vec{Str}
     for word in words
         totalLineLen = length(curLine) + length(word)
         if totalLineLen < targetLineLen
-            curLine *= word * " "
+            curLine *= word * PAD
         end
         if totalLineLen == targetLineLen
             curLine *= word
         end
         if totalLineLen > targetLineLen
             push!(lines, strip(curLine))
-            curLine = word * " "
+            curLine = word * PAD
         end
     end
     if strip(curLine) != ""
@@ -44,16 +45,16 @@ function getLines(txt::Str, targetLineLen::Int=60)::Vec{Str}
     return lines
 end
 
-function padLine(line::Str, pad::Str, lPadLen::Int, rPadLen::Int)::Str
-    return pad ^ lPadLen * line * pad ^ rPadLen
+function padLine(line::Str, lPadding::Str, lPaddingLen::Int,
+                 rPadding::Str, rPaddingLen::Int)::Str
+    return lPadding ^ lPaddingLen * line * rPadding ^ rPaddingLen
 end
 
 function addBorder(lines::Vec{Str}, targetLineLen::Int=60)::Vec{Str}
     lMargin::Str = "|  "
     rMargin::Str = reverse(lMargin)
     padLen::Int = length(lMargin) + length(rMargin)
-    result = map(l -> padLine(l, lMargin, 1, 0), lines)
-    result = map(l -> padLine(l, rMargin, 0, 1), result)
+    result = map(l -> padLine(l, lMargin, 1, rMargin, 1), lines)
     pushfirst!(result, "-" ^ (targetLineLen + padLen))
     push!(result, "-" ^ (targetLineLen + padLen))
     return result
@@ -63,7 +64,7 @@ function alignLeft(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = map(l -> targetLineLen - length(l), lines)
-    lines = [padLine(l, " ", 0, d) for (d, l) in zip(diffs, lines)]
+    lines = [padLine(l, PAD, 0, PAD, d) for (d, l) in zip(diffs, lines)]
     if border
         lines = addBorder(lines)
     end
@@ -74,7 +75,7 @@ function alignRight(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = map(l -> targetLineLen - length(l), lines)
-    lines = [padLine(l, " ", d, 0) for (d, l) in zip(diffs, lines)]
+    lines = [padLine(l, PAD, d, PAD, 0) for (d, l) in zip(diffs, lines)]
     if border
         lines = addBorder(lines)
     end
@@ -87,7 +88,7 @@ function center(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
     diffs::Vec{Int} = map(l -> targetLineLen - length(l), lines)
     lDiffs::Vec{Int} = map(d -> div(d, 2), diffs)
     rDiffs::Vec{Int} = diffs .- lDiffs
-    lines = [padLine(l, " ", ld, rd) for (ld, rd, l) in zip(lDiffs, rDiffs, lines)]
+    lines = [padLine(l, PAD, ld, PAD, rd) for (ld, rd, l) in zip(lDiffs, rDiffs, lines)]
     if border
         lines = addBorder(lines)
     end
@@ -132,4 +133,4 @@ txtFromFile = getTxtFromFile("./test.txt")
 alignLeft(txtFromFile) |> print
 alignRight(txtFromFile) |> print
 center(txtFromFile) |> print
-justifyTxt(txtFromFile, 60) |> print
+justifyTxt(txtFromFile) |> print
