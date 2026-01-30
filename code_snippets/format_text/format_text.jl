@@ -25,16 +25,12 @@ function getLines(txt::Str, targetLineLen::Int=60)::Vec{Str}
     words::Vec{Str} = split(txt)
     lines::Vec{Str} = []
     curLine::Str = ""
-    totalLineLen::Int = 0
+    difference::Int = 0
     for word in words
-        totalLineLen = length(curLine) + length(word)
-        if totalLineLen < targetLineLen
+        difference = targetLineLen - length(curLine) - length(word)
+        if difference >= 0
             curLine *= word * PAD
-        end
-        if totalLineLen == targetLineLen
-            curLine *= word
-        end
-        if totalLineLen > targetLineLen
+        else
             push!(lines, strip(curLine))
             curLine = word * PAD
         end
