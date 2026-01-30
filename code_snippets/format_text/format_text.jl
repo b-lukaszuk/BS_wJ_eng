@@ -41,8 +41,9 @@ function getLines(txt::Str, targetLineLen::Int=60)::Vec{Str}
     return lines
 end
 
-function padLine(line::Str, lPadding::Str, lPaddingLen::Int,
-                 rPadding::Str, rPaddingLen::Int)::Str
+function padLine(line::Str, lPaddingLen::Int, rPaddingLen::Int,
+                 lPadding::Str=PAD, rPadding::Str=PAD)::Str
+    @assert lPaddingLen >= 0 && rPaddingLen >= 0 "padding lengths must be >= 0"
     return lPadding ^ lPaddingLen * line * rPadding ^ rPaddingLen
 end
 
@@ -50,7 +51,7 @@ function addBorder(lines::Vec{Str}, targetLineLen::Int=60)::Vec{Str}
     lMargin::Str = "|  "
     rMargin::Str = reverse(lMargin)
     padLen::Int = length(lMargin) + length(rMargin)
-    result = map(l -> padLine(l, lMargin, 1, rMargin, 1), lines)
+    result = map(line -> padLine(line, 1, 1, lMargin, rMargin), lines)
     pushfirst!(result, "-" ^ (targetLineLen + padLen))
     push!(result, "-" ^ (targetLineLen + padLen))
     return result
@@ -59,36 +60,27 @@ end
 function alignLeft(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
-    diffs::Vec{Int} = map(l -> targetLineLen - length(l), lines)
-    lines = [padLine(l, PAD, 0, PAD, d) for (d, l) in zip(diffs, lines)]
-    if border
-        lines = addBorder(lines)
-    end
-    return join(lines, "\n")
+    diffs::Vec{Int} = map(line -> targetLineLen - length(line), lines)
+    lines = [padLine(l, 0, d) for (d, l) in zip(diffs, lines)]
+    return join(border ? addBorder(lines) : lines, "\n")
 end
 
 function alignRight(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
-    diffs::Vec{Int} = map(l -> targetLineLen - length(l), lines)
-    lines = [padLine(l, PAD, d, PAD, 0) for (d, l) in zip(diffs, lines)]
-    if border
-        lines = addBorder(lines)
-    end
-    return join(lines, "\n")
+    diffs::Vec{Int} = map(line -> targetLineLen - length(line), lines)
+    lines = [padLine(l, d, 0) for (d, l) in zip(diffs, lines)]
+    return join(border ? addBorder(lines) : lines, "\n")
 end
 
 function center(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
-    diffs::Vec{Int} = map(l -> targetLineLen - length(l), lines)
+    diffs::Vec{Int} = map(line -> targetLineLen - length(line), lines)
     lDiffs::Vec{Int} = map(d -> div(d, 2), diffs)
     rDiffs::Vec{Int} = diffs .- lDiffs
-    lines = [padLine(l, PAD, ld, PAD, rd) for (ld, rd, l) in zip(lDiffs, rDiffs, lines)]
-    if border
-        lines = addBorder(lines)
-    end
-    return join(lines, "\n")
+    lines = [padLine(l, ld, rd) for (ld, rd, l) in zip(lDiffs, rDiffs, lines)]
+    return join(border ? addBorder(lines) : lines, "\n")
 end
 
 function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
@@ -99,8 +91,9 @@ function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
     return result * v1[end]
 end
 
+# returns random sample of v (without replacement) of length n
 function getSample(v::Vec{A}, n::Int)::Vec{A} where A
-    @assert 0 < n < length(v) "n must be in range [1-length(v)]"
+    @assert 0 <= n <= length(v) "n must be in range [0-length(v)]"
     return Rnd.shuffle(v)[1:n]
 end
 
@@ -111,14 +104,14 @@ function justifyLine(line::Str, targetLineLen::Int=60)::Str
     spaceBtwnWordsLen::Int = floor(Int,  nSpacesTotal / nSpacesBtwnWords)
     spaces::Vec{Str} = fill(PAD ^ spaceBtwnWordsLen, nSpacesBtwnWords)
     nExtraSpaces::Int = nSpacesTotal - nSpacesBtwnWords * spaceBtwnWordsLen
-    spaces[getSample(eachindex(spaces), nExtraSpaces)] .*= PAD
+    spaces[getSample(collect(eachindex(spaces)), nExtraSpaces)] .*= PAD
     return intercalate(words, spaces)
 end
 
 function justifyTxt(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
-    lines = map(l -> justifyLine(l, targetLineLen), lines)
+    lines = map(line -> justifyLine(line, targetLineLen), lines)
     if border
         lines = addBorder(lines)
     end
