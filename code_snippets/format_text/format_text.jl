@@ -84,9 +84,10 @@ function getSample(v::Vec{A}, n::Int)::Vec{A} where A
     return Rnd.shuffle(v)[1:n]
 end
 
-function justifyLine(line::Str, targetLineLen::Int=MAX_LINE_LEN)::Str
+function justifyLine(line::Str,
+                     lastLine::Bool=false, targetLineLen::Int=MAX_LINE_LEN)::Str
     words::Vec{Str} = split(line)
-    if length(words) < 2 # last, likely short line
+    if  length(words) < 2 || lastLine
         return rpad(line, targetLineLen, PAD)
     end
     nSpacesBtwnWords::Int = length(words) - 1
@@ -100,7 +101,7 @@ end
 
 function getJustifiedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     lines::Vec{Str} = getLines(txt, targetLineLen)
-    return map(line -> justifyLine(line, targetLineLen), lines)
+    return map(line -> justifyLine(line, line == lines[end], targetLineLen), lines)
 end
 
 function connectColumns(lines1::Vec{Str}, lines2::Vec{Str})::Vec{Str}
@@ -146,3 +147,16 @@ getRightAlignedLines(txtFromFile) |> addBorder |> printLines
 getCenteredLines(txtFromFile) |> addBorder |> printLines
 getJustifiedLines(txtFromFile) |> addBorder |> printLines
 getDoubleColumn(txtFromFile) |> addBorder |> printLines
+
+txt = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+culpa qui officia deserunt mollit anim id est laborum."
+
+getLeftAlignedLines(txt) |> addBorder |> printLines
+getRightAlignedLines(txt) |> addBorder |> printLines
+getCenteredLines(txt) |> addBorder |> printLines
+getJustifiedLines(txt) |> addBorder |> printLines
+getDoubleColumn(txt) |> addBorder |> printLines
