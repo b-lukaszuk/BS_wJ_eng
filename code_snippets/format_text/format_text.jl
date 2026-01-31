@@ -7,6 +7,7 @@ const Vec = Vector
 
 const PAD = " "
 const MAX_LINE_LEN = 60
+const COL_SEP = PAD ^ 5
 
 # https://docs.julialang.org/en/v1/base/io-network/#Base.IOStream
 # https://docs.julialang.org/en/v1/base/io-network/#Base.open
@@ -23,6 +24,7 @@ function getTxtFromFile(filePath::Str)::Str
 end
 
 function getLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
+    @assert 20 <= targetLineLen <= 60 "lineLen must be in range [20-60]"
     words::Vec{Str} = split(txt)
     lines::Vec{Str} = []
     curLine::Str = ""
@@ -49,21 +51,18 @@ function padLine(line::Str, lPaddingLen::Int, rPaddingLen::Int,
 end
 
 function getLeftAlignedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
-    @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = map(line -> targetLineLen - length(line), lines)
     return [padLine(l, 0, d) for (d, l) in zip(diffs, lines)]
 end
 
 function getRightAlignedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
-    @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = map(line -> targetLineLen - length(line), lines)
     return [padLine(l, d, 0) for (d, l) in zip(diffs, lines)]
 end
 
 function getCenteredLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
-    @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = map(line -> targetLineLen - length(line), lines)
     lDiffs::Vec{Int} = map(d -> div(d, 2), diffs)
@@ -87,6 +86,9 @@ end
 
 function justifyLine(line::Str, targetLineLen::Int=MAX_LINE_LEN)::Str
     words::Vec{Str} = split(line)
+    if length(words) < 2 # last, likely short line
+        return rpad(line, targetLineLen, PAD)
+    end
     nSpacesBtwnWords::Int = length(words) - 1
     nSpacesTotal::Int = targetLineLen - sum(map(length, words))
     spaceBtwnWordsLen::Int = floor(Int,  nSpacesTotal / nSpacesBtwnWords)
@@ -97,18 +99,37 @@ function justifyLine(line::Str, targetLineLen::Int=MAX_LINE_LEN)::Str
 end
 
 function getJustifiedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
-    @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
     return map(line -> justifyLine(line, targetLineLen), lines)
 end
 
-function addBorder(lines::Vec{Str}, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
+function connectColumns(lines1::Vec{Str}, lines2::Vec{Str})::Vec{Str}
+    @assert length(lines1) >= length(lines2) "lines1 must have >= chars than line2"
+    result::Vec{Str} = []
+    emptyColPad = rpad(" ", length(lines1[1]))
+    for i in eachindex(lines1)
+        push!(result,
+              string(lines1[i], COL_SEP, get(lines2, i, emptyColPad))
+              )
+    end
+    return result
+end
+
+function getDoubleColumn(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
+    @assert 20 <= targetLineLen <= 60 "lineLen must be in range [20-60]"
+    lines::Vec{Str} = getJustifiedLines(txt, div(targetLineLen, 2) - 5)
+    midPoint::Int = ceil(Int, length(lines)/2)
+    return connectColumns(lines[1:midPoint], lines[(midPoint+1):end])
+end
+
+function addBorder(lines::Vec{Str})::Vec{Str}
     lMargin::Str = "|  "
     rMargin::Str = reverse(lMargin)
     padLen::Int = length(lMargin) + length(rMargin)
+    totalLen::Int = length(lines[1]) + padLen
     result = map(line -> padLine(line, 1, 1, lMargin, rMargin), lines)
-    pushfirst!(result, "-" ^ (targetLineLen + padLen))
-    push!(result, "-" ^ (targetLineLen + padLen))
+    pushfirst!(result, "-" ^ totalLen)
+    push!(result, "-" ^ totalLen)
     return result
 end
 
@@ -124,3 +145,4 @@ getLeftAlignedLines(txtFromFile) |> addBorder |> printLines
 getRightAlignedLines(txtFromFile) |> addBorder |> printLines
 getCenteredLines(txtFromFile) |> addBorder |> printLines
 getJustifiedLines(txtFromFile) |> addBorder |> printLines
+getDoubleColumn(txtFromFile) |> addBorder |> printLines
