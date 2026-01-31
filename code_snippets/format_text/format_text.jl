@@ -6,6 +6,7 @@ const Str = String
 const Vec = Vector
 
 const PAD = " "
+const MAX_LINE_LEN = 60
 
 # https://docs.julialang.org/en/v1/base/io-network/#Base.IOStream
 # https://docs.julialang.org/en/v1/base/io-network/#Base.open
@@ -21,7 +22,7 @@ function getTxtFromFile(filePath::Str)::Str
     return fileTxt
 end
 
-function getLines(txt::Str, targetLineLen::Int=60)::Vec{Str}
+function getLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     words::Vec{Str} = split(txt)
     lines::Vec{Str} = []
     curLine::Str = ""
@@ -47,40 +48,27 @@ function padLine(line::Str, lPaddingLen::Int, rPaddingLen::Int,
     return lPadding ^ lPaddingLen * line * rPadding ^ rPaddingLen
 end
 
-function addBorder(lines::Vec{Str}, targetLineLen::Int=60)::Vec{Str}
-    lMargin::Str = "|  "
-    rMargin::Str = reverse(lMargin)
-    padLen::Int = length(lMargin) + length(rMargin)
-    result = map(line -> padLine(line, 1, 1, lMargin, rMargin), lines)
-    pushfirst!(result, "-" ^ (targetLineLen + padLen))
-    push!(result, "-" ^ (targetLineLen + padLen))
-    return result
-end
-
-function alignLeft(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
+function getLeftAlignedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = map(line -> targetLineLen - length(line), lines)
-    lines = [padLine(l, 0, d) for (d, l) in zip(diffs, lines)]
-    return join(border ? addBorder(lines) : lines, "\n")
+    return [padLine(l, 0, d) for (d, l) in zip(diffs, lines)]
 end
 
-function alignRight(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
+function getRightAlignedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = map(line -> targetLineLen - length(line), lines)
-    lines = [padLine(l, d, 0) for (d, l) in zip(diffs, lines)]
-    return join(border ? addBorder(lines) : lines, "\n")
+    return [padLine(l, d, 0) for (d, l) in zip(diffs, lines)]
 end
 
-function center(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
+function getCenteredLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = map(line -> targetLineLen - length(line), lines)
     lDiffs::Vec{Int} = map(d -> div(d, 2), diffs)
     rDiffs::Vec{Int} = diffs .- lDiffs
-    lines = [padLine(l, ld, rd) for (ld, rd, l) in zip(lDiffs, rDiffs, lines)]
-    return join(border ? addBorder(lines) : lines, "\n")
+    return [padLine(l, ld, rd) for (ld, rd, l) in zip(lDiffs, rDiffs, lines)]
 end
 
 function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
@@ -97,7 +85,7 @@ function getSample(v::Vec{A}, n::Int)::Vec{A} where A
     return Rnd.shuffle(v)[1:n]
 end
 
-function justifyLine(line::Str, targetLineLen::Int=60)::Str
+function justifyLine(line::Str, targetLineLen::Int=MAX_LINE_LEN)::Str
     words::Vec{Str} = split(line)
     nSpacesBtwnWords::Int = length(words) - 1
     nSpacesTotal::Int = targetLineLen - sum(map(length, words))
@@ -108,20 +96,31 @@ function justifyLine(line::Str, targetLineLen::Int=60)::Str
     return intercalate(words, spaces)
 end
 
-function justifyTxt(txt::Str, targetLineLen::Int=60, border::Bool=true)::Str
+function getJustifiedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     @assert 40 <= targetLineLen <= 60 "lineLen must be in range [40-60]"
     lines::Vec{Str} = getLines(txt, targetLineLen)
-    lines = map(line -> justifyLine(line, targetLineLen), lines)
-    if border
-        lines = addBorder(lines)
-    end
-    return join(lines, "\n")
+    return map(line -> justifyLine(line, targetLineLen), lines)
+end
+
+function addBorder(lines::Vec{Str}, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
+    lMargin::Str = "|  "
+    rMargin::Str = reverse(lMargin)
+    padLen::Int = length(lMargin) + length(rMargin)
+    result = map(line -> padLine(line, 1, 1, lMargin, rMargin), lines)
+    pushfirst!(result, "-" ^ (targetLineLen + padLen))
+    push!(result, "-" ^ (targetLineLen + padLen))
+    return result
+end
+
+function printLines(lines::Vec{Str})
+    join(lines, "\n") |> print
+    return nothing
 end
 
 txtFromFile = getTxtFromFile("./text2beFormatted.txt")
 txtFromFile = getTxtFromFile("./test.txt")
 
-alignLeft(txtFromFile) |> print
-alignRight(txtFromFile) |> print
-center(txtFromFile) |> print
-justifyTxt(txtFromFile) |> print
+getLeftAlignedLines(txtFromFile) |> addBorder |> printLines
+getRightAlignedLines(txtFromFile) |> addBorder |> printLines
+getCenteredLines(txtFromFile) |> addBorder |> printLines
+getJustifiedLines(txtFromFile) |> addBorder |> printLines
