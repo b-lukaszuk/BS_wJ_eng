@@ -41,24 +41,23 @@ function padLine(line::Str, lPaddingLen::Int, rPaddingLen::Int,
     return lPadding ^ lPaddingLen * line * rPadding ^ rPaddingLen
 end
 
-function getAlignedLines(lines::Vec{Str},
+function getPaddedLines(lines::Vec{Str},
                          lPadsLens::Vec{Int}, rPadsLens::Vec{Int})::Vec{Str}
     @assert(length(lines) == length(lPadsLens) == length(rPadsLens),
             "all vectors must be of equal lengths")
-    return [padLine(l, ld, rd)
-            for (ld, rd, l) in zip(lPadsLens, rPadsLens, lines)]
+    return map(padLine, lines, lPadsLens, rPadsLens)
 end
 
 function getLeftAlignedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = getLenDiffs(lines, targetLineLen)
-    return getAlignedLines(lines, zeros(Int, length(lines)), diffs)
+    return getPaddedLines(lines, zeros(Int, length(lines)), diffs)
 end
 
 function getRightAlignedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = getLenDiffs(lines, targetLineLen)
-    return getAlignedLines(lines, diffs, zeros(Int, length(lines)))
+    return getPaddedLines(lines, diffs, zeros(Int, length(lines)))
 end
 
 function getCenteredLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
@@ -66,7 +65,7 @@ function getCenteredLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     diffs::Vec{Int} = getLenDiffs(lines, targetLineLen)
     lDiffs::Vec{Int} = map(d -> div(d, 2), diffs)
     rDiffs::Vec{Int} = diffs .- lDiffs
-    return getAlignedLines(lines, lDiffs, rDiffs)
+    return getPaddedLines(lines, lDiffs, rDiffs)
 end
 
 function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
