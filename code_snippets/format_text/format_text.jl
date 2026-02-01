@@ -5,23 +5,9 @@ import Random as Rnd
 const Str = String
 const Vec = Vector
 
-const PAD = " "
+const COL_SEP = "     "
 const MAX_LINE_LEN = 60
-const COL_SEP = PAD ^ 5
-
-# https://docs.julialang.org/en/v1/base/io-network/#Base.IOStream
-# https://docs.julialang.org/en/v1/base/io-network/#Base.open
-function getTxtFromFile(filePath::Str)::Str
-    fileTxt::Str = ""
-    try
-        fileTxt = open(filePath) do file
-            read(file, Str)
-        end
-    catch
-        fileTxt = "Couldn't read '$filePath', please make sure it exists."
-    end
-    return fileTxt
-end
+const PAD = " "
 
 function getLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     @assert 20 <= targetLineLen <= 60 "lineLen must be in range [20-60]"
@@ -44,33 +30,47 @@ function getLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     return lines
 end
 
+function getLenDiffs(lines::Vec{Str}, targetLineLen::Int=MAX_LINE_LEN)::Vec{Int}
+    return targetLineLen .- map(length, lines)
+end
+
 function padLine(line::Str, lPaddingLen::Int, rPaddingLen::Int,
                  lPadding::Str=PAD, rPadding::Str=PAD)::Str
-    @assert lPaddingLen >= 0 && rPaddingLen >= 0 "padding lengths must be >= 0"
+    @assert(lPaddingLen >= 0 && rPaddingLen >= 0,
+            "padding lengths must be >= 0")
     return lPadding ^ lPaddingLen * line * rPadding ^ rPaddingLen
+end
+
+function getAlignedLines(lines::Vec{Str},
+                         lPadsLens::Vec{Int}, rPadsLens::Vec{Int})::Vec{Str}
+    @assert(length(lines) == length(lPadsLens) == length(rPadsLens),
+            "all vectors must be of equal lengths")
+    return [padLine(l, ld, rd)
+            for (ld, rd, l) in zip(lPadsLens, rPadsLens, lines)]
 end
 
 function getLeftAlignedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     lines::Vec{Str} = getLines(txt, targetLineLen)
-    diffs::Vec{Int} = map(line -> targetLineLen - length(line), lines)
-    return [padLine(l, 0, d) for (d, l) in zip(diffs, lines)]
+    diffs::Vec{Int} = getLenDiffs(lines, targetLineLen)
+    return getAlignedLines(lines, zeros(Int, length(lines)), diffs)
 end
 
 function getRightAlignedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     lines::Vec{Str} = getLines(txt, targetLineLen)
-    diffs::Vec{Int} = map(line -> targetLineLen - length(line), lines)
-    return [padLine(l, d, 0) for (d, l) in zip(diffs, lines)]
+    diffs::Vec{Int} = getLenDiffs(lines, targetLineLen)
+    return getAlignedLines(lines, diffs, zeros(Int, length(lines)))
 end
 
 function getCenteredLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     lines::Vec{Str} = getLines(txt, targetLineLen)
-    diffs::Vec{Int} = map(line -> targetLineLen - length(line), lines)
+    diffs::Vec{Int} = getLenDiffs(lines, targetLineLen)
     lDiffs::Vec{Int} = map(d -> div(d, 2), diffs)
     rDiffs::Vec{Int} = diffs .- lDiffs
-    return [padLine(l, ld, rd) for (ld, rd, l) in zip(lDiffs, rDiffs, lines)]
+    return getAlignedLines(lines, lDiffs, rDiffs)
 end
 
 function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
+    @assert length(v1) > length(v2) "length(v1) must be > length(v2)"
     result::Str = ""
     for i in eachindex(v2)
         result *= v1[i] * v2[i]
@@ -139,24 +139,54 @@ function printLines(lines::Vec{Str})
     return nothing
 end
 
+###############################################################################
+#                               minimal testing                               #
+###############################################################################
+# text from file
+function getTxtFromFile(filePath::Str)::Str
+    fileTxt::Str = ""
+    try
+        fileTxt = open(filePath) do file
+            read(file, Str)
+        end
+    catch
+        fileTxt = "Couldn't read '$filePath', please make sure it exists."
+    end
+    return fileTxt
+end
 txtFromFile = getTxtFromFile("./text2beFormatted.txt")
-txtFromFile = getTxtFromFile("./test.txt")
 
+# with border
 getLeftAlignedLines(txtFromFile) |> addBorder |> printLines
 getRightAlignedLines(txtFromFile) |> addBorder |> printLines
 getCenteredLines(txtFromFile) |> addBorder |> printLines
 getJustifiedLines(txtFromFile) |> addBorder |> printLines
 getDoubleColumn(txtFromFile) |> addBorder |> printLines
 
-txt = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum."
+# without border
+getLeftAlignedLines(txtFromFile) |> printLines
+getRightAlignedLines(txtFromFile) |> printLines
+getCenteredLines(txtFromFile) |> printLines
+getJustifiedLines(txtFromFile) |> printLines
+getDoubleColumn(txtFromFile) |> printLines
 
-getLeftAlignedLines(txt) |> addBorder |> printLines
-getRightAlignedLines(txt) |> addBorder |> printLines
-getCenteredLines(txt) |> addBorder |> printLines
-getJustifiedLines(txt) |> addBorder |> printLines
-getDoubleColumn(txt) |> addBorder |> printLines
+lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+consequat.  Duis aute irure dolor in reprehenderit in voluptate velit esse
+cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+
+# with border
+getLeftAlignedLines(lorem) |> addBorder |> printLines
+getRightAlignedLines(lorem) |> addBorder |> printLines
+getCenteredLines(lorem) |> addBorder |> printLines
+getJustifiedLines(lorem) |> addBorder |> printLines
+getDoubleColumn(lorem) |> addBorder |> printLines
+
+# without border
+getLeftAlignedLines(lorem) |> printLines
+getRightAlignedLines(lorem) |> printLines
+getCenteredLines(lorem) |> printLines
+getJustifiedLines(lorem) |> printLines
+getDoubleColumn(lorem) |> printLines
