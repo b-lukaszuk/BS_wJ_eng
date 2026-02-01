@@ -14,6 +14,7 @@ contents = [
     "progress_bar",
     "pascals_triangle",
     "tree",
+    "format_text",
     "roman_numerals",
     "cheque",
     "binary",
