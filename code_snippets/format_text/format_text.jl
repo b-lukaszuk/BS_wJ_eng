@@ -5,9 +5,9 @@ import Random as Rnd
 const Str = String
 const Vec = Vector
 
-const COL_SEP = "     "
-const MAX_LINE_LEN = 60
 const PAD = " "
+const COL_SEP = PAD ^ 5
+const MAX_LINE_LEN = 60
 
 function getLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     @assert 20 <= targetLineLen <= 60 "lineLen must be in range [20-60]"
@@ -50,22 +50,22 @@ end
 
 function getLeftAlignedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     lines::Vec{Str} = getLines(txt, targetLineLen)
-    diffs::Vec{Int} = getLenDiffs(lines, targetLineLen)
-    return getPaddedLines(lines, zeros(Int, length(lines)), diffs)
+    rPadLens::Vec{Int} = getLenDiffs(lines, targetLineLen)
+    return getPaddedLines(lines, zeros(Int, length(lines)), rPadLens)
 end
 
 function getRightAlignedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     lines::Vec{Str} = getLines(txt, targetLineLen)
-    diffs::Vec{Int} = getLenDiffs(lines, targetLineLen)
-    return getPaddedLines(lines, diffs, zeros(Int, length(lines)))
+    lPadLens::Vec{Int} = getLenDiffs(lines, targetLineLen)
+    return getPaddedLines(lines, lPadLens, zeros(Int, length(lines)))
 end
 
 function getCenteredLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = getLenDiffs(lines, targetLineLen)
-    lDiffs::Vec{Int} = map(d -> div(d, 2), diffs)
-    rDiffs::Vec{Int} = diffs .- lDiffs
-    return getPaddedLines(lines, lDiffs, rDiffs)
+    lPadLens::Vec{Int} = map(d -> div(d, 2), diffs)
+    rPadLens::Vec{Int} = diffs .- lPadLens
+    return getPaddedLines(lines, lPadLens, rPadLens)
 end
 
 function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
@@ -77,7 +77,7 @@ function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
     return result * v1[end]
 end
 
-# returns random sample of v (without replacement) of length n
+# draws n random elements from v (without replacement)
 function getSample(v::Vec{A}, n::Int)::Vec{A} where A
     @assert 0 <= n <= length(v) "n must be in range [0-length(v)]"
     return Rnd.shuffle(v)[1:n]
