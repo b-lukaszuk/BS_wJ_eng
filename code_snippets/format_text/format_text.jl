@@ -63,13 +63,13 @@ end
 function getCenteredLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = getLenDiffs(lines, targetLineLen)
-    lPadLens::Vec{Int} = map(d -> div(d, 2), diffs)
+    lPadLens::Vec{Int} = div.(diffs, 2)
     rPadLens::Vec{Int} = diffs .- lPadLens
     return getPaddedLines(lines, lPadLens, rPadLens)
 end
 
 function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
-    @assert length(v1) > length(v2) "length(v1) must be > length(v2)"
+    @assert length(v1) == (length(v2)+1) "length(v1) must be equal length(v2)+1"
     result::Str = ""
     for i in eachindex(v2)
         result *= v1[i] * v2[i]
@@ -104,7 +104,8 @@ function getJustifiedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
 end
 
 function connectColumns(lines1::Vec{Str}, lines2::Vec{Str})::Vec{Str}
-    @assert length(lines1) >= length(lines2) "lines1 must have >= chars than line2"
+    @assert(length(lines1) >= length(lines2),
+            "lines1 must have >= elements than line2")
     result::Vec{Str} = []
     emptyColPad = rpad(" ", length(lines1[1]))
     for i in eachindex(lines1)
@@ -117,7 +118,8 @@ end
 
 function getDoubleColumn(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     @assert 20 <= targetLineLen <= 60 "lineLen must be in range [20-60]"
-    lines::Vec{Str} = getJustifiedLines(txt, div(targetLineLen, 2) - 5)
+    lines::Vec{Str} = getJustifiedLines(
+        txt, div(targetLineLen, 2) - length(COL_SEP)) # 2 - nCols
     midPoint::Int = ceil(Int, length(lines)/2)
     return connectColumns(lines[1:midPoint], lines[(midPoint+1):end])
 end
@@ -127,7 +129,8 @@ function addBorder(lines::Vec{Str})::Vec{Str}
     rMargin::Str = reverse(lMargin)
     padLen::Int = length(lMargin) + length(rMargin)
     totalLen::Int = length(lines[1]) + padLen
-    result = map(line -> padLine(line, 1, 1, lMargin, rMargin), lines)
+    padWithBorder(line::Str)::Str = padLine(line, 1, 1, lMargin, rMargin)
+    result = map(padWithBorder, lines)
     pushfirst!(result, "-" ^ totalLen)
     push!(result, "-" ^ totalLen)
     return result
