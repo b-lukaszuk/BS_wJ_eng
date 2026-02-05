@@ -116,4 +116,41 @@ the text (the borders are optional).
 
 ## Solution {#sec:format_text_solution}
 
-The solution goes here.
+Our first step in formatting a paragraph will be to break it into lines, each
+with the length smaller than or equal to some target value.
+
+```
+const PAD = " "
+const MAX_LINE_LEN = 60
+
+function getLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
+    @assert 19 < targetLineLen < 61 "targetLineLen must be in range [20-60]"
+    words::Vec{Str} = split(txt)
+    lines::Vec{Str} = []
+    curLine::Str = ""
+    difference::Int = 0
+    for word in words
+        difference = targetLineLen - length(curLine) - length(word)
+        if difference >= 0
+            curLine *= word * PAD
+        else
+            push!(lines, strip(curLine))
+            curLine = word * PAD
+        end
+    end
+    push!(lines, strip(curLine))
+    return lines
+end
+```
+
+For that we break our text (`txt`) into `words` with the `split` function. Next,
+`for` each `word` we calculate the `difference` between our desired line length
+(`targetLineLen`) and the current line length (`length(curLine)`) plus the
+length of the word (`length(word)`) we want to add to that line. If we still got
+room for one more word (`if difference >= 0`) then we just add it with a padding
+on the right (`curLine *= word * PAD`). Otherwise (`else`), we add `curLine` to
+the collection of `lines` with `push!` and make our `word` the beginning of a
+new line (`curLine = word * PAD`). Notice, that before `push`ing the old line to
+the collection, first, we `strip`ped it from any possible extra spaces on the
+edges. Afterwards (`end` of `for`), we `push` the last line to `lines` and
+return it from inside the function.
