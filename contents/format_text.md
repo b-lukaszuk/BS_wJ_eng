@@ -22,15 +22,18 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/format
 programs](https://en.wikipedia.org/wiki/List_of_word_processor_programs) offer
 many text editing capacities. Let's try to replicate some of those with Julia.
 
-Choose an exemplary text, like `text2beFormatted.txt` or [Lorem
-ipsum](https://en.wikipedia.org/wiki/Lorem_ipsum) from the Wikipedia page. For
-simplicity, you may assume the text to be composed of [ASCII
-characters](https://en.wikipedia.org/wiki/ASCII) with the words composed of,
-let's say, up to 10 characters.
+Choose an exemplary text, like `text2beFormatted.txt` from [the code
+snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/format_text)
+or [Lorem ipsum from this Wikipedia's
+page](https://en.wikipedia.org/wiki/Lorem_ipsum).  For simplicity, you may
+assume the text to be composed of [ASCII encoded
+symbols](https://en.wikipedia.org/wiki/ASCII) with the words composed of, let's
+say, up to 10 letters and separated by an unspecified number of [whitespace
+caracters](https://en.wikipedia.org/wiki/Whitespace_character).
 
 Write a program (a series of functions) that will allow you to:
 
-1. Left align
+1. Left align,
 
 ```
 ------------------------------------------------------------------
@@ -42,10 +45,10 @@ Write a program (a series of functions) that will allow you to:
 |  esse cillum dolore eu fugiat nulla pariatur. Excepteur sint   |
 |  occaecat cupidatat non proident, sunt in culpa qui officia    |
 |  deserunt mollit anim id est laborum.                          |
-------------------------------------------------------------------
+------------------------------------------------------------------ 
 ```
 
-2. Right align
+2. Right align,
 
 ```
 ------------------------------------------------------------------
@@ -57,10 +60,10 @@ Write a program (a series of functions) that will allow you to:
 |   esse cillum dolore eu fugiat nulla pariatur. Excepteur sint  |
 |    occaecat cupidatat non proident, sunt in culpa qui officia  |
 |                          deserunt mollit anim id est laborum.  |
-------------------------------------------------------------------
+------------------------------------------------------------------ 
 ```
 
-3. Center
+3. Center,
 
 ```
 ------------------------------------------------------------------
@@ -72,10 +75,10 @@ Write a program (a series of functions) that will allow you to:
 |  esse cillum dolore eu fugiat nulla pariatur. Excepteur sint   |
 |   occaecat cupidatat non proident, sunt in culpa qui officia   |
 |              deserunt mollit anim id est laborum.              |
-------------------------------------------------------------------
+------------------------------------------------------------------ 
 ```
 
-4. Justify
+4. Justify,
 
 ```
 ------------------------------------------------------------------
@@ -87,10 +90,10 @@ Write a program (a series of functions) that will allow you to:
 |  esse cillum dolore eu fugiat nulla pariatur. Excepteur  sint  |
 |  occaecat cupidatat  non proident, sunt in culpa  qui officia  |
 |  deserunt mollit anim id est laborum.                          |
-------------------------------------------------------------------
+------------------------------------------------------------------ 
 ```
 
-and/or
+or
 
 5. Justify in a double column layout
 
@@ -106,10 +109,10 @@ and/or
 |  exercitation      ullamco     culpa     qui     officia  |
 |  laboris  nisi  ut aliquip     deserunt mollit  anim  id  |
 |  ex ea  commodo consequat.     est laborum.               |
--------------------------------------------------------------
+------------------------------------------------------------- 
 ```
 
-the text.
+the text (the borders are optional).
 
 ## Solution {#sec:format_text_solution}
 
