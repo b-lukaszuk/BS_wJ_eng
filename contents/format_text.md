@@ -98,18 +98,17 @@ or
 5. Justify in a double column layout
 
 ```
--------------------------------------------------------------
-|  Lorem  ipsum  dolor   sit     Duis  aute irure dolor in  |
-|  amet,         consectetur     reprehenderit          in  |
-|  adipiscing elit,  sed  do     voluptate   velit    esse  |
-|  eiusmod tempor incididunt     cillum  dolore  eu fugiat  |
-|  ut labore et dolore magna     nulla pariatur. Excepteur  |
-|  aliqua.  Ut enim ad minim     sint  occaecat  cupidatat  |
-|  veniam,   quis    nostrud     non  proident,  sunt   in  |
-|  exercitation      ullamco     culpa     qui     officia  |
-|  laboris  nisi  ut aliquip     deserunt mollit  anim  id  |
-|  ex ea  commodo consequat.     est laborum.               |
-------------------------------------------------------------- 
+------------------------------------------------------------------
+|  Lorem ipsum dolor sit  amet,    aute    irure    dolor    in  |
+|  consectetur adipiscing elit,    reprehenderit  in  voluptate  |
+|  sed   do    eiusmod   tempor    velit esse  cillum dolore eu  |
+|  incididunt  ut   labore   et    fugiat    nulla    pariatur.  |
+|  dolore magna aliqua. Ut enim    Excepteur   sint    occaecat  |
+|  ad    minim   veniam,   quis    cupidatat non proident, sunt  |
+|  nostrud exercitation ullamco    in    culpa    qui   officia  |
+|  laboris  nisi  ut aliquip ex    deserunt  mollit anim id est  |
+|  ea  commodo consequat.  Duis    laborum.                      |
+------------------------------------------------------------------ 
 ```
 
 the text (the borders are optional).
@@ -148,9 +147,9 @@ For that we break our text (`txt`) into `words` with the `split` function. Next,
 (`targetLineLen`) and the current line length (`length(curLine)`) plus the
 length of the word (`length(word)`) we want to add to that line. If we still got
 room for one more word (`if difference >= 0`) then we just add it with a padding
-on the right (`curLine *= word * PAD`). Otherwise (`else`), we add `curLine` to
-the collection of `lines` with `push!` and make our `word` the beginning of a
-new line (`curLine = word * PAD`). Notice, that before `push`ing the old line to
-the collection, first, we `strip`ped it from any possible extra spaces on the
-edges. Afterwards (`end` of `for`), we `push` the last line to `lines` and
-return it from inside the function.
+on the right side (`curLine *= word * PAD`). Otherwise (`else`), we add
+`curLine` to the vector of `lines` with `push!` and make our `word` the
+beginning of a new line (`curLine = word * PAD`). Notice, that before `push`ing
+the old line to the collection, first, we `strip`ped it from any possible extra
+spaces on the edges. Afterwards (`end` of `for`), we `push` the last line to
+`lines` and return the latter from inside the function.
