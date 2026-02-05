@@ -70,11 +70,7 @@ end
 
 function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
     @assert length(v1) == (length(v2)+1) "length(v1) must be equal length(v2)+1"
-    result::Str = ""
-    for i in eachindex(v2)
-        result *= v1[i] * v2[i]
-    end
-    return result * v1[end]
+    return join(map(*, v1, v2)) * v1[end]
 end
 
 # draws n random elements from v (without replacement)
