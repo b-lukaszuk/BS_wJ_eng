@@ -192,3 +192,34 @@ applies a function (`padLine`) to every consecutive elements of `lines`,
 `lPadsLens` and `rPadsLens` in turn. So it goes like: `padLine(lines[1],
 lPadsLens[1], rPadsLens[1])` and `padLine(lines[2], lPadsLens[2],
 rPadsLens[2])`, etc., and collect the results into a vector.
+
+Now, the formatting reduces down to obtaining the lines, and calculating the
+diffs, which we do on the fly with this code snippet (`div(x, y)` divides `x` by
+`y` and returns an integer by dropping fractional part when necessary).
+
+```
+function getLeftAlignedLines(txt::Str,
+                             targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
+    lines::Vec{Str} = getLines(txt, targetLineLen)
+    rPadLens::Vec{Int} = getLenDiffs(lines, targetLineLen)
+    return getPaddedLines(lines, zeros(Int, length(lines)), rPadLens)
+end
+
+function getRightAlignedLines(txt::Str,
+                              targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
+    lines::Vec{Str} = getLines(txt, targetLineLen)
+    lPadLens::Vec{Int} = getLenDiffs(lines, targetLineLen)
+    return getPaddedLines(lines, lPadLens, zeros(Int, length(lines)))
+end
+
+function getCenteredLines(txt::Str,
+                          targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
+    lines::Vec{Str} = getLines(txt, targetLineLen)
+    diffs::Vec{Int} = getLenDiffs(lines, targetLineLen)
+    lPadLens::Vec{Int} = div.(diffs, 2)
+    rPadLens::Vec{Int} = diffs .- lPadLens
+    return getPaddedLines(lines, lPadLens, rPadLens)
+end
+```
+
+Go ahead, test it out and see how it works.
