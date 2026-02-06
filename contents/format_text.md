@@ -175,3 +175,20 @@ function padLine(line::Str, lPadLen::Int, rPadLen::Int,
 end
 ```
 
+Once we got it, padding lines should be a breeze.
+
+```
+function getPaddedLines(lines::Vec{Str},
+                         lPadsLens::Vec{Int}, rPadsLens::Vec{Int})::Vec{Str}
+    @assert(length(lines) == length(lPadsLens) == length(rPadsLens),
+            "all vectors must be of equal lengths")
+    return map(padLine, lines, lPadsLens, rPadsLens)
+end
+```
+
+Here, similarly to @sec:mat_multip_solution, we use
+[map](https://docs.julialang.org/en/v1/base/collections/#Base.map), which
+applies a function (`padLine`) to every consecutive elements of `lines`,
+`lPadsLens` and `rPadsLens` in turn. So it goes like: `padLine(lines[1],
+lPadsLens[1], rPadsLens[1])` and `padLine(lines[2], lPadsLens[2],
+rPadsLens[2])`, etc., and collect the results into a vector.
