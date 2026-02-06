@@ -153,3 +153,25 @@ beginning of a new line (`curLine = word * PAD`). Notice, that before `push`ing
 the old line to the collection, first, we `strip`ped it from any possible extra
 spaces on the edges. Afterwards (`end` of `for`), we `push` the last line to
 `lines` and return the latter from inside the function.
+
+Now, for left-, right- and center alignment each line will have to be padded
+with space characters (`PAD`) placed on the right, left, and both sides,
+respectively. For that we need to know the difference between the number of
+characters in our line and its target length. Moreover, we need a padding
+function. Notice, the usage of the `*` operator that glues two strings
+together and the `^` symbol that repeats the sting on its left the number of
+times on its right (remember about the operator precedence from mathematics).
+
+```
+function getLenDiffs(lines::Vec{Str},
+                     targetLineLen::Int=MAX_LINE_LEN)::Vec{Int}
+    return targetLineLen .- map(length, lines)
+end
+
+function padLine(line::Str, lPadLen::Int, rPadLen::Int,
+                 lPad::Str=PAD, rPad::Str=PAD)::Str
+    @assert lPadLen >= 0 && rPadLen >= 0, "padding lengths must be >= 0"
+    return lPad ^ lPadLen * line * rPad ^ rPadLen
+end
+```
+
