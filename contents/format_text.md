@@ -229,3 +229,55 @@ end
 
 Go ahead, test it out (e.g. `getCenteredLines(lorem) |> printLines`) and see how
 it works.
+
+OK, time for a function that will justify our line (`justifyLine`). Here, our
+approach will be slightly different. First, we'll break the line into words
+(with `split`). Then, we'll figure out how many regular (`nSpacesBtwnWords`)
+spaces and extra spaces (`nExtraSpaces`) between the words we need. Finally,
+we'll place the extra spaces in random places (with `getSample`) between the
+words (with `intercalate`).
+
+```
+# draws n random elements from v (without replacement)
+function getSample(v::Vec{A}, n::Int)::Vec{A} where A
+    @assert 0 <= n <= length(v) "n must be in range [0-length(v)]"
+    return Rnd.shuffle(v)[1:n]
+end
+
+function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
+    @assert(length(v1) == (length(v2)+1),
+            "length(v1) must be equal length(v2)+1")
+    return join(map(*, v1, v2)) * v1[end]
+end
+
+function justifyLine(line::Str, lastLine::Bool=false,
+					 targetLineLen::Int=MAX_LINE_LEN)::Str
+    words::Vec{Str} = split(line)
+    if  length(words) < 2 || lastLine
+        return rpad(line, targetLineLen, PAD)
+    end
+    nSpacesBtwnWords::Int = length(words) - 1
+    nSpacesTotal::Int = targetLineLen - sum(map(length, words))
+    spaceBtwnWordsLen::Int = div(nSpacesTotal, nSpacesBtwnWords)
+    nExtraSpaces::Int = nSpacesTotal - nSpacesBtwnWords * spaceBtwnWordsLen
+    spaces::Vec{Str} = fill(PAD ^ spaceBtwnWordsLen, nSpacesBtwnWords)
+    inds::Vec{Str} = getSample(collect(eachindex(spaces)), nExtraSpaces)
+    spaces[inds] .*= PAD
+    return intercalate(words, spaces)
+end
+```
+
+Let's briefly discuss some most interesting parts of the code snippet. We start
+by determining how many spaces between the words there are (`nSpacesBtwnWords`)
+and how many spaces in total we need in order to reach our `targetLineLen`
+(`nSpacesTotal`). In the perfect world, `nSpacesTotal` should divide by
+`nSpacesBtwnWords` evenly (`spaceBtwnWordsLen` should be an integer). To help
+that happen we use `div` (it drops the fractional part). Moreover, we also
+account for the possible extra spaces needed (`nExtraSpaces`, when the dropped
+fractional part was greater than 0). Once we got it, we get a vector of regular
+spaces between the words and place it in `spaces`. Then, we draw random indices
+(`inds`) from `spaces` to which we will add a single extra space (`PAD`). Notice
+that `spaces[inds] .= PAD` would replace every element of `spaces` (indicated by
+`inds`) with `PAD`. Instead, `spaces[inds] .*= PAD` will take every element and
+update it `*=` with `PAD`, which in this case means just appending (`*`) `PAD`
+(a string) to the string that was previously in an element of `spaces`.
