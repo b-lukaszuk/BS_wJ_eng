@@ -120,6 +120,7 @@ with the length smaller than or equal to some target value.
 
 ```
 const PAD = " "
+const COL_SEP = PAD ^ 4
 const MAX_LINE_LEN = 60
 
 function getLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
@@ -260,7 +261,7 @@ function justifyLine(line::Str, lastLine::Bool=false,
     nSpacesTotal::Int = targetLineLen - sum(map(length, words))
     spaceBtwnWordsLen::Int = div(nSpacesTotal, nSpacesBtwnWords)
     nExtraSpaces::Int = nSpacesTotal - nSpacesBtwnWords * spaceBtwnWordsLen
-    spaces::Vec{Str} = fill(PAD ^ spaceBtwnWordsLen, nSpacesBtwnWords)
+    spaces::Vec{Int} = fill(PAD ^ spaceBtwnWordsLen, nSpacesBtwnWords)
     inds::Vec{Str} = getSample(collect(eachindex(spaces)), nExtraSpaces)
     spaces[inds] .*= PAD
     return intercalate(words, spaces)
@@ -294,3 +295,45 @@ end
 ```
 
 and test it out (`getJustifiedLines(lorem) |> printLines`).
+
+As for the double column justified layout. It's pretty straightforward, we'll
+get a single justified column (that is roughly half the width of
+`MAX_LINE_LEN`), split it approximately in half and glue together lines from
+adjacent columns. Let's get into it.
+
+```
+function connectColumns(col1lines::Vec{Str}, col2lines::Vec{Str})::Vec{Str}
+    @assert(length(col1lines) >= length(col2lines),
+            "col1lines must have >= elements than col2lines")
+    result::Vec{Str} = []
+    emptyColPad = rpad(" ", length(col1lines[1]))
+    for i in eachindex(col1lines)
+        push!(result,
+              string(col1lines[i], COL_SEP, get(col2lines, i, emptyColPad))
+              )
+    end
+    return result
+end
+
+function getDoubleColumn(txt::Str,
+                         targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
+    @assert 20 <= targetLineLen <= 60 "lineLen must be in range [20-60]"
+    lines::Vec{Str} = getJustifiedLines(
+        txt, div(targetLineLen, 2) - div(length(COL_SEP), 2), ) # 2 - nCols
+    midPoint::Int = ceil(Int, length(lines)/2)
+    return connectColumns(lines[1:midPoint], lines[(midPoint+1):end])
+end
+```
+
+Of note, `connectColumns` walks through every index in `col1lines`
+(`eachindex(col1lines)`) and glues together the columns with the `string`
+function. The outcome of such string concatenation is `push!`ed into
+`result`. Since, splitting a one long thin column in half may result in a
+columns of different lengths then we cannot just use a regular indexing on
+`col2lines` (because if the element is not there we'll get an error). Instead,
+we use the `get` function that we [used with
+dictionaries](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_decision_making.html#sec:julia_language_dictionaries).
+Likewise to the case of dictionaries, here we also use a default value
+(`emptyColPad`) that gets returned if an element of an given index does not
+exist. It's seems that we're done with the chapter's task. Go ahead, test the
+last function (`getDoubleColumn(lorem) |> printLines `).
