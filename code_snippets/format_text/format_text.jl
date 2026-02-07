@@ -6,11 +6,11 @@ const Str = String
 const Vec = Vector
 
 const PAD = " "
-const COL_SEP = PAD ^ 5
+const COL_SEP = PAD ^ 4
 const MAX_LINE_LEN = 60
 
 function getLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
-    @assert 20 <= targetLineLen <= 60 "lineLen must be in range [20-60]"
+    @assert 19 < targetLineLen < 61 "targetLineLen must be in range [20-60]"
     words::Vec{Str} = split(txt)
     lines::Vec{Str} = []
     curLine::Str = ""
@@ -24,9 +24,7 @@ function getLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
             curLine = word * PAD
         end
     end
-    if strip(curLine) != ""
-        push!(lines, strip(curLine))
-    end
+    push!(lines, strip(curLine))
     return lines
 end
 
@@ -34,11 +32,10 @@ function getLenDiffs(lines::Vec{Str}, targetLineLen::Int=MAX_LINE_LEN)::Vec{Int}
     return targetLineLen .- map(length, lines)
 end
 
-function padLine(line::Str, lPaddingLen::Int, rPaddingLen::Int,
-                 lPadding::Str=PAD, rPadding::Str=PAD)::Str
-    @assert(lPaddingLen >= 0 && rPaddingLen >= 0,
-            "padding lengths must be >= 0")
-    return lPadding ^ lPaddingLen * line * rPadding ^ rPaddingLen
+function padLine(line::Str, lPadLen::Int, rPadLen::Int,
+                 lPad::Str=PAD, rPad::Str=PAD)::Str
+    @assert lPadLen >= 0 && rPadLen >= 0 "padding lengths must be >= 0"
+    return lPad ^ lPadLen * line * rPad ^ rPadLen
 end
 
 function getPaddedLines(lines::Vec{Str},
@@ -63,14 +60,9 @@ end
 function getCenteredLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     lines::Vec{Str} = getLines(txt, targetLineLen)
     diffs::Vec{Int} = getLenDiffs(lines, targetLineLen)
-    lPadLens::Vec{Int} = div.(diffs, 2)
-    rPadLens::Vec{Int} = diffs .- lPadLens
-    return getPaddedLines(lines, lPadLens, rPadLens)
-end
-
-function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
-    @assert length(v1) == (length(v2)+1) "length(v1) must be equal length(v2)+1"
-    return join(map(*, v1, v2)) * v1[end]
+    lPadsLens::Vec{Int} = div.(diffs, 2)
+    rPadsLsens::Vec{Int} = diffs .- lPadsLens
+    return getPaddedLines(lines, lPadsLens, rPadsLsens)
 end
 
 # draws n random elements from v (without replacement)
@@ -79,18 +71,24 @@ function getSample(v::Vec{A}, n::Int)::Vec{A} where A
     return Rnd.shuffle(v)[1:n]
 end
 
-function justifyLine(line::Str,
-                     lastLine::Bool=false, targetLineLen::Int=MAX_LINE_LEN)::Str
+function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
+    @assert length(v1) == (length(v2)+1) "length(v1) must be equal length(v2)+1"
+    return join(map(*, v1, v2)) * v1[end]
+end
+
+function justifyLine(line::Str, lastLine::Bool=false,
+                     targetLineLen::Int=MAX_LINE_LEN)::Str
     words::Vec{Str} = split(line)
     if  length(words) < 2 || lastLine
-        return rpad(line, targetLineLen, PAD)
+        return padLine(line, 0, targetLineLen - length(line))
     end
     nSpacesBtwnWords::Int = length(words) - 1
     nSpacesTotal::Int = targetLineLen - sum(map(length, words))
-    spaceBtwnWordsLen::Int = floor(Int,  nSpacesTotal / nSpacesBtwnWords)
-    spaces::Vec{Str} = fill(PAD ^ spaceBtwnWordsLen, nSpacesBtwnWords)
+    spaceBtwnWordsLen::Int = div(nSpacesTotal, nSpacesBtwnWords)
     nExtraSpaces::Int = nSpacesTotal - nSpacesBtwnWords * spaceBtwnWordsLen
-    spaces[getSample(collect(eachindex(spaces)), nExtraSpaces)] .*= PAD
+    spaces::Vec{Str} = fill(PAD ^ spaceBtwnWordsLen, nSpacesBtwnWords)
+    inds::Vec{Int} = getSample(collect(eachindex(spaces)), nExtraSpaces)
+    spaces[inds] .*= PAD
     return intercalate(words, spaces)
 end
 
@@ -99,14 +97,14 @@ function getJustifiedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     return map(line -> justifyLine(line, line == lines[end], targetLineLen), lines)
 end
 
-function connectColumns(lines1::Vec{Str}, lines2::Vec{Str})::Vec{Str}
-    @assert(length(lines1) >= length(lines2),
-            "lines1 must have >= elements than line2")
+function connectColumns(col1lines::Vec{Str}, col2lines::Vec{Str})::Vec{Str}
+    @assert(length(col1lines) >= length(col2lines),
+            "col1lines must have >= elements than col2lines")
     result::Vec{Str} = []
-    emptyColPad = rpad(" ", length(lines1[1]))
-    for i in eachindex(lines1)
+    emptyColPad = padLine(" ", 0, length(col1lines[1]))
+    for i in eachindex(col1lines)
         push!(result,
-              string(lines1[i], COL_SEP, get(lines2, i, emptyColPad))
+              string(col1lines[i], COL_SEP, get(col2lines, i, emptyColPad))
               )
     end
     return result
@@ -115,7 +113,7 @@ end
 function getDoubleColumn(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     @assert 20 <= targetLineLen <= 60 "lineLen must be in range [20-60]"
     lines::Vec{Str} = getJustifiedLines(
-        txt, div(targetLineLen, 2) - length(COL_SEP)) # 2 - nCols
+        txt, div(targetLineLen, 2) - div(length(COL_SEP), 2), ) # 2 - nCols
     midPoint::Int = ceil(Int, length(lines)/2)
     return connectColumns(lines[1:midPoint], lines[(midPoint+1):end])
 end
@@ -132,7 +130,7 @@ function addBorder(lines::Vec{Str})::Vec{Str}
     return result
 end
 
-function printLines(lines::Vec{Str})
+function printLines(lines::Vec{Str})::Nothing
     join(lines, "\n") |> print
     return nothing
 end
