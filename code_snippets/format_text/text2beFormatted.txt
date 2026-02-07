@@ -1,4 +1,4 @@
 This is an exemplary
-text2beFormatted.	It should be      fairly short, let's say 500-1000 characters. It should be composed of standard ASCII charset       and words of reasonable lenghts (let's say upto 10 characters).
+text2beFormatted.	It should be      fairly short, let's say 500-1000 characters. It should be composed of standard ASCII charset       and words of reasonable lenghts (let's say upto 10-15 characters).
 Usage of different combinations of line lengths, spaces, tabs,              shouldn't make much of a difference. Still, I wouldn't get too creative about this file's contents.
 Minimal     testing was done    on my laptop  running GNU/Linux, so you may have to make some adjustments in the *.jl and this *.txt file to make it work in your case as well.
