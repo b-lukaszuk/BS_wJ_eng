@@ -115,14 +115,20 @@ the text (the borders are optional).
 
 ## Solution {#sec:format_text_solution}
 
-Our first step in formatting a paragraph will be to break it into lines, each
-with the length smaller than or equal to some target value.
+Before we begin, let's define a few
+[const](https://docs.julialang.org/en/v1/base/base/#const)ants that will be used
+throughout the program.
 
 ```
 const PAD = " "
 const COL_SEP = PAD ^ 4
 const MAX_LINE_LEN = 60
+```
 
+Next, our first step in formatting a paragraph will be to break it into lines,
+each with the length smaller than or equal to some target value.
+
+```
 function getLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     @assert 19 < targetLineLen < 61 "targetLineLen must be in range [20-60]"
     words::Vec{Str} = split(txt)
@@ -143,25 +149,30 @@ function getLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
 end
 ```
 
-For that we break our text (`txt`) into `words` with the `split` function. Next,
-`for` each `word` we calculate the `difference` between our desired line length
-(`targetLineLen`) and the current line length (`length(curLine)`) plus the
-length of the word (`length(word)`) we want to add to that line. If we still got
-room for one more word (`if difference >= 0`) then we just add it with a padding
-on the right side (`curLine *= word * PAD`). Otherwise (`else`), we add
-`curLine` to the vector of `lines` with `push!` and make our `word` the
-beginning of a new line (`curLine = word * PAD`). Notice, that before `push`ing
-the old line to the collection, first, we `strip`ped it from any possible extra
-spaces on the edges. Afterwards (`end` of `for`), we `push` the last line to
-`lines` and return the latter from inside the function.
+For that we break our text (`txt`) into `words` with the
+ [split](https://docs.julialang.org/en/v1/base/strings/#Base.split)
+ function. Then, `for` each `word` we calculate the `difference` between our
+ desired line length (`targetLineLen`) and the current line length
+ (`length(curLine)`) plus the length of the word (`length(word)`) we want to add
+ to that line. If we still got room for one more word (`if difference >= 0`)
+ then we just add it with a padding on the right side (`curLine *= word *
+ PAD`). Otherwise (`else`), we add `curLine` to the vector of `lines` with
+ `push!` and make our `word` the beginning of a new line (`curLine = word *
+ PAD`). Notice, that before `push`ing the old line to the collection, first, we
+ `strip`ped it from any possible extra spaces on the edges. Afterwards (`end` of
+ `for`), we `push` the last line to `lines` and return the latter from inside
+ the function.
 
-Now, for left-, right- and center alignment each line will have to be padded
+Now, for left-, right- and center alignment, each line will have to be padded
 with space characters (`PAD`) placed on the right, left, and both sides,
 respectively. For that we need to know the difference between the number of
 characters in our line and its target length. Moreover, we need a padding
-function. Notice, the usage of the `*` operator that glues two strings
-together and the `^` symbol that repeats the sting on its left the number of
-times on its right (remember about the operator precedence from mathematics).
+function that we will name `padLine` (to practice coding we will not use the
+built in [lpad](https://docs.julialang.org/en/v1/base/strings/#Base.lpad) and
+[rpad](https://docs.julialang.org/en/v1/base/strings/#Base.rpad)). Notice, the
+usage of the `*` operator that glues two strings together and the `^` symbol
+that repeats the sting on its left the number of times on its right (remember
+about the operator precedence from mathematics).
 
 ```
 function getLenDiffs(lines::Vec{Str},
@@ -252,23 +263,23 @@ function intercalate(v1::Vec{Str}, v2::Vec{Str})::Str
 end
 
 function justifyLine(line::Str, lastLine::Bool=false,
-					 targetLineLen::Int=MAX_LINE_LEN)::Str
+                     targetLineLen::Int=MAX_LINE_LEN)::Str
     words::Vec{Str} = split(line)
     if  length(words) < 2 || lastLine
-        return rpad(line, targetLineLen, PAD)
+        return padLine(line, 0, targetLineLen - length(line))
     end
     nSpacesBtwnWords::Int = length(words) - 1
     nSpacesTotal::Int = targetLineLen - sum(map(length, words))
     spaceBtwnWordsLen::Int = div(nSpacesTotal, nSpacesBtwnWords)
     nExtraSpaces::Int = nSpacesTotal - nSpacesBtwnWords * spaceBtwnWordsLen
-    spaces::Vec{Int} = fill(PAD ^ spaceBtwnWordsLen, nSpacesBtwnWords)
-    inds::Vec{Str} = getSample(collect(eachindex(spaces)), nExtraSpaces)
+    spaces::Vec{Str} = fill(PAD ^ spaceBtwnWordsLen, nSpacesBtwnWords)
+    inds::Vec{Int} = getSample(collect(eachindex(spaces)), nExtraSpaces)
     spaces[inds] .*= PAD
     return intercalate(words, spaces)
 end
 ```
 
-Let's briefly discuss some most interesting parts of the code snippet. We start
+Let's briefly discuss some more interesting parts of the code snippet. We start
 by determining how many spaces between the words there are (`nSpacesBtwnWords`)
 and how many spaces in total we need in order to reach our `targetLineLen`
 (`nSpacesTotal`). In the perfect world, `nSpacesTotal` should divide by
@@ -296,7 +307,7 @@ end
 
 and test it out (`getJustifiedLines(lorem) |> printLines`).
 
-As for the double column justified layout. It's pretty straightforward, we'll
+As for the double column justified layout, it's pretty straightforward. We'll
 get a single justified column (that is roughly half the width of
 `MAX_LINE_LEN`), split it approximately in half and glue together lines from
 adjacent columns. Let's get into it.
@@ -306,7 +317,7 @@ function connectColumns(col1lines::Vec{Str}, col2lines::Vec{Str})::Vec{Str}
     @assert(length(col1lines) >= length(col2lines),
             "col1lines must have >= elements than col2lines")
     result::Vec{Str} = []
-    emptyColPad = rpad(" ", length(col1lines[1]))
+    emptyColPad = padLine(" ", 0, length(col1lines[1]))
     for i in eachindex(col1lines)
         push!(result,
               string(col1lines[i], COL_SEP, get(col2lines, i, emptyColPad))
@@ -334,6 +345,6 @@ columns of different lengths then we cannot just use a regular indexing on
 we use the `get` function that we [used with
 dictionaries](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_decision_making.html#sec:julia_language_dictionaries).
 Likewise to the case of dictionaries, here we also use a default value
-(`emptyColPad`) that gets returned if an element of an given index does not
-exist. It's seems that we're done with the chapter's task. Go ahead, test the
-last function (`getDoubleColumn(lorem) |> printLines `).
+(`emptyColPad`) that gets returned if an element at a given index does not
+exist. It seems that we're done with the chapter's task. Go ahead, test the last
+function (`getDoubleColumn(lorem) |> printLines `).
