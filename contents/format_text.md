@@ -280,4 +280,17 @@ spaces between the words and place it in `spaces`. Then, we draw random indices
 that `spaces[inds] .= PAD` would replace every element of `spaces` (indicated by
 `inds`) with `PAD`. Instead, `spaces[inds] .*= PAD` will take every element and
 update it `*=` with `PAD`, which in this case means just appending (`*`) `PAD`
-(a string) to the string that was previously in an element of `spaces`.
+(a string) to the string that was previously in an element of `spaces`. Finally,
+we intercalate `words` in a `line` with `spaces` (regular and extra), which we
+`return`. And voila, all that's left to do is to justify every line
+
+```
+function getJustifiedLines(txt::Str,
+                           targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
+    lines::Vec{Str} = getLines(txt, targetLineLen)
+    return map(line -> justifyLine(
+        line, line == lines[end], targetLineLen), lines)
+end
+```
+
+and test it out (`getJustifiedLines(lorem) |> printLines`).
