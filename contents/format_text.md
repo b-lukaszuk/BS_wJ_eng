@@ -170,7 +170,7 @@ end
 
 function padLine(line::Str, lPadLen::Int, rPadLen::Int,
                  lPad::Str=PAD, rPad::Str=PAD)::Str
-    @assert lPadLen >= 0 && rPadLen >= 0, "padding lengths must be >= 0"
+    @assert lPadLen >= 0 && rPadLen >= 0 "padding lengths must be >= 0"
     return lPad ^ lPadLen * line * rPad ^ rPadLen
 end
 ```
@@ -220,6 +220,12 @@ function getCenteredLines(txt::Str,
     rPadLens::Vec{Int} = diffs .- lPadLens
     return getPaddedLines(lines, lPadLens, rPadLens)
 end
+
+function printLines(lines::Vec{Str})::Nothing
+    join(lines, "\n") |> print
+    return nothing
+end
 ```
 
-Go ahead, test it out and see how it works.
+Go ahead, test it out (e.g. `getCenteredLines(lorem) |> printLines`) and see how
+it works.
