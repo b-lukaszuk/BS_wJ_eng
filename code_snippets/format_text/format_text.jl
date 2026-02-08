@@ -100,18 +100,17 @@ end
 function connectColumns(col1lines::Vec{Str}, col2lines::Vec{Str})::Vec{Str}
     @assert(length(col1lines) >= length(col2lines),
             "col1lines must have >= elements than col2lines")
-    result::Vec{Str} = []
-    emptyColPad = padLine(" ", 0, length(col1lines[1]))
+    result::Vec{Str} = fill("", length(col1lines))
+    emptyColPad = padLine("", 0, length(col1lines[1]))
     for i in eachindex(col1lines)
-        push!(result,
-              string(col1lines[i], COL_SEP, get(col2lines, i, emptyColPad))
-              )
+        result[i] = string(col1lines[i], COL_SEP,
+                           get(col2lines, i, emptyColPad))
     end
     return result
 end
 
 function getDoubleColumn(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
-    @assert 20 <= targetLineLen <= 60 "lineLen must be in range [20-60]"
+    @assert 19 < targetLineLen < 61 "targetLineLen must be in range [20-60]"
     lines::Vec{Str} = getJustifiedLines(
         txt, div(targetLineLen, 2) - div(length(COL_SEP), 2), ) # 2 - nCols
     midPoint::Int = ceil(Int, length(lines)/2)
@@ -166,6 +165,7 @@ getCenteredLines(txtFromFile) |> printLines
 getJustifiedLines(txtFromFile) |> printLines
 getDoubleColumn(txtFromFile) |> printLines
 
+# lorem from: https://en.wikipedia.org/wiki/Lorem_ipsum
 lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
 tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
 quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
