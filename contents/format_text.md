@@ -167,8 +167,9 @@ Now, for left-, right- and center alignment, each line will have to be padded
 with space characters (`PAD`) placed on the right, left, and both sides,
 respectively. For that we need to know the difference between the number of
 characters in our line and its target length. Moreover, we need a padding
-function that we will name `padLine` (to practice coding we will not use the
-built in [lpad](https://docs.julialang.org/en/v1/base/strings/#Base.lpad) and
+function that we will name `padLine` (to practice coding even more we will not
+use the built in
+[lpad](https://docs.julialang.org/en/v1/base/strings/#Base.lpad) and
 [rpad](https://docs.julialang.org/en/v1/base/strings/#Base.rpad)). Notice, the
 usage of the `*` operator that glues two strings together and the `^` symbol
 that repeats the sting on its left the number of times on its right (remember
@@ -203,7 +204,7 @@ Here, similarly to @sec:mat_multip_solution, we use
 applies a function (`padLine`) to every consecutive elements of `lines`,
 `lPadsLens` and `rPadsLens` in turn. So it goes like: `padLine(lines[1],
 lPadsLens[1], rPadsLens[1])` and `padLine(lines[2], lPadsLens[2],
-rPadsLens[2])`, etc., and collect the results into a vector.
+rPadsLens[2])`, etc., and collects the results into a vector.
 
 Now, the formatting reduces down to obtaining the lines, and calculating the
 diffs, which we do on the fly with this code snippet (`div(x, y)` divides `x` by
@@ -279,22 +280,23 @@ function justifyLine(line::Str, lastLine::Bool=false,
 end
 ```
 
-Let's briefly discuss some more interesting parts of the code snippet. We start
-by determining how many spaces between the words there are (`nSpacesBtwnWords`)
-and how many spaces in total we need in order to reach our `targetLineLen`
-(`nSpacesTotal`). In the perfect world, `nSpacesTotal` should divide by
-`nSpacesBtwnWords` evenly (`spaceBtwnWordsLen` should be an integer). To help
-that happen we use `div` (it drops the fractional part). Moreover, we also
-account for the possible extra spaces needed (`nExtraSpaces`, when the dropped
-fractional part was greater than 0). Once we got it, we get a vector of regular
-spaces between the words and place it in `spaces`. Then, we draw random indices
-(`inds`) from `spaces` to which we will add a single extra space (`PAD`). Notice
-that `spaces[inds] .= PAD` would replace every element of `spaces` (indicated by
-`inds`) with `PAD`. Instead, `spaces[inds] .*= PAD` will take every element and
-update it `*=` with `PAD`, which in this case means just appending (`*`) `PAD`
-(a string) to the string that was previously in an element of `spaces`. Finally,
-we intercalate `words` in a `line` with `spaces` (regular and extra), which we
-`return`. And voila, all that's left to do is to justify every line
+Let's briefly discuss some of the more interesting parts of the code snippet. We
+start by determining how many spaces between the words there are
+(`nSpacesBtwnWords`) and how many spaces in total we need in order to reach our
+`targetLineLen` (`nSpacesTotal`). In the perfect world, `nSpacesTotal` should
+divide by `nSpacesBtwnWords` evenly (`spaceBtwnWordsLen` should be an
+integer). To help that happen we use `div` (it drops the fractional
+part). Moreover, we also account for the possible extra spaces needed
+(`nExtraSpaces`, when the dropped fractional part was greater than 0). Once we
+got it, we get a vector of regular spaces between the words and place it in
+`spaces`. Then, we draw random indices (`inds`) from `spaces` to which we will
+add a single extra space (`PAD`). Notice that `spaces[inds] .= PAD` would
+replace every element of `spaces` (indicated by `inds`) with `PAD`. Instead,
+`spaces[inds] .*= PAD` will take every element and update it (`*=`) with `PAD`,
+which in this case means just appending (`*`) `PAD` (a string) to the string
+that was previously in an element of `spaces`. Finally, we intercalate `words`
+in a `line` with `spaces` (regular and extra), which we `return`. And voila, all
+that's left to do is to justify every line
 
 ```
 function getJustifiedLines(txt::Str,
@@ -316,19 +318,18 @@ adjacent columns. Let's get into it.
 function connectColumns(col1lines::Vec{Str}, col2lines::Vec{Str})::Vec{Str}
     @assert(length(col1lines) >= length(col2lines),
             "col1lines must have >= elements than col2lines")
-    result::Vec{Str} = []
-    emptyColPad = padLine(" ", 0, length(col1lines[1]))
+    result::Vec{Str} = fill("", length(col1lines))
+    emptyColPad = padLine("", 0, length(col1lines[1]))
     for i in eachindex(col1lines)
-        push!(result,
-              string(col1lines[i], COL_SEP, get(col2lines, i, emptyColPad))
-              )
+        result[i] = string(col1lines[i], COL_SEP,
+                           get(col2lines, i, emptyColPad))
     end
     return result
 end
 
 function getDoubleColumn(txt::Str,
                          targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
-    @assert 20 <= targetLineLen <= 60 "lineLen must be in range [20-60]"
+    @assert 19 < targetLineLen < 61 "targetLineLen must be in range [20-60]"
     lines::Vec{Str} = getJustifiedLines(
         txt, div(targetLineLen, 2) - div(length(COL_SEP), 2), ) # 2 - nCols
     midPoint::Int = ceil(Int, length(lines)/2)
@@ -338,13 +339,18 @@ end
 
 Of note, `connectColumns` walks through every index in `col1lines`
 (`eachindex(col1lines)`) and glues together the columns with the `string`
-function. The outcome of such string concatenation is `push!`ed into
-`result`. Since, splitting a one long thin column in half may result in a
-columns of different lengths then we cannot just use a regular indexing on
+function. The outcome of such string concatenation is put into
+`result[i]`. Splitting a long thin column in half may result in a columns of a
+slightly different lengths. Therefore, we cannot just use a regular indexing on
 `col2lines` (because if the element is not there we'll get an error). Instead,
-we use the `get` function that we [used with
+we use the `get` function that we [encountered while working with
 dictionaries](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_decision_making.html#sec:julia_language_dictionaries).
-Likewise to the case of dictionaries, here we also use a default value
-(`emptyColPad`) that gets returned if an element at a given index does not
-exist. It seems that we're done with the chapter's task. Go ahead, test the last
-function (`getDoubleColumn(lorem) |> printLines `).
+Likewise, here we also use a default value (`emptyColPad`) that gets returned if
+an element at a given index does not exist. It seems that we're done with the
+chapter's task. Go ahead, test the last function (`getDoubleColumn(lorem) |>
+printLines `).
+
+For a final challenge (a cherry on the top) add borders to the printout (or use
+the function `addBorder` from [the code
+snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/format_text)). This
+will allow to better visualize the correctness of your padding.
