@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Compound interest - Build SH*T with Julia</title>
+  <title>Problem - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -160,16 +160,84 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h1 data-number="23" id="sec:compound_interest"><span class="header-section-number">23</span> Compound interest</h1>
-<p>In this chapter I did not use any external libraries. Still, once you read the problem description you may decide to do otherwise. In that case don’t let me stop you.</p>
-<p>I recommend you try to solve the task on your own first. Once you finish you may compare your own solution with the one in this chapter (with explanations) or with <a href="https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/compound_interest">the code snippets</a> (without explanations).</p>
+<h2 data-number="13.1" id="sec:format_text_problem"><span class="header-section-number">13.1</span> Problem</h2>
+<p><a href="https://en.wikipedia.org/wiki/List_of_word_processor_programs">Word processing programs</a> offer many text editing capacities. In a pre-digital era, those tasks had to be done manually. Anyway, let’s try to do some typesetting with Julia.</p>
+<p>Choose an exemplary text, like <code>text2beFormatted.txt</code> from <a href="https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/format_text">the code snippets</a> or <a href="https://en.wikipedia.org/wiki/Lorem_ipsum">Lorem ipsum from this Wikipedia’s page</a>. Next, write a program (a series of functions) that will allow you to:</p>
+<ol type="1">
+<li>Left align,</li>
+</ol>
+<pre><code>------------------------------------------------------------------
+|  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed  |
+|  do eiusmod tempor incididunt ut labore et dolore magna        |
+|  aliqua. Ut enim ad minim veniam, quis nostrud exercitation    |
+|  ullamco laboris nisi ut aliquip ex ea commodo consequat.      |
+|  Duis aute irure dolor in reprehenderit in voluptate velit     |
+|  esse cillum dolore eu fugiat nulla pariatur. Excepteur sint   |
+|  occaecat cupidatat non proident, sunt in culpa qui officia    |
+|  deserunt mollit anim id est laborum.                          |
+------------------------------------------------------------------ </code></pre>
+<ol start="2" type="1">
+<li>Right align,</li>
+</ol>
+<pre><code>------------------------------------------------------------------
+|  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed  |
+|        do eiusmod tempor incididunt ut labore et dolore magna  |
+|    aliqua. Ut enim ad minim veniam, quis nostrud exercitation  |
+|      ullamco laboris nisi ut aliquip ex ea commodo consequat.  |
+|     Duis aute irure dolor in reprehenderit in voluptate velit  |
+|   esse cillum dolore eu fugiat nulla pariatur. Excepteur sint  |
+|    occaecat cupidatat non proident, sunt in culpa qui officia  |
+|                          deserunt mollit anim id est laborum.  |
+------------------------------------------------------------------ </code></pre>
+<ol start="3" type="1">
+<li>Center,</li>
+</ol>
+<pre><code>------------------------------------------------------------------
+|  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed  |
+|     do eiusmod tempor incididunt ut labore et dolore magna     |
+|   aliqua. Ut enim ad minim veniam, quis nostrud exercitation   |
+|    ullamco laboris nisi ut aliquip ex ea commodo consequat.    |
+|   Duis aute irure dolor in reprehenderit in voluptate velit    |
+|  esse cillum dolore eu fugiat nulla pariatur. Excepteur sint   |
+|   occaecat cupidatat non proident, sunt in culpa qui officia   |
+|              deserunt mollit anim id est laborum.              |
+------------------------------------------------------------------ </code></pre>
+<ol start="4" type="1">
+<li>Justify,</li>
+</ol>
+<pre><code>------------------------------------------------------------------
+|  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed  |
+|  do eiusmod  tempor  incididunt  ut labore  et  dolore  magna  |
+|  aliqua. Ut  enim ad minim  veniam, quis nostrud exercitation  |
+|  ullamco  laboris nisi  ut  aliquip ex ea  commodo consequat.  |
+|  Duis aute irure  dolor  in  reprehenderit in voluptate velit  |
+|  esse cillum dolore eu fugiat nulla pariatur. Excepteur  sint  |
+|  occaecat cupidatat  non proident, sunt in culpa  qui officia  |
+|  deserunt mollit anim id est laborum.                          |
+------------------------------------------------------------------ </code></pre>
+<ol start="5" type="1">
+<li>Justify in a double column layout</li>
+</ol>
+<pre><code>------------------------------------------------------------------
+|  Lorem ipsum dolor sit  amet,    aute    irure    dolor    in  |
+|  consectetur adipiscing elit,    reprehenderit  in  voluptate  |
+|  sed   do    eiusmod   tempor    velit esse  cillum dolore eu  |
+|  incididunt  ut   labore   et    fugiat    nulla    pariatur.  |
+|  dolore magna aliqua. Ut enim    Excepteur   sint    occaecat  |
+|  ad    minim   veniam,   quis    cupidatat non proident, sunt  |
+|  nostrud exercitation ullamco    in    culpa    qui   officia  |
+|  laboris  nisi  ut aliquip ex    deserunt  mollit anim id est  |
+|  ea  commodo consequat.  Duis    laborum.                      |
+------------------------------------------------------------------ </code></pre>
+<p>the text (the borders are optional).</p>
+<p>For simplicity, you may assume the text to be composed of <a href="https://en.wikipedia.org/wiki/ASCII">ASCII encoded symbols</a> with the words composed of, let’s say, up to 10-15 letters and separated by an unspecified number of <a href="https://en.wikipedia.org/wiki/Whitespace_character">whitespace characters</a>. Feel free to adjust the task to your programming experience and do as many tasks as you deem suitable.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-2" href="./birthday_solution.html"><b>22.2</b> Solution</a> <kbd>←</kbd>
+        <a class="menu-level-1" href="./format_text.html"><b>13</b> Format text</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./compound_interest_problem.html"><b>23.1</b> Problem</a>
+            <kbd>→</kbd> <a class="menu-level-2" href="./format_text_solution.html"><b>13.2</b> Solution</a>
         </span>
     </p>
 </div>
