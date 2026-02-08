@@ -20,18 +20,14 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/format
 
 [Word processing
 programs](https://en.wikipedia.org/wiki/List_of_word_processor_programs) offer
-many text editing capacities. Let's try to replicate some of those with Julia.
+many text editing capacities. In a pre-digital era, those tasks had to be done
+manually. Anyway, let's try to do some typesetting with Julia.
 
 Choose an exemplary text, like `text2beFormatted.txt` from [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/format_text)
 or [Lorem ipsum from this Wikipedia's
-page](https://en.wikipedia.org/wiki/Lorem_ipsum).  For simplicity, you may
-assume the text to be composed of [ASCII encoded
-symbols](https://en.wikipedia.org/wiki/ASCII) with the words composed of, let's
-say, up to 10 letters and separated by an unspecified number of [whitespace
-caracters](https://en.wikipedia.org/wiki/Whitespace_character).
-
-Write a program (a series of functions) that will allow you to:
+page](https://en.wikipedia.org/wiki/Lorem_ipsum). Next, write a program (a
+series of functions) that will allow you to:
 
 1. Left align,
 
@@ -93,8 +89,6 @@ Write a program (a series of functions) that will allow you to:
 ------------------------------------------------------------------ 
 ```
 
-or
-
 5. Justify in a double column layout
 
 ```
@@ -112,6 +106,13 @@ or
 ```
 
 the text (the borders are optional).
+
+For simplicity, you may assume the text to be composed of [ASCII encoded
+symbols](https://en.wikipedia.org/wiki/ASCII) with the words composed of, let's
+say, up to 10-15 letters and separated by an unspecified number of [whitespace
+characters](https://en.wikipedia.org/wiki/Whitespace_character). Feel free to
+adjust the task to your programming experience and do as many tasks as you deem
+suitable.
 
 ## Solution {#sec:format_text_solution}
 
