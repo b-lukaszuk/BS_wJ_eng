@@ -47,14 +47,14 @@ end
 
 function getLeftAlignedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     lines::Vec{Str} = getLines(txt, targetLineLen)
-    rPadLens::Vec{Int} = getLenDiffs(lines, targetLineLen)
-    return getPaddedLines(lines, zeros(Int, length(lines)), rPadLens)
+    rPadsLens::Vec{Int} = getLenDiffs(lines, targetLineLen)
+    return getPaddedLines(lines, zeros(Int, length(lines)), rPadsLens)
 end
 
 function getRightAlignedLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
     lines::Vec{Str} = getLines(txt, targetLineLen)
-    lPadLens::Vec{Int} = getLenDiffs(lines, targetLineLen)
-    return getPaddedLines(lines, lPadLens, zeros(Int, length(lines)))
+    lPadsLens::Vec{Int} = getLenDiffs(lines, targetLineLen)
+    return getPaddedLines(lines, lPadsLens, zeros(Int, length(lines)))
 end
 
 function getCenteredLines(txt::Str, targetLineLen::Int=MAX_LINE_LEN)::Vec{Str}
