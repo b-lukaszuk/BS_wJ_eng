@@ -4,10 +4,18 @@
 # TODO
 const Pt = Tuple{Int, Int} # (x, y)
 const Vec = Vector
+const Str = String
 
-canvas = fill(' ', 20, 20) # top-left corner (1, 1)
+# https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+function getGrayBg(s::Str)::Str
+    # "\x1b[100m" sets background color to gray
+    # "\x1b[0m" resets background color to default value
+    return "\x1b[100m" * s * "\x1b[0m"
+end
 
-function printCanvas(cvs::Matrix{Char}=canvas)
+canvas = fill(getGrayBg(" "), 20, 40) # top-left corner (1, 1)
+
+function printCanvas(cvs::Matrix{Str}=canvas)::Nothing
     nRows, _ = size(cvs)
     for r in 1:nRows
         println(cvs[r, :] |> join)
@@ -15,10 +23,12 @@ function printCanvas(cvs::Matrix{Char}=canvas)
     return nothing
 end
 
-function clearCanvas!(cvs::Matrix{Char}=canvas)
-    cvs .= ' '
+function clearCanvas!(cvs::Matrix{Str}=canvas)::Nothing
+    cvs .= getGrayBg(" ")
     return nothing
 end
+
+printCanvas()
 
 function isOutsideGrid(pt::Pt, cvs::Matrix{Char}=canvas)::Bool
     nRows, nCols = size(cvs)
@@ -56,15 +66,6 @@ function addPoints!(line::Vec{Pt}, cvs::Matrix{Char}=canvas)
     return nothing
 end
 
-# dconf, set default font 2*width and  1*height
-# addPoints!([(10, i) for i in 1:10], canvas)
-# printCanvas()
-# addPoints!([(i, 10) for i in 1:10], canvas)
-# printCanvas()
-
-# clearCanvas!()
-# printCanvas()
-
 function getRectangle(topLeft::Pt, width::Int, height::Int)::Vec{Pt}
     @assert width >= 2 "width must be >= 2"
     @assert height >= 2 "height must be >= 2"
@@ -77,7 +78,3 @@ function getRectangle(topLeft::Pt, width::Int, height::Int)::Vec{Pt}
     ]
     return rectangle
 end
-
-clearCanvas!()
-addPoints!(getRectangle((5, 5), 5, 5))
-printCanvas()
