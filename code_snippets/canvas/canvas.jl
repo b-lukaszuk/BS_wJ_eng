@@ -17,6 +17,10 @@ function getWhiteBg(s::Str)::Str
     return "\x1b[107m" * s * "\x1b[0m"
 end
 
+function getRedBg(s::Str)::Str
+    return "\x1b[41m" * s * "\x1b[0m"
+end
+
 canvas = fill(getGrayBg(" "), 20, 40) # top-left corner (1, 1)
 
 function printCanvas(cvs::Matrix{Str}=canvas)::Nothing
@@ -46,10 +50,13 @@ function isSamePt(pt1::Pt, pt2::Pt)::Bool
     return pt1 .- pt2 == (0, 0)
 end
 
-function addPoints!(line::Vec{Pt}, cvs::Matrix{Str}=canvas)::Nothing
+# colorFn(Str) -> Str, returns Str with ANSI code for color
+function addPoints!(line::Vec{Pt},
+                    colorFn::Function,
+                    cvs::Matrix{Str}=canvas)::Nothing
     for pt in line
         if isWithinGrid(pt)
-            cvs[pt...] = getWhiteBg(" ")
+            cvs[pt...] = colorFn(" ")
         end
     end
     return nothing
@@ -68,6 +75,23 @@ function getRectangle(width::Int, height::Int)::Vec{Pt}
     return rectangle
 end
 
+function getTriangle(height::Int)::Vec{Pt}
+    @assert height > 1 "height must be > 1"
+    startCol::Int = 10
+    lCol::Int = startCol
+    rCol::Int = startCol
+    triangle::Vec{Pt} = []
+    for row in 1:height
+        for c in lCol:rCol
+            push!(triangle, (row, c))
+        end
+        lCol -= 1
+        rCol += 1
+    end
+    return triangle
+end
+
 clearCanvas!()
-addPoints!(getRectangle(6, 3))
+addPoints!(getRectangle(16, 8), getWhiteBg)
+addPoints!(getTriangle(10), getRedBg)
 printCanvas()
