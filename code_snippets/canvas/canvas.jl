@@ -7,25 +7,21 @@ const Vec = Vector
 const Str = String
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
-function getGrayBg(s::Str)::Str
-    # "\x1b[100m" sets background color to gray
-    # "\x1b[0m" resets background color to default value
-    return "\x1b[100m" * s * "\x1b[0m"
+# "\x1b[XXXm" sets background color to XXX color code
+const BG_COLORS = Dict(
+    :gray => "\x1b[100m",
+    :white => "\x1b[107m",
+    :red => "\x1b[41m",
+    :yellow => "\x1b[43m",
+    :blue => "\x1b[44m"
+)
+
+# "\x1b[0m" resets background color to default value
+function getBgColor(s::Str, color::Symbol, colors::Dict{Symbol, Str}=BG_COLORS)::Str
+    return get(colors, color, :gray) * s * "\x1b[0m"
 end
 
-function getWhiteBg(s::Str)::Str
-    return "\x1b[107m" * s * "\x1b[0m"
-end
-
-function getRedBg(s::Str)::Str
-    return "\x1b[41m" * s * "\x1b[0m"
-end
-
-function getYellowBg(s::Str)::Str
-    return "\x1b[43m" * s * "\x1b[0m"
-end
-
-canvas = fill(getGrayBg(" "), 20, 40) # top-left corner (1, 1)
+canvas = fill(getBgColor(" ", :gray), 20, 40) # top-left corner (1, 1)
 
 function printCanvas(cvs::Matrix{Str}=canvas)::Nothing
     nRows, _ = size(cvs)
@@ -36,7 +32,7 @@ function printCanvas(cvs::Matrix{Str}=canvas)::Nothing
 end
 
 function clearCanvas!(cvs::Matrix{Str}=canvas)::Nothing
-    cvs .= getGrayBg(" ")
+    cvs .= getBgColor(" ", :gray)
     return nothing
 end
 
@@ -54,13 +50,10 @@ function isSamePt(pt1::Pt, pt2::Pt)::Bool
     return pt1 .- pt2 == (0, 0)
 end
 
-# colorFn(Str) -> Str, returns Str with ANSI code for color
-function addPoints!(line::Vec{Pt},
-                    colorFn::Function,
-                    cvs::Matrix{Str}=canvas)::Nothing
+function addPoints!(line::Vec{Pt}, color::Symbol, cvs::Matrix{Str}=canvas)::Nothing
     for pt in line
         if isWithinGrid(pt)
-            cvs[pt...] = colorFn(" ")
+            cvs[pt...] = getBgColor(" ", color)
         end
     end
     return nothing
@@ -109,8 +102,8 @@ function getCircle(radius::Int)::Vec{Pt}
 end
 
 clearCanvas!()
-addPoints!(getRectangle(16, 8), getWhiteBg)
-addPoints!(getTriangle(10), getRedBg)
-addPoints!(getCircle(2), getYellowBg)
-addPoints!(getCircle(3), getYellowBg)
+addPoints!(getRectangle(16, 8), :white)
+addPoints!(getTriangle(10), :red)
+addPoints!(getCircle(2), :yellow)
+addPoints!(getCircle(3), :yellow)
 printCanvas()
