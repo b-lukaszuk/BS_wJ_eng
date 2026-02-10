@@ -21,6 +21,10 @@ function getRedBg(s::Str)::Str
     return "\x1b[41m" * s * "\x1b[0m"
 end
 
+function getYellowBg(s::Str)::Str
+    return "\x1b[43m" * s * "\x1b[0m"
+end
+
 canvas = fill(getGrayBg(" "), 20, 40) # top-left corner (1, 1)
 
 function printCanvas(cvs::Matrix{Str}=canvas)::Nothing
@@ -91,7 +95,22 @@ function getTriangle(height::Int)::Vec{Pt}
     return triangle
 end
 
+function getCircle(radius::Int)::Vec{Pt}
+    @assert radius > 1 "radius must be > 1"
+    cols::Vec{Vec{Int}} = [collect((9-r):(10+r)) for r in 0:(radius-1)]
+    cols = [cols..., reverse(cols)...]
+    triangle::Vec{Pt} = []
+    for row in 1:(radius*2)
+        for col in cols[row]
+            push!(triangle, (row, col))
+        end
+    end
+    return triangle
+end
+
 clearCanvas!()
 addPoints!(getRectangle(16, 8), getWhiteBg)
 addPoints!(getTriangle(10), getRedBg)
+addPoints!(getCircle(2), getYellowBg)
+addPoints!(getCircle(3), getYellowBg)
 printCanvas()
