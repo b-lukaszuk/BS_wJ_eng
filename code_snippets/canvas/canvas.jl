@@ -36,14 +36,10 @@ function clearCanvas!(cvs::Matrix{Str}=canvas)::Nothing
     return nothing
 end
 
-function isOutsideGrid(pt::Pt, cvs::Matrix{Str}=canvas)::Bool
-    nRows, nCols = size(cvs)
-    x, y = pt
-    return (x > nCols || x < 1) || (y > nRows || y < 1)
-end
-
 function isWithinGrid(pt::Pt, cvs::Matrix{Str}=canvas)::Bool
-    return !isOutsideGrid(pt, cvs)
+    nRows, nCols = size(cvs)
+    row, col = pt
+    return (0 < row <= nRows) || (0 < col <= nCols)
 end
 
 function isSamePt(pt1::Pt, pt2::Pt)::Bool
@@ -101,9 +97,12 @@ function getCircle(radius::Int)::Vec{Pt}
     return triangle
 end
 
+function nudge(shape::Vec{Pt}, by::Pt)::Vec{Pt}
+    return map(pt -> pt .+ by, shape)
+end
+
 clearCanvas!()
-addPoints!(getRectangle(16, 8), :white)
+addPoints!(nudge(getRectangle(16, 8), (10, 0)), :white)
 addPoints!(getTriangle(10), :red)
-addPoints!(getCircle(2), :yellow)
-addPoints!(getCircle(3), :yellow)
+addPoints!(nudge(getCircle(3), (0, 10)), :yellow)
 printCanvas()
