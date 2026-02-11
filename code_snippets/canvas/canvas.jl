@@ -2,9 +2,12 @@
 # it may not act correctly
 
 # TODO
-const Pt = Tuple{Int, Int} # (x, y)
+const Location = Tuple{Int, Int} # (row, col) in canvas
 const Vec = Vector
 const Str = String
+
+const RATIO = 2 # a character in a font is 2 units high, 1 unit wide
+const PIXEL = " " # empty string, because we set background color
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 # "\x1b[XXXm" sets background color to XXX color code
@@ -17,11 +20,11 @@ const BG_COLORS = Dict(
 )
 
 # "\x1b[0m" resets background color to default value
-function getBgColor(s::Str, color::Symbol, colors::Dict{Symbol, Str}=BG_COLORS)::Str
-    return get(colors, color, :gray) * s * "\x1b[0m"
+function getBgColor(color::Symbol, colors::Dict{Symbol, Str}=BG_COLORS)::Str
+    return get(colors, color, :gray) * PIXEL * "\x1b[0m"
 end
 
-canvas = fill(getBgColor(" ", :gray), 20, 40) # top-left corner (1, 1)
+canvas = fill(getBgColor(:gray), 30, 30*RATIO) # top-left corner (1, 1)
 
 function printCanvas(cvs::Matrix{Str}=canvas)::Nothing
     nRows, _ = size(cvs)
@@ -32,34 +35,35 @@ function printCanvas(cvs::Matrix{Str}=canvas)::Nothing
 end
 
 function clearCanvas!(cvs::Matrix{Str}=canvas)::Nothing
-    cvs .= getBgColor(" ", :gray)
+    cvs .= getBgColor(:gray)
     return nothing
 end
 
-function isWithinGrid(pt::Pt, cvs::Matrix{Str}=canvas)::Bool
+function isWithinGrid(point::Location, cvs::Matrix{Str}=canvas)::Bool
     nRows, nCols = size(cvs)
-    row, col = pt
+    row, col = point
     return (0 < row <= nRows) || (0 < col <= nCols)
 end
 
-function isSamePt(pt1::Pt, pt2::Pt)::Bool
+function isSamePt(pt1::Location, pt2::Location)::Bool
     return pt1 .- pt2 == (0, 0)
 end
 
-function addPoints!(line::Vec{Pt}, color::Symbol, cvs::Matrix{Str}=canvas)::Nothing
+function addPoints!(line::Vec{Location}, color::Symbol, cvs::Matrix{Str}=canvas)::Nothing
     for pt in line
         if isWithinGrid(pt)
-            cvs[pt...] = getBgColor(" ", color)
+            cvs[pt...] = getBgColor(color)
         end
     end
     return nothing
 end
 
-function getRectangle(width::Int, height::Int)::Vec{Pt}
+function getRectangle(width::Int, height::Int)::Vec{Location}
     @assert width >= 2 "width must be >= 2"
     @assert height >= 2 "height must be >= 2"
+    width *= RATIO
     nRects::Int = width * height
-    rectangle::Vec{Pt} = Vec{Pt}(undef, nRects)
+    rectangle::Vec{Location} = Vec{Location}(undef, nRects)
     i::Int = 1
     for row in 1:height, col in 1:width
         rectangle[i] = (row, col)
@@ -68,12 +72,12 @@ function getRectangle(width::Int, height::Int)::Vec{Pt}
     return rectangle
 end
 
-function getTriangle(height::Int)::Vec{Pt}
+function getTriangle(height::Int)::Vec{Location}
     @assert height > 1 "height must be > 1"
     startCol::Int = 10
     lCol::Int = startCol
     rCol::Int = startCol
-    triangle::Vec{Pt} = []
+    triangle::Vec{Location} = []
     for row in 1:height
         for c in lCol:rCol
             push!(triangle, (row, c))
@@ -84,11 +88,11 @@ function getTriangle(height::Int)::Vec{Pt}
     return triangle
 end
 
-function getCircle(radius::Int)::Vec{Pt}
+function getCircle(radius::Int)::Vec{Location}
     @assert radius > 1 "radius must be > 1"
     cols::Vec{Vec{Int}} = [collect((9-r):(10+r)) for r in 0:(radius-1)]
     cols = [cols..., reverse(cols)...]
-    triangle::Vec{Pt} = []
+    triangle::Vec{Location} = []
     for row in 1:(radius*2)
         for col in cols[row]
             push!(triangle, (row, col))
@@ -97,7 +101,7 @@ function getCircle(radius::Int)::Vec{Pt}
     return triangle
 end
 
-function nudge(shape::Vec{Pt}, by::Pt)::Vec{Pt}
+function nudge(shape::Vec{Location}, by::Location)::Vec{Location}
     return map(pt -> pt .+ by, shape)
 end
 
