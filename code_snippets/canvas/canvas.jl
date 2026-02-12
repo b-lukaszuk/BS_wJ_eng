@@ -16,8 +16,10 @@ const BG_COLORS = Dict(
     :red => "\x1b[48:5:160m",
     :yellow => "\x1b[48:5:11m",
     :blue => "\x1b[48:5:12m",
+    :darkblue => "\x1b[48:5:20m",
     :green => "\x1b[48:5:35m",
     :black => "\x1b[48:5:0m",
+    :brown => "\x1b[48:5:88m",
 )
 
 # "\x1b[0m" resets background color to default value
@@ -84,7 +86,7 @@ end
 
 function getCircle(radius::Int)::Vec{Location}
     @assert radius > 1 "radius must be > 1"
-    cols::Vec{Vec{Int}} = [collect((0-r):(1+r)) for r in 0:(radius-1)]
+    cols::Vec{Vec{Int}} = [collect((-1-r):(2+r)) for r in 0:(radius-1)]
     cols = [cols..., reverse(cols)...]
     triangle::Vec{Location} = []
     for row in 1:(radius*2)
@@ -107,6 +109,8 @@ addPoints!(getRectangle(60, 15), :blue)
 addPoints!(getRectangle(60, 15), :blue)
 addPoints!(nudge(getRectangle(15, 8), (15, 20)), :white)
 addPoints!(nudge(getRectangle(4, 6), (8, 30)), :black)
+addPoints!(nudge(getRectangle(8, 6), (17, 26)), :brown)
+addPoints!(nudge(getRectangle(4, 2), (16, 21)), :darkblue)
 addPoints!(nudge(getTriangle(8), (7, 27)), :red)
 addPoints!(nudge(getCircle(3), (2, 50)), :yellow)
 printCanvas()
