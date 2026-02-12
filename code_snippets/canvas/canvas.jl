@@ -7,6 +7,7 @@ const Vec = Vector
 const Str = String
 
 const PIXEL = " " # empty string, because we set background color
+const COORD_ORIGIN = (1, 1) # origin or the coordinate system (row, col)
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 # "\x1b[48:5:XXXm" sets background color to XXX color code (256-color mode)
@@ -23,6 +24,7 @@ const BG_COLORS = Dict(
 )
 
 # "\x1b[0m" resets background color to default value
+# default color: "\x1b[48:5:8m" - gray
 function getBgColor(color::Symbol, colors::Dict{Symbol, Str}=BG_COLORS)::Str
     return get(colors, color, "\x1b[48:5:8m") * PIXEL * "\x1b[0m"
 end
@@ -55,6 +57,10 @@ function addPoints!(line::Vec{Location}, color::Symbol, cvs::Matrix{Str}=canvas)
     return nothing
 end
 
+function nudge(shape::Vec{Location}, by::Location)::Vec{Location}
+    return map(pt -> pt .+ by, shape)
+end
+
 function getRectangle(width::Int, height::Int)::Vec{Location}
     @assert width >= 2 "width must be >= 2"
     @assert height >= 2 "height must be >= 2"
@@ -66,6 +72,15 @@ function getRectangle(width::Int, height::Int)::Vec{Location}
         i += 1
     end
     return rectangle
+end
+
+function shift(figure::Vec{Location}, anchor::Location)::Vec{Location}
+    shift::Location = anchor .- COORD_ORIGIN
+    return nudge(figure, shift)
+end
+
+function getRectangle(width::Int, height::Int, topLeft::Location)::Vec{Location}
+    return shift(getRectangle(width, height), topLeft)
 end
 
 function getTriangle(height::Int)::Vec{Location}
@@ -84,6 +99,10 @@ function getTriangle(height::Int)::Vec{Location}
     return triangle
 end
 
+function getTriangle(height::Int, apex::Location)::Vec{Location}
+    return shift(getTriangle(height), apex)
+end
+
 function getCircle(radius::Int)::Vec{Location}
     @assert radius > 1 "radius must be > 1"
     cols::Vec{Vec{Int}} = [collect((-1-r):(2+r)) for r in 0:(radius-1)]
@@ -97,20 +116,19 @@ function getCircle(radius::Int)::Vec{Location}
     return triangle
 end
 
-function nudge(shape::Vec{Location}, by::Location)::Vec{Location}
-    return map(pt -> pt .+ by, shape)
+function getCircle(radius::Int, topCenter::Location)::Vec{Location}
+    return shift(getCircle(radius), topCenter)
 end
 
 canvas = fill(getBgColor(:gray), 30, 60) # top-left corner (1, 1)
 
 clearCanvas!()
-addPoints!(nudge(getRectangle(60, 15), (15, 0)), :green)
+addPoints!(getRectangle(60, 15, (16, 1)), :green)
 addPoints!(getRectangle(60, 15), :blue)
-addPoints!(getRectangle(60, 15), :blue)
-addPoints!(nudge(getRectangle(15, 8), (15, 20)), :white)
-addPoints!(nudge(getRectangle(4, 6), (8, 30)), :black)
-addPoints!(nudge(getRectangle(8, 6), (17, 26)), :brown)
-addPoints!(nudge(getRectangle(4, 2), (16, 21)), :darkblue)
-addPoints!(nudge(getTriangle(8), (7, 27)), :red)
-addPoints!(nudge(getCircle(3), (2, 50)), :yellow)
+addPoints!(getRectangle(15, 8, (16, 21)), :white)
+addPoints!(getRectangle(6, 6, (18, 28)), :brown)
+addPoints!(getRectangle(4, 2, (17, 22)), :darkblue)
+addPoints!(getRectangle(4, 6, (9, 31)), :black)
+addPoints!(getTriangle(8, (8, 28)), :red)
+addPoints!(getCircle(3, (3, 51)), :yellow)
 printCanvas()
