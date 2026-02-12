@@ -1,7 +1,6 @@
 # the code in this file is meant to serve as a programming exercise only
 # it may not act correctly
 
-# TODO
 const Location = Tuple{Int, Int} # (row, col) in canvas
 const Vec = Vector
 const Str = String
@@ -85,9 +84,9 @@ end
 
 function getTriangle(height::Int)::Vec{Location}
     @assert height > 1 "height must be > 1"
-    startCol::Int = 1
-    lCol::Int = startCol
-    rCol::Int = startCol
+    _, c::Int = COORD_ORIGIN
+    lCol::Int = c
+    rCol::Int = c
     triangle::Vec{Location} = []
     for row in 1:height
         for c in lCol:rCol
@@ -125,10 +124,13 @@ canvas = fill(getBgColor(:gray), 30, 60) # top-left corner (1, 1)
 clearCanvas!()
 addPoints!(getRectangle(60, 15, (16, 1)), :green)
 addPoints!(getRectangle(60, 15), :blue)
-addPoints!(getRectangle(15, 8, (16, 21)), :white)
-addPoints!(getRectangle(6, 6, (18, 28)), :brown)
-addPoints!(getRectangle(4, 2, (17, 22)), :darkblue)
-addPoints!(getRectangle(4, 6, (9, 31)), :black)
-addPoints!(getTriangle(8, (8, 28)), :red)
-addPoints!(getCircle(3, (3, 51)), :yellow)
+addPoints!(getRectangle(15, 8, (15, 21)), :white)
+addPoints!(getRectangle(6, 6, (17, 28)), :brown)
+addPoints!(getRectangle(4, 2, (16, 22)), :darkblue)
+addPoints!(getRectangle(4, 6, (8, 31)), :black)
+addPoints!(getTriangle(8, (7, 28)), :red)
+addPoints!(getCircle(4, (2, 55)), :yellow)
+addPoints!(getCircle(3, (4, 7)), :white)
+addPoints!(getCircle(4, (4, 14)), :white)
+addPoints!(getCircle(2, (2, 18)), :white)
 printCanvas()
