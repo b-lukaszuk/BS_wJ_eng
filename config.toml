@@ -13,6 +13,7 @@ contents = [
     "the_doors",
     "progress_bar",
     "pascals_triangle",
+    "canvas",
     "tree",
     "format_text",
     "roman_numerals",
