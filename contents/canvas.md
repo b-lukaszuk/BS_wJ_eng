@@ -12,7 +12,11 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/canvas
 
 ## Problem {#sec:canvas_problem}
 
-The problem description goes here.
+Create a simple pixel-art
+[terminal](https://en.wikipedia.org/wiki/Terminal_emulator) graphics. You may,
+e.g. draw a house on a meadow, similar to the one below.
+
+![Sample pixel-art terminal graphics made with Julia.](./images/canvas.png){#fig:canvas}
 
 ## Solution {#sec:canvas_solution}
 
