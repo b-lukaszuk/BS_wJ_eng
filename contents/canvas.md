@@ -16,7 +16,7 @@ Create a simple pixel-art
 [terminal](https://en.wikipedia.org/wiki/Terminal_emulator) graphics. You may,
 e.g. draw a house on a meadow, similar to the one below.
 
-![Sample pixel-art terminal graphics made with Julia.](./images/canvas.png){#fig:canvas}
+![An exemplary pixel-art terminal graphics made with Julia.](./images/canvas.png){#fig:canvas}
 
 ## Solution {#sec:canvas_solution}
 
@@ -80,8 +80,7 @@ with a rectangle as this should be the easiest shape to obtain.
 function getRectangle(width::Int, height::Int)::Vec{Pos}
     @assert width >= 2 "width must be >= 2"
     @assert height >= 2 "height must be >= 2"
-    nRects::Int = width * height
-    rectangle::Vec{Pos} = Vec{Pos}(undef, nRects)
+    rectangle::Vec{Pos} = Vec{Pos}(undef, width * height)
     i::Int = 1
     startX::Int, startY::Int = COORD_ORIGIN
     for row in startX:height, col in startY:width
@@ -95,10 +94,30 @@ end
 Each `rectangle` is represented as a vector of positions (`Vec{Pos}`). It will
 start at the origin of our coordinate system (`COORD_ORIGIN` - top left corner
 of our matrix) and go through as many `row`s as its `height` is
-(`startX:height`) and as many `col`umns as its width is (`startY:width`).
+(`startX:height`) and as many `col`umns as its width is (`startY:width`). Such a
+rectangle (the one that starts in the coordinate origin point) is a good start,
+but to draw a picture we need to be able to place a shape in any location on the
+canvas.
 
-Time to find a way to add the points that build our shape to the canvas (notice,
-that we only add the points that are inside of our canvas).
+```
+# moves a shape by (nRows, nCols)
+function nudge(shape::Vec{Pos}, by::Pos)::Vec{Pos}
+    return map(pt -> pt .+ by, shape)
+end
+
+# shifts a shape so that its anchor point starts where we want
+function shift(shape::Vec{Pos}, anchor::Pos)::Vec{Pos}
+    shift::Pos = anchor .- COORD_ORIGIN
+    return nudge(shape, shift)
+end
+
+function getRectangle(width::Int, height::Int, topLeftCorner::Pos)::Vec{Pos}
+    return shift(getRectangle(width, height), topLeftCorner)
+end
+```
+
+So far so good. Time to find a way to add the points that build our shape to the
+canvas (notice, that we only add the points that are inside of our canvas).
 
 ```
 function isWithinCanvas(point::Pos, cvs::Matrix{Str}=canvas)::Bool
