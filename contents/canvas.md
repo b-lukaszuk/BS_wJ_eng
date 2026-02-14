@@ -70,3 +70,29 @@ function clearCanvas!(cvs::Matrix{Str}=canvas)::Nothing
     return nothing
 end
 ```
+
+Now, to draw @fig:canvas we will need a few shapes, most likely: a rectangle, a
+triangle and an oval/circle. A shape will be represented as coordinates (row and
+column) of our matrix that need to be dyed with a specific color. Let's start
+with a rectangle as this should be the easiest shape to obtain.
+
+```
+function getRectangle(width::Int, height::Int)::Vec{Pos}
+    @assert width >= 2 "width must be >= 2"
+    @assert height >= 2 "height must be >= 2"
+    nRects::Int = width * height
+    rectangle::Vec{Pos} = Vec{Pos}(undef, nRects)
+    i::Int = 1
+    startX::Int, startY::Int = COORD_ORIGIN
+    for row in startX:height, col in startY:width
+        rectangle[i] = (row, col)
+        i += 1
+    end
+    return rectangle
+end
+```
+
+Each `rectangle` is represented as a vector of positions (`Vec{Pos}`). It will
+start at the origin of our coordinate system (`COORD_ORIGIN` - top left corner
+of our matrix) and go through as many `row`s as its `height` is
+(`startX:height`) and as many `col`umns as its width is (`startY:width`).
