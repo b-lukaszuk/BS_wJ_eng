@@ -71,7 +71,7 @@ function clearCanvas!(cvs::Matrix{Str}=canvas)::Nothing
 end
 ```
 
-Now, to draw @fig:canvas we will need a few shapes, most likely: a rectangle, a
+Now, to draw a picture we will need a few shapes, most likely: a rectangle, a
 triangle and an oval/circle. A shape will be represented as coordinates (row and
 column) of our matrix that need to be dyed with a specific color. Let's start
 with a rectangle as this should be the easiest shape to obtain.
@@ -96,3 +96,24 @@ Each `rectangle` is represented as a vector of positions (`Vec{Pos}`). It will
 start at the origin of our coordinate system (`COORD_ORIGIN` - top left corner
 of our matrix) and go through as many `row`s as its `height` is
 (`startX:height`) and as many `col`umns as its width is (`startY:width`).
+
+Time to find a way to add the points that build our shape to the canvas (notice,
+that we only add the points that are inside of our canvas).
+
+```
+function isWithinCanvas(point::Pos, cvs::Matrix{Str}=canvas)::Bool
+    nRows, nCols = size(cvs)
+    row, col = point
+    return (0 < row <= nRows) && (0 < col <= nCols)
+end
+
+function addPoints!(shape::Vec{Pos}, color::Symbol,
+                    cvs::Matrix{Str}=canvas)::Nothing
+    for pt in shape
+        if isWithinCanvas(pt)
+            cvs[pt...] = getBgColor(color)
+        end
+    end
+    return nothing
+end
+```
