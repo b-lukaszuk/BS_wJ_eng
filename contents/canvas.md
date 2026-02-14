@@ -51,3 +51,22 @@ end
 
 canvas = fill(getBgColor(:gray), 30, 60) # top-left corner (1, 1)
 ```
+
+Next, we need a way to properly display canvas (`printCanvas`) and to clear it
+(`clearCanvas!`) which will allow us to erase an incorrect drawing and try
+again.
+
+```
+function printCanvas(cvs::Matrix{Str}=canvas)::Nothing
+    nRows, _ = size(cvs)
+    for r in 1:nRows
+        println(cvs[r, :] |> join)
+    end
+    return nothing
+end
+
+function clearCanvas!(cvs::Matrix{Str}=canvas)::Nothing
+    cvs .= getBgColor(:gray)
+    return nothing
+end
+```
