@@ -20,16 +20,15 @@ e.g. draw a house on a meadow, similar to the one below.
 
 ## Solution {#sec:canvas_solution}
 
-The first question we must answer is how to represent our `canvas`. Here, we'll
+The first question to answer is how to represent our `canvas`. Here, we'll
 go with a matrix of strings which we will tint by placing space characters (`"
 "`) on a background colored with [ANSI escape
 codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors).
 
 ```
-const PIXEL = " " # empty string, because we set background color
+const PIXEL = " "
 const COORD_ORIGIN = (1, 1) # origin or the coordinate system (row, col)
 
-# https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 # "\x1b[48:5:XXXm" sets background color to XXX color code (256-color mode)
 const BG_COLORS = Dict(
     :gray => "\x1b[48:5:8m",
@@ -44,17 +43,17 @@ const BG_COLORS = Dict(
 )
 
 # "\x1b[0m" resets background color to default value
-# default color: "\x1b[48:5:8m" - gray
+# default color: "\x1b[48:5:13m" - pink
 function getBgColor(color::Symbol, colors::Dict{Symbol, Str}=BG_COLORS)::Str
-    return get(colors, color, "\x1b[48:5:8m") * PIXEL * "\x1b[0m"
+    return get(colors, color, "\x1b[48:5:13m") * PIXEL * "\x1b[0m"
 end
 
 canvas = fill(getBgColor(:gray), 30, 60) # top-left corner (1, 1)
 ```
 
 Next, we need a way to properly display canvas (`printCanvas`) and to clear it
-(`clearCanvas!`) which will allow us to erase an incorrect drawing and try
-again.
+(`clearCanvas!`). This last method will allow us to erase an incorrect drawing
+and try again and again if we needed to.
 
 ```
 function printCanvas(cvs::Matrix{Str}=canvas)::Nothing
@@ -72,11 +71,14 @@ end
 ```
 
 Now, to draw a picture we will need a few shapes, most likely: a rectangle, a
-triangle and an oval/circle. A shape will be represented as coordinates (row and
-column) of our matrix that need to be dyed with a specific color. Let's start
-with a rectangle as this should be the easiest shape to obtain.
+triangle and an oval/circle. A shape will be represented as a position (row and
+column) in our matrix (`canvas`) that need to be dyed with a specific
+color. Let's start with a rectangle as this should be the easiest shape to
+obtain.
 
 ```
+const Pos = Tuple{Int, Int} # position, (row, col) in canvas
+
 function getRectangle(width::Int, height::Int)::Vec{Pos}
     @assert width >= 2 "width must be >= 2"
     @assert height >= 2 "height must be >= 2"
@@ -93,11 +95,11 @@ end
 
 Each `rectangle` is represented as a vector of positions (`Vec{Pos}`). It will
 start at the origin of our coordinate system (`COORD_ORIGIN` - top left corner
-of our matrix) and go through as many `row`s as its `height` is
-(`startX:height`) and as many `col`umns as its width is (`startY:width`). Such a
-rectangle (the one that starts in the coordinate origin point) is a good start,
-but to draw a picture we need to be able to place a shape in any location on the
-canvas.
+of our matrix). It will spread through as many `row`s and `col`umns as there
+are. Their numbers will be calculated based on the `height` (`startX:height`)
+and width (`startY:width`) of the `canvas`. Such a rectangle (the one that
+starts in the coordinate system origin point) is a good start, but to draw a
+picture we need to be able to place a shape in any location on the canvas.
 
 ```
 # moves a shape by (nRows, nCols)
