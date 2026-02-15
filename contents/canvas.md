@@ -171,3 +171,32 @@ one pixel on each side (`lCol -= 1` and `rCol += 1`) with each row we move down.
 Of note, we could have shorten the above snippet, e.g. by using a C-like chained
 assignment (`lCol = rCol = colStart` instead of lines `#1` and `#2`). Still, I
 think the longer version might be clearer and easier to follow in our heads.
+
+There's one more shape left, a circle.
+
+```
+function getCircle(radius::Int)::Vec{Pos}
+    @assert 1 < radius < 6 "radius must be in range [2-5]"
+    cols::Vec{Vec{Int}} = [collect((-1-r):(2+r)) for r in 0:(radius-1)]
+    cols = [cols..., reverse(cols)...]
+    triangle::Vec{Pos} = []
+    rowStart::Int, _ = COORD_ORIGIN
+    for row in rowStart:(radius*2)
+        for col in cols[row]
+            push!(triangle, (row, col))
+        end
+    end
+    return triangle
+end
+
+function getCircle(radius::Int, topCenter::Pos)::Vec{Pos}
+    return shift(getCircle(radius), topCenter)
+end
+```
+
+Here, we use a pattern similar to the one from the triangle. A circle is started
+in the top row (`rowStart`) with three columns (`collect((-1-r):(2+r))`) and
+increase the spread by 1 column in each direction (`r` changes by 1). Once, we
+are in half of our circle we decrease the number of colored columns. we achieve
+that by combining the previous `cols` with their `reverse`d version (`...` is a
+splat operator that, unpacks a vector by copying its elements).
