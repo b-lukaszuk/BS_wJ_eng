@@ -83,9 +83,9 @@ function getRectangle(width::Int, height::Int)::Vec{Pos}
     @assert width >= 2 "width must be >= 2"
     @assert height >= 2 "height must be >= 2"
     rectangle::Vec{Pos} = Vec{Pos}(undef, width * height)
+    rowStart::Int, colStart::Int = COORD_ORIGIN
     i::Int = 1
-    startX::Int, startY::Int = COORD_ORIGIN
-    for row in startX:height, col in startY:width
+    for row in rowStart:height, col in colStart:width
         rectangle[i] = (row, col)
         i += 1
     end
@@ -138,3 +138,36 @@ function addPoints!(shape::Vec{Pos}, color::Symbol,
     return nothing
 end
 ```
+
+Once, we got it we can move to another shape, i.e. triangle.
+
+```
+function getTriangle(height::Int)::Vec{Pos}
+    @assert height > 1 "height must be > 1"
+    rowStart::Int, colStart::Int = COORD_ORIGIN
+    lCol::Int = colStart # 1
+    rCol::Int = colStart # 2
+    triangle::Vec{Pos} = []
+    for row in rowStart:height
+        for col in lCol:rCol
+            push!(triangle, (row, col))
+        end
+        lCol -= 1
+        rCol += 1
+    end
+    return triangle
+end
+
+function getTriangle(height::Int, apex::Pos)::Vec{Pos}
+    return shift(getTriangle(height), apex)
+end
+```
+
+Our triangle top starts with a pixel (`lCol` and `rCol` are initialized with the
+same value) in the origin of our coordinate system (`COORD_ORIGIN`). Then for
+each row (`for row in rowStart:height`) we dye each pixel between the left
+(`lCol`) and right (`rCol`) columns. The basis of the triangle is increased by
+one pixel on each side (`lCol -= 1` and `rCol += 1`) with each row we move down.
+Of note, we could have shorten the above snippet, e.g. by using a C-like chained
+assignment (`lCol = rCol = colStart` instead of lines `#1` and `#2`). Still, I
+think the longer version might be clearer and easier to follow in our heads.
