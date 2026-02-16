@@ -80,7 +80,7 @@ end
 function addPoints!(shape::Vec{Pos}, color::Symbol,
                     cvs::Matrix{Str}=canvas)::Nothing
     for pt in shape
-        if isWithinCanvas(pt)
+        if isWithinCanvas(pt, cvs)
             cvs[pt...] = getBgColor(color)
         end
     end
