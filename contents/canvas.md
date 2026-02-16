@@ -200,3 +200,39 @@ increase the spread by 1 column in each direction (`r` changes by 1). Once, we
 are in half of our circle we decrease the number of colored columns. we achieve
 that by combining the previous `cols` with their `reverse`d version (`...` is a
 splat operator that, unpacks a vector by copying its elements).
+
+Finally, we can proceed to create our pixel-art, e.g. by iteratively adding one
+element at a time with something like:
+
+```
+clearCanvas!()
+addPoints!(getSomeShape, :someColor)
+printCanvas()
+```
+
+and
+
+```
+clearCanvas!()
+addPoints!(getSomeShape, :someColor)
+addPoints!(getAnotherShape, :someOtherColor)
+printCanvas()
+```
+
+Until we reach a satisfactory result with a code snippet to the one below:
+
+```
+clearCanvas!()
+addPoints!(getRectangle(60, 15, (16, 1)), :green)
+addPoints!(getRectangle(60, 15), :blue)
+addPoints!(getRectangle(15, 8, (15, 21)), :white)
+addPoints!(getRectangle(6, 6, (17, 28)), :brown)
+addPoints!(getRectangle(4, 2, (16, 22)), :darkblue)
+addPoints!(getRectangle(4, 6, (8, 31)), :black)
+addPoints!(getTriangle(8, (7, 28)), :red)
+addPoints!(getCircle(4, (2, 55)), :yellow)
+addPoints!(getCircle(3, (4, 7)), :white)
+addPoints!(getCircle(4, (4, 14)), :white)
+addPoints!(getCircle(2, (2, 18)), :white)
+printCanvas()
+```
