@@ -127,15 +127,15 @@ end
 
 # final drawing
 clearCanvas!()
-addPoints!(getRectangle(60, 15, (16, 1)), :green)
-addPoints!(getRectangle(60, 15), :blue)
-addPoints!(getRectangle(15, 8, (15, 21)), :white)
-addPoints!(getRectangle(6, 6, (17, 28)), :brown)
-addPoints!(getRectangle(4, 2, (16, 22)), :darkblue)
-addPoints!(getRectangle(4, 6, (8, 31)), :black)
-addPoints!(getTriangle(8, (7, 28)), :red)
-addPoints!(getCircle(4, (2, 55)), :yellow)
-addPoints!(getCircle(3, (4, 7)), :white)
-addPoints!(getCircle(4, (4, 14)), :white)
-addPoints!(getCircle(2, (2, 18)), :white)
+addPoints!(getRectangle(60, 15, (16, 1)), :green) # meadow
+addPoints!(getRectangle(60, 15), :blue) # sky
+addPoints!(getRectangle(15, 8, (15, 21)), :white) # house walls
+addPoints!(getRectangle(6, 6, (17, 28)), :brown) # doors
+addPoints!(getRectangle(4, 2, (16, 22)), :darkblue) # window
+addPoints!(getRectangle(4, 6, (8, 31)), :black) # chimney
+addPoints!(getTriangle(8, (7, 28)), :red) # roof
+addPoints!(getCircle(4, (2, 55)), :yellow) # sun
+addPoints!(getCircle(3, (4, 7)), :white) # cloud, part 1
+addPoints!(getCircle(4, (4, 14)), :white) # cloud, part 2
+addPoints!(getCircle(2, (2, 18)), :white) # cloud, part 3
 printCanvas()
