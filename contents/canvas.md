@@ -14,7 +14,7 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/canvas
 
 Create a simple pixel-art
 [terminal](https://en.wikipedia.org/wiki/Terminal_emulator) graphics. You may,
-e.g. draw a house on a meadow, similar to the one below.
+e.g. draw a house on a meadow that is similar to the one below.
 
 ![An exemplary pixel-art terminal graphics made with Julia.](./images/canvas.png){#fig:canvas}
 
@@ -48,12 +48,12 @@ function getBgColor(color::Symbol, colors::Dict{Symbol, Str}=BG_COLORS)::Str
     return get(colors, color, "\x1b[48:5:13m") * PIXEL * "\x1b[0m"
 end
 
-canvas = fill(getBgColor(:gray), 30, 60) # top-left corner (1, 1)
+canvas = fill(getBgColor(:gray), 30, 60)
 ```
 
-Next, we need a way to properly display canvas (`printCanvas`) and to clear it
+Next, we want a way to properly display canvas (`printCanvas`) and to clear it
 (`clearCanvas!`). This last method will allow us to erase an incorrect drawing
-and try again and again if we needed to.
+and try again and again if we need to.
 
 ```
 function printCanvas(cvs::Matrix{Str}=canvas)::Nothing
@@ -71,10 +71,10 @@ end
 ```
 
 Now, to draw a picture we will need a few shapes, most likely: a rectangle, a
-triangle and an oval/circle. A shape will be represented as a position (row and
-column) in our matrix (`canvas`) that need to be dyed with a specific
-color. Let's start with a rectangle as this should be the easiest shape to
-obtain.
+triangle and an oval/circle. A shape will be represented as a vector of
+positions in our matrix (`canvas`). The positions need to be dyed with a
+specific color to visualize an object. Let's start with a rectangle as this
+should be the easiest shape to obtain.
 
 ```
 const Pos = Tuple{Int, Int} # position, (row, col) in canvas
@@ -95,8 +95,8 @@ end
 
 Each `rectangle` is represented as a vector of positions (`Vec{Pos}`). It will
 start at the origin of our coordinate system (`COORD_ORIGIN` - top left corner
-of our matrix). It will spread through as many `row`s and `col`umns as there
-are. Their numbers will be calculated based on the `height` (`startX:height`)
+of our matrix). It will spread through as many `row`s and `col`umns as there are
+needed. Their numbers will be calculated based on the `height` (`startX:height`)
 and width (`startY:width`) of the `canvas`. Such a rectangle (the one that
 starts in the coordinate system origin point) is a good start, but to draw a
 picture we need to be able to place a shape in any location on the canvas.
@@ -131,7 +131,7 @@ end
 function addPoints!(shape::Vec{Pos}, color::Symbol,
                     cvs::Matrix{Str}=canvas)::Nothing
     for pt in shape
-        if isWithinCanvas(pt)
+        if isWithinCanvas(pt, cvs)
             cvs[pt...] = getBgColor(color)
         end
     end
@@ -139,7 +139,7 @@ function addPoints!(shape::Vec{Pos}, color::Symbol,
 end
 ```
 
-Once, we got it we can move to another shape, i.e. triangle.
+Once, we got it we can move to another shape, i.e. a triangle.
 
 ```
 function getTriangle(height::Int)::Vec{Pos}
@@ -163,14 +163,16 @@ function getTriangle(height::Int, apex::Pos)::Vec{Pos}
 end
 ```
 
-Our triangle top starts with a pixel (`lCol` and `rCol` are initialized with the
-same value) in the origin of our coordinate system (`COORD_ORIGIN`). Then for
-each row (`for row in rowStart:height`) we dye each pixel between the left
-(`lCol`) and right (`rCol`) columns. The basis of the triangle is increased by
-one pixel on each side (`lCol -= 1` and `rCol += 1`) with each row we move down.
-Of note, we could have shorten the above snippet, e.g. by using a C-like chained
-assignment (`lCol = rCol = colStart` instead of lines `#1` and `#2`). Still, I
-think the longer version might be clearer and easier to follow in our heads.
+Our triangle's top starts with a pixel (`lCol` and `rCol` are initialized with
+the same value) in the origin of our coordinate system (`COORD_ORIGIN`). Then
+for each row (`for row in rowStart:height`) we dye each pixel between the left
+(`lCol`) and right (`rCol`) columns (inclusive-inclusive). The basis of the
+triangle is increased by one pixel on each side (`lCol -= 1` and `rCol += 1`)
+with each row we move down. Of note, we could have shortened the above snippet,
+e.g. by using a [C](https://en.wikipedia.org/wiki/C_(programming_language))-like
+chained assignment (`lCol = rCol = colStart` instead of lines `#1` and
+`#2`). However, the longer version might be clearer and easier to follow in a
+head.
 
 There's one more shape left, a circle.
 
@@ -195,14 +197,15 @@ end
 ```
 
 Here, we use a pattern similar to the one from the triangle. A circle is started
-in the top row (`rowStart`) with three columns (`collect((-1-r):(2+r))`) and
-increase the spread by 1 column in each direction (`r` changes by 1). Once, we
-are in half of our circle we decrease the number of colored columns. we achieve
-that by combining the previous `cols` with their `reverse`d version (`...` is a
-splat operator that, unpacks a vector by copying its elements).
+in the top row (`rowStart`) with three columns (`collect((-1-r):(2+r))`). With
+every row down we increase the spread by 1 column in each direction (`r` changes
+by 1). Once, we are in half of our circle we decrease the number of colored
+columns. We achieve that by combining the previous `cols` with their `reverse`d
+version (`...` is a splat operator that, unpacks a vector by copying its
+elements).
 
-Finally, we can proceed to create our pixel-art, e.g. by iteratively adding one
-element at a time with something like:
+Finally, we proceed to create our pixel-art graphics, e.g. by iteratively adding
+one element at a time with something like:
 
 ```
 clearCanvas!()
@@ -219,20 +222,21 @@ addPoints!(getAnotherShape, :someOtherColor)
 printCanvas()
 ```
 
-Until we reach a satisfactory result with a code snippet to the one below:
+Until we reach a satisfactory result with a code snippet similar to the one
+below:
 
 ```
 clearCanvas!()
-addPoints!(getRectangle(60, 15, (16, 1)), :green)
-addPoints!(getRectangle(60, 15), :blue)
-addPoints!(getRectangle(15, 8, (15, 21)), :white)
-addPoints!(getRectangle(6, 6, (17, 28)), :brown)
-addPoints!(getRectangle(4, 2, (16, 22)), :darkblue)
-addPoints!(getRectangle(4, 6, (8, 31)), :black)
-addPoints!(getTriangle(8, (7, 28)), :red)
-addPoints!(getCircle(4, (2, 55)), :yellow)
-addPoints!(getCircle(3, (4, 7)), :white)
-addPoints!(getCircle(4, (4, 14)), :white)
-addPoints!(getCircle(2, (2, 18)), :white)
+addPoints!(getRectangle(60, 15, (16, 1)), :green) # meadow
+addPoints!(getRectangle(60, 15), :blue) # sky
+addPoints!(getRectangle(15, 8, (15, 21)), :white) # house walls
+addPoints!(getRectangle(6, 6, (17, 28)), :brown) # doors
+addPoints!(getRectangle(4, 2, (16, 22)), :darkblue) # window
+addPoints!(getRectangle(4, 6, (8, 31)), :black) # chimney
+addPoints!(getTriangle(8, (7, 28)), :red) # roof
+addPoints!(getCircle(4, (2, 55)), :yellow) # sun
+addPoints!(getCircle(3, (4, 7)), :white) # cloud, part 1
+addPoints!(getCircle(4, (4, 14)), :white) # cloud, part 2
+addPoints!(getCircle(2, (2, 18)), :white) # cloud, part 3
 printCanvas()
 ```
