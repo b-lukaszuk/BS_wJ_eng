@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Solution - Build SH*T with Julia</title>
+  <title>Problem - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -163,135 +163,19 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="35.2" id="sec:vigenere_solution"><span class="header-section-number">35.2</span> Solution</h2>
-<p>OK, so the technique relies on applying different Caesar cipher to every letter of the plain text. The shift used by the Caesar cipher is established by using the provided passphrase. Therefore, we can safely reuse some of the code from our previous solution (see Section <a href="./caesar_solution.html#sec:caesar_solution">34.2</a>).</p>
-<pre class="language-julia"><code>function getAlphabets(rotBy::Int, upper::Bool)::Tuple{Str, Str}
-    alphabet::Str = upper ? join(&#39;A&#39;:&#39;Z&#39;) : join(&#39;a&#39;:&#39;z&#39;)
-    rot::Int = abs(rotBy) % length(alphabet)
-    rotAlphabet::Str = alphabet[(rot+1):end] * alphabet[1:rot]
-    return rotBy &lt; 0 ? (rotAlphabet, alphabet) : (alphabet, rotAlphabet)
-end
-
-function codeChar(c::Char, rotBy::Int)::Char
-    outerDisc::Str, innerDisc::Str = getAlphabets(rotBy, isuppercase(c))
-    ind::Union{Int, Nothing} = findfirst(c, outerDisc)
-    return isnothing(ind) ? c : innerDisc[ind]
-end</code></pre>
-<p>Time to create a function that will (de)code the whole message.</p>
-<pre class="language-julia"><code>function isAsciiLetter(c::Char)::Bool
-    return isascii(c) &amp;&amp; isletter(c)
-end
-
-function codeMsg(msg::Str, passphrase::Str, decode::Bool=false)::Str
-    pass::Str = filter(isAsciiLetter, lowercase(passphrase))
-    pwr::Int = ceil(length(msg) / length(pass))
-    pass = pass ^ pwr
-    shifts::Vec{Int} = [c - &#39;a&#39; for c in pass]
-    if decode
-        shifts .*= -1
-    end
-    result::Vec{Char} = Vec{Char}(undef, length(msg))
-    shiftsInd::Int = 1
-    for (ind, char) in enumerate(msg)
-        result[ind] = codeChar(char, shifts[shiftsInd])
-        if isAsciiLetter(char)
-            shiftsInd += 1
-        end
-    end
-    return result |&gt; join
-end</code></pre>
-<p>We begin with come preparatory code. First, we <code>lowercase</code> the <code>passphrase</code> and retain only ‘a’:‘z’ characters (<code>isAsciiLetter</code>). Next, we check how many times longer is the coded message (<code>length(msg)</code>) in comparison to the passphrase (<code>length(pass)</code>). The <code>ceil</code> function rounds the obtained float to the nearest whole number higher than or equal to it. Finally, we repeat <code>pass</code> the necessary number of times (<code>^ pwr</code>) to make sure it is at least as long as our <code>msg</code>. Next, we obtain the shifts by subtracting <code>'a'</code> from every character (<code>c</code>) in the passphrase (<code>pass</code>). For decoding (<code>if decode</code>) purposes we change the signs in <code>shifts</code> to the opposite (<code>.*= -1</code>, where <code>.*</code> multiplies every shift by <code>-1</code> and <code>=</code> re-assigns them to the <code>shifts</code> variable). We initialize an empty vector of chars of a given length (<code>Vec{Char}(undef, length(msg))</code>). Afterwards, we traverse (<code>for</code>) all characters (<code>char</code>) and their indices (<code>ind</code>) in <code>msg</code>. We code a <code>char</code> with the proper shift (<code>shiftsInd</code>). If the coded character was a letter (<code>isAsciiLetter(char)</code>) we update the <code>shiftsInd</code> (we use the next shift for coding of another letter). Finally, we concatenate the chars (<code>result</code>) into a string (<code>join</code>) that we return.</p>
-<p>Time for our minimal test.</p>
-<pre class="language-julia"><code>(
-    codeMsg(&quot;attacking tonight&quot;, &quot;oculorhinolaryngology&quot;),
-    codeMsg(&quot;Attacking tonight&quot;, &quot;oculorhinolaryngology&quot;),
-    codeMsg(&quot;attacking Tonight&quot;, &quot;oCulorhinolaryngoloGY&quot;)
-)</code></pre>
-<pre class="output"><code>(&quot;ovnlqbpvt hznzeuz&quot;, &quot;Ovnlqbpvt hznzeuz&quot;, &quot;ovnlqbpvt Hznzeuz&quot;)</code></pre>
-<p>Yep, we got the expected “ovnlqbpvt hznzeuz” (with casing consistent with the original message).</p>
-<p>And now for the second part of this exercise. We will code <code>genesis.txt</code> with the passphrase “Julia rocks, believe in its magic.” and see if it changed the frequency distribution of the letters (no single, clearly dominant letter).</p>
-<p>To this end we will mostly use the code from Section <a href="./shift_solution.html#sec:shift_solution">33.2</a> so go there if you need detailed explanations.</p>
-<p>First, lets read the text in and encode it.</p>
-<pre class="language-julia"><code># adjust the file path if necessary
-# genesis.txt ~31 KiB
-plainTxt = open(&quot;./code_snippets/vigenere/genesis.txt&quot;) do file
-    read(file, Str)
-end
-passphrase = &quot;Julia rocks, believe in its magic.&quot;
-codedTxt = codeMsg(plainTxt, passphrase)
-
-(
-    first(plainTxt, 16),
-    first(codedTxt, 16),
-)</code></pre>
-<pre class="output"><code>(&quot;In the beginning&quot;, &quot;Rh epe ssisfomyo&quot;)</code></pre>
-<p>Now let’s use the functions to obtain the letter frequencies.</p>
-<pre class="language-julia"><code>plainTxt = filter(isAsciiLetter, uppercase(plainTxt))
-codedTxt = filter(isAsciiLetter, uppercase(codedTxt))
-
-function getCounts(s::Str)::Dict{Char,Int}
-    counts::Dict{Char, Int} = Dict()
-    for char in s
-        if haskey(counts, char)
-            counts[char] = counts[char] + 1
-        else
-            counts[char] = 1
-        end
-    end
-    return counts
-end
-
-function getFreqs(counts::Dict{Char, Int})::Dict{Char,Flt}
-    total::Int = sum(values(counts))
-    return Dict(k =&gt; v/total for (k, v) in counts)
-end
-
-function getFreqs(s::Str)::Dict{Char,Flt}
-    return s |&gt; getCounts |&gt; getFreqs
-end</code></pre>
-<p>And finally, cherry on the cake. Instead of just printing the percentages, we will draw the comparison of the letters distribution in both texts.</p>
-<pre><code>import CairoMakie as Cmk
-
-function drawFreqComparison(txt1::Str, title1::Str,
-                            txt2::Str, title2::Str)::Cmk.Figure
-    letFreqs1::Dict{Char, Flt} = getFreqs(txt1)
-    letFreqs2::Dict{Char, Flt} = getFreqs(txt2)
-    alphabet::Str = join(&#39;A&#39;:&#39;Z&#39;)
-    revAlphabet::Str = alphabet[end:-1:1]
-    len::Int = length(alphabet)
-    freqs1::Vec{Flt} = [get(letFreqs1, c, 0) for c in alphabet]
-    freqs2::Vec{Flt} = [get(letFreqs2, c, 0) for c in alphabet]
-    fig::Cmk.Figure = Cmk.Figure(size=(600, 1200))
-    ax1::Cmk.Axis = Cmk.Axis(fig[1, 1], title=title1,
-                             xlabel=&quot;Frequency in text&quot;, ylabel=&quot;Letter&quot;,
-                             yticks=(1:len, split(revAlphabet, &quot;&quot;)),
-                             ygridvisible=false)
-    ax2::Cmk.Axis = Cmk.Axis(fig[2, 1], title=title2,
-                             xlabel=&quot;Frequency in text&quot;, ylabel=&quot;Letter&quot;,
-                             yticks=(1:len, split(revAlphabet, &quot;&quot;)),
-                             ygridvisible=false)
-    Cmk.linkyaxes!(ax1, ax2)
-    Cmk.linkxaxes!(ax1, ax2)
-    Cmk.barplot!(ax1, len:-1:1, freqs1, color=:deepskyblue3, direction=:x)
-    Cmk.barplot!(ax2, len:-1:1, freqs2, color=:deepskyblue3, direction=:x)
-    return fig
-end
-
-drawFreqComparison(plainTxt, &quot;genesis.txt in plain text&quot;,
-                   codedTxt, &quot;genesis.txt coded with a Vigenere cipher&quot;)</code></pre>
-<figure id="fig:genesisVigenere.png">
-<img src="./images/genesisVigenere.png" alt="Figure 22: Frequency analysis of plain and encrypted book of Genesis." />
-<figcaption aria-hidden="true">Figure 22: Frequency analysis of plain and encrypted book of Genesis.</figcaption>
+<h2 data-number="12.1" id="sec:canvas_problem"><span class="header-section-number">12.1</span> Problem</h2>
+<p>Create a simple pixel-art <a href="https://en.wikipedia.org/wiki/Terminal_emulator">terminal</a> graphics. You may, e.g. draw a house on a meadow that is similar to the one below.</p>
+<figure id="fig:canvas">
+<img src="./images/canvas.png" alt="Figure 4: An exemplary pixel-art terminal graphics made with Julia." />
+<figcaption aria-hidden="true">Figure 4: An exemplary pixel-art terminal graphics made with Julia.</figcaption>
 </figure>
-<p>The letter distribution definetely got more <a href="https://en.wikipedia.org/wiki/Discrete_uniform_distribution">uniform</a>. This should make cracking the cipher more difficult, but still <a href="https://en.wikipedia.org/wiki/Vigen%C3%A8re_cipher#Cryptanalysis">possible</a>.</p>
-<p>The performance of our <code>codeMsg</code> should be comparable to its counterpart in Section <a href="./caesar_solution.html#sec:caesar_solution">34.2</a>. If you expect to work on long text messages you may improve it, e.g. by generating <code>encryptionMaps</code>. It would be a <code>Dict{Int, Dict{Char, Char}}</code> where the key (<code>Int</code>) is a possible shift (<code>0</code> to <code>25</code>) and the value (<code>Dict{Char, Char}</code>) is an <code>encryptionMap</code> (like the one produced by <code>getEncryptionMap</code> in Section <a href="./caesar_solution.html#sec:caesar_solution">34.2</a>) for that shift. You could generate the <code>encryptionMaps</code> only once and use them inside <code>codeMsg</code> based on the shift from <code>shifts::Vec{Int}</code>. I’ll leave this as an extra exercise for you.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-2" href="./vigenere_problem.html"><b>35.1</b> Problem</a> <kbd>←</kbd>
+        <a class="menu-level-1" href="./canvas.html"><b>12</b> Canvas</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-             
+            <kbd>→</kbd> <a class="menu-level-2" href="./canvas_solution.html"><b>12.2</b> Solution</a>
         </span>
     </p>
 </div>
