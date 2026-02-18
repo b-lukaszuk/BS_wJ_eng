@@ -102,7 +102,7 @@ we divide it by $P(D)$ (sum of all probabilities) like so:
 
 ```jl
 s = """
-function bayesUpdate!(df::Dfs.DataFrame)
+function bayesUpdate!(df::Dfs.DataFrame)::Nothing
     unnorm = df.prior .* df.likelihood
     df.posterior = unnorm ./ sum(unnorm)
     return nothing
@@ -142,7 +142,7 @@ function get3RandDoors()::Vec{Door}
 end
 
 # open first non-chosen, non-car door
-function openEligibleDoor!(doors::Vec{Door})
+function openEligibleDoor!(doors::Vec{Door})::Nothing
 	@assert length(doors) == 3 "need 3 doors"
 	indEligible::Int = findfirst(d -> !d.isCar && !d.isChosen, doors)
 	doors[indEligible].isOpen = true
@@ -150,7 +150,7 @@ function openEligibleDoor!(doors::Vec{Door})
 end
 
 # swap to first non-chosen, non-open door
-function swapChoice!(doors::Vec{Door})
+function swapChoice!(doors::Vec{Door})::Nothing
     @assert length(doors) == 3 "need 3 doors"
     indCurChosen::Int = findfirst(d -> d.isChosen, doors)
     ind2Choose::Int = findfirst(d -> !d.isChosen && !d.isOpen, doors)
@@ -167,14 +167,25 @@ order to simulate our game-show. Notice the `mutable` keyword, it will allow us
 to change a property of a `Door` in-place. Anyway, we follow the structure
 definition with a random generator of three doors (`get3RandDoors`) door opener
 `openEligibleDoor` and `swapChoice`. All the above act per the game description.
+Of note,
+[findfirst](https://docs.julialang.org/en/v1/base/arrays/#Base.findfirst-Tuple%7BFunction,%20Any%7D)
+accepts a predicate and a vector. The predicate is a function that is executed
+on consecutive elements of the vector (`doors`) and returns `true` or `false`
+for each of them. In the end `findfirst` returns the first index from the vector
+(`doors`) for which the predicate was `true` or `nothing` if no such thing
+happened. Normally, we should handle both the possible cases (`Int` if `true`
+and `nothing` if all the tests came negative). However, if we're pretty sure to
+get the `Int` and actually we want to get the error if we're mistaken, then we
+may leave it as in the code snippet above.
 
 Now, we only need a way to determine did the player win.
 
 ```jl
 s = """
 function didTraderWin(doors::Vec{Door})::Bool
-    return isnothing(
-        findfirst(d -> d.isChosen && d.isCar, doors)) ? false : true
+    indWinner::Union{Nothing, Int} = findfirst(
+        d -> d.isChosen && d.isCar, doors)
+    return isnothing(indWinner) ? false : true
 end
 
 function getResultOfDoorsGame(shouldSwap::Bool=false)::Bool
@@ -189,7 +200,14 @@ end
 sc(s)
 ```
 
-And voila, we are ready to estimate the probability:
+Of note, in the above snippet we used `findfirst` once more. However, this time
+we may not find the index of a winner (`indWinner`). We mark that possibility
+with an `Union` type (`indWinner` is an `Int` if behind the doors chosen by the
+trader is a car or `nothing` otherwise). Lastly, we handle such a situation with
+[isnothing](https://docs.julialang.org/en/v1/base/base/#Base.isnothing) and a
+[ternary expression](https://docs.julialang.org/en/v1/base/base/#?:).
+
+Anyway, now we are ready to estimate the probability:
 
 ```jl
 s = """
