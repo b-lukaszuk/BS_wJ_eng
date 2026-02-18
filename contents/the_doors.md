@@ -39,7 +39,7 @@ One way to answer the question is to use the so called Bayes's Theorem, as
 explained by Allen B. Downey
 [here](https://allendowney.github.io/ThinkBayes2/chap02.html#the-monty-hall-problem).
 
-> **_Note:_** Below, you will find a shortened explanation. To understand this
+> **_Note:_** Below, you will find a shortened explanation. To understand the
 > topic more satisfactorily you will likely need to read the first two chapters
 > of [Think Bayes](https://allendowney.github.io/ThinkBayes2/index.html) by
 > Allen B. Downey.
@@ -57,7 +57,7 @@ where:
 - P(H|D) - probability of a hypothesis given the obtained data (aka **posterior**),
 - P(H) - probability of a given hypothesis upfront (aka **prior**),
 - P(D|H) - probability of obtaining such data given the discussed hypothesis is true (aka **likelihood**),
-- P(D) - the total probability of the data under all the considered hypothesis.
+- P(D) - the total probability of the data under all the considered hypotheses.
 
 Regarding the **priors** or P(H), initially it is equally likely for the car to
 be behind any of the three doors. Therefore, the probability that the car is
