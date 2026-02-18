@@ -144,27 +144,18 @@ end
 # open first non-chosen, non-car door
 function openEligibleDoor!(doors::Vec{Door})
 	@assert length(doors) == 3 "need 3 doors"
-    for d in doors
-        if !d.isCar && !d.isChosen
-            d.isOpen = true
-            break
-        end
-    end
+	indEligible::Int = findfirst(d -> !d.isCar && !d.isChosen, doors)
+	doors[indEligible].isOpen = true
     return nothing
 end
 
 # swap to first non-chosen, non-open door
 function swapChoice!(doors::Vec{Door})
-	@assert length(doors) == 3 "need 3 doors"
-    for d in doors
-        if d.isChosen
-            d.isChosen = false
-            continue
-        end
-        if !d.isChosen && !d.isOpen
-            d.isChosen = true
-        end
-    end
+    @assert length(doors) == 3 "need 3 doors"
+    indCurChosen::Int = findfirst(d -> d.isChosen, doors)
+    ind2Choose::Int = findfirst(d -> !d.isChosen && !d.isOpen, doors)
+    doors[indCurChosen].isChosen = false
+    doors[ind2Choose].isChosen = true
     return nothing
 end
 """
@@ -182,12 +173,8 @@ Now, we only need a way to determine did the player win.
 ```jl
 s = """
 function didTraderWin(doors::Vec{Door})::Bool
-    for d in doors
-        if d.isChosen && d.isCar
-            return true
-        end
-    end
-    return false
+    return isnothing(
+        findfirst(d -> d.isChosen && d.isCar, doors)) ? false : true
 end
 
 function getResultOfDoorsGame(shouldSwap::Bool=false)::Bool
@@ -256,28 +243,19 @@ Now we change the `return` statements in our `openEligibleDoor!` and
 s = """
 # open first non-chosen, non-car door
 function openEligibleDoor!(doors::Vec{Door})::Vec{Door}
-	@assert length(doors) == 3 "need 3 doors"
-    for d in doors
-        if !d.isCar && !d.isChosen
-            d.isOpen = true
-            break
-        end
-    end
+    @assert length(doors) == 3 "need 3 doors"
+    indEligible::Int = findfirst(d -> !d.isCar && !d.isChosen, doors)
+    doors[indEligible].isOpen = true
     return doors # instead of: return nothing
 end
 
 # swap to first non-chosen, non-open door
-function swapChoice!(doors::Vec{Door})
-	@assert length(doors) == 3 "need 3 doors"
-    for d in doors
-        if d.isChosen
-            d.isChosen = false
-            continue
-        end
-        if !d.isChosen && !d.isOpen
-            d.isChosen = true
-        end
-    end
+function swapChoice!(doors::Vec{Door})::Vec{Door}
+    @assert length(doors) == 3 "need 3 doors"
+    indCurChosen::Int = findfirst(d -> d.isChosen, doors)
+    ind2Choose::Int = findfirst(d -> !d.isChosen && !d.isOpen, doors)
+    doors[indCurChosen].isChosen = false
+    doors[ind2Choose].isChosen = true
     return doors # instead of: return nothing
 end
 """
