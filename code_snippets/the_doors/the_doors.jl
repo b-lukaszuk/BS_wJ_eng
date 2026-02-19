@@ -88,8 +88,7 @@ function getProbOfWinningDoorsGame(shouldSwap::Bool=false,
 end
 
 Rnd.seed!(1492)
-getProbOfWinningDoorsGame(false)
-getProbOfWinningDoorsGame(true)
+getProbOfWinningDoorsGame(false), getProbOfWinningDoorsGame(true)
 
 ###############################################################################
 #                                  solution 3                                 #
@@ -97,10 +96,10 @@ getProbOfWinningDoorsGame(true)
 function getAll3DoorSets()::Vec{Vec{Door}}
     allDoorSets::Vec{Vec{Door}} = []
     subset::Vec{Door} = Door[]
-    for i in 1:3, j in 1:3
+    for indCar in 1:3, indChosen in 1:3
         subset = [Door(false, false, false) for _ in 1:3]
-        subset[i].isCar = true
-        subset[j].isChosen = true
+        subset[indCar].isCar = true
+        subset[indChosen].isChosen = true
         push!(allDoorSets, subset)
     end
     return allDoorSets
