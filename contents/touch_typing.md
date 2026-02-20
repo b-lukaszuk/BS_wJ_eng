@@ -200,7 +200,8 @@ function getAccuracy(typedTxt::Str, text2beTyped::Str)::Flt
     return sum(correctlyTyped) / length(correctlyTyped)
 end
 
-function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
+function printSummary(typedTxt::Str, text2beTyped::Str,
+                      elapsedTimeSec::Flt)::Nothing
     wordLen::Int = 5 # avg. word length in English
     secsPerMin::Int = 60
     len1::Int = length(typedTxt)
@@ -215,6 +216,7 @@ function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
     println("Words per minute: ", round(wpm, digits=1))
     println("Accuracy: ", round(acc * 100, digits=2), "%")
     return nothing
+end
 ```
 
 You can choose a different set of statistics, but I picked accuracy (% of
@@ -224,7 +226,7 @@ and number of words per minute `wpm`.
 As before (see @sec:tic_tac_toe_solution) we finish with the main function.
 
 ```
-function main()
+function main()::Nothing
 
     println("Hello. This is a toy program for touch typing.")
     println("It should work well on terminals that: ")
