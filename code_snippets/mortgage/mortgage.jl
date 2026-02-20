@@ -134,7 +134,8 @@ end
 drawPrincipalOwedEachYr(mortgage1) # Figure 2
 drawPrincipalOwedEachYr(mortgage2)
 
-function addPieChart!(m::Mortgage, fig::Cmk.Figure, ax::Cmk.Axis, col::Int)
+function addPieChart!(m::Mortgage, fig::Cmk.Figure,
+                      ax::Cmk.Axis, col::Int)::Nothing
     installment::Flt = getInstallment(m)
     totalInterest::Flt = installment * m.numMonths - m.principal
     yrs::Flt = round.(m.numMonths / 12, digits=2)

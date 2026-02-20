@@ -242,7 +242,8 @@ chart](https://docs.makie.org/v0.21/reference/plots/pie).
 ```
 import CairoMakie as Cmk
 
-function addPieChart!(m::Mortgage, fig::Cmk.Figure, ax::Cmk.Axis, col::Int)
+function addPieChart!(m::Mortgage, fig::Cmk.Figure,
+                      ax::Cmk.Axis, col::Int)::Nothing
     installment::Flt = getInstallment(m)
     totalInterest::Flt = installment * m.numMonths - m.principal
     yrs::Flt = round.(m.numMonths / 12, digits=2)
