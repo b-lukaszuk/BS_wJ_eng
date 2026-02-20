@@ -163,12 +163,27 @@ function getTxtFormatedForTyping(txt::Str, lineLen::Int=60)::Str
     return result[2:end] # 1st char is ' '
 end
 
+function areRequirementsMet()::Bool
+    try
+        return success(`man stty`)
+    catch
+        return false
+    end
+end
+
 function main()
 
     println("Hello. This is a toy program for touch typing.")
     println("It should work well on terminals that: ")
     println("- support ANSI escape codes,")
     println("- got stty.\n")
+
+    if !areRequirementsMet()
+        println("Checking the requirements")
+        println("The requirements for the program were not met.\n")
+        println("Leaving the program. Goodbye.")
+        return nothing
+    end
 
     println("Press Enter (or any key and Enter) and start typing.")
     println("Press q and Enter to quit now.")
