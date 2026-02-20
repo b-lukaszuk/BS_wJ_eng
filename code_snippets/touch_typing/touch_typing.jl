@@ -163,9 +163,18 @@ function getTxtFormatedForTyping(txt::Str, lineLen::Int=60)::Str
     return result[2:end] # 1st char is ' '
 end
 
-function areRequirementsMet()::Bool
+function isSttyPresent()::Bool
     try
         return success(`man stty`)
+    catch
+        return false
+    end
+end
+
+function isAnsiSupport()::Bool
+    try
+	    nColors::Int = parse(Int, read(`tput colors`, String))
+        return nColors >= 8
     catch
         return false
     end
@@ -177,14 +186,23 @@ function main()
     println("It should work well on terminals that: ")
     println("- support ANSI escape codes,")
     println("- got stty.\n")
+    println("Checking the requirements...\n")
 
-    if !areRequirementsMet()
-        println("Checking the requirements")
-        println("The requirements for the program were not met.\n")
-        println("Leaving the program. Goodbye.")
+    requirementsMet::Bool = true
+    if !isAnsiSupport()
+        requirementsMet &= false
+        println("Didn't detect suport for ANSI escape codes.")
+    end
+    if !isSttyPresent()
+        requirementsMet &= false
+        println("Didn't detect `stty` command.")
+    end
+    if !requirementsMet
+        println("Leaving the program. Goodbye!")
         return nothing
     end
 
+    println("Requirements seem to be met.\n")
     println("Press Enter (or any key and Enter) and start typing.")
     println("Press q and Enter to quit now.")
     choice::Str = readline()
