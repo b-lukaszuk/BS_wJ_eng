@@ -90,7 +90,7 @@ function getDirections(path::Path)::Vec{Mov}
 end
 
 function addGrid!(ax::Cmk.Axis,
-                  xmin::Int=0, xmax::Int=2, ymin::Int=-2, ymax::Int=0)
+                  xmin::Int=0, xmax::Int=2, ymin::Int=-2, ymax::Int=0)::Nothing
     @assert xmin < xmax "xmin must be < xmax"
     @assert ymin < ymax "ymin must be < ymax"
     for yCut in ymin:ymax
