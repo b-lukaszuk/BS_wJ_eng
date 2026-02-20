@@ -27,20 +27,20 @@ function isEnter(c::Char)::Bool
 end
 
 # by default sets cursor at (1, 1), i.e. top left corner
-function setCursor(row::Int=1, col::Int=1)
+function setCursor(row::Int=1, col::Int=1)::Nothing
     @assert row >= 1 && col >= 1 "both row and col must be >= 1 "
     print("\x1b[", row, ";", col, "H")
     return nothing
 end
 
 # clears screen, sets cursor at (1, 1), i.e. top left corner
-function clearScreen()
+function clearScreen()::Nothing
     print("\x1b[", 1, "J") # clear from cursor to beginning of the screen
     setCursor()
     return nothing
 end
 
-function printColoredTxt(typedTxt::Str, referenceTxt::Str)
+function printColoredTxt(typedTxt::Str, referenceTxt::Str)::Nothing
     len::Int = length(typedTxt)
     for i in eachindex(referenceTxt)
         if i > len
@@ -115,7 +115,7 @@ function getAccuracy(typedTxt::Str, text2beTyped::Str)::Flt
     return sum(correctlyTyped) / length(correctlyTyped)
 end
 
-function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)
+function printSummary(typedTxt::Str, text2beTyped::Str, elapsedTimeSec::Flt)::Nothing
     wordLen::Int = 5 # avg. word length in English
     secsPerMin::Int = 60
     len1::Int = length(typedTxt)
@@ -173,22 +173,16 @@ end
 
 function isAnsiSupport()::Bool
     try
-	    nColors::Int = parse(Int, read(`tput colors`, String))
+        nColors::Int = parse(Int, read(`tput colors`, String))
         return nColors >= 8
     catch
         return false
     end
 end
 
-function main()
-
-    println("Hello. This is a toy program for touch typing.")
-    println("It should work well on terminals that: ")
-    println("- support ANSI escape codes,")
-    println("- got stty.\n")
-    println("Checking the requirements...\n")
-
+function areRequirementsMet()::Bool
     requirementsMet::Bool = true
+    println("Checking the requirements...")
     if !isAnsiSupport()
         requirementsMet &= false
         println("Didn't detect suport for ANSI escape codes.")
@@ -197,13 +191,26 @@ function main()
         requirementsMet &= false
         println("Didn't detect `stty` command.")
     end
-    if !requirementsMet
-        println("Leaving the program. Goodbye!")
+    if requirementsMet
+        println("Requirements seem to be met.\n")
+    end
+    return requirementsMet
+end
+
+function main()::Nothing
+
+    println("\nHello. This is a toy program for touch typing.")
+    println("It should work well on terminals that: ")
+    println("- support ANSI escape codes,")
+    println("- got stty.\n")
+
+    if !areRequirementsMet()
+        println("\nLeaving the program. Goodbye!\n")
         return nothing
     end
 
-    println("Requirements seem to be met.\n")
-    println("Press Enter (or any key and Enter) and start typing.")
+    println("Press Enter (or any key and Enter) and start typing")
+    println("(While typing you may quit by pressing Ctrl+C or Ctrl+D).")
     println("Press q and Enter to quit now.")
     choice::Str = readline()
 
