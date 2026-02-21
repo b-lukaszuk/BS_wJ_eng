@@ -150,7 +150,7 @@ end
 )
 
 function addPieChart!(s::Summary, interestPercYr::Real, installment::Real,
-                      fig::Cmk.Figure, ax::Cmk.Axis, col::Int)
+                      fig::Cmk.Figure, ax::Cmk.Axis, col::Int)::Nothing
     colors::Vec{Str} = ["coral1", "turquoise2", "white", "white", "white"]
     lebels::Vec{Str} = ["interest = $(fmt(s.interest))",
                         "principal = $(fmt(s.principal))",
