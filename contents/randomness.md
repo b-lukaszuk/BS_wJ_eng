@@ -128,7 +128,7 @@ c = 1013904223
 m = 2^32
 seed = round(Int, Dt.now() |> Dt.datetime2unix)
 
-function setSeed!(newSeed)
+function setSeed!(newSeed)::Nothing
     global seed = newSeed
     return nothing
 end
