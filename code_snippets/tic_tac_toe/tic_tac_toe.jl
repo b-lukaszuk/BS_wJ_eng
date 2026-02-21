@@ -76,7 +76,7 @@ function colorFirstTriplet(board::Vec{Str})::Vec{Str}
     return result
 end
 
-function clearLines(nLines::Int)
+function clearLines(nLines::Int)::Nothing
     @assert 0 < nLines "nLines must be a positive integer"
     # "\033[xxxA" - xxx moves cursor up xxx LINES
     print("\033[" * string(nLines) * "A")
@@ -85,7 +85,7 @@ function clearLines(nLines::Int)
     return nothing
 end
 
-function printBoard(board::Vec{Str})
+function printBoard(board::Vec{Str})::Nothing
     bd::Vec{Str} = colorFieldNumbers(board)
     bd = colorFirstTriplet(bd)
     for row in LINES[1:3]
@@ -151,7 +151,7 @@ function getComputerMove(board::Vec{Str})::Int
     return move
 end
 
-function makeMove!(move::Int, player::Str, board::Vec{Str})
+function makeMove!(move::Int, player::Str, board::Vec{Str})::Nothing
     @assert move in eachindex(board) "move must be in range [1-9]"
     @assert player in PLAYERS "player must be X or O"
     if isFree2Take(board[move])
@@ -160,7 +160,7 @@ function makeMove!(move::Int, player::Str, board::Vec{Str})
     return nothing
 end
 
-function playMove!(player::Str, board::Vec{Str})
+function playMove!(player::Str, board::Vec{Str})::Nothing
     @assert player in PLAYERS "player must be X or O"
     printBoard(board)
     move::Int = (player == "X") ? getUserMove(board) : getComputerMove(board)
@@ -192,7 +192,7 @@ function isGameOver(board::Vec{Str})::Bool
     return isGameWon(board) || isNoMoreMoves(board)
 end
 
-function displayGameOverScreen(player::Str, board::Vec{Str})
+function displayGameOverScreen(player::Str, board::Vec{Str})::Nothing
     @assert player in PLAYERS "player must be X or O"
     printBoard(board)
     print("Game Over. ")
@@ -207,7 +207,7 @@ function togglePlayer(player::Str)::Str
     return player == "X" ? "O" : "X"
 end
 
-function playGame()
+function playGame()::Nothing
     board::Vec{Str} = getNewGameBoard()
     player::Str = "O"
     while !isGameOver(board)
@@ -219,9 +219,36 @@ function playGame()
     return nothing
 end
 
-function main()
-    println("This is a toy program to play a tic-tac-toe game.")
+function isAnsiSupport()::Bool
+    try
+        nColors::Int = parse(Int, read(`tput colors`, String))
+        return nColors >= 8
+    catch
+        return false
+    end
+end
+
+function areRequirementsMet()::Bool
+    requirementsMet::Bool = true
+    println("Checking the requirements...")
+    if !isAnsiSupport()
+        requirementsMet &= false
+        println("Didn't detect suport for ANSI escape codes.")
+    end
+    if requirementsMet
+        println("Requirements seem to be met.\n")
+    end
+    return requirementsMet
+end
+
+function main()::Nothing
+    println("\nThis is a toy program to play a tic-tac-toe game.")
     println("Note: your terminal must support ANSI escape codes.\n")
+
+    if !areRequirementsMet()
+        println("\nLeaving the program. Goodbye!\n")
+        return nothing
+    end
 
     # y(es) - default choice (also with Enter), anything else: no
     println("Continue with the game? [Y/n]")

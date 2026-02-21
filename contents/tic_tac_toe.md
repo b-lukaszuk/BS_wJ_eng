@@ -153,7 +153,7 @@ Now, we are ready to print.
 ```jl
 s = """
 # https://en.wikipedia.org/wiki/ANSI_escape_code
-function clearLines(nLines::Int)
+function clearLines(nLines::Int)::Nothing
     @assert 0 < nLines "nLines must be a positive integer"
     # "\\033[xxxA" - xxx moves cursor up xxx LINES
     print("\\033[", nLines, "A")
@@ -162,7 +162,7 @@ function clearLines(nLines::Int)
 	return nothing
 end
 
-function printBoard(board::Vec{Str})
+function printBoard(board::Vec{Str})::Nothing
     bd::Vec{Str} = colorFieldNumbers(board)
     bd = colorFirstTriplet(bd)
     for row in LINES[1:3] # first 3 LINES are for rows
@@ -282,7 +282,7 @@ Time to actually make a move that we obtained for a player.
 
 ```jl
 s = """
-function makeMove!(move::Int, player::Str, board::Vec{Str})
+function makeMove!(move::Int, player::Str, board::Vec{Str})::Nothing
     @assert move in eachindex(board) "move must be in range [1-9]"
     @assert player in PLAYERS "player must be X or O"
     if isFree2Take(board[move])
@@ -304,7 +304,7 @@ its display on the screen.
 
 ```jl
 s = """
-function playMove!(player::Str, board::Vec{Str})
+function playMove!(player::Str, board::Vec{Str})::Nothing
     @assert player in PLAYERS "player must be X or O"
     printBoard(board)
     move::Int = (player=="X") ? getUserMove(board) : getComputerMove(board)
@@ -357,7 +357,7 @@ Once the game is over we display an appropriate info.
 
 ```jl
 s = """
-function displayGameOverScreen(player::Str, board::Vec{Str})
+function displayGameOverScreen(player::Str, board::Vec{Str})::Nothing
     @assert player in PLAYERS "player must be X or O"
     printBoard(board)
     print("Game Over. ")
@@ -379,7 +379,7 @@ function togglePlayer(player::Str)::Str
     return player == "X" ? "O" : "X"
 end
 
-function playGame()
+function playGame()::Nothing
     board::Vec{Str} = getNewGameBoard()
     player::Str = "O"
     while !isGameOver(board)
@@ -415,7 +415,7 @@ to run the game from a terminal (with `julia tic_tac_toe.jl`).
 
 ```jl
 s = """
-function main()
+function main()::Nothing
     println("This is a toy program to play a tic-tac-toe game.")
     println("Note: your terminal must support ANSI escape codes.\\n")
 
