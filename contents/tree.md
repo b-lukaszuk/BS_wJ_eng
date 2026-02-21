@@ -43,7 +43,7 @@ Let's start small with an initial definition of `printCatalogTree`.
 
 ```jl
 s1 = """
-function printCatalogTree(path::Str, pad::Str)
+function printCatalogTree(path::Str, pad::Str)::Nothing
     newPad::Str = pad * "   "
     for name in readdir(path)
         newPath::Str = joinpath(path, name)
@@ -57,7 +57,7 @@ function printCatalogTree(path::Str, pad::Str)
     return nothing
 end
 
-function printCatalogTree(path::Str)
+function printCatalogTree(path::Str)::Nothing
     println(path, "/")
     printCatalogTree(path, "")
     return nothing
@@ -97,7 +97,7 @@ guideways that we may follow with our eyes.
 
 ```jl
 s2 = """
-function printCatalogTree(path::Str, pad::Str)
+function printCatalogTree(path::Str, pad::Str)::Nothing
     newPad::Str = pad * "---"
     for name in readdir(path)
         newPath::Str = joinpath(path, name)
@@ -111,7 +111,7 @@ function printCatalogTree(path::Str, pad::Str)
     return nothing
 end
 
-function printCatalogTree(path::Str)
+function printCatalogTree(path::Str)::Nothing
     println(path, "/")
     printCatalogTree(path, "|")
     return nothing
@@ -144,7 +144,8 @@ Not bad at all. Time to add a summary line.
 
 ```jl
 s3 = """
-function printCatalogTree!(path::Str, pad::Str, count::Dict{Str, Int})
+function printCatalogTree!(path::Str, pad::Str,
+                           count::Dict{Str, Int})::Nothing
     newPad::Str = pad * "---"
     for name in readdir(path)
         newPath::Str = joinpath(path, name)
@@ -160,7 +161,7 @@ function printCatalogTree!(path::Str, pad::Str, count::Dict{Str, Int})
     return nothing
 end
 
-function printCatalogTree(path::Str)
+function printCatalogTree(path::Str)::Nothing
     println(path, "/")
     count::Dict{Str, Int}= Dict("nDirs" => 0, "nFiles" => 0)
     printCatalogTree!(path, "|", count)
