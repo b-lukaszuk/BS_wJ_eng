@@ -13,7 +13,7 @@ end
 
 # the terminal must support ANSI escape codes
 # https://en.wikipedia.org/wiki/ANSI_escape_code
-function clearPrintout()
+function clearPrintout()::Nothing
     #"\033[xxxA" - xxx moves cursor up xxx lines
     print("\033[1A")
     # clears from cursor position till end of display
@@ -21,7 +21,7 @@ function clearPrintout()
     return nothing
 end
 
-function animateProgressBar()
+function animateProgressBar()::Nothing
     delayMs::Int = 0
     fans::Vec{Str} = ["\\", "-", "/", "-"]
     ind::Int = 1
@@ -36,7 +36,7 @@ function animateProgressBar()
     return nothing
 end
 
-function main()
+function main()::Nothing
     println("Toy program.")
     println("It animates a progress bar.")
     println("Note: your terminal must support ANSI escape codes.\n")

@@ -81,7 +81,7 @@ so it is not such a big problem after all.
 Now, we are ready to write the first version of our `animateProgressBar`.
 
 ```
-function animateProgressBar()
+function animateProgressBar()::Nothing
     fans::Vec{Str} = ["\\", "-", "/", "-"]
     ind::Int = 1
     for p in 0:100
@@ -140,7 +140,7 @@ Wikipedia's page].
 ```
 # the terminal must support ANSI escape codes
 # https://en.wikipedia.org/wiki/ANSI_escape_code
-function clearPrintout()
+function clearPrintout()::Nothing
     #"\033[xxxA" - xxx moves cursor up xxx lines
     print("\033[1A")
     # clears from cursor position till end of display
@@ -148,7 +148,7 @@ function clearPrintout()
 	return nothing
 end
 
-function animateProgressBar()
+function animateProgressBar()::Nothing
     delayMs::Int = 0
     fans::Vec{Str} = ["\\", "-", "/", "-"]
     ind::Int = 1
@@ -171,7 +171,7 @@ As a final touch we will add some functionality for running our script (saved as
 [terminal](https://en.wikipedia.org/wiki/Terminal_emulator).
 
 ```
-function main()
+function main()::Nothing
     println("Toy program.")
     println("It animates a progress bar.")
     println("Note: your terminal must support ANSI escape codes.\n")
