@@ -219,7 +219,7 @@ function playGame()::Nothing
     return nothing
 end
 
-function isAnsiSupport()::Bool
+function isAnsiColorSupport()::Bool
     try
         nColors::Int = parse(Int, read(`tput colors`, String))
         return nColors >= 8
@@ -231,7 +231,7 @@ end
 function areRequirementsMet()::Bool
     requirementsMet::Bool = true
     println("Checking the requirements...")
-    if !isAnsiSupport()
+    if !isAnsiColorSupport()
         requirementsMet &= false
         println("Didn't detect suport for ANSI escape codes.")
     end
