@@ -3,12 +3,18 @@
 # https://regex101.com/
 # https://www.pcre.org/current/doc/html/pcre2syntax.html
 # https://en.wikiversity.org/wiki/Regular_expressions
-
+# https://docs.julialang.org/en/v1/base/strings/#Base.replace-Tuple{IO,%20AbstractString,%20Vararg{Pair}}
+# https://docs.julialang.org/en/v1/base/strings/#Base.eachmatch
 import Random as Rnd
+
+# the code in this file is meant to serve as a programming exercise only
+# it may not act correctly
 
 const Flt = Float64
 const Str = String
+const Vec = Vector
 
+# e/t 1
 Rnd.seed!(009)
 telNums = [join(Rnd.rand(string.(0:9), 9)) for _ in 1:3]
 
@@ -20,3 +26,4 @@ function getFmtTelNum(num::Str)::Str
 end
 
 getFmtTelNum.(telNums)
+
