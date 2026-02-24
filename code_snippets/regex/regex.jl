@@ -15,15 +15,26 @@ const Str = String
 const Vec = Vector
 
 # e/t 1
-Rnd.seed!(009)
-telNums = [join(Rnd.rand(string.(0:9), 9)) for _ in 1:3]
+function getTxtFromFile(filePath::Str)::Str
+    fileTxt::Str = ""
+    try
+        fileTxt = open(filePath) do file
+            read(file, Str)
+        end
+    catch
+        fileTxt = "Couldn't read '$filePath', please make sure it exists."
+    end
+    return fileTxt
+end
+txt = getTxtFromFile("./loremJohnSmith.txt")
 
-function getFmtTelNum(num::Str)::Str
-    @assert map(isdigit, collect(num)) |> all "not a number"
-    @assert length(num) == 9 "tel numbers have exactly 9 digits"
-    return replace(
-        num, r"^(\d{3})(\d{2})(\d{2})(\d{2})$" => s"\1-\2-\3-\4")
+function getAllMatches(rmi::Base.RegexMatchIterator)::Vec{Str}
+    allMatches::Vec{RegexMatch} = collect(rmi)
+    return isempty(allMatches) ? [] :
+        [regMatch.match for regMatch in allMatches]
 end
 
-getFmtTelNum.(telNums)
+getAllMatches(eachmatch(r"John Smith", txt))
+txt = replace(txt, r"John Smith" => "John S.")
+getAllMatches(eachmatch(r"John Smith", txt))
 
