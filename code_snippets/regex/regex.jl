@@ -38,3 +38,12 @@ getAllMatches(eachmatch(r"John Smith", txt))
 txt = replace(txt, r"John Smith" => "John S.")
 getAllMatches(eachmatch(r"John Smith", txt))
 
+# e/t 2
+txt = getTxtFromFile("./loremDates.txt")
+
+yrRegs = [r"[0-9][0-9][0-9][0-9]", r"[0-9]{4}", r"\d{4}"]
+
+getAllMatches(eachmatch(yrRegs[1], txt))
+getAllMatches(eachmatch(yrRegs[2], txt))
+getAllMatches(eachmatch(yrRegs[3], txt))
+
