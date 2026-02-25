@@ -47,3 +47,17 @@ getAllMatches(eachmatch(yrRegs[1], txt))
 getAllMatches(eachmatch(yrRegs[2], txt))
 getAllMatches(eachmatch(yrRegs[3], txt))
 
+# e/t 3
+txt = getTxtFromFile("./loremDollarsDates.txt")
+
+getAllMatches(eachmatch(r"\d.+\d", txt))
+getAllMatches(eachmatch(r"\d.+?\d", txt))
+getAllMatches(eachmatch(r"\d{1,}", txt))
+getAllMatches(eachmatch(r"$\d{1,}", txt))
+getAllMatches(eachmatch(r"\$\d{1,}", txt))
+
+getAllMatches(eachmatch(r"\$\d{1,4}", txt)) |>
+vecStrDollars -> replace.(vecStrDollars, "\$" => "") |>
+vecStrNumbers -> parse.(Int, vecStrNumbers) |>
+sum
+
