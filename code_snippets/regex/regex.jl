@@ -74,3 +74,14 @@ replace.(datesMMDDYYYY, r"^\d{4}" => "")
 # convert to yyyymmdd
 replace.(datesMMDDYYYY, r"(\d{2})(\d{2})(\d{4})" => s"\3\1\2")
 replace.(datesMMDDYYYY, r"(\d{2})(\d{2})(\d{4})" => s"\3-\1-\2")
+
+# e/t 5
+camelCasedWords = ["helloWorld", "niceToMeetYou", "translateToEnglish"]
+# funny, Julia allows for \1 (captures) but not \l (lowercase) from pcre2
+# replace.(camelCasedWords, r"([A-Z])" => s"\l\1")
+# no biggie, we'll do it with an anonymous function
+replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_$(lowercase(AtoZ))")
+
+snakeCasedWords = ["hello_world", "nice_to_meet_you", "translate_to_english"]
+replace.(snakeCasedWords, r"_([a-z])" => _atoz -> "$(uppercase(_atoz[2:end]))")
+
