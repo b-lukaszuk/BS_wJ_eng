@@ -61,3 +61,16 @@ vecStrDollars -> replace.(vecStrDollars, "\$" => "") |>
 vecStrNumbers -> parse.(Int, vecStrNumbers) |>
 sum
 
+# e/t 4
+datesMMDDYYYY = [
+   "01042025",
+   "11012018",
+   "12311999",
+]
+
+# extract year only
+replace.(datesMMDDYYYY, r"^\d{4}" => "")
+
+# convert to yyyymmdd
+replace.(datesMMDDYYYY, r"(\d{2})(\d{2})(\d{4})" => s"\3\1\2")
+replace.(datesMMDDYYYY, r"(\d{2})(\d{2})(\d{4})" => s"\3-\1-\2")
