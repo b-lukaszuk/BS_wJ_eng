@@ -85,3 +85,15 @@ replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_$(lowercase(AtoZ))")
 snakeCasedWords = ["hello_world", "nice_to_meet_you", "translate_to_english"]
 replace.(snakeCasedWords, r"_([a-z])" => _atoz -> "$(uppercase(_atoz[2:end]))")
 
+# e/t 6
+Rnd.seed!(009)
+telNums = [join(Rnd.rand(string.(0:9), 9)) for _ in 1:3]
+
+function getFmtTelNum(num::Str)::Str
+    @assert map(isdigit, collect(num)) |> all "not a number"
+    @assert length(num) == 9 "tel numbers have exactly 9 digits"
+    return replace(
+        num, r"^(\d{3})(\d{2})(\d{2})(\d{2})$" => s"\1-\2-\3-\4")
+end
+
+getFmtTelNum.(telNums)
