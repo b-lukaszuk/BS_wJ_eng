@@ -1,0 +1,11 @@
+This is a lorem ipsum text from: https://en.wikipedia.org/wiki/Lorem_ipsum it
+contains a randomly placed amounts of money and years. It is used for
+educational purpose only.
+
+Lorem ipsum dolor sit $112 amet consectetur 1234 adipiscing elit sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut $200 enim ad minim veniam
+quis nostrud $173 exercitation ullamco 1492 laboris nisi ut aliquip ex ea
+commodo consequat. $1180 Duis aute irure dolor in $122 reprehenderit in
+voluptate velit esse $113 cillum dolore eu $3333 fugiat nulla pariatur.
+Excepteur $444 sint occaecat cupidatat non $212 proident sunt in culpa qui
+officia $534 deserunt mollit anim id est laborum.
