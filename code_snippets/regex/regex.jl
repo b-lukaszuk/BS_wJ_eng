@@ -108,3 +108,24 @@ getAllMatches(eachmatch(mailReg, txt)) |> unique
 means_sds = ["100,15", "25,2.5", "88,8.0"]
 replace.(means_sds, r"(\d{1,}),(\d{1,})" => s"mean = \1, sd = \2")
 
+# e/t 9
+firstNameOption = ["Peter", "Adam", "Tom", "John", "Jane", "Eve", "Mary"]
+lastNameOption = ["Smith", "Doe", "Brown", "Johnson"]
+
+function getRandName(n::Int = 3,
+                     first::Vec{Str}=firstNameOption,
+                     last::Vec{Str}=lastNameOption)::Vec{Str}
+    @assert n > 0 "n must be > 0"
+    result::Vec{Str} = []
+    parts::Vec{Str} = []
+    for _ in 1:n
+        parts = [Rnd.rand(first), Rnd.rand(last)]
+        push!(result, join(parts, " "))
+    end
+    return result
+end
+
+Rnd.seed!(824)
+firstLastNames = getRandName()
+replace.(firstLastNames, r"([A-z]+) ([A-z]+)" => s"\2 \1")
+
