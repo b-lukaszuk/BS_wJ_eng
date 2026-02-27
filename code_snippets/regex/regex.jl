@@ -81,9 +81,10 @@ camelCasedWords = ["helloWorld", "niceToMeetYou", "translateToEnglish"]
 # replace.(camelCasedWords, r"([A-Z])" => s"\l\1")
 # no biggie, we'll do it with an anonymous function
 replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_$(lowercase(AtoZ))")
+replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_" * lowercase(AtoZ))
 
 snakeCasedWords = ["hello_world", "nice_to_meet_you", "translate_to_english"]
-replace.(snakeCasedWords, r"_([a-z])" => _atoz -> "$(uppercase(_atoz[2:end]))")
+replace.(snakeCasedWords, r"_[a-z]" => _atoz -> uppercase(_atoz[2:end]))
 
 # e/t 6
 Rnd.seed!(009)
