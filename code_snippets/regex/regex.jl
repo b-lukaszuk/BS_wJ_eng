@@ -97,3 +97,14 @@ function getFmtTelNum(num::Str)::Str
 end
 
 getFmtTelNum.(telNums)
+
+# e/t 7
+txt = getTxtFromFile("./loremMail.txt")
+
+mailReg = r"[a-z0-9.]+@[a-z0-9.]+"
+getAllMatches(eachmatch(mailReg, txt)) |> unique
+
+# e/t 8
+means_sds = ["100,15", "25,2.5", "88,8.0"]
+replace.(means_sds, r"(\d{1,}),(\d{1,})" => s"mean = \1, sd = \2")
+
