@@ -17,7 +17,7 @@ numeral](https://en.wikipedia.org/wiki/English_numerals) with the words. Case in
 point would be to write a sum of money on a cheque or to display it in a finance
 (perhaps bank) app. So here is a task for you. Write a program in Julia that for
 any number let's say in the range of 1 to 999,999 returns its transcription with
-words.
+words. You may handle only integers.
 
 ## Solution {#sec:cheque_solution}
 
@@ -25,19 +25,19 @@ We begin by defining a few constants that will be useful later on.
 
 ```jl
 s = """
-UNITS_AND_TEENS = Dict(0 => "zero", 1 => "one",
-                     2 => "two", 3 => "three", 4 => "four",
-                     5 => "five", 6 => "six", 7 => "seven",
-                     8 => "eight", 9 => "nine", 10 => "ten",
-                     11 => "eleven", 12 => "twelve",
-                     13 => "thirteen", 14 => "fourteen",
-                     15 => "fifteen", 16 => "sixteen",
-                     17 => "seventeen", 18 => "eighteen",
-                     19 => "nineteen")
+UNITS_AND_TEENS = Dict(1 => "one",
+                             2 => "two", 3 => "three", 4 => "four",
+                             5 => "five", 6 => "six", 7 => "seven",
+                             8 => "eight", 9 => "nine", 10 => "ten",
+                             11 => "eleven", 12 => "twelve",
+                             13 => "thirteen", 14 => "fourteen",
+                             15 => "fifteen", 16 => "sixteen",
+                             17 => "seventeen", 18 => "eighteen",
+                             19 => "nineteen")
 
-TENS = Dict(20 => "twenty", 30 => "thrity",
-            40 => "forty", 50 => "fifty", 60 => "sixty",
-            70 => "seventy", 80 => "eigthy", 90 => "ninety")
+TENS = Dict(2 => "twenty", 3 => "thrity",
+                  4 => "forty", 5 => "fifty", 6 => "sixty",
+                  7 => "seventy", 8 => "eigthy", 9 => "ninety")
 """
 replace(sc(s), r"\bUNITS" => "const UNITS", r"\bTENS " => "const TENS ")
 ```
@@ -61,8 +61,8 @@ function getEngNumeralUpto99(n::Int)::Str
     if n < 20
         return UNITS_AND_TEENS[n]
     end
-    u::Int = rem(n, 10) # u - units
-    result::Str = TENS[n-u]
+    t::Int, u::Int = divrem(n, 10) # t - tens, u - units
+    result::Str = TENS[t]
     if u != 0
         result *= "-" * UNITS_AND_TEENS[u]
     end
@@ -74,18 +74,20 @@ sc(s)
 
 Whenever a number (`n`) is below 20 (`if n < 20`) we just return its
 representation from the `UNITS_AND_TEENS` dictionary. Alternatively, for `n` in
-the `TENS`, first we obtain the units (`u`) part, which is a reminder of
-dividing `n` by `10` (`rem(n, 10)`). We use it (`u`), to obtain the transcript
-for the TENS (`TENS[n-u]`). It becomes our `result` to which we attach the
-transcript for units separated by a hyphen (`"-" * UNITS_AND_TEENS[u]`), but only
-if the unit is different than zero (`if u != 0`).
+the `TENS`, first we obtain the tens (`t`) and units (`u`) part.
+[divrem](https://docs.julialang.org/en/v1/base/math/#Base.divrem) is a
+combination of `div` (an integer division) and `rem` (a reminder after the
+division). We use it, to obtain the transcript for the TENS (`TENS[t]`). It
+becomes our `result` to which we attach the transcript for units separated by a
+hyphen (`"-" * UNITS_AND_TEENS[u]`), but only if the unit is different than zero
+(`if u != 0`).
 
 Time for a test ride.
 
 ```jl
 s = """
 (
-	getEngNumeralUpto99.([0, 5, 9, 11, 13, 20, 21]),
+	getEngNumeralUpto99.([5, 9, 11, 13, 20, 21]),
 	getEngNumeralUpto99.([25, 32, 58, 64, 66]),
 	getEngNumeralUpto99.([79, 83, 95, 99])
 )
@@ -130,7 +132,7 @@ Time for a test.
 ```jl
 s = """
 (
-	getEngNumeralUpto999.([0, 9, 13, 20, 66, 95]),
+	getEngNumeralUpto999.([9, 13, 20, 66]),
 	getEngNumeralUpto999.([101, 109, 110]),
 	getEngNumeralUpto999.([320, 400, 500])
 )
@@ -180,7 +182,7 @@ Let's see our creation at work.
 ```jl
 s = """
 (
-	getEngNumeralBelow1M.([0, 21, 64, 95]),
+	getEngNumeralBelow1M.([5, 9, 13, 21, 40, 95]),
 	getEngNumeralBelow1M.([101, 320, 500]),
 	getEngNumeralBelow1M.([1_800]),
 	getEngNumeralBelow1M.([96_779]),
@@ -191,6 +193,54 @@ s = """
 replace(sco(s), "], " => "],\n")
 ```
 
-Mission, completed. If you ever wanted to transcribe a number in the range of
-millions, you know what to do. Use `getEngNumeralBelow1M` as its building block,
-and write it according to the above-presented schema.
+Mission, completed. We wrote three functions that allow us to write down any
+number we want in the range [1-999,999]. Still, you could argue that there is
+some code duplication. If that bothers you, you may try to shorten the solution
+to something like:
+
+```jl
+s = """
+function getEngNumeral(n::Int)::Str # uses recursion
+    @assert 0 <= n < 1e6 "n must be in range [0-1e6)"
+    major::Int, minor::Int = 0, 0
+    if n < 20
+        return UNITS_AND_TEENS[n]
+    elseif n < 100
+        major, minor = divrem(n, 10)
+        return TENS[major] * (
+            minor == 0 ? "" : "-" * UNITS_AND_TEENS[minor]
+        )
+    elseif n < 1000
+        major, minor = divrem(n, 100)
+        return getEngNumeral(major) * " hundred" * (
+            minor == 0 ? "" : " and " * getEngNumeral(minor)
+        )
+    else # < 1e6 due to @assert above
+        major, minor = divrem(n, 1_000)
+        return getEngNumeral(major) * " thousand" * (
+            minor == 0 ? "" :
+            minor < 100 ? " and " * getEngNumeral(minor) :
+            ", " * getEngNumeral(minor)
+        )
+    end
+end
+"""
+sco(s)
+```
+
+This allowed us to reduce the number of lines of code roughly by half, while
+maintaining the functionality.
+
+```jl
+s = """
+(
+	getEngNumeral.([5, 9, 13, 21, 40, 95]),
+	getEngNumeral.([101, 320, 500]),
+	getEngNumeral.([1_800]),
+	getEngNumeral.([96_779]),
+	getEngNumeral.([180_000]),
+	getEngNumeral.([889_308])
+)
+"""
+replace(sco(s), "], " => "],\n")
+```
