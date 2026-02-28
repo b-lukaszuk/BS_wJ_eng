@@ -150,6 +150,9 @@ function getRandName2(n::Int = 3,
     return result
 end
 
-Rnd.seed!(822)
+Rnd.seed!(715)
 firstMiddleLastNames = getRandName2(4)
 replace.(firstMiddleLastNames, r"([A-z ]+) ([A-z]+)$" => s"\2, \1")
+
+# e/t 10
+replace.(firstMiddleLastNames, r" ([A-Z])[a-z]+ " => s" \1. ")
