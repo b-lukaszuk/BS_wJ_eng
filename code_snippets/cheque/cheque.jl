@@ -78,7 +78,7 @@ getEngNumeralBelow1M.([1_800, 4_547, 5_005, 10_800, 96_779,
 
 # shorter version
 function getEngNumeral(n::Int)::Str # uses recursion
-    @assert 0 <= n < 1e6 "n must be in range [0-1e6)"
+    @assert 0 < n < 1e6 "n must be in range (0-1e6)"
     major::Int, minor::Int = 0, 0
     if n < 20
         return UNITS_AND_TEENS[n]
