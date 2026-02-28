@@ -43,12 +43,12 @@ replace(sc(s), r"\bUNITS" => "const UNITS", r"\bTENS " => "const TENS ")
 ```
 
 > Note. Using `const` with mutable containers like vectors or dictionaries
-> allows to change their contents in the future, e.g., with `push!`. So the
-> `const` used here is more like a convention, a signal that we do not plan to
-> change the containers in the future. If we really wanted an immutable
-> container then we should consider a(n) (immutable) tuple. Anyway, some
-> programming languages suggest that `const` names should be declared using all
-> uppercase characters to make them stand out. Here, I follow this convention.
+> allows to change their contents later on, e.g., with `push!`. So the `const`
+> used here is more like a convention, a signal that we do not plan to change
+> the containers in the future. If we really wanted an immutable container then
+> we should consider a(n) (immutable) tuple. Anyway, some programming languages
+> suggest that `const` names should be declared using all uppercase characters
+> to make them stand out. Here, I follow this convention.
 
 The above are just mappings between the necessary basic key ingredients of our
 number soup. Let's use them to get the transcript for numbers in the range of 0

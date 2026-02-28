@@ -51,6 +51,14 @@ end
 canvas = fill(getBgColor(:gray), 30, 60)
 ```
 
+> Note. Using `const` with mutable containers like vectors or dictionaries
+> allows to change their contents later on, e.g., with `push!`. So the `const`
+> used here is more like a convention, a signal that we do not plan to change
+> the containers in the future. If we really wanted an immutable container then
+> we should consider a(n) (immutable) tuple. Anyway, some programming languages
+> suggest that `const` names should be declared using all uppercase characters
+> to make them stand out. Here, I follow this convention.
+
 Next, we want a way to properly display canvas (`printCanvas`) and to clear it
 (`clearCanvas!`). This last method will allow us to erase an incorrect drawing
 and try again and again if we need to.
