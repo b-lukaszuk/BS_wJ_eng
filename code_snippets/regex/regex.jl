@@ -130,3 +130,26 @@ Rnd.seed!(824)
 firstLastNames = getRandName()
 replace.(firstLastNames, r"([A-z]+) ([A-z]+)" => s"\2 \1")
 
+# e/t 9
+function getRandName2(n::Int = 3,
+                      first::Vec{Str}=firstNameOption,
+                      middle::Vec{Str}=firstNameOption,
+                      last::Vec{Str}=lastNameOption)::Vec{Str}
+    @assert n > 0 "n must be > 0"
+    result::Vec{Str} = []
+    parts::Vec{Str} = []
+    for _ in 1:n
+        if Rnd.rand([true, false])
+            parts = [Rnd.rand(first), Rnd.rand(middle), Rnd.rand(last)]
+        else
+            parts = [Rnd.rand(first), Rnd.rand(last)]
+        end
+        push!(result, join(parts, " "))
+    end
+    return result
+    return result
+end
+
+Rnd.seed!(822)
+firstMiddleLastNames = getRandName2(4)
+replace.(firstMiddleLastNames, r"([A-z ]+) ([A-z]+)$" => s"\2, \1")
