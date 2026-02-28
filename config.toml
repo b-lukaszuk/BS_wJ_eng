@@ -18,6 +18,7 @@ contents = [
     "format_text",
     "roman_numerals",
     "cheque",
+    "regex",
     "binary",
     "leap_year",
     "calendar",
