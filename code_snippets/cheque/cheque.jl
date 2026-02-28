@@ -4,7 +4,7 @@ const Str = String
 # it may not act correctly
 
 # https://en.wikipedia.org/wiki/English_numerals
-const UNITS_AND_TEENS = Dict(0 => "zero", 1 => "one",
+const UNITS_AND_TEENS = Dict(0 => "", 1 => "one",
                            2 => "two", 3 => "three", 4 => "four",
                            5 => "five", 6 => "six", 7 => "seven",
                            8 => "eight", 9 => "nine", 10 => "ten",
@@ -31,7 +31,7 @@ function getEngNumeralUpto99(n::Int)::Str
     return result
 end
 
-getEngNumeralUpto99.([0, 5, 9, 11, 13, 20, 21, 25, 32, 40, 45,
+getEngNumeralUpto99.([5, 9, 11, 13, 20, 21, 25, 32, 40, 45,
                       58, 64, 66, 79, 83, 95, 99])
 
 function getEngNumeralUpto999(n::Int)::Str
@@ -47,7 +47,7 @@ function getEngNumeralUpto999(n::Int)::Str
     return result
 end
 
-getEngNumeralUpto999.([0, 5, 9, 11, 13, 20, 21, 25, 32, 40, 45,
+getEngNumeralUpto999.([5, 9, 11, 13, 20, 21, 25, 32, 40, 45,
                        58, 64, 66, 79, 83, 95, 99])
 getEngNumeralUpto999.([101, 109, 110, 117, 120, 152, 200, 208, 394, 400, 999])
 
@@ -69,9 +69,48 @@ function getEngNumeralBelow1M(n::Int)::Str
     return result
 end
 
-getEngNumeralBelow1M.([0, 5, 9, 11, 13, 20, 21, 25, 32, 40, 45,
+getEngNumeralBelow1M.([5, 9, 11, 13, 20, 21, 25, 32, 40, 45,
                        58, 64, 66, 79, 83, 95, 99])
 getEngNumeralBelow1M.([101, 109, 110, 117, 120, 152, 200, 208, 394, 400, 999])
 getEngNumeralBelow1M.([1_800, 4_547, 5_005, 10_800, 96_779,
                        108_090, 108_001, 189_014, 500_506,
                        889_308])
+
+function getEngNumeral(n::Int)::Str
+    @assert 0 <= n < 1e6 "n must be in range [0-1e6)"
+    major::Int, minor::Int = 0, 0
+    if n < 20
+        return UNITS_AND_TEENS[n]
+    elseif n < 100
+        major, minor = divrem(n, 10)
+        return TENS[major*10] * (
+            minor == 0 ? "" : "-" * UNITS_AND_TEENS[minor]
+        )
+    elseif n < 1000
+        major, minor = divrem(n, 100)
+        return getEngNumeral(major) * " hundred" * (
+            minor == 0 ? "" : " and " * getEngNumeral(minor)
+        )
+    else # < 1e6 due to @assert above
+        major, minor = divrem(n, 1_000)
+        return getEngNumeral(major) * " thousand" * (
+            minor == 0 ? "" :
+            minor < 100 ? " and " * getEngNumeral(minor) :
+            ", " * getEngNumeral(minor)
+        )
+    end
+end
+
+xs = getEngNumeralBelow1M.([5, 9, 11, 13, 20, 21, 25, 32, 40, 45, 58, 64, 66, 79, 83, 95, 99])
+ys = getEngNumeral.([5, 9, 11, 13, 20, 21, 25, 32, 40, 45, 58, 64, 66, 79, 83, 95, 99])
+xs == ys
+
+xs = getEngNumeralBelow1M.([101, 109, 110, 117, 120, 152, 200, 208, 394, 400, 999])
+ys = getEngNumeral.([101, 109, 110, 117, 120, 152, 200, 208, 394, 400, 999])
+xs == ys
+
+xs = getEngNumeralBelow1M.([1_800, 4_547, 5_005, 10_800, 96_779,
+                            108_090, 108_001, 189_014, 500_506, 889_308])
+ys = getEngNumeral.([1_800, 4_547, 5_005, 10_800, 96_779,
+                            108_090, 108_001, 189_014, 500_506, 889_308])
+xs == ys
