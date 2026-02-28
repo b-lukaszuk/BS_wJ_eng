@@ -14,17 +14,17 @@ const UNITS_AND_TEENS = Dict(0 => "", 1 => "one",
                            17 => "seventeen", 18 => "eighteen",
                            19 => "nineteen")
 
-const TENS = Dict(20 => "twenty", 30 => "thrity",
-                  40 => "forty", 50 => "fifty", 60 => "sixty",
-                  70 => "seventy", 80 => "eigthy", 90 => "ninety")
+const TENS = Dict(2 => "twenty", 3 => "thrity",
+                  4 => "forty", 5 => "fifty", 6 => "sixty",
+                  7 => "seventy", 8 => "eigthy", 9 => "ninety")
 
 function getEngNumeralUpto99(n::Int)::Str
     @assert 0 <= n <= 99 "n must be in range [0-99]"
     if n < 20
         return UNITS_AND_TEENS[n]
     end
-    u::Int = rem(n, 10) # u - units
-    result::Str = TENS[n-u]
+    t::Int, u::Int = divrem(n, 10) # t - tens, u - units
+    result::Str = TENS[t]
     if u != 0
         result *= "-" * UNITS_AND_TEENS[u]
     end
@@ -83,7 +83,7 @@ function getEngNumeral(n::Int)::Str
         return UNITS_AND_TEENS[n]
     elseif n < 100
         major, minor = divrem(n, 10)
-        return TENS[major*10] * (
+        return TENS[major] * (
             minor == 0 ? "" : "-" * UNITS_AND_TEENS[minor]
         )
     elseif n < 1000
