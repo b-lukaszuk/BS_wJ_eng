@@ -156,3 +156,23 @@ replace.(firstMiddleLastNames, r"([A-z ]+) ([A-z]+)$" => s"\2, \1")
 
 # e/t 10
 replace.(firstMiddleLastNames, r" ([A-Z])[a-z]+ " => s" \1. ")
+
+# e/t 11
+nums1 = [0, 1, 12, 123, 1234, 12345, 123456, 1234567, 12345678, 123456789]
+
+# ver 1
+function fmtN(n::Int)::Str
+    @assert n >= 0 "n must be >= 0"
+    result::Str = replace(reverse(string(n)), r"(\d{3})" => s"\1,")
+    return replace(result, r",$" => "") |> reverse
+end
+
+fmtN.(nums1) .* " USD"
+
+# ver 2 shorter, but more enigmatic, uses positive look-ahead
+function fmtN(n::Int)::Str
+    @assert n >= 0 "n must be >= 0"
+    return replace(string(n), r"(\d)(?=(\d{3})+$)" => s"\1,")
+end
+
+fmtN.(nums1) .* " USD"
