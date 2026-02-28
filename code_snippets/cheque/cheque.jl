@@ -4,15 +4,15 @@ const Str = String
 # it may not act correctly
 
 # https://en.wikipedia.org/wiki/English_numerals
-const UNITS_AND_TEENS = Dict(0 => "", 1 => "one",
-                           2 => "two", 3 => "three", 4 => "four",
-                           5 => "five", 6 => "six", 7 => "seven",
-                           8 => "eight", 9 => "nine", 10 => "ten",
-                           11 => "eleven", 12 => "twelve",
-                           13 => "thirteen", 14 => "fourteen",
-                           15 => "fifteen", 16 => "sixteen",
-                           17 => "seventeen", 18 => "eighteen",
-                           19 => "nineteen")
+const UNITS_AND_TEENS = Dict(1 => "one",
+                             2 => "two", 3 => "three", 4 => "four",
+                             5 => "five", 6 => "six", 7 => "seven",
+                             8 => "eight", 9 => "nine", 10 => "ten",
+                             11 => "eleven", 12 => "twelve",
+                             13 => "thirteen", 14 => "fourteen",
+                             15 => "fifteen", 16 => "sixteen",
+                             17 => "seventeen", 18 => "eighteen",
+                             19 => "nineteen")
 
 const TENS = Dict(2 => "twenty", 3 => "thrity",
                   4 => "forty", 5 => "fifty", 6 => "sixty",
@@ -76,7 +76,8 @@ getEngNumeralBelow1M.([1_800, 4_547, 5_005, 10_800, 96_779,
                        108_090, 108_001, 189_014, 500_506,
                        889_308])
 
-function getEngNumeral(n::Int)::Str
+# shorter version
+function getEngNumeral(n::Int)::Str # uses recursion
     @assert 0 <= n < 1e6 "n must be in range [0-1e6)"
     major::Int, minor::Int = 0, 0
     if n < 20
@@ -101,6 +102,7 @@ function getEngNumeral(n::Int)::Str
     end
 end
 
+# comparison of two versions
 xs = getEngNumeralBelow1M.([5, 9, 11, 13, 20, 21, 25, 32, 40, 45, 58, 64, 66, 79, 83, 95, 99])
 ys = getEngNumeral.([5, 9, 11, 13, 20, 21, 25, 32, 40, 45, 58, 64, 66, 79, 83, 95, 99])
 xs == ys
