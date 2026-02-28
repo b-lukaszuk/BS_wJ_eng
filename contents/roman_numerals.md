@@ -63,12 +63,12 @@ order of the pairs of values. Notice, that we incluced the key landmarks
 of subtractive notation (e.g. `("CM", 900)` or `("IV", 4)`).
 
 > Note. Using `const` with mutable containers like vectors or dictionaries
-> allows to change their contents in the future, e.g., with `push!`. So the
-> `const` used here is more like a convention, a signal that we do not plan to
-> change the containers in the future. If we really wanted an immutable
-> container then we should consider a(n) (immutable) tuple. Anyway, some
-> programming languages suggest that `const` names should be declared using all
-> uppercase characters to make them stand out. Here, I follow this convention.
+> allows to change their contents later on, e.g., with `push!`. So the `const`
+> used here is more like a convention, a signal that we do not plan to change
+> the containers in the future. If we really wanted an immutable container then
+> we should consider a(n) (immutable) tuple. Anyway, some programming languages
+> suggest that `const` names should be declared using all uppercase characters
+> to make them stand out. Here, I follow this convention.
 
 Now, we are ready to take the next step.
 

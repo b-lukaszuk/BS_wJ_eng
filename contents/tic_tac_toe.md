@@ -58,12 +58,12 @@ replace(sc(s), r"\bPLAYERS" => "const PLAYERS", r"\bLINES " => "const LINES")
 ```
 
 > Note. Using `const` with mutable containers like vectors or dictionaries
-> allows to change their contents in the future, e.g., with `push!`. So the
-> `const` used here is more like a convention, a signal that we do not plan to
-> change the containers in the future. If we really wanted an immutable
-> container then we should consider a(n) (immutable) tuple. Anyway, some
-> programming languages suggest that `const` names should be declared using all
-> uppercase characters to make them stand out. Here, I follow this convention.
+> allows to change their contents later on, e.g., with `push!`. So the `const`
+> used here is more like a convention, a signal that we do not plan to change
+> the containers in the future. If we really wanted an immutable container then
+> we should consider a(n) (immutable) tuple. Anyway, some programming languages
+> suggest that `const` names should be declared using all uppercase characters
+> to make them stand out. Here, I follow this convention.
 
 The two are: `PLAYERS`, a vector with marks used by each of the players (`"X"` -
 human, `"O"` - computer) and the coordinates of `LINES` in our game board that
