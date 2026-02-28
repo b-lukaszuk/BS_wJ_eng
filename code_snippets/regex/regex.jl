@@ -176,3 +176,22 @@ function fmtN(n::Int)::Str
 end
 
 fmtN.(nums1) .* " USD"
+
+# e/t 12 - extension of the previous one
+nums2 = [0, 0.1, 1, 1.2, 12., 12.34, 123.472, 1234, 12345, 12345.67, 123456.7, 1234567.89]
+
+function getDollarPennies(money::Flt)::Tuple{Int, Int}
+    @assert money >= 0 "money must be >= 0"
+    integralPart::Int = floor(Int, money)
+    decimalPart::Flt = money % 1
+    return (integralPart, round(Int, decimalPart*100))
+end
+
+function fmtN(n::Flt)::Str
+    @assert n >= 0 "n must be >= 0"
+    dollars::Int, pennies::Int = getDollarPennies(n)
+    result::Str = fmtN(dollars)
+    return result * string(".", pennies)
+end
+
+fmtN.(nums2) .* " USD"
