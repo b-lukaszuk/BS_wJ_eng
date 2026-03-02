@@ -41,7 +41,7 @@ This could be done, e.g. by manually replacing his last name with the first
 letter, but it's kind of tedious and boring. It could be sped up with a [word
 processing
 program](https://en.wikipedia.org/wiki/List_of_word_processor_programs) in which
-`Ctrl+F` is an abbreviation for a `find` command. In Julia this could be done
+`Ctrl+F` is a shortcut for a `find` command. In Julia this could be done
 with [eachmatch](https://docs.julialang.org/en/v1/base/strings/#Base.eachmatch)
 like so:
 
@@ -62,8 +62,34 @@ Here we defined a little helper function (`getAllMatches`), that will help us to
 extract the matches as a vector of strings which is easier to read. Notice, the
 `r"John Smith"` argument sent to `eachmatch`. The `r` indicates that the
 following characters compose no ordinary string but a special one that is called
-a [regular expression](https://en.wikipedia.org/wiki/Regular_expression). It may
-not seem like much right now, but we'll see it potential in a moment.
+a [regular expression](https://en.wikipedia.org/wiki/Regular_expression) (or
+regex). It may not seem like much right now, but we'll see its potential in a
+moment.
+
+Once we confirmed the phrase existence we may wish to obfuscate it. Again, in a
+word processing program this would be likely done with `Ctrl+H` that stands for
+`find and replace` command. In Julia, we would do with something like:
+
+```
+# in Julia strings are immutable
+# to make changes permament write it to `txt` and/or to a file
+txt = replace(txt, r"John Smith" => "John S")
+getAllMatches(eachmatch(r"John Smith", txt))
+```
+
+```
+String[]
+```
+
+There, we did our job, identity of a suspect was protected. We may now write the
+file on a disk and send the press report. I imagine now you're wondering what's
+the big deal with those regexes anyway, it doesn't seem that we've done anything
+unusual for a person with basic computer literacy. We'll you're right. We
+didn't. That's because in order to have a regex we need to use some
+meta-characters, i.e. a special symbols that are interpreted beyond their
+literal meaning.
+
+Let me demonstrate it with another example.
 
 ## Solution {#sec:regex_solution}
 
