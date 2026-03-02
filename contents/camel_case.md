@@ -46,13 +46,13 @@ underscores ("_") and the characters from the Latin alphabet.
 
 ## Solution {#sec:camel_case_solution}
 
-One of the most succinct solutions (and the one quite performant) would be based
-on [regular expressions](https://en.wikipedia.org/wiki/Regular_expression) (also
-called regexes). Although Julia does have a regex support (see [the
-docs](https://docs.julialang.org/en/v1/base/strings/#Base.Regex)) such a
-solution would seem rather arcane and off-putting for newcomers. Therefore, to
-keep things simple our approach will rely on good old for loops and
-conditionals.
+One of the most succinct (and quite performant) solutions would be based on
+[regular expressions](https://en.wikipedia.org/wiki/Regular_expression) (also
+called regexes). Julia does have a regex support (see [the
+docs](https://docs.julialang.org/en/v1/base/strings/#Base.Regex)). Although at
+first glance such regexes seem arcane and off-putting, we'll explore this venue
+in @sec:regex_problem. For now, in order to keep things simple our approach will
+rely on good old for loops and conditionals.
 
 First `changeToSnakeCase` as it is simpler to write (start small and build).
 
