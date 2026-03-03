@@ -12,6 +12,12 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/regex)
 
 ## Problem {#sec:regex_problem}
 
+### Regex Intro {#sec:regex_problem_intro}
+
+> **_Note:_** This subsection provides a short description of regular
+> expressions. You may skip it if you know what a regex is. In that case go to
+> the task specification right away (see @sec:regex_problem_task).
+
 Imagine you work at a police station that happened to arrest John Smith who is a
 suspect in a certain case you ran. In your country the exact details of an
 accused person are to be protected so your job is to remove or obfuscate any
@@ -112,24 +118,71 @@ thousand numbers. But wait, a simple regex can save me a lot of work. Observe:
 
 ```jl
 s = """
-getAllMatches(eachmatch(r"[0-9][0-9][0-9][0-9]", txt))
+getAllMatches(
+    eachmatch(
+        r"[0-9][0-9][0-9][0-9]",
+        txt
+    )
+)
 """
 sco(s)
 ```
 
-The `[...]` is a positive character class that matches any of the enclosed
-characters. Therefore, `[0123456789]` would mean match any character used to
-represent a digit (`0` or `1` or `2` or ...). In general the contents of a
-positive character class are interpreted literally with the exception of `\`,
-`^` at the beginning, and `-` between two characters. In the last case, the
-hyphen (`-`) means any character within a range. Typically its used in the
-following configurations: `[0-9]`, `[a-z]`, `[A-Z]`, or `[A-z]`. The range is
-likely determined based on the underlying codes (e.g. like
+This returned us all 4-digit sets in the order they appear in the text (left to
+right, top to bottom).
+
+In regex (`r"..."`), the `[...]` is a positive character class that matches any
+of the enclosed characters. Therefore, `[0123456789]` would mean match any
+character used to represent a digit (`0` or `1` or `2` or ...). In general the
+contents of a positive character class are interpreted literally with the
+exception of `\`, `^` at the beginning, and `-` between two characters. In the
+last case, the hyphen (`-`) means any character within a range. Typically its
+used in the following configurations: `[0-9]`, `[a-z]`, `[A-Z]`, or `[A-z]`. The
+range is likely determined based on the underlying codes (e.g. like
 [ASCII](https://en.wikipedia.org/wiki/ASCII)). Therefore, the last expression
 must be written as `[A-z]` (it means match any, small or capital, letter) and
 not `[a-Z]`. Anyway, in our case a regex of the form `r"[0-9][0-9][0-9][0-9]"`)
-means match any digit (`[0-9]`) followed by a digit (`[0-9]`), followed by a
-digit (`[0-9]`), followed by a digit (`[0-9]`) (exactly 4 digits in a row).
+means match a digit (`[0-9]`) followed by a digit (`[0-9]`), followed by a digit
+(`[0-9]`), followed by a digit (`[0-9]`) (exactly 4 digits in a row).
+
+Interestingly, we could save us some typing by using other meta-characters for
+this problem, i.e.
+
+```jl
+s = """
+getAllMatches(
+    eachmatch(
+        r"[0-9]{4}",
+        txt
+    )
+)
+"""
+sco(s)
+```
+
+The `{4}` means exactly 4 repetitions of a preceding character class (which is
+`[0-9]`, so a digit).
+
+Some newer regex engines allow to shorten it even more:
+
+```jl
+s = """
+getAllMatches(
+    eachmatch(
+        r"\\d{4}",
+        txt
+    )
+)
+"""
+sco(s)
+```
+
+Where `\d` means any digit (usually `\` gives a special meaning to the following
+character) and `{4}` still designates exactly 4 repetitions of a previous token.
+
+### Regex Task {#sec:regex_problem_task}
+
+The task goes here.
 
 ## Solution {#sec:regex_solution}
 
