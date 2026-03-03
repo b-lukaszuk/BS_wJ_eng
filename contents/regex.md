@@ -87,9 +87,14 @@ the big deal with those regexes anyway, it doesn't seem that we've done anything
 unusual for a person with basic computer literacy. We'll you're right. We
 didn't. That's because in order to have a regex we need to use some
 meta-characters, i.e. a special symbols that are interpreted beyond their
-literal meaning.
+literal meaning. Their list is rather long, but as stated in [the
+docs](https://docs.julialang.org/en/v1/manual/strings/#man-regex-literals) it
+may be found at [the PCRE2 syntax
+manpage](https://www.pcre.org/current/doc/html/pcre2syntax.html).
 
-Let me demonstrate it with another example.
+Instead of going through all the meta-characters (admittedly an impossible task
+for a short book chapter) let me just demonstrate a few of the more important
+ones with some illustrative examples.
 
 ## Solution {#sec:regex_solution}
 
