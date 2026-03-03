@@ -168,12 +168,15 @@ Now, for left-, right- and center alignment, each line will have to be padded
 with space characters (`PAD`) placed on the right, left, and both sides,
 respectively. For that we need to know the difference between the number of
 characters in our line and its target length. Moreover, we need a padding
-function that we will name `padLine` (to practice coding even more we will not
-use the built in
-[lpad](https://docs.julialang.org/en/v1/base/strings/#Base.lpad) and
-[rpad](https://docs.julialang.org/en/v1/base/strings/#Base.rpad)). Notice, the
-usage of the `*` operator that glues two strings together and the `^` symbol
-that repeats the sting on its left the number of times on its right (remember
+function that we will name `padLine`. To practice coding we didn't use the built
+in [sprintf](https://docs.julialang.org/en/v1/stdlib/Printf/#Printf.@sprintf)
+(it would be just to easy to type something like `@sprintf("%60s",
+"xxx")`/`@sprintf("%-60s", "xxx")` to get the `"xxx"` right/left justified for
+us). For the same reason we didn't use
+[lpad](https://docs.julialang.org/en/v1/base/strings/#Base.lpad) nor
+[rpad](https://docs.julialang.org/en/v1/base/strings/#Base.rpad). Instead, we
+went with the `*` operator that glues two strings together and the `^` symbol
+that repeats the string on its left the number of times on its right (remember
 about the operator precedence from mathematics).
 
 ```
