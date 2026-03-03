@@ -96,6 +96,41 @@ Instead of going through all the meta-characters (admittedly an impossible task
 for a short book chapter) let me just demonstrate a few of the more important
 ones with some illustrative examples.
 
+```jl
+s = """
+txt = getTxtFromFile("./code_snippets/regex/loremDates.txt")
+"<<< " * txt[1:200] * " ... >>>"
+"""
+replace(sco(s), "./code_snippets/regex/loremDates.txt" => "./loremDates.txt")
+```
+
+This time, since I study for an exam, my `txt` contains a passage from a history
+book. I would like to extract all the dates from it to make sure I know them
+all. Let's say that the dates cover years between 1000 AD and the present.
+Doing a standard string search is no good, after all I would have to list like a
+thousand numbers. But wait, a simple regex can save me a lot of work. Observe:
+
+```jl
+s = """
+getAllMatches(eachmatch(r"[0-9][0-9][0-9][0-9]", txt))
+"""
+sco(s)
+```
+
+The `[...]` is a positive character class that matches any of the enclosed
+characters. Therefore, `[0123456789]` would mean match any character used to
+represent a digit (`0` or `1` or `2` or ...). In general the contents of a
+positive character class are interpreted literally with the exception of `\`,
+`^` at the beginning, and `-` between two characters. In the last case, the
+hyphen (`-`) means any character within a range. Typically its used in the
+following configurations: `[0-9]`, `[a-z]`, `[A-Z]`, or `[A-z]`. The range is
+likely determined based on the underlying codes (e.g. like
+[ASCII](https://en.wikipedia.org/wiki/ASCII)). Therefore, the last expression
+must be written as `[A-z]` (it means match any, small or capital, letter) and
+not `[a-Z]`. Anyway, in our case a regex of the form `r"[0-9][0-9][0-9][0-9]"`)
+means match any digit (`[0-9]`) followed by a digit (`[0-9]`), followed by a
+digit (`[0-9]`), followed by a digit (`[0-9]`) (exactly 4 digits in a row).
+
 ## Solution {#sec:regex_solution}
 
 The solution goes here.
