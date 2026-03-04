@@ -165,6 +165,44 @@ sco(s)
 Where `\d` means any digit (usually `\` gives a special meaning to the following
 character) and `{4}` still designates exactly 4 repetitions of a previous token.
 
+Let's see antoher example.
+
+```jl
+s = """
+txt = getTxtFromFile("./code_snippets/regex/loremDollarsDates.txt")
+"<<< " * txt[1:200] * " ... >>>"
+"""
+replace(sco(s), "./code_snippets/regex/loremDollarsDates.txt" => "./loremDollarsDates.txt")
+```
+
+This time, we got a text that contains both dollars quota (in `$123` format) and
+dates, but we're interested only in the former. Let's try to get it out. If
+we assume for a moment that the amount of money is at least 3 digits long then
+for our first try we might go with:
+
+```jl
+s = """
+eachmatch(r"\\d.+\\d", txt) |> getAllMatches
+"""
+replace(sco(s), "," => ",\n", "\\" => "")
+```
+
+Here `\d` means a digit, `.` is any character, and `+` stands for one or more of
+the preceeding tokens (so match a digit followed by one or more other character,
+followed by a digit). There is a small problem though, we caught more than we wanted,
+that's because by default, regexes are greedy (they match as much as they can)
+if we want to make it more temperate we need to follow `.+` with `?` (one or
+more characters, but as few as you can to fulfil the condition).
+
+```jl
+s = """
+eachmatch(r"\\d.+?\\d", txt) |> getAllMatches
+"""
+replace(sco(s), "," => ",\n", "\\" => "")
+```
+
+An improvement, but we're still not there.
+
 ### Regex Task {#sec:regex_problem_task}
 
 The task goes here.
