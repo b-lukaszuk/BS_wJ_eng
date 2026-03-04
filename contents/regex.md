@@ -180,11 +180,20 @@ dates, but we're interested only in the former. Let's try to get it out. If
 we assume for a moment that the amount of money is at least 3 digits long then
 for our first try we might go with:
 
-```jl
-s = """
-eachmatch(r"\\d.+\\d", txt) |> getAllMatches
-"""
-replace(sco(s), "," => ",\n", "\\" => "")
+```
+eachmatch(r"\d.+\d", txt) |> getAllMatches
+```
+
+```
+[
+"112 amet consectetur 1234",
+"200",
+"173 exercitation ullamco 1492",
+"1180 Duis aute irure dolor in $122",
+"113 cillum dolore eu $3333",
+"444 sint occaecat cupidatat non $212",
+"534"
+]
 ```
 
 Here `\d` means a digit, `.` is any character, and `+` stands for one or more of
@@ -194,14 +203,54 @@ that's because by default, regexes are greedy (they match as much as they can)
 if we want to make it more temperate we need to follow `.+` with `?` (one or
 more characters, but as few as you can to fulfil the condition).
 
-```jl
-s = """
-eachmatch(r"\\d.+?\\d", txt) |> getAllMatches
-"""
-replace(sco(s), "," => ",\n", "\\" => "")
+```
+eachmatch(r"\d.+?\d", txt) |> getAllMatches
 ```
 
-An improvement, but we're still not there.
+```
+[
+"112",
+"123",
+"200",
+"173",
+"149",
+"118",
+"0 Duis aute irure dolor in \$1",
+"113",
+"333",
+"444",
+"212",
+"534"
+]
+```
+
+An improvement, but we're still not there. Let's try again.
+
+```
+eachmatch(r"\d{1, }", txt) |> getAllMatches
+```
+
+```
+"112"
+"1234"
+"200"
+"173"
+"1492"
+"1180"
+"122"
+"113"
+"3333"
+"444"
+"212"
+"534"
+```
+
+Pretty good, here `{i, j}` means between `i` and `j` (inclusive - inclusive)
+occurences of the previous token (`\d`). `{, j}` stands for 0 to `j` and `{i, }`
+stands for `i` or more. Therefore, we only match 1 or more digits in a line, so
+it seems that we are finally there. Well, not quite, right now we got no way to
+tell do the digits denote money or years (they're from file
+`loremDollarsDates.txt`).
 
 ### Regex Task {#sec:regex_problem_task}
 
