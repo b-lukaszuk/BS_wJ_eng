@@ -18,8 +18,8 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/regex)
 > expressions. You may skip it if you know what a regex is. In that case go to
 > the task specification right away (see @sec:regex_problem_task).
 
-Imagine you work at a police station that happened to arrest John Smith who is a
-suspect in a certain case you ran. In your country the exact details of an
+Imagine you work at a police station that happened to arrest a John Smith who is
+a suspect in a certain case you condut. In your country the exact details of an
 accused person are to be protected so your job is to remove or obfuscate any
 mention of him from the press statement.
 
@@ -67,10 +67,10 @@ sco(s)
 Here we defined a little helper function (`getAllMatches`), that will help us to
 extract the matches as a vector of strings which is easier to read. Notice, the
 `r"John Smith"` argument sent to `eachmatch`. The `r` indicates that the
-following characters compose no ordinary string but a special one that is called
-a [regular expression](https://en.wikipedia.org/wiki/Regular_expression) (or
-regex). It may not seem like much right now, but we'll see its potential in a
-moment.
+following characters compose no ordinary string, but a special one that is
+called a [regular expression](https://en.wikipedia.org/wiki/Regular_expression)
+(or regex). It may not seem like much right now, but we'll see its potential in
+a moment.
 
 Once we confirmed the phrase existence we may wish to obfuscate it. Again, in a
 word processing program this would be likely done with `Ctrl+H` that stands for
@@ -80,7 +80,7 @@ word processing program this would be likely done with `Ctrl+H` that stands for
 # in Julia strings are immutable
 # to make changes permament write it to `txt` and/or to a file
 txt = replace(txt, r"John Smith" => "John S")
-getAllMatches(eachmatch(r"John Smith", txt))
+eachmatch(r"John Smith", txt) |> getAllMatches
 ```
 
 ```
@@ -118,12 +118,7 @@ thousand numbers. But wait, a simple regex can save me a lot of work. Observe:
 
 ```jl
 s = """
-getAllMatches(
-    eachmatch(
-        r"[0-9][0-9][0-9][0-9]",
-        txt
-    )
-)
+eachmatch(r"[0-9][0-9][0-9][0-9]", txt) |> getAllMatches
 """
 sco(s)
 ```
@@ -150,12 +145,7 @@ this problem, i.e.
 
 ```jl
 s = """
-getAllMatches(
-    eachmatch(
-        r"[0-9]{4}",
-        txt
-    )
-)
+eachmatch(r"[0-9]{4}", txt) |> getAllMatches
 """
 sco(s)
 ```
@@ -167,12 +157,7 @@ Some newer regex engines allow to shorten it even more:
 
 ```jl
 s = """
-getAllMatches(
-    eachmatch(
-        r"\\d{4}",
-        txt
-    )
-)
+eachmatch(r"\\d{4}", txt) |> getAllMatches
 """
 sco(s)
 ```
