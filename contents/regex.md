@@ -102,6 +102,8 @@ Instead of going through all the meta-characters (admittedly an impossible task
 for a short book chapter) let me just demonstrate a few of the more important
 ones with some illustrative examples.
 
+#### Example 1
+
 ```jl
 s = """
 txt = getTxtFromFile("./code_snippets/regex/loremDates.txt")
@@ -165,7 +167,7 @@ sco(s)
 Where `\d` means any digit (usually `\` gives a special meaning to the following
 character) and `{4}` still designates exactly 4 repetitions of a previous token.
 
-Let's see antoher example.
+#### Example 2
 
 ```jl
 s = """
@@ -176,9 +178,12 @@ replace(sco(s), "./code_snippets/regex/loremDollarsDates.txt" => "./loremDollars
 ```
 
 This time, we got a text that contains both dollars quota (in `$123` format) and
-dates, but we're interested only in the former. Let's try to get it out. If
-we assume for a moment that the amount of money is at least 3 digits long then
-for our first try we might go with:
+dates, but we're interested only in the former. Let's say we want to sum them to
+find out how much do we need to pay.
+
+First, we'll try to get the numbers out. If we assume for a moment that the
+amount of money is at least 3 digits long then for our first try we might go
+with:
 
 ```
 eachmatch(r"\d.+\d", txt) |> getAllMatches
