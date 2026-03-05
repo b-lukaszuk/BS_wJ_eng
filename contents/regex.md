@@ -236,6 +236,7 @@ eachmatch(r"\d{1, }", txt) |> getAllMatches
 ```
 
 ```
+[
 "112"
 "1234"
 "200"
@@ -248,6 +249,7 @@ eachmatch(r"\d{1, }", txt) |> getAllMatches
 "444"
 "212"
 "534"
+]
 ```
 
 Pretty good, here `{i, j}` means between `i` and `j` (inclusive - inclusive)
@@ -256,6 +258,44 @@ stands for `i` or more. Therefore, we only match 1 or more digits in a line, so
 it seems that we are finally there. Well, not quite, right now we got no way to
 tell do the digits denote money or years (they're from file
 `loremDollarsDates.txt`).
+
+Let's try to change our regex a bit to extract only dollars.
+
+```
+eachmatch(r"$\d{1,}", txt) |> getAllMatches
+```
+
+```
+String[]
+```
+
+Hmm, we wanted to extract a dollar symbol `$` with all the following digits.
+Oddly enough that seemed to have failed. That's because `$` is a metacharacter
+that denotes end of subject (usually end of line or end of string). So, actually
+what we said with `$\d{1,}` was find digits after the end of string. An
+impossible task, hence the empty string. If we want `$` to be interpreted as a
+regular dollar symbol we need to proceed it with `\` (`\` gives a special
+meaning to ordinary characters, like `\d` and strips it away from a special
+character like `$`).
+
+```
+getAllMatches(eachmatch(r"\$\d{1,}", txt))
+```
+
+```
+[
+"$112",
+"$200",
+"$173",
+"$1180",
+"$122",
+"$113",
+"$3333",
+"$444",
+"$212",
+"$534"
+]
+```
 
 ### Regex Task {#sec:regex_problem_task}
 
