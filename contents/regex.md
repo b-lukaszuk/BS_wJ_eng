@@ -253,10 +253,10 @@ eachmatch(r"\d{1, }", txt) |> getAllMatches
 ```
 
 Pretty good, here `{i, j}` means between `i` and `j` (inclusive - inclusive)
-occurences of the previous token (`\d`). `{, j}` stands for 0 to `j` and `{i, }`
-stands for `i` or more. Therefore, we only match 1 or more digits in a line, so
-it seems that we are finally there. Well, not quite, right now we got no way to
-tell do the digits denote money or years (they're from file
+occurrences of the previous token (`\d`). `{, j}` stands for 0 to `j` and `{i,
+}` stands for `i` or more. Therefore, we only match 1 or more digits in a line,
+so it seems that we are finally there. Well, not quite, right now we got no way
+to tell do the digits denote money or years (they're from file
 `loremDollarsDates.txt`).
 
 Let's try to change our regex a bit to extract only dollars.
@@ -270,7 +270,7 @@ String[]
 ```
 
 Hmm, we wanted to extract a dollar symbol `$` with all the following digits.
-Oddly enough that seemed to have failed. That's because `$` is a metacharacter
+Oddly enough that seemed to have failed. That's because `$` is a meta-character
 that denotes end of subject (usually end of line or end of string). So, actually
 what we said with `$\d{1,}` was find digits after the end of string. An
 impossible task, hence the empty string. If we want `$` to be interpreted as a
@@ -296,6 +296,23 @@ getAllMatches(eachmatch(r"\$\d{1,}", txt))
 "$534"
 ]
 ```
+
+Finally, we can sum it up using, e.g. this few liner:
+
+```
+getAllMatches(eachmatch(r"\$\d{1,4}", txt)) |>
+vecStrDollars -> replace.(vecStrDollars, "\$" => "") |>
+vecStrNumbers -> parse.(Int, vecStrNumbers) |>
+sum
+```
+
+```
+6423
+```
+
+And voila, we're done. Notice, however, that the regex doesn't handle amount of
+money that contain floating point values, so in that case we would have to
+improve upon it.
 
 ### Regex Task {#sec:regex_problem_task}
 
