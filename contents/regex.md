@@ -347,6 +347,87 @@ substitution (`s""` - denotes a substitution string that may use
 meta-characters) is for use the first captured and remembered group (by analogy
 `\2` is for the second captured group and `\3` is for the third).
 
+#### Example 4
+
+In @sec:camel_case we dealt with two-way text transformations between camelCase
+and snake_case.
+
+```
+snakeCasedWords = [
+	"hello_world", "nice_to_meet_you", "translate_to_english"]
+```
+
+Let's see can we do this with regex.
+
+First, `camelCasedWords`
+
+```
+camelCasedWords = [
+	"helloWorld", "niceToMeetYou", "translateToEnglish"]
+eachmatch.(r"([A-Z])", camelCasedWords) .|> getAllMatches
+```
+
+```
+[
+["W"],
+["T", "M", "Y"],
+["T", "E"]
+]
+```
+
+First, we capture (`()`) any capital letter (`[A-Z]`) in a string. Now we would
+like to lowercase it. Per [pcre2 syntax
+manual](https://www.pcre.org/current/doc/html/pcre2syntax.html#SEC32) we should
+be able to do this using `\l` escape sequence (it means lowercase next
+character), but for whatever reason the following snippet throws an error:
+
+```
+replace.(camelCasedWords, r"([A-Z])" => s"\l\1")
+```
+
+No, biggie. Julia allows the second argument to be a pair of the form `regex => 
+function that operates on a matched string` which we can use to our advantage:
+
+```
+replace.(camelCasedWords, r"([A-Z])" => lowercase)
+```
+
+```
+[
+"helloworld",
+"nicetomeetyou",
+"translatetoenglish"
+]
+```
+
+Almost there, we just need to precced the lowercased letter with `_` symbol which could be done with an anonymous function like this:
+
+```
+replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_" * lowercase(AtoZ))
+```
+
+```
+[
+"hello_world",
+"nice_to_meet_you",
+"translate_to_english"
+]
+```
+
+or like that (choose the version that is more readable to you):
+
+```
+replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_$(lowercase(AtoZ))")
+```
+
+```
+[
+"hello_world",
+"nice_to_meet_you",
+"translate_to_english"
+]
+```
+
 ### Regex Task {#sec:regex_problem_task}
 
 The task goes here.
