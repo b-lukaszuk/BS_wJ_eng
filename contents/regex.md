@@ -385,7 +385,7 @@ character), but for whatever reason the following snippet throws an error:
 replace.(camelCasedWords, r"([A-Z])" => s"\l\1")
 ```
 
-No, biggie. Julia allows the second argument to be a pair of the form `regex => 
+No, biggie. Julia allows the second argument to be a pair of the form `regex =>
 function that operates on a matched string` which we can use to our advantage:
 
 ```
@@ -427,6 +427,30 @@ replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_$(lowercase(AtoZ))")
 "translate_to_english"
 ]
 ```
+
+Time for the opposite transformation.
+
+```
+snakeCasedWords = ["hello_world",
+	"nice_to_meet_you", "translate_to_english"]
+replace.(snakeCasedWords, r"_[a-z]" => _atoz -> uppercase(_atoz[2:end]))
+```
+
+```
+[
+"helloWorld",
+"niceToMeetYou",
+"translateToEnglish",
+]
+```
+
+Wow, that felt like a breeze.
+
+Overall, the two lines of code (`replace.(camelCasedWord, etc.)` and
+`replace.(snakeCasedWords, etc.)`) are the equivallent of roughtly 20 lines of
+code in @sec:camel_case_solution. And that's how it usually is, regexes are more
+succint than the traditional functions, although they're not necessarily faster
+to write (especially if that is your first encounter with the subject).
 
 ### Regex Task {#sec:regex_problem_task}
 
