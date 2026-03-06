@@ -273,9 +273,9 @@ Hmm, we wanted to extract a dollar symbol `$` with all the following digits.
 Oddly enough that seemed to have failed. That's because `$` is a meta-character
 that denotes end of subject (usually end of line or end of string). So, actually
 what we said with `$\d{1,}` was find digits after the end of string. An
-impossible task, hence the empty string. If we want `$` to be interpreted as a
+impossible task, hence the empty vector. If we want `$` to be interpreted as a
 regular dollar symbol we need to proceed it with `\` (`\` gives a special
-meaning to ordinary characters, like `\d` and strips it away from a special
+meaning to an ordinary character, like `\d` and strips it away from a special
 character like `$`).
 
 ```
@@ -310,9 +310,42 @@ sum
 6423
 ```
 
-And voila, we're done. Notice, however, that the regex doesn't handle amount of
+And voila, we're done. Notice, however, that the regex doesn't handle amounts of
 money that contain floating point values, so in that case we would have to
 improve upon it.
+
+#### Example 3
+
+This time we got a few random telephone numbers.
+
+```jl
+s = """
+Rnd.seed!(009)
+telNums = [join(Rnd.rand(string.(0:9), 9)) for _ in 1:3]
+"""
+sco(s)
+```
+
+Our task is to convert them into more readable form, i.e. xxx-xxx-xxx.
+
+```
+replace.(telNums, r"(\d{3})(\d{3})(\d{3})" => s"\1-\2-\3")
+```
+
+```
+[
+"304-039-945",
+"545-946-090",
+"818-309-467"
+]
+```
+
+The new elements here are `()` and `\number` which are capture groups and
+back-references, respectively. Therefore, `(\d{3})` in regex (`r""`) means
+capture any three numbers in a row and remember them whereas `\1` in
+substitution (`s""` - denotes a substitution string that may use
+meta-characters) is for use the first captured and remembered group (by analogy
+`\2` is for the second captured group and `\3` is for the third).
 
 ### Regex Task {#sec:regex_problem_task}
 
