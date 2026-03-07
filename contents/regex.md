@@ -127,7 +127,7 @@ eachmatch(r"[0-9][0-9][0-9][0-9]", txt) |> getAllMatches
 sco(s)
 ```
 
-This returned us all 4-digit sets in the order they appear in the text (left to
+This returned all 4-digit sets in the order they appear in the text (left to
 right, top to bottom).
 
 In regex (`r"..."`), the `[...]` is a positive character class that matches any
@@ -136,10 +136,10 @@ character used to represent a digit (`0` or `1` or `2` or ...). In general the
 contents of a positive character class are interpreted literally with the
 exception of `\`, `^` at the beginning, and `-` between two characters. In the
 last case, the hyphen (`-`) means any character within a range. Typically its
-used in the following configurations: `[0-9]`, `[a-z]`, `[A-Z]`, or `[A-z]`. The
-range is likely determined based on the underlying codes (e.g. like
-[ASCII](https://en.wikipedia.org/wiki/ASCII)). Therefore, the last expression
-must be written as `[A-z]` (it means match any, small or capital, letter) and
+used in the following configurations: `[0-9]`, `[a-z]`, `[A-Z]`, `[A-z]`, or
+`[A-z0-9]`. The range is likely determined based on the underlying codes
+(e.g. like [ASCII](https://en.wikipedia.org/wiki/ASCII)). Therefore, if you want
+to match any letter (capital or small) the regex must be written as `[A-z]` and
 not `[a-Z]`. Anyway, in our case a regex of the form `r"[0-9][0-9][0-9][0-9]"`)
 means match a digit (`[0-9]`) followed by a digit (`[0-9]`), followed by a digit
 (`[0-9]`), followed by a digit (`[0-9]`) (exactly 4 digits in a row).
@@ -206,10 +206,10 @@ eachmatch(r"\d.+\d", txt) |> getAllMatches
 
 Here `\d` means a digit, `.` is any character, and `+` stands for one or more of
 the preceeding tokens (so match a digit followed by one or more other character,
-followed by a digit). There is a small problem though, we caught more than we wanted,
-that's because by default, regexes are greedy (they match as much as they can)
-if we want to make it more temperate we need to follow `.+` with `?` (one or
-more characters, but as few as you can to fulfil the condition).
+followed by a digit). There is a small problem though, we caught more than we
+wanted, that's because by default, regexes are greedy (they match as much as
+they can) if we want to make it more temperate we need to follow `.+` with `?`
+(one or more characters, but as few as you can to fulfil the condition).
 
 ```
 eachmatch(r"\d.+?\d", txt) |> getAllMatches
@@ -257,9 +257,9 @@ eachmatch(r"\d{1, }", txt) |> getAllMatches
 
 Pretty good, here `{i, j}` means between `i` and `j` (inclusive - inclusive)
 occurrences of the previous token (`\d`). `{, j}` stands for 0 to `j` and `{i,
-}` stands for `i` or more. Therefore, we only match 1 or more digits in a line,
+}` stands for `i` or more. Therefore, we only match 1 or more digits in a row,
 so it seems that we are finally there. Well, not quite, right now we got no way
-to tell do the digits denote money or years (they're from file
+to tell which digits denote money and which years (they're from file
 `loremDollarsDates.txt`).
 
 Let's try to change our regex a bit to extract only dollars.
@@ -384,9 +384,10 @@ character), but for whatever reason the following snippet throws an error:
 replace.(camelCasedWords, r"([A-Z])" => s"\l\1")
 ```
 
-No, biggie. Julia allows the second argument of `replace` to be a pair of the
-form `regex => function that operates on a matched string`. We can use that to
-our advantage:
+No, biggie. Julia allows the second argument of `replace` to be a
+[pair](https://docs.julialang.org/en/v1/base/collections/#Core.Pair) of the form
+`regex => function that operates on a matched string`. We can use that to our
+advantage:
 
 ```
 replace.(camelCasedWords, r"([A-Z])" => lowercase)
@@ -400,7 +401,8 @@ replace.(camelCasedWords, r"([A-Z])" => lowercase)
 ]
 ```
 
-Almost there, we just need to precced the lowercased letter with `_` symbol which could be done with an anonymous function like this:
+Almost there, we just need to precced the lowercased letter with `_` symbol
+which could be done with an anonymous function like this:
 
 ```
 replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_" * lowercase(AtoZ))
@@ -459,6 +461,31 @@ Overall, the two lines of code (`replace.(camelCasedWord, etc.)` and
 code in @sec:camel_case_solution. And that's how it usually is, regexes are more
 succint than the traditional functions, although they're not necessarily faster
 to write (especially if that is your first encounter with the subject).
+
+#### Summary
+
+Here's a quick reminder of what we learned about regexes and meta-characters:
+
+1. in general any letter or digit that occurs in regex stands for itself;
+2. a positive character class is denoted by square brackets and is often used to
+   capture a range of characters, like `[a-z]`, `[A-Z]`, `[0-9]`, `[A-z]`, or
+   `[A-z0-9]`;
+3. `{}` is a quantifier, it specifies a quantity of the previous token, where
+   `{i}`, `{i, j}`, `{i, }`, and `{, j}` mean: exactly `i`, between `i` and `j`,
+   at least `i` and up-to `j` previous tokens, respectively;
+4. `\` bestows a special meaning on an ordinary character (`\d` denotes any
+   digit), or strips it away (`$` - is end of a string, wheres `\$` is a dollar
+   symbol);
+5. `(sth)` inside of `r""` stands for capture and remember, whereas `\1` in
+   `s""` denotes back-reference to the first capture;
+6. the second argument of replace is usually a
+   [pair](https://docs.julialang.org/en/v1/base/collections/#Core.Pair) of the
+   form: `r"" => ""` (regex => regular string), `r"" => s""` (regex =>
+   substitution string), `r"" => function` (regex => function that accepts a
+   string and returns a string possibly applying some transformation on the
+   way).
+
+OK, time to put what you learned to good use.
 
 ### Regex Task {#sec:regex_problem_task}
 
