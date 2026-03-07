@@ -356,18 +356,13 @@ meta-characters) means: use the first captured and remembered group (by analogy
 In @sec:camel_case we dealt with two-way text transformations between camelCase
 and snake_case.
 
-```
-snakeCasedWords = [
-	"hello_world", "nice_to_meet_you", "translate_to_english"]
-```
-
-Let's see can we do this with regex.
-
-First, `camelCasedWords`
+Let's see can we do this with regex. We'll start with `camelCasedWords`:
 
 ```
 camelCasedWords = [
-	"helloWorld", "niceToMeetYou", "translateToEnglish"]
+	"helloWorld", "niceToMeetYou", "translateToEnglish"
+]
+
 eachmatch.(r"([A-Z])", camelCasedWords) .|> getAllMatches
 ```
 
@@ -389,8 +384,9 @@ character), but for whatever reason the following snippet throws an error:
 replace.(camelCasedWords, r"([A-Z])" => s"\l\1")
 ```
 
-No, biggie. Julia allows the second argument to be a pair of the form `regex =>
-function that operates on a matched string` which we can use to our advantage:
+No, biggie. Julia allows the second argument of `replace` to be a pair of the
+form `regex => function that operates on a matched string`. We can use that to
+our advantage:
 
 ```
 replace.(camelCasedWords, r"([A-Z])" => lowercase)
@@ -418,7 +414,8 @@ replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_" * lowercase(AtoZ))
 ]
 ```
 
-or like that (choose the version that is more readable to you):
+or like that by using a template string (choose the version that is more
+readable to you):
 
 ```
 replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_$(lowercase(AtoZ))")
@@ -432,12 +429,19 @@ replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_$(lowercase(AtoZ))")
 ]
 ```
 
-Time for the opposite transformation.
+Nice.
+
+Now, it's time for the opposite transformation.
 
 ```
 snakeCasedWords = ["hello_world",
-	"nice_to_meet_you", "translate_to_english"]
+	"nice_to_meet_you", "translate_to_english"
+]
+
 replace.(snakeCasedWords, r"_[a-z]" => _atoz -> uppercase(_atoz[2:end]))
+# or
+replace.(snakeCasedWords,
+	r"_[a-z]" => _atoz -> uppercase(strip(_atoz, '_')))
 ```
 
 ```
