@@ -87,13 +87,15 @@ eachmatch(r"John Smith", txt) |> getAllMatches
 String[]
 ```
 
-There, we did our job, identity of an accused person was protected. We may now
-write the file on a disk and send the press report. I imagine now you're
-wondering what's the big deal with those regexes anyway.  For a person with
-basic computer literacy it doesn't seem that we've done anything particularly
-advanced. Well, you're right. We didn't. That's because in order to have a regex
-we need to use some meta-characters, i.e. a special symbols that are interpreted
-beyond their literal meaning. Their list is rather long, but as stated in [the
+There, we did our job, the identity of an accused person was protected. We may
+now write the file on a disk and send the press report. I imagine now you're
+wondering what's the big deal with those regexes anyway. For a person with basic
+computer literacy it doesn't seem that we've done anything particularly
+advanced. Well, you're right. We didn't. That's because in order **to have a
+regex we need to use some meta-characters, i.e. special symbols that are
+interpreted beyond their literal meaning. On the other hand, as a general rule,
+any letter or digit in regex (like `r"JohnSmith"`) stands for itself**. Overall,
+the list of meta-characters is rather long, but as stated in [the
 docs](https://docs.julialang.org/en/v1/manual/strings/#man-regex-literals) it
 may be found at [the PCRE2 syntax
 manpage](https://www.pcre.org/current/doc/html/pcre2syntax.html).
@@ -272,12 +274,12 @@ String[]
 
 Hmm, we wanted to extract a dollar symbol `$` with all the following digits.
 Oddly enough that seemed to have failed. That's because `$` is a meta-character
-that denotes end of subject (usually end of line or end of string). So, actually
-what we said with `$\d{1,}` was find digits after the end of string. An
-impossible task, hence the empty vector. If we want `$` to be interpreted as a
-regular dollar symbol we need to proceed it with `\` (`\` gives a special
-meaning to an ordinary character, like `\d` and strips it away from a special
-character like `$`).
+that denotes end of a subject (usually end of a line or end of a string). So,
+actually what we said with `$\d{1,}` was: find digits after the end of a
+string. An impossible task, hence the empty vector as a result. If we want `$`
+to be interpreted as a regular dollar symbol we need to proceed it with `\` (`\`
+gives a special meaning to an ordinary character, like in `\d,` and strips it
+away from a special character like `$`).
 
 ```
 getAllMatches(eachmatch(r"\$\d{1,}", txt))
@@ -311,8 +313,9 @@ sum
 6423
 ```
 
-And voila, we're done. Notice, however, that the regex doesn't handle amounts of
-money that contain floating point values, so in that case we would have to
+And voila, we're done. Notice, however, that the regex isn't perfect. For
+example, it doesn't handle the amounts of money that contain floating point
+values (or negative quotas). If that were a requirement, we would would have to
 improve upon it.
 
 #### Example 3
@@ -321,7 +324,7 @@ This time we got a few random telephone numbers.
 
 ```jl
 s = """
-Rnd.seed!(009)
+Rnd.seed!(9)
 telNums = [join(Rnd.rand(string.(0:9), 9)) for _ in 1:3]
 """
 sco(s)
@@ -343,9 +346,9 @@ replace.(telNums, r"(\d{3})(\d{3})(\d{3})" => s"\1-\2-\3")
 
 The new elements here are `()` and `\number` which are capture groups and
 back-references, respectively. Therefore, `(\d{3})` in regex (`r""`) means
-capture any three numbers in a row and remember them whereas `\1` in
+capture any three numbers in a row and remember them, whereas `\1` in
 substitution (`s""` - denotes a substitution string that may use
-meta-characters) is for use the first captured and remembered group (by analogy
+meta-characters) means: use the first captured and remembered group (by analogy
 `\2` is for the second captured group and `\3` is for the third).
 
 #### Example 4
