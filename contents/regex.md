@@ -19,9 +19,9 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/regex)
 > the task specification right away (see @sec:regex_problem_task).
 
 Imagine you work at a police station that happened to arrest a John Smith who is
-a suspect in a certain case you condut. In your country the exact details of an
-accused person are to be protected so your job is to remove or obfuscate any
-mention of him from the press statement.
+a suspect in a certain case. In your country the identity of an accused person
+is to be protected from public, so your job is to obfuscate any mention of him
+from the press statement.
 
 ```jl
 s = """
@@ -44,7 +44,7 @@ replace(sco(s), "./code_snippets/regex/loremJohnSmith.txt" => "./loremJohnSmith.
 ```
 
 This could be done, e.g. by manually replacing his last name with the first
-letter, but it's kind of tedious and boring. It could be sped up with a [word
+letter, but it's kind of tedious and boring. It may be sped up with a [word
 processing
 program](https://en.wikipedia.org/wiki/List_of_word_processor_programs) in which
 `Ctrl+F` is a shortcut for a `find` command. In Julia this could be done
@@ -74,7 +74,7 @@ a moment.
 
 Once we confirmed the phrase existence we may wish to obfuscate it. Again, in a
 word processing program this would be likely done with `Ctrl+H` that stands for
-`find and replace` command. In Julia, we would do with something like:
+`find and replace` command. In Julia, we would do it with something like:
 
 ```
 # in Julia strings are immutable
@@ -87,13 +87,13 @@ eachmatch(r"John Smith", txt) |> getAllMatches
 String[]
 ```
 
-There, we did our job, identity of a suspect was protected. We may now write the
-file on a disk and send the press report. I imagine now you're wondering what's
-the big deal with those regexes anyway, it doesn't seem that we've done anything
-unusual for a person with basic computer literacy. We'll you're right. We
-didn't. That's because in order to have a regex we need to use some
-meta-characters, i.e. a special symbols that are interpreted beyond their
-literal meaning. Their list is rather long, but as stated in [the
+There, we did our job, identity of an accused person was protected. We may now
+write the file on a disk and send the press report. I imagine now you're
+wondering what's the big deal with those regexes anyway.  For a person with
+basic computer literacy it doesn't seem that we've done anything particularly
+advanced. Well, you're right. We didn't. That's because in order to have a regex
+we need to use some meta-characters, i.e. a special symbols that are interpreted
+beyond their literal meaning. Their list is rather long, but as stated in [the
 docs](https://docs.julialang.org/en/v1/manual/strings/#man-regex-literals) it
 may be found at [the PCRE2 syntax
 manpage](https://www.pcre.org/current/doc/html/pcre2syntax.html).
@@ -142,8 +142,8 @@ not `[a-Z]`. Anyway, in our case a regex of the form `r"[0-9][0-9][0-9][0-9]"`)
 means match a digit (`[0-9]`) followed by a digit (`[0-9]`), followed by a digit
 (`[0-9]`), followed by a digit (`[0-9]`) (exactly 4 digits in a row).
 
-Interestingly, we could save us some typing by using other meta-characters for
-this problem, i.e.
+Interestingly, we could save ourselves even more typing by using other
+meta-characters for this problem, i.e.
 
 ```jl
 s = """
@@ -165,7 +165,8 @@ sco(s)
 ```
 
 Where `\d` means any digit (usually `\` gives a special meaning to the following
-character) and `{4}` still designates exactly 4 repetitions of a previous token.
+ordinary character) and `{4}` still designates exactly 4 repetitions of a
+previous token.
 
 #### Example 2
 
