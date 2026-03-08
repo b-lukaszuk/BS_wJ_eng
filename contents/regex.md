@@ -485,11 +485,27 @@ Here's a quick reminder of what we learned about regexes and meta-characters:
    string and returns a string possibly applying some transformation on the
    way).
 
-OK, time to put what you learned to good use.
-
 ### Regex Task {#sec:regex_problem_task}
 
-The task goes here.
+OK, time to put what you learned to good use. If, while solving the tasks, you
+want to look for a visual assistant that helps you with regular expressions,
+then you may try e.g. [regex101](https://regex101.com/).
+
+#### Regex Task 1 {#sec:regex_problem_task1}
+
+You got a series of dates in the US format "MMDDYYYY":
+
+```
+datesMMDDYYYY = [
+   "01042025",
+   "11012018",
+   "12311999",
+   "03202026",
+]
+```
+
+The format is confusing to some (e.g. European) people. Change it to
+less ambiguous "YYYY-MM-DD".
 
 ## Solution {#sec:regex_solution}
 
