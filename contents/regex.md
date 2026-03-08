@@ -507,6 +507,10 @@ datesMMDDYYYY = [
 The format is confusing to some (e.g. European) people. Change it to
 less ambiguous "YYYY-MM-DD".
 
-## Solution {#sec:regex_solution}
+#### Regex Task 2 {#sec:regex_problem_task2}
 
-The solution goes here.
+Read the contents of the `loremMail.txt` that is to be found in [the code
+snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/regex).
+It contains 8 random e-mail addresses with repetitions. Use Julia to list the
+unique e-mail addresses from the text.
+
