@@ -514,3 +514,30 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/regex)
 It contains 8 random e-mail addresses with repetitions. Use Julia to list the
 unique e-mail addresses from the text.
 
+#### Regex Task 3 {#sec:regex_problem_task3}
+
+Here's a vector of random names:
+
+```
+# random names
+firstLastNames = ["Mary Johnson", "Eve Smith", "Tom Brown"]
+```
+
+Swap the names order with a regex ("Adam Smith" should become "Smith, Adam") and
+sort them alphabetically in ascending order.
+
+Can you do the same, but while accounting for possible middle names.
+
+```
+# random names
+firstMiddleLastNames = ["Jane Johnson", "Mary Jane Doe",
+	"Peter Smith", "Adam Tom Brown"]
+```
+
+To add a small tweak, I want you to swap the names, abbreviate the middle name
+("John Daniel Smith" should become "Smith, John D.", whereas "Adam Smith" should
+become "Smith, Adam") and then sort them alphabetically in ascending order.
+
+## Solution {#sec:regex_solution}
+
+The solution goes here.
