@@ -538,6 +538,30 @@ To add a small tweak, I want you to swap the names, abbreviate the middle name
 ("John Daniel Smith" should become "Smith, John D.", whereas "Adam Smith" should
 become "Smith, Adam") and then sort them alphabetically in ascending order.
 
+#### Regex Task 4 {#sec:regex_problem_task4}
+
+In @sec:mortgage_solution we wrote a `fmt` function to format numbers to
+something like: "123,456 USD".
+
+Write a program (possibly a regex or regexes + some extra code) that will
+convert those numbers to the desired form (place `,` after every three numbers
+from right).
+
+```
+nums1 = [0, 1, 12, 123, 1234, 12345,
+	123456, 1234567, 12345678, 123456789]
+```
+
+Can you modify your program so that it handles the following numbers correctly
+as well (e.g. `12345.678` should become "12,345.68 USD"):
+
+```
+nums2 = [0, 0.1, 1, 1.2, 12., 12.34, 123.472,
+	1234, 12345, 12345.678, 123456.78, 1234567.89]
+```
+
+Well, let's find out. Good luck.
+
 ## Solution {#sec:regex_solution}
 
 The solution goes here.
