@@ -565,4 +565,25 @@ Well, let's find out. Good luck.
 
 ## Solution {#sec:regex_solution}
 
-The solution goes here.
+#### Regex Solution 1 {#sec:regex_problem_solution1}
+
+The solution is pretty straightforward if you read through Example 1 and 3 in,
+@sec:regex_problem_intro.,
+
+```
+replace.(datesMMDDYYYY, r"(\d{2})(\d{2})(\d{4})" => s"\3-\1-\2")
+```
+
+```
+[
+"2025-01-04",
+"2018-11-01",
+"1999-12-31",
+"2026-03-20"
+]
+```
+
+You just go with capturing months (first two digits, `(\d{2})`), days (second
+pair of digits, `(\d{2})`) and years (last four digits, `(\d{4})`) and reference
+them back in the appropriate order (`\3`, `\1`, and `\2`) separated by hyphens
+(`-`). And that's it. Finito.
