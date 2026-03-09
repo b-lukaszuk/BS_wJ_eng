@@ -346,9 +346,9 @@ replace.(telNums, r"(\d{3})(\d{3})(\d{3})" => s"\1-\2-\3")
 ```
 
 The new elements here are `()` and `\number` which are capture groups and
-back-references, respectively. Therefore, `(\d{3})` in regex (`r""`) means
-capture any three numbers in a row and remember them, whereas `\1` in
-substitution (`s""` - denotes a substitution string that may use
+back-references, respectively. Therefore, `(\d{3})` in a regex (`r""`) means
+capture any three digits in a row and remember them, whereas `\1` in
+the substitution (`s""` - denotes a substitution string that may use
 meta-characters) means: use the first captured and remembered group (by analogy
 `\2` is for the second captured group and `\3` is for the third).
 
@@ -357,7 +357,7 @@ meta-characters) means: use the first captured and remembered group (by analogy
 In @sec:camel_case we dealt with two-way text transformations between camelCase
 and snake_case.
 
-Let's see can we do this with regex. We'll start with `camelCasedWords`:
+Let's do this with regexes. We'll start with `camelCasedWords`:
 
 ```
 camelCasedWords = [
@@ -402,8 +402,8 @@ replace.(camelCasedWords, r"([A-Z])" => lowercase)
 ]
 ```
 
-Almost there, we just need to precced the lowercased letter with `_` symbol
-which could be done with an anonymous function like this:
+Almost there, we just need to precede the lowercased letter with `_` symbol
+which could be done with an anonymous function, e.g. like this:
 
 ```
 replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_" * lowercase(AtoZ))
@@ -417,8 +417,8 @@ replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_" * lowercase(AtoZ))
 ]
 ```
 
-or like that by using a template string (choose the version that is more
-readable to you):
+or like that (here we use a template string):
+
 
 ```
 replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_$(lowercase(AtoZ))")
@@ -458,9 +458,9 @@ replace.(snakeCasedWords,
 Wow, that felt like a breeze.
 
 Overall, the two lines of code (`replace.(camelCasedWord, etc.)` and
-`replace.(snakeCasedWords, etc.)`) are the equivallent of roughtly 20 lines of
+`replace.(snakeCasedWords, etc.)`) are the equivalent of roughly 20 lines of
 code in @sec:camel_case_solution. And that's how it usually is, regexes are more
-succint than the traditional functions, although they're not necessarily faster
+succinct than the traditional functions, although they're not necessarily faster
 to write (especially if that is your first encounter with the subject).
 
 #### Summary
@@ -483,13 +483,13 @@ Here's a quick reminder of what we learned about regexes and meta-characters:
    [pair](https://docs.julialang.org/en/v1/base/collections/#Core.Pair) of the
    form: `r"" => ""` (regex => regular string), `r"" => s""` (regex =>
    substitution string), `r"" => function` (regex => function that accepts a
-   string and returns a string possibly applying some transformation on the
+   string and returns a string possibly applying some transformations on the
    way).
 
 ### Regex Task {#sec:regex_problem_task}
 
-OK, time to put what you learned to good use. If, while solving the tasks, you
-want to look for a visual assistant that helps you with regular expressions,
+OK, time to put what you've learned to good use. If, while solving the tasks,
+you want to look for a visual assistant that helps you with regular expressions,
 then you may try e.g. [regex101](https://regex101.com/).
 
 #### Regex Task 1 {#sec:regex_problem_task1}
@@ -506,14 +506,14 @@ datesMMDDYYYY = [
 ```
 
 The format is confusing to some (e.g. European) people. Change it to
-less ambiguous "YYYY-MM-DD".
+a less ambiguous "YYYY-MM-DD" configuration.
 
 #### Regex Task 2 {#sec:regex_problem_task2}
 
-Read the contents of the `loremMail.txt` that is to be found in [the code
+Read the contents of `loremMail.txt` that is to be found in [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/regex).
-It contains 8 random e-mail addresses with repetitions. Use Julia to list the
-unique e-mail addresses from the text.
+It contains 8 random e-mail addresses (with repetitions). Use Julia to list the
+unique e-mail addresses found in the text.
 
 #### Regex Task 3 {#sec:regex_problem_task3}
 
