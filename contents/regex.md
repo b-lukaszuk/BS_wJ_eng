@@ -43,13 +43,13 @@ txt = getTxtFromFile("./code_snippets/regex/loremJohnSmith.txt")
 replace(sco(s), "./code_snippets/regex/loremJohnSmith.txt" => "./loremJohnSmith.txt")
 ```
 
-This could be done, e.g. by manually replacing his last name with the first
-letter, but it's kind of tedious and boring. It may be sped up with a [word
-processing
+This could be done, e.g. by replacing his last name with its first letter, but
+it's kind of tedious and boring to do this manually. It may be sped up with a
+[word processing
 program](https://en.wikipedia.org/wiki/List_of_word_processor_programs) in which
-`Ctrl+F` is a shortcut for a `find` command. In Julia this could be done
-with [eachmatch](https://docs.julialang.org/en/v1/base/strings/#Base.eachmatch)
-like so:
+`Ctrl+F` is a shortcut for a `find` command. In Julia this could be done with
+[eachmatch](https://docs.julialang.org/en/v1/base/strings/#Base.eachmatch) like
+so:
 
 ```jl
 s = """
@@ -66,11 +66,11 @@ sco(s)
 
 Here we defined a little helper function (`getAllMatches`), that will help us to
 extract the matches as a vector of strings which is easier to read. Notice, the
-`r"John Smith"` argument sent to `eachmatch`. The `r` indicates that the
-following characters compose no ordinary string, but a special one that is
-called a [regular expression](https://en.wikipedia.org/wiki/Regular_expression)
-(or regex). It may not seem like much right now, but we'll see its potential in
-a moment.
+`r"John Smith"` argument in `eachmatch`. The `r` indicates that the following
+characters compose no ordinary string, but a special one that is called a
+[regular expression](https://en.wikipedia.org/wiki/Regular_expression) (or
+regex). It may not seem like much right now, but we'll see its potential in a
+moment.
 
 Once we confirmed the phrase existence we may wish to obfuscate it. Again, in a
 word processing program this would be likely done with `Ctrl+H` that stands for
@@ -87,15 +87,15 @@ eachmatch(r"John Smith", txt) |> getAllMatches
 String[]
 ```
 
-There, we did our job, the identity of an accused person was protected. We may
+There, we did our job, the identity of an accused person is protected. We may
 now write the file on a disk and send the press report. I imagine now you're
 wondering what's the big deal with those regexes anyway. For a person with basic
-computer literacy it doesn't seem that we've done anything particularly
-advanced. Well, you're right. We didn't. That's because in order **to have a
-regex we need to use some meta-characters, i.e. special symbols that are
-interpreted beyond their literal meaning. On the other hand, as a general rule,
-any letter or digit in regex (like `r"JohnSmith"`) stands for itself**. Overall,
-the list of meta-characters is rather long, but as stated in [the
+computer literacy what we've done doesn't seem particularly advanced. Well,
+you're right. We its not. That's because in order **to have a regex we need to
+use some meta-characters, i.e. special symbols that are interpreted beyond their
+literal meaning. On the other hand, as a general rule, any letter or digit in
+regex (like `r"JohnSmith"`) stands for itself**. Overall, the list of
+meta-characters is rather long, but as stated in [the
 docs](https://docs.julialang.org/en/v1/manual/strings/#man-regex-literals) it
 may be found at [the PCRE2 syntax
 manpage](https://www.pcre.org/current/doc/html/pcre2syntax.html).
@@ -115,7 +115,7 @@ replace(sco(s), "./code_snippets/regex/loremDates.txt" => "./loremDates.txt")
 ```
 
 This time, since I study for an exam, my `txt` contains a passage from a history
-book. I would like to extract all the dates from it to make sure I know them
+book. I would like to extract the dates from it to make sure I know them
 all. Let's say that the dates cover years between 1000 AD and the present.
 Doing a standard string search is no good, after all I would have to list like a
 thousand numbers. But wait, a simple regex can save me a lot of work. Observe:
@@ -130,8 +130,8 @@ sco(s)
 This returned all 4-digit sets in the order they appear in the text (left to
 right, top to bottom).
 
-In regex (`r"..."`), the `[...]` is a positive character class that matches any
-of the enclosed characters. Therefore, `[0123456789]` would mean match any
+In the regex (`r"..."`), the `[...]` is a positive character class that matches
+any of the enclosed characters. Therefore, `[0123456789]` would mean match any
 character used to represent a digit (`0` or `1` or `2` or ...). In general the
 contents of a positive character class are interpreted literally with the
 exception of `\`, `^` at the beginning, and `-` between two characters. In the
@@ -181,8 +181,8 @@ replace(sco(s), "./code_snippets/regex/loremDollarsDates.txt" => "./loremDollars
 ```
 
 This time, we got a text that contains both dollars quota (in `$123` format) and
-dates, but we're interested only in the former. Let's say we want to sum them to
-find out how much do we need to pay.
+dates, but we're interested only in the former. Let's say we want to add them up
+to find out how much do we need to pay.
 
 First, we'll try to get the numbers out. If we assume for a moment that the
 amount of money is at least 3 digits long then for our first try we might go
@@ -205,11 +205,12 @@ eachmatch(r"\d.+\d", txt) |> getAllMatches
 ```
 
 Here `\d` means a digit, `.` is any character, and `+` stands for one or more of
-the preceeding tokens (so match a digit followed by one or more other character,
+the preceding tokens (so match a digit followed by one or more other character,
 followed by a digit). There is a small problem though, we caught more than we
-wanted, that's because by default, regexes are greedy (they match as much as
-they can) if we want to make it more temperate we need to follow `.+` with `?`
-(one or more characters, but as few as you can to fulfil the condition).
+wanted. That's because by default, regexes are greedy (usually they match as
+much as they can until a line ends) if we want to make it more temperate we need
+to follow `.+` with `?`  (one or more characters, but as few as you can to
+fulfill the condition).
 
 ```
 eachmatch(r"\d.+?\d", txt) |> getAllMatches
@@ -300,7 +301,7 @@ getAllMatches(eachmatch(r"\$\d{1,}", txt))
 ]
 ```
 
-Finally, we can sum it up using, e.g. this few liner:
+Finally, we can add it up using, e.g. this few liner:
 
 ```
 getAllMatches(eachmatch(r"\$\d{1,4}", txt)) |>
@@ -314,9 +315,9 @@ sum
 ```
 
 And voila, we're done. Notice, however, that the regex isn't perfect. For
-example, it doesn't handle the amounts of money that contain floating point
-values (or negative quotas). If that were a requirement, we would would have to
-improve upon it.
+example, it doesn't handle correctly the amounts of money that contain floating
+point values (or negative quotas). If that were a requirement, we would would
+have to improve upon it.
 
 #### Example 3
 
