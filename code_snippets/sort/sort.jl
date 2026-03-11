@@ -7,6 +7,25 @@ const Vec = Vector
 # the code in this file is meant to serve as a programming exercise only
 # it may not act correctly
 
+# https://en.wikipedia.org/wiki/Bubble_sort
+function bs(v::Vec{Int})::Vec{Int}
+    result::Vec{Int} = copy(v)
+    swapped::Bool = true
+    while swapped
+        swapped = false
+        for i in eachindex(result)[2:end]
+            if result[i-1] > result[i]
+                result[i-1], result[i] = result[i], result[i-1]
+                swapped = true
+            end
+        end
+    end
+    return result
+end
+
+xs = [47, 15, 23, 99, 4]
+bs(xs)
+
 # https://en.wikipedia.org/wiki/Quicksort
 function qs(v::Vec{Int})::Vec{Int}
     if isempty(v)
@@ -21,7 +40,7 @@ function qs(v::Vec{Int})::Vec{Int}
     end
 end
 
-xs = [47, 15, 23, 99, 4]
+qs(xs)
 sort(xs) == qs(xs)
 
 # by - (A) -> B is applied to every elt of v before sorting
