@@ -204,13 +204,13 @@ eachmatch(r"\d.+\d", txt) |> getAllMatches
 ]
 ```
 
-Here `\d` means a digit, `.` is any character, and `+` stands for one or more of
-the preceding tokens (so match a digit followed by one or more other character,
-followed by a digit). There is a small problem though, we caught more than we
-wanted. That's because by default, regexes are greedy (usually they match as
-much as they can until a line ends) if we want to make it more temperate we need
-to follow `.+` with `?`  (one or more characters, but as few as you can to
-fulfill the condition).
+Here `\d` means a digit, `.` is any character (except for newline), and `+`
+stands for one or more of the preceding tokens (so match a digit followed by one
+or more other character, followed by a digit). There is a small problem though,
+we caught more than we wanted. That's because by default, regexes are greedy
+(usually they match as much as they can until a line ends) if we want to make it
+more temperate we need to follow `.+` with `?`  (one or more characters, but as
+few as you can to fulfill the condition).
 
 ```
 eachmatch(r"\d.+?\d", txt) |> getAllMatches
@@ -567,8 +567,8 @@ Well, let's find out. Good luck.
 
 #### Regex Solution 1 {#sec:regex_problem_solution1}
 
-The solution is pretty straightforward if you read through Example 1 and 3 in,
-@sec:regex_problem_intro.,
+The solution is pretty straightforward if you read through Example 1 and 3 in
+@sec:regex_problem_intro.
 
 ```
 replace.(datesMMDDYYYY, r"(\d{2})(\d{2})(\d{4})" => s"\3-\1-\2")
@@ -587,3 +587,39 @@ You just go with capturing months (first two digits, `(\d{2})`), days (second
 pair of digits, `(\d{2})`) and years (last four digits, `(\d{4})`) and reference
 them back in the appropriate order (`\3`, `\1`, and `\2`) separated by hyphens
 (`-`). And that's it. Finito.
+
+#### Regex Solution 2 {#sec:regex_problem_solution2}
+
+```jl
+s = """
+txt = getTxtFromFile("./code_snippets/regex/loremMail.txt")
+"<<< " * txt[1:200] * " ... >>>"
+"""
+replace(sco(s), "./code_snippets/regex/loremMail.txt" => "./loremMail.txt")
+```
+
+Surprisingly, it seems that a proper regex for e-mail validation is pretty
+complex ([see
+here](https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression)).
+Still, we can go a far way with a much simpler one, which in our particular case
+would do the trick:
+
+```jl
+s = """
+getAllMatches(eachmatch(r"[A-z0-9.]+@[A-z0-9.]+", txt)) |>
+	unique
+"""
+replace(sco(s), "es\"," => "es\",\n")
+```
+
+The regex is composed of a few parts. First of all `[A-z0-9.]`. It searches for
+any letter (`A-z`, an email may contain a capital letter, although in general
+they are [case-insensitive](https://en.wikipedia.org/wiki/Case_sensitivity)) or
+digit (`0-9`) or literal dot (`.` inside a positive character class is just a
+dot, although in general inside a regex it stands for any character except for
+newline). This positive character class must be repeated at least one time (`+`)
+before the `@` symbol. On the other hand, the `@` symbol must be followed by at
+least one (`+`) letter or digit or dot (`[A-z0-9.]`). Notice, that there is no
+need to add `?` after the `+` to make a non-greedy match. That is because the
+email addresses are separated by one or more spaces and the positive character
+class (`[A-z0-9.]`) does not include spaces.
