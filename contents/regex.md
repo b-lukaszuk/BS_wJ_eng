@@ -623,3 +623,38 @@ least one (`+`) letter or digit or dot (`[A-z0-9.]`). Notice, that there is no
 need to add `?` after the `+` to make a non-greedy match. That is because the
 email addresses are separated by one or more spaces and the positive character
 class (`[A-z0-9.]`) does not include spaces.
+
+#### Regex Solution 3 {#sec:regex_problem_solution3}
+
+Swapping the names is a piece of cake. We just use capture groups (`(...)`)
+with back-references (`\1` and `\2`) together with one or more (`+`) letters
+(`[A-z]`) per word. The words are separated by a white-space:
+
+```
+# random names
+firstLastNames = ["Mary Johnson", "Eve Smith", "Tom Brown"]
+
+replace.(firstLastNames, r"([A-z]+) ([A-z]+)" => s"\2, \1")
+```
+
+```
+[
+"Johnson, Mary",
+"Smith, Eve",
+"Brown, Tom"
+]
+```
+
+Once we got the names formatted, sorting them shouldn't be a problem either:
+
+```
+replace.(firstLastNames, r"([A-z]+) ([A-z]+)" => s"\2, \1") |> sort
+```
+
+```
+[
+"Brown, Tom",
+"Johnson, Mary",
+"Smith, Eve"
+]
+```
