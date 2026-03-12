@@ -628,7 +628,8 @@ class (`[A-z0-9.]`) does not include spaces.
 
 Swapping the names is a piece of cake. We just use capture groups (`(...)`)
 with back-references (`\1` and `\2`) together with one or more (`+`) letters
-(`[A-z]`) per word. The words are separated by a white-space:
+(`[A-z]`) per word. The words are separated by a white-space in the regex
+(`r""`) and a comma and white-space in the substitution string (`s""`):
 
 ```
 # random names
@@ -639,9 +640,9 @@ replace.(firstLastNames, r"([A-z]+) ([A-z]+)" => s"\2, \1")
 
 ```
 [
-"Johnson, Mary",
-"Smith, Eve",
-"Brown, Tom"
+	"Johnson, Mary",
+	"Smith, Eve",
+	"Brown, Tom"
 ]
 ```
 
@@ -653,17 +654,22 @@ replace.(firstLastNames, r"([A-z]+) ([A-z]+)" => s"\2, \1") |> sort
 
 ```
 [
-"Brown, Tom",
-"Johnson, Mary",
-"Smith, Eve"
+	"Brown, Tom",
+	"Johnson, Mary",
+	"Smith, Eve"
 ]
 ```
 
-OK, time for some more complicated random names:
+OK, time for some more complicated names:
 
 ```
-firstMiddleLastNames = ["Jane Johnson", "Mary Jane Doe",
-	"Peter Smith", "Adam Tom Brown"]
+# random names
+firstMiddleLastNames = [
+	"Jane Johnson",
+	"Mary Jane Doe",
+	"Peter Smith",
+	"Adam Tom Brown"
+]
 ```
 
 Let's build our regex step by step. We start by matching a middle name (if there
@@ -682,8 +688,8 @@ eachmatch.(r" [A-z]+ ", firstMiddleLastNames) .|> getAllMatches
 ]
 ```
 
-Here we search for a word between two spaces, more specifcally: space character,
-at least one letter (`[A-z]+`) and space character.
+Here we search for a word between two spaces, more specifically: a white-space
+character, at least one letter (`[A-z]+`) and a white-space character.
 
 Time to abbreviate the middle name:
 
@@ -693,18 +699,19 @@ replace.(firstMiddleLastNames, r" ([A-Z])[a-z]+ " => s" \1. ")
 
 ```
 [
- "Jane Johnson",
- "Mary J. Doe",
- "Peter Smith",
- "Adam T. Brown"
+	"Jane Johnson",
+	"Mary J. Doe",
+	"Peter Smith",
+	"Adam T. Brown"
 ]
 ```
 
-For that we modified the previous regex. This time we looked for space
+For that we modified the previous regex. This time we looked for a white-space
 character, one capital letter (`[A-Z]`), at least one small letter (`[a-z]+`)
-and space character. Out of the whole match (`" ([A-Z])[a-z]+ "`) we captured
-(`()`) and remembered only the capital letter, which we used in the substitution
-string (`s""`) followed by a literal dot (`\1.`).
+and a whtie-space character. Out of the whole match (`" ([A-Z])[a-z]+ "`) we
+captured (`()`) and remembered only the capital letter, which we used in the
+substitution string (`s""`) followed by a literal dot (`\1.`). Therefore, we
+replaced the whole match (`" ([A-Z])[a-z]+ "`) by its first letter (`\1`).
 
 Now, time for the swap.
 
@@ -715,19 +722,20 @@ names -> replace.(names, r"([A-z .]+) ([A-z]+)" => s"\2, \1")
 
 ```
 [
- "Johnson, Jane",
- "Doe, Mary J.",
- "Smith, Peter",
- "Brown, Adam T."
+	"Johnson, Jane",
+	"Doe, Mary J.",
+	"Smith, Peter",
+	"Brown, Adam T."
 ]
 ```
 
 Here, instead of being clever and building a one complicated regex, we just
-passed the result of one regex as an input to another one. The other regex
-looked for at least one letter, space or dot (`[A-z ]+`, this captures as many
-as it can consecutive words due to greedyness) followed by one word (`[A-z]+`,
-one or more letters). We captured the words with `()` and swapped them with
-backreferences (`\2` and `\1`), while putting comma (`,`) between them.
+passed the result of one `replace` function as an input to another one. The
+second regex looks for at least one letter, space or dot (`[A-z ]+`, this
+captures as many consecutive words as it can because of the greediness) followed
+by one word (`[A-z]+`, one or more letters). We captured the words with `()` and
+swapped them with back-references (`\2` and `\1`), while putting comma (`,`)
+between them.
 
 OK, now for the last step, sorting:
 
@@ -739,10 +747,10 @@ sort
 
 ```
 [
- "Brown, Adam T.",
- "Doe, Mary J.",
- "Johnson, Jane",
- "Smith, Peter"
+	"Brown, Adam T.",
+	"Doe, Mary J.",
+	"Johnson, Jane",
+	"Smith, Peter"
 ]
 ```
 
