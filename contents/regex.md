@@ -658,3 +658,92 @@ replace.(firstLastNames, r"([A-z]+) ([A-z]+)" => s"\2, \1") |> sort
 "Smith, Eve"
 ]
 ```
+
+OK, time for some more complicated random names:
+
+```
+firstMiddleLastNames = ["Jane Johnson", "Mary Jane Doe",
+	"Peter Smith", "Adam Tom Brown"]
+```
+
+Let's build our regex step by step. We start by matching a middle name (if there
+is one).
+
+```
+eachmatch.(r" [A-z]+ ", firstMiddleLastNames) .|> getAllMatches
+```
+
+```
+[
+	[],
+	[" Jane "],
+	[],
+	[" Tom "]
+]
+```
+
+Here we search for a word between two spaces, more specifcally: space character,
+at least one letter (`[A-z]+`) and space character.
+
+Time to abbreviate the middle name:
+
+```
+replace.(firstMiddleLastNames, r" ([A-Z])[a-z]+ " => s" \1. ")
+```
+
+```
+[
+ "Jane Johnson",
+ "Mary J. Doe",
+ "Peter Smith",
+ "Adam T. Brown"
+]
+```
+
+For that we modified the previous regex. This time we looked for space
+character, one capital letter (`[A-Z]`), at least one small letter (`[a-z]+`)
+and space character. Out of the whole match (`" ([A-Z])[a-z]+ "`) we captured
+(`()`) and remembered only the capital letter, which we used in the substitution
+string (`s""`) followed by a literal dot (`\1.`).
+
+Now, time for the swap.
+
+```
+replace.(firstMiddleLastNames, r" ([A-Z])[a-z]+ " => s" \1. ") |>
+names -> replace.(names, r"([A-z .]+) ([A-z]+)" => s"\2, \1")
+```
+
+```
+[
+ "Johnson, Jane",
+ "Doe, Mary J.",
+ "Smith, Peter",
+ "Brown, Adam T."
+]
+```
+
+Here, instead of being clever and building a one complicated regex, we just
+passed the result of one regex as an input to another one. The other regex
+looked for at least one letter, space or dot (`[A-z ]+`, this captures as many
+as it can consecutive words due to greedyness) followed by one word (`[A-z]+`,
+one or more letters). We captured the words with `()` and swapped them with
+backreferences (`\2` and `\1`), while putting comma (`,`) between them.
+
+OK, now for the last step, sorting:
+
+```
+replace.(firstMiddleLastNames, r" ([A-Z])[a-z]+ " => s" \1. ") |>
+names -> replace.(names, r"([A-z .]+) ([A-z]+)" => s"\2, \1") |>
+sort
+```
+
+```
+[
+ "Brown, Adam T.",
+ "Doe, Mary J.",
+ "Johnson, Jane",
+ "Smith, Peter"
+]
+```
+
+And we're done.
