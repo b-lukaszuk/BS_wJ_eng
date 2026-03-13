@@ -835,3 +835,40 @@ nums -> reverse.(replace.(nums, r",$" => ""))
 "123,456,789"
 ]
 ```
+
+To make it slightly more elegant we can enclose it into a function:
+
+```
+function fmtMoney(n::Int)::Str
+    @assert n >= 0 "n must be >= 0"
+    result::Str = replace(reverse(string(n)), r"(\d{3})" => s"\1,")
+    return replace(result, r",$" => "") |> reverse
+end
+```
+
+And use it for money formatting:
+
+```
+fmtMoney.(nums1) .* " USD"
+```
+
+```
+[
+"0 USD"
+"1 USD"
+"12 USD"
+"123 USD"
+"1,234 USD"
+"12,345 USD"
+"123,456 USD"
+"1,234,567 USD"
+"12,345,678 USD"
+"123,456,789 USD"
+]
+```
+
+The above `fmtMoney` is a five line regex equivalent of the fifteen lines long
+`getFormattedMoney` from @sec:compound_interest_problem_q4. Likely, it could be
+shortened even more by applying [lookahead
+assertions](https://en.wikipedia.org/wiki/Regular_expression#Assertions) (we
+didn't use them, since they had not been discussed in @sec:regex_problem_intro).
