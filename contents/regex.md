@@ -755,3 +755,83 @@ sort
 ```
 
 And we're done.
+
+#### Regex Solution 4 {#sec:regex_problem_solution4}
+
+OK, time for a tough challenge. Let's to properly format `nums1` using only the
+regex techniques we learned so far (see @sec:regex_problem_intro). My first try
+would look something like:
+
+```
+nums1 = [0, 1, 12, 123, 1234, 12345,
+	123456, 1234567, 12345678, 123456789]
+
+replace.(string.(nums1), r"(\d{3})" => s"\1,")
+```
+
+```
+[
+"0"
+"1"
+"12"
+"123,"
+"123,4"
+"123,45"
+"123,456,"
+"123,456,7"
+"123,456,78"
+"123,456,789,"
+]
+```
+
+Overall, we did pretty good. First we changed the integers (`nums1`) into
+strings (by using `string` function). Next, we said match exactly three digits
+(`\d{3}`) and remember them (`(...)`). Finally, insert the remembered digits
+followed by a white-space character (`"\1,"`). There is a small problem, though.
+The tripplets are matched starting from left side instead of the right one that
+we would like to. Not a problem, we'll just reverse the string before
+transformation (putting commas).
+
+```
+replace.(reverse.(string.(nums1)), r"(\d{3})" => s"\1,")
+```
+
+```
+[
+"0"
+"1"
+"21"
+"321,"
+"432,1"
+"543,21"
+"654,321,"
+"765,432,1"
+"876,543,21"
+"987,654,321,"
+]
+```
+
+OK, the commas are placed every three digits from right (if you consider the
+original numbers). Now we would like to remove the stray comma at the end of
+some lines (`r",$" => ""`) and reverse the string again (to restore the original
+order).
+
+```
+replace.(reverse.(string.(nums1)), r"(\d{3})" => s"\1,") |>
+nums -> reverse.(replace.(nums, r",$" => ""))
+```
+
+```
+[
+"0"
+"1"
+"12"
+"123"
+"1,234"
+"12,345"
+"123,456"
+"1,234,567"
+"12,345,678"
+"123,456,789"
+]
+```
