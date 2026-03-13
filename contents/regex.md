@@ -854,15 +854,15 @@ fmtMoney.(nums1) .* " USD"
 
 ```
 [
-"0 USD"
-"1 USD"
-"12 USD"
-"123 USD"
-"1,234 USD"
-"12,345 USD"
-"123,456 USD"
-"1,234,567 USD"
-"12,345,678 USD"
+"0 USD",
+"1 USD",
+"12 USD",
+"123 USD",
+"1,234 USD",
+"12,345 USD",
+"123,456 USD",
+"1,234,567 USD",
+"12,345,678 USD",
 "123,456,789 USD"
 ]
 ```
@@ -872,3 +872,54 @@ The above `fmtMoney` is a five line regex equivalent of the fifteen lines long
 shortened even more by applying [lookahead
 assertions](https://en.wikipedia.org/wiki/Regular_expression#Assertions) (we
 didn't use them, since they had not been discussed in @sec:regex_problem_intro).
+
+Now, let's go one step further and try to format also decimals. For that, we'll
+split a number into dollars (integers) and pennies (two digits after comma,
+rounded if necessary).
+
+```
+function getDollarPennies(money::Flt)::Tuple{Int, Int}
+    @assert money >= 0 "money must be >= 0"
+    integralPart::Int = floor(Int, money)
+    decimalPart::Flt = money % 1
+    return (integralPart, round(Int, decimalPart*100))
+end
+```
+
+Once we got it, we will use `fmtMoney(n::Int)::Str` to format the dollars to
+which we'll append the pennies:
+
+```
+function fmtN(n::Flt)::Str
+    @assert n >= 0 "n must be >= 0"
+    dollars::Int, pennies::Int = getDollarPennies(n)
+    result::Str = fmtN(dollars)
+    return result * string(".", pennies)
+end
+```
+
+Time to test it out:
+
+```
+nums2 = [0, 0.1, 1, 1.2, 12., 12.34, 123.456,
+	1234, 12345, 12345.67, 123456.7, 1234567.89]
+
+fmtN.(nums2) .* " USD"
+```
+
+```
+[
+"0.0 USD",
+"0.10 USD",
+"1.0 USD",
+"1.20 USD",
+"12.0 USD",
+"12.34 USD",
+"123.46 USD",
+"1,234.0 USD",
+"12,345.0 USD",
+"12,345.67 USD",
+"123,456.70 USD",
+"1,234,567.89 USD"
+]
+```
