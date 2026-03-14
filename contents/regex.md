@@ -548,7 +548,7 @@ convert those numbers to the desired form (place `,` after every three numbers
 from right).
 
 ```
-nums1 = [0, 1, 12, 123, 1234, 12345,
+nums = [0, 1, 12, 123, 1234, 12345,
 	123456, 1234567, 12345678, 123456789]
 ```
 
@@ -556,7 +556,7 @@ Can you modify your program so that it handles the following numbers correctly
 as well (e.g. `12345.678` should become "12,345.68 USD"):
 
 ```
-nums2 = [0, 0.1, 1, 1.2, 12., 12.34, 123.472,
+nums = [0, 0.1, 1, 1.2, 12., 12.34, 123.472,
 	1234, 12345, 12345.678, 123456.78, 1234567.89]
 ```
 
@@ -628,7 +628,7 @@ class (`[A-z0-9.]`) does not include spaces.
 Swapping the names is a piece of cake. We just use capture groups (`(...)`)
 that contain one or more (`+`) letters (`[A-z]`) per word and are separated by a
 white-space character. In the substitution string (`s""`) we use back-references
-in reversed order (`\2` and `\1`) and separate them with the comma (`","`):
+in reversed order (`\2` and `\1`) and separate them with a comma (`","`):
 
 ```
 # random names
@@ -707,7 +707,7 @@ replace.(names, r" ([A-Z])[a-z]+ " => s" \1. ")
 
 For that we modified the previous regex. This time we looked for a white-space
 character, one capital letter (`[A-Z]`), at least one small letter (`[a-z]+`)
-and a whtie-space character. Out of the whole match (`" ([A-Z])[a-z]+ "`) we
+and a white-space character. Out of the whole match (`" ([A-Z])[a-z]+ "`) we
 captured (`()`) and remembered only the capital letter, which we used in the
 substitution string (`s""`) followed by a literal dot (`\1.`). Therefore, we
 replaced the whole match (`" ([A-Z])[a-z]+ "`) by its first letter (`\1`).
@@ -733,7 +733,7 @@ passed the result of one `replace` function as an input to another one. The
 second regex looks for at least one letter, space or dot (`[A-z .]+`, this
 captures as many consecutive words as it can because of the greediness) followed
 by one word (`[A-z]+`, one or more letters). We captured the words with `()` and
-swapped them with back-references (`\2` and `\1`), while putting comma (`,`)
+swapped them with back-references (`\2` and `\1`), while putting a comma (`,`)
 between them.
 
 OK, now for the last step, sorting:
@@ -757,85 +757,89 @@ And we're done.
 
 #### Regex Solution 4 {#sec:regex_problem_solution4}
 
-OK, time for a tough challenge. Let's to properly format `nums1` using only the
-regex techniques we learned so far (see @sec:regex_problem_intro). My first try
-would look something like:
+OK, time for a tough challenge. Let's properly format `nums` using only the
+regex techniques we learned so far (see @sec:regex_problem_intro) + some
+built-in Julia functions. My first try would look something like:
 
 ```
-nums1 = [0, 1, 12, 123, 1234, 12345,
+nums = [0, 1, 12, 123, 1234, 12345,
 	123456, 1234567, 12345678, 123456789]
 
-replace.(string.(nums1), r"(\d{3})" => s"\1,")
+replace.(string.(nums), r"(\d{3})" => s"\1,")
 ```
 
 ```
+# no comma separating elts of vector, to make it more legible
 [
-"0"
-"1"
-"12"
-"123,"
-"123,4"
-"123,45"
-"123,456,"
-"123,456,7"
-"123,456,78"
-"123,456,789,"
+	"0"
+	"1"
+	"12"
+	"123,"
+	"123,4"
+	"123,45"
+	"123,456,"
+	"123,456,7"
+	"123,456,78"
+	"123,456,789,"
 ]
 ```
 
-Overall, we did pretty good. First we changed the integers (`nums1`) into
-strings (by using `string` function). Next, we said match exactly three digits
-(`\d{3}`) and remember them (`(...)`). Finally, insert the remembered digits
-followed by a white-space character (`"\1,"`). There is a small problem, though.
-The tripplets are matched starting from left side instead of the right one that
-we would like to. Not a problem, we'll just reverse the string before
-transformation (putting commas).
+Overall, we did pretty good. First, we changed the integers (`nums`) into
+strings (by using `string` function). Next, we said: while moving left to right
+(default direction for a regex engine) match exactly three digits (`\d{3}`) and
+remember them (`(...)`). Finally, insert the remembered digits followed by a
+comma (`"\1,"`). There is a small problem, though. The triplets are matched
+starting from left side instead of the right (which we would prefer). Not a
+problem, we'll just reverse the string before transformation (putting commas).
 
 ```
-replace.(reverse.(string.(nums1)), r"(\d{3})" => s"\1,")
+replace.(reverse.(string.(nums)), r"(\d{3})" => s"\1,")
 ```
 
 ```
+# no comma separating elts of vector, to make it more legible
 [
-"0"
-"1"
-"21"
-"321,"
-"432,1"
-"543,21"
-"654,321,"
-"765,432,1"
-"876,543,21"
-"987,654,321,"
+	"0"
+	"1"
+	"21"
+	"321,"
+	"432,1"
+	"543,21"
+	"654,321,"
+	"765,432,1"
+	"876,543,21"
+	"987,654,321,"
 ]
 ```
 
 OK, the commas are placed every three digits from right (if you consider the
 original numbers). Now we would like to remove the stray comma at the end of
 some lines (`r",$" => ""`) and reverse the string again (to restore the original
-order).
+order):
 
 ```
-replace.(reverse.(string.(nums1)), r"(\d{3})" => s"\1,") |>
-nums -> reverse.(replace.(nums, r",$" => ""))
+replace.(reverse.(string.(nums)), r"(\d{3})" => s"\1,") |>
+reversedNums -> reverse.(replace.(reversedNums, r",$" => ""))
 ```
 
 ```
+# no comma separating elts of vector, to make it more legible
 [
-"0"
-"1"
-"12"
-"123"
-"1,234"
-"12,345"
-"123,456"
-"1,234,567"
-"12,345,678"
-"123,456,789"
+	"0"
+	"1"
+	"12"
+	"123"
+	"1,234"
+	"12,345"
+	"123,456"
+	"1,234,567"
+	"12,345,678"
+	"123,456,789"
 ]
 ```
 
-To make it slightly more elegant we can enclose it into a function:
+To make it slightly more elegant we can enclose the entire procedure into a
+function:
 
 ```
 function fmtMoney(n::Int)::Str
@@ -853,16 +857,16 @@ fmtMoney.(nums1) .* " USD"
 
 ```
 [
-"0 USD",
-"1 USD",
-"12 USD",
-"123 USD",
-"1,234 USD",
-"12,345 USD",
-"123,456 USD",
-"1,234,567 USD",
-"12,345,678 USD",
-"123,456,789 USD"
+	"0 USD",
+	"1 USD",
+	"12 USD",
+	"123 USD",
+	"1,234 USD",
+	"12,345 USD",
+	"123,456 USD",
+	"1,234,567 USD",
+	"12,345,678 USD",
+	"123,456,789 USD"
 ]
 ```
 
@@ -877,7 +881,7 @@ split a number into dollars (integers) and pennies (two digits after comma,
 rounded if necessary).
 
 ```
-function getDollarPennies(money::Flt)::Tuple{Int, Int}
+function getDollarsPennies(money::Flt)::Tuple{Int, Int}
     @assert money >= 0 "money must be >= 0"
     integralPart::Int = floor(Int, money)
     decimalPart::Flt = money % 1
@@ -891,7 +895,7 @@ which we'll append the pennies:
 ```
 function fmtN(n::Flt)::Str
     @assert n >= 0 "n must be >= 0"
-    dollars::Int, pennies::Int = getDollarPennies(n)
+    dollars::Int, pennies::Int = getDollarsPennies(n)
     result::Str = fmtN(dollars)
     return result * string(".", pennies)
 end
@@ -908,17 +912,21 @@ fmtN.(nums2) .* " USD"
 
 ```
 [
-"0.0 USD",
-"0.10 USD",
-"1.0 USD",
-"1.20 USD",
-"12.0 USD",
-"12.34 USD",
-"123.46 USD",
-"1,234.0 USD",
-"12,345.0 USD",
-"12,345.67 USD",
-"123,456.70 USD",
-"1,234,567.89 USD"
+	"0.0 USD",
+	"0.10 USD",
+	"1.0 USD",
+	"1.20 USD",
+	"12.0 USD",
+	"12.34 USD",
+	"123.46 USD",
+	"1,234.0 USD",
+	"12,345.0 USD",
+	"12,345.67 USD",
+	"123,456.70 USD",
+	"1,234,567.89 USD"
 ]
 ```
+
+Looks like we finished the job. Regular expressions are worth learning, even at
+a relatively basic level. Sometimes they can really speed things up or reduce
+the amount of code.
