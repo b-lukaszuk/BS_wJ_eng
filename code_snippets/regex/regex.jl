@@ -62,3 +62,27 @@ getAllMatches(eachmatch(r"\$\d{1,}", txt)) |>
 vecStrDollars -> replace.(vecStrDollars, "\$" => "") |>
 vecStrNumbers -> parse.(Int, vecStrNumbers) |>
 sum
+
+### Example 3
+Rnd.seed!(9)
+telNums = [join(Rnd.rand(string.(0:9), 9)) for _ in 1:3]
+
+replace.(telNums, r"(\d{3})(\d{3})(\d{3})" => s"\1-\2-\3")
+
+### Example 4
+camelCasedWords = ["helloWorld", "niceToMeetYou", "translateToEnglish"]
+
+eachmatch.(r"([A-Z])", camelCasedWords) .|> getAllMatches
+
+# the below return an error
+# replace.(camelCasedWords, r"([A-Z])" => s"\l\1")
+replace.(camelCasedWords, r"([A-Z])" => lowercase)
+replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_" * lowercase(AtoZ))
+replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_$(lowercase(AtoZ))")
+
+
+snakeCasedWords = ["hello_world", "nice_to_meet_you", "translate_to_english"]
+
+replace.(snakeCasedWords, r"_[a-z]" => _atoz -> uppercase(_atoz[2:end]))
+# or
+replace.(snakeCasedWords, r"_[a-z]" => _atoz -> uppercase(strip(_atoz, '_')))
