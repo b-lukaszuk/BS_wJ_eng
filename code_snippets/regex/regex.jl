@@ -1,10 +1,3 @@
-# TODO regex
-# https://docs.julialang.org/en/v1/manual/strings/#man-regex-literals
-# https://regex101.com/
-# https://www.pcre.org/current/doc/html/pcre2syntax.html
-# https://en.wikiversity.org/wiki/Regular_expressions
-# https://docs.julialang.org/en/v1/base/strings/#Base.replace-Tuple{IO,%20AbstractString,%20Vararg{Pair}}
-# https://docs.julialang.org/en/v1/base/strings/#Base.eachmatch
 import Random as Rnd
 
 # the code in this file is meant to serve as a programming exercise only
@@ -14,7 +7,7 @@ const Flt = Float64
 const Str = String
 const Vec = Vector
 
-# e/t 1
+## Regex Intro
 function getTxtFromFile(filePath::Str)::Str
     fileTxt::Str = ""
     try
@@ -26,7 +19,9 @@ function getTxtFromFile(filePath::Str)::Str
     end
     return fileTxt
 end
-txt = getTxtFromFile("./loremJohnSmith.txt")
+
+txt = getTxtFromFile("./loremJohnSmith.txt");
+println(txt)
 
 function getAllMatches(rmi::Base.RegexMatchIterator)::Vec{Str}
     allMatches::Vec{RegexMatch} = collect(rmi)
@@ -35,163 +30,35 @@ function getAllMatches(rmi::Base.RegexMatchIterator)::Vec{Str}
 end
 
 getAllMatches(eachmatch(r"John Smith", txt))
-txt = replace(txt, r"John Smith" => "John S.")
+
+txt = replace(txt, r"John Smith" => "John S")
 getAllMatches(eachmatch(r"John Smith", txt))
 
-# e/t 2
-txt = getTxtFromFile("./loremDates.txt")
+# in Julia strings are immutable
+# to make changes permament write it to `txt` and/or to a file
+txt = replace(txt, r"John Smith" => "John S")
+eachmatch(r"John Smith", txt) |> getAllMatches
 
-yrRegs = [r"[0-9][0-9][0-9][0-9]", r"[0-9]{4}", r"\d{4}"]
+### Example 1
+txt = getTxtFromFile("./loremDates.txt");
+println(txt)
 
-getAllMatches(eachmatch(yrRegs[1], txt))
-getAllMatches(eachmatch(yrRegs[2], txt))
-getAllMatches(eachmatch(yrRegs[3], txt))
+eachmatch(r"[0-9][0-9][0-9][0-9]", txt) |> getAllMatches
+eachmatch(r"[0-9]{4}", txt) |> getAllMatches
+eachmatch(r"\d{4}", txt) |> getAllMatches
 
-# e/t 3
-txt = getTxtFromFile("./loremDollarsDates.txt")
+### Example 2
+txt = getTxtFromFile("./loremDollarsDates.txt");
+println(txt)
 
-getAllMatches(eachmatch(r"\d.+\d", txt))
-getAllMatches(eachmatch(r"\d.+?\d", txt))
-getAllMatches(eachmatch(r"\d{1,}", txt))
-getAllMatches(eachmatch(r"$\d{1,}", txt))
+eachmatch(r"\d.+\d", txt) |> getAllMatches
+eachmatch(r"\d.+?\d", txt) |> getAllMatches
+eachmatch(r"\d{1,}", txt) |> getAllMatches
+eachmatch(r"\d{1,3}", txt) |> getAllMatches
+eachmatch(r"$\d{1,}", txt) |> getAllMatches
 getAllMatches(eachmatch(r"\$\d{1,}", txt))
 
-getAllMatches(eachmatch(r"\$\d{1,4}", txt)) |>
+getAllMatches(eachmatch(r"\$\d{1,}", txt)) |>
 vecStrDollars -> replace.(vecStrDollars, "\$" => "") |>
 vecStrNumbers -> parse.(Int, vecStrNumbers) |>
 sum
-
-# e/t 4
-datesMMDDYYYY = [
-   "01042025",
-   "11012018",
-   "12311999",
-]
-
-# extract year only
-replace.(datesMMDDYYYY, r"^\d{4}" => "")
-
-# convert to yyyymmdd
-replace.(datesMMDDYYYY, r"(\d{2})(\d{2})(\d{4})" => s"\3\1\2")
-replace.(datesMMDDYYYY, r"(\d{2})(\d{2})(\d{4})" => s"\3-\1-\2")
-
-# e/t 5
-camelCasedWords = ["helloWorld", "niceToMeetYou", "translateToEnglish"]
-# funny, Julia allows for \1 (captures) but not \l (lowercase) from pcre2
-# replace.(camelCasedWords, r"([A-Z])" => s"\l\1")
-# no biggie, we'll do it with an anonymous function
-replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_$(lowercase(AtoZ))")
-replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_" * lowercase(AtoZ))
-
-snakeCasedWords = ["hello_world", "nice_to_meet_you", "translate_to_english"]
-replace.(snakeCasedWords, r"_[a-z]" => _atoz -> uppercase(_atoz[2:end]))
-
-# e/t 6
-Rnd.seed!(009)
-telNums = [join(Rnd.rand(string.(0:9), 9)) for _ in 1:3]
-
-function getFmtTelNum(num::Str)::Str
-    @assert map(isdigit, collect(num)) |> all "not a number"
-    @assert length(num) == 9 "tel numbers have exactly 9 digits"
-    return replace(
-        num, r"^(\d{3})(\d{2})(\d{2})(\d{2})$" => s"\1-\2-\3-\4")
-end
-
-getFmtTelNum.(telNums)
-
-# e/t 7
-txt = getTxtFromFile("./loremMail.txt")
-
-mailReg = r"[a-z0-9.]+@[a-z0-9.]+"
-getAllMatches(eachmatch(mailReg, txt)) |> unique
-
-# e/t 8
-means_sds = ["100,15", "25,2.5", "88,8.0"]
-replace.(means_sds, r"(\d{1,}),(\d{1,})" => s"mean = \1, sd = \2")
-
-# e/t 9
-firstNameOption = ["Peter", "Adam", "Tom", "John", "Jane", "Eve", "Mary"]
-lastNameOption = ["Smith", "Doe", "Brown", "Johnson"]
-
-function getRandName(n::Int = 3,
-                     first::Vec{Str}=firstNameOption,
-                     last::Vec{Str}=lastNameOption)::Vec{Str}
-    @assert n > 0 "n must be > 0"
-    result::Vec{Str} = []
-    parts::Vec{Str} = []
-    for _ in 1:n
-        parts = [Rnd.rand(first), Rnd.rand(last)]
-        push!(result, join(parts, " "))
-    end
-    return result
-end
-
-Rnd.seed!(824)
-firstLastNames = getRandName()
-replace.(firstLastNames, r"([A-z]+) ([A-z]+)" => s"\2 \1")
-
-# e/t 9
-function getRandName2(n::Int = 3,
-                      first::Vec{Str}=firstNameOption,
-                      middle::Vec{Str}=firstNameOption,
-                      last::Vec{Str}=lastNameOption)::Vec{Str}
-    @assert n > 0 "n must be > 0"
-    result::Vec{Str} = []
-    parts::Vec{Str} = []
-    for _ in 1:n
-        if Rnd.rand([true, false])
-            parts = [Rnd.rand(first), Rnd.rand(middle), Rnd.rand(last)]
-        else
-            parts = [Rnd.rand(first), Rnd.rand(last)]
-        end
-        push!(result, join(parts, " "))
-    end
-    return result
-    return result
-end
-
-Rnd.seed!(715)
-firstMiddleLastNames = getRandName2(4)
-replace.(firstMiddleLastNames, r"([A-z ]+) ([A-z]+)$" => s"\2, \1")
-
-# e/t 10
-replace.(firstMiddleLastNames, r" ([A-Z])[a-z]+ " => s" \1. ")
-
-# e/t 11
-nums1 = [0, 1, 12, 123, 1234, 12345, 123456, 1234567, 12345678, 123456789]
-
-# ver 1
-function fmtN(n::Int)::Str
-    @assert n >= 0 "n must be >= 0"
-    result::Str = replace(reverse(string(n)), r"(\d{3})" => s"\1,")
-    return replace(result, r",$" => "") |> reverse
-end
-
-fmtN.(nums1) .* " USD"
-
-# ver 2 shorter, but more enigmatic, uses positive look-ahead
-function fmtN(n::Int)::Str
-    @assert n >= 0 "n must be >= 0"
-    return replace(string(n), r"(\d)(?=(\d{3})+$)" => s"\1,")
-end
-
-fmtN.(nums1) .* " USD"
-
-# e/t 12 - extension of the previous one
-nums2 = [0, 0.1, 1, 1.2, 12., 12.34, 123.472, 1234, 12345, 12345.67, 123456.7, 1234567.89]
-
-function getDollarPennies(money::Flt)::Tuple{Int, Int}
-    @assert money >= 0 "money must be >= 0"
-    integralPart::Int = floor(Int, money)
-    decimalPart::Flt = money % 1
-    return (integralPart, round(Int, decimalPart*100))
-end
-
-function fmtN(n::Flt)::Str
-    @assert n >= 0 "n must be >= 0"
-    dollars::Int, pennies::Int = getDollarPennies(n)
-    result::Str = fmtN(dollars)
-    return result * string(".", pennies)
-end
-
-fmtN.(nums2) .* " USD"
