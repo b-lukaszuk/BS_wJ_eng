@@ -243,7 +243,7 @@ eachmatch(r"\d.+?\d", txt) |> getAllMatches
 An improvement, but we're still not there. Let's try again.
 
 ```
-eachmatch(r"\d{1, }", txt) |> getAllMatches
+eachmatch(r"\d{1,}", txt) |> getAllMatches
 ```
 
 ```
@@ -263,11 +263,11 @@ eachmatch(r"\d{1, }", txt) |> getAllMatches
 ]
 ```
 
-Pretty good, here `{i, j}` means between `i` and `j` (inclusive - inclusive)
-occurrences of the previous token (`\d`). `{, j}` stands for 0 to `j` and `{i,
-}` stands for `i` or more. Therefore, we only match 1 or more digits in a row,
-so it seems that we are finally there. Well, not quite, right now we got no way
-to tell which digits denote money and which years (they're from file
+Pretty good, here `{i,j}` means between `i` and `j` (inclusive - inclusive)
+occurrences of the previous token (`\d`). `{,j}` stands for 0 to `j` and `{i,}`
+stands for `i` or more. Therefore, we only match 1 or more digits in a row, so
+it seems that we are finally there. Well, not quite, right now we got no way to
+tell which digits denote money and which years (they're from file
 `loremDollarsDates.txt`).
 
 Let's try to change our regex a bit to extract only dollars.
@@ -311,7 +311,7 @@ getAllMatches(eachmatch(r"\$\d{1,}", txt))
 Finally, we can add it up using, e.g. this few liner:
 
 ```
-getAllMatches(eachmatch(r"\$\d{1,4}", txt)) |>
+getAllMatches(eachmatch(r"\$\d{1,}", txt)) |>
 vecStrDollars -> replace.(vecStrDollars, "\$" => "") |>
 vecStrNumbers -> parse.(Int, vecStrNumbers) |>
 sum
@@ -508,7 +508,7 @@ datesMMDDYYYY = [
    "01042025",
    "11012018",
    "12311999",
-   "03202026",
+   "03202026"
 ]
 ```
 
@@ -563,15 +563,15 @@ Can you modify your program so that it handles the following numbers correctly
 as well (e.g. `12345.678` should become "12,345.68 USD"):
 
 ```
-nums = [0, 0.1, 1, 1.2, 12., 12.34, 123.472,
-	1234, 12345, 12345.678, 123456.78, 1234567.89]
+nums = [0, 0.1, 1, 1.2, 12., 12.34, 123.456,
+	1234, 12345, 12345.67, 123456.7, 1234567.89]
 ```
 
 Well, let's find out. Good luck.
 
 ## Solution {#sec:regex_solution}
 
-#### Regex Solution 1 {#sec:regex_problem_solution1}
+### Regex Solution 1 {#sec:regex_problem_solution1}
 
 The solution is pretty straightforward if you read through Example 1 and 3 in
 @sec:regex_problem_intro.
@@ -594,7 +594,7 @@ pair of digits, `(\d{2})`) and years (last four digits, `(\d{4})`) and reference
 them back in the appropriate order (`\3`, `\1`, and `\2`) separated by hyphens
 (`-`). And that's it. Finito.
 
-#### Regex Solution 2 {#sec:regex_problem_solution2}
+### Regex Solution 2 {#sec:regex_problem_solution2}
 
 ```jl
 s = """
@@ -608,7 +608,7 @@ Surprisingly, it seems that a proper regex for e-mail validation is pretty
 complex ([see
 here](https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-address-using-a-regular-expression)).
 Still, we can go a far way with a much simpler one, which in our particular case
-would do the trick:
+should do the trick:
 
 ```jl
 s = """
@@ -630,7 +630,7 @@ need to add `?` after the `+` to make a non-greedy match. That is because the
 email addresses are separated by one or more spaces and the positive character
 class (`[A-z0-9.]`) does not include spaces.
 
-#### Regex Solution 3 {#sec:regex_problem_solution3}
+### Regex Solution 3 {#sec:regex_problem_solution3}
 
 Swapping the names is a piece of cake. We just use capture groups (`(...)`)
 that contain one or more (`+`) letters (`[A-z]`) per word and are separated by a
@@ -762,7 +762,7 @@ sort
 
 And we're done.
 
-#### Regex Solution 4 {#sec:regex_problem_solution4}
+### Regex Solution 4 {#sec:regex_problem_solution4}
 
 OK, time for a tough challenge. Let's properly format `nums` using only the
 regex techniques we learned so far (see @sec:regex_problem_intro) + some
@@ -859,7 +859,7 @@ end
 And use it for money formatting:
 
 ```
-fmtMoney.(nums1) .* " USD"
+fmtMoney.(nums) .* " USD"
 ```
 
 ```
@@ -900,10 +900,10 @@ Once we got it, we will use `fmtMoney(n::Int)::Str` to format the dollars to
 which we'll append the pennies:
 
 ```
-function fmtN(n::Flt)::Str
+function fmtMoney(n::Flt)::Str
     @assert n >= 0 "n must be >= 0"
     dollars::Int, pennies::Int = getDollarsPennies(n)
-    result::Str = fmtN(dollars)
+    result::Str = fmtMoney(dollars)
     return result * string(".", pennies)
 end
 ```
@@ -911,10 +911,10 @@ end
 Time to test it out:
 
 ```
-nums2 = [0, 0.1, 1, 1.2, 12., 12.34, 123.456,
+nums = [0, 0.1, 1, 1.2, 12., 12.34, 123.456,
 	1234, 12345, 12345.67, 123456.7, 1234567.89]
 
-fmtN.(nums2) .* " USD"
+fmtMoney.(nums) .* " USD"
 ```
 
 ```
