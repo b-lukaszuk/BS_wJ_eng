@@ -521,7 +521,7 @@ Here's a vector of random names:
 
 ```
 # random names
-firstLastNames = ["Mary Johnson", "Eve Smith", "Tom Brown"]
+names = ["Mary Johnson", "Eve Smith", "Tom Brown"]
 ```
 
 Swap the names order with a regex ("Adam Smith" should become "Smith, Adam") and
@@ -531,8 +531,7 @@ Can you do the same, but while accounting for possible middle names.
 
 ```
 # random names
-firstMiddleLastNames = ["Jane Johnson", "Mary Jane Doe",
-	"Peter Smith", "Adam Tom Brown"]
+names = ["Jane Johnson", "Mary Jane Doe", "Peter Smith", "Adam Tom Brown"]
 ```
 
 To add a small tweak, I want you to swap the names, abbreviate the middle name
@@ -627,15 +626,15 @@ class (`[A-z0-9.]`) does not include spaces.
 #### Regex Solution 3 {#sec:regex_problem_solution3}
 
 Swapping the names is a piece of cake. We just use capture groups (`(...)`)
-with back-references (`\1` and `\2`) together with one or more (`+`) letters
-(`[A-z]`) per word. The words are separated by a white-space in the regex
-(`r""`) and a comma and white-space in the substitution string (`s""`):
+that contain one or more (`+`) letters (`[A-z]`) per word and are separated by a
+white-space character. In the substitution string (`s""`) we use back-references
+in reversed order (`\2` and `\1`) and separate them with the comma (`","`):
 
 ```
 # random names
-firstLastNames = ["Mary Johnson", "Eve Smith", "Tom Brown"]
+names = ["Mary Johnson", "Eve Smith", "Tom Brown"]
 
-replace.(firstLastNames, r"([A-z]+) ([A-z]+)" => s"\2, \1")
+replace.(names, r"([A-z]+) ([A-z]+)" => s"\2, \1")
 ```
 
 ```
@@ -649,7 +648,7 @@ replace.(firstLastNames, r"([A-z]+) ([A-z]+)" => s"\2, \1")
 Once we got the names formatted, sorting them shouldn't be a problem either:
 
 ```
-replace.(firstLastNames, r"([A-z]+) ([A-z]+)" => s"\2, \1") |> sort
+replace.(names, r"([A-z]+) ([A-z]+)" => s"\2, \1") |> sort
 ```
 
 ```
@@ -664,7 +663,7 @@ OK, time for some more complicated names:
 
 ```
 # random names
-firstMiddleLastNames = [
+names = [
 	"Jane Johnson",
 	"Mary Jane Doe",
 	"Peter Smith",
@@ -676,7 +675,7 @@ Let's build our regex step by step. We start by matching a middle name (if there
 is one).
 
 ```
-eachmatch.(r" [A-z]+ ", firstMiddleLastNames) .|> getAllMatches
+eachmatch.(r" [A-z]+ ", names) .|> getAllMatches
 ```
 
 ```
@@ -694,7 +693,7 @@ character, at least one letter (`[A-z]+`) and a white-space character.
 Time to abbreviate the middle name:
 
 ```
-replace.(firstMiddleLastNames, r" ([A-Z])[a-z]+ " => s" \1. ")
+replace.(names, r" ([A-Z])[a-z]+ " => s" \1. ")
 ```
 
 ```
@@ -716,8 +715,8 @@ replaced the whole match (`" ([A-Z])[a-z]+ "`) by its first letter (`\1`).
 Now, time for the swap.
 
 ```
-replace.(firstMiddleLastNames, r" ([A-Z])[a-z]+ " => s" \1. ") |>
-names -> replace.(names, r"([A-z .]+) ([A-z]+)" => s"\2, \1")
+replace.(names, r" ([A-Z])[a-z]+ " => s" \1. ") |>
+abbrevNames -> replace.(abbrevNames, r"([A-z .]+) ([A-z]+)" => s"\2, \1")
 ```
 
 ```
@@ -731,7 +730,7 @@ names -> replace.(names, r"([A-z .]+) ([A-z]+)" => s"\2, \1")
 
 Here, instead of being clever and building a one complicated regex, we just
 passed the result of one `replace` function as an input to another one. The
-second regex looks for at least one letter, space or dot (`[A-z ]+`, this
+second regex looks for at least one letter, space or dot (`[A-z .]+`, this
 captures as many consecutive words as it can because of the greediness) followed
 by one word (`[A-z]+`, one or more letters). We captured the words with `()` and
 swapped them with back-references (`\2` and `\1`), while putting comma (`,`)
@@ -740,8 +739,8 @@ between them.
 OK, now for the last step, sorting:
 
 ```
-replace.(firstMiddleLastNames, r" ([A-Z])[a-z]+ " => s" \1. ") |>
-names -> replace.(names, r"([A-z .]+) ([A-z]+)" => s"\2, \1") |>
+replace.(names, r" ([A-Z])[a-z]+ " => s" \1. ") |>
+abbrevNames -> replace.(abbrevNames, r"([A-z .]+) ([A-z]+)" => s"\2, \1") |>
 sort
 ```
 
