@@ -1,7 +1,6 @@
 # The Doors {#sec:the_doors}
 
-In this chapter I used the following libraries. Still, once you read the problem
-description you may decide to do otherwise.
+In this chapter I used the following libraries.
 
 ```jl
 s2 = """
@@ -10,6 +9,8 @@ import Random as Rnd
 """
 sc(s2)
 ```
+
+Still, once you read the problem description you may decide to do otherwise.
 
 I recommend you try to solve the task on your own first. Once you finish you may
 compare your own solution with the one in this chapter (with explanations) or
