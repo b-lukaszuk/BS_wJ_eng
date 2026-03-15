@@ -351,9 +351,9 @@ replace.(telNums, r"(\d{3})(\d{3})(\d{3})" => s"\1-\2-\3")
 
 ```
 [
-"304-039-945",
-"545-946-090",
-"818-309-467"
+	"304-039-945",
+	"545-946-090",
+	"818-309-467"
 ]
 ```
 
@@ -381,9 +381,9 @@ eachmatch.(r"([A-Z])", camelCasedWords) .|> getAllMatches
 
 ```
 [
-["W"],
-["T", "M", "Y"],
-["T", "E"]
+	["W"],
+	["T", "M", "Y"],
+	["T", "E"]
 ]
 ```
 
@@ -414,8 +414,8 @@ replace.(camelCasedWords, r"([A-Z])" => lowercase)
 ]
 ```
 
-Almost there, we just need to precede the lowercased letter with `_` symbol
-which could be done with an anonymous function, e.g. like this:
+Almost there, we just need to precede the lower-cased letter with `_`. This
+could be done with an anonymous function, e.g. like this:
 
 ```
 replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_" * lowercase(AtoZ))
@@ -484,10 +484,11 @@ Here's a quick reminder of what we learned about regexes and meta-characters:
    capture a range of characters, like `[a-z]`, `[A-Z]`, `[0-9]`, `[A-z]`, or
    `[A-z0-9]`;
 3. `{}` is a quantifier, it specifies a quantity of the previous token, where
-   `{i}`, `{i, j}`, `{i, }`, and `{, j}` mean: exactly `i`, between `i` and `j`,
-   at least `i` and up-to `j` previous tokens, respectively;
+   `{i}`, `{i,j}`, `{i,}`, and `{,j}` mean: exactly `i`, between `i` and `j`, at
+   least `i` and up-to `j` previous tokens, respectively;
 4. `\` bestows a special meaning on an ordinary character (`\d` denotes any
-   digit), or strips it away (`$` - is end of a string, wheres `\$` is a dollar
+   digit), or strips it away from a special character (`$` - is end of a string,
+   wheres `\$` is a dollar
    symbol);
 5. `(sth)` inside of `r""` stands for capture and remember, whereas `\1` in
    `s""` denotes back-reference to the first capture;

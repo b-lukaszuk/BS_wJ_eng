@@ -72,7 +72,7 @@ camelCasedWords = ["helloWorld", "niceToMeetYou", "translateToEnglish"]
 
 eachmatch.(r"([A-Z])", camelCasedWords) .|> getAllMatches
 
-# the below return an error
+# the following line throws an error
 # replace.(camelCasedWords, r"([A-Z])" => s"\l\1")
 replace.(camelCasedWords, r"([A-Z])" => lowercase)
 replace.(camelCasedWords, r"([A-Z])" => AtoZ -> "_" * lowercase(AtoZ))
