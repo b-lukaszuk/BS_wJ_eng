@@ -99,6 +99,9 @@ to the `result` and count to three a new (`counter = 0`). Besides, we prepend
 our `digit` to the `result` (`digit * result`) and increase the counter
 (`counter +=1`). In the end we return the formatted number (`result * " USD"`).
 
+> **_Note:_** For another way to format a number to currency see
+> @sec:regex_problem_solution4.
+
 Let's see how it works.
 
 ```jl

@@ -77,6 +77,9 @@ end
 sc(s)
 ```
 
+> **_Note:_** For another way to format a number to currency see
+> @sec:regex_problem_solution4.
+
 Time to define a `struct` that will contain the data necessary to perform
 calculations for a given mortgage.
 
