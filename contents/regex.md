@@ -29,7 +29,7 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/regex)
 Imagine you work at a police station that happened to arrest a John Smith who is
 a suspect in a certain case. In your country the identity of an accused person
 is to be protected from public, so your job is to obfuscate any mention of him
-from the press statement.
+from the press release.
 
 ```jl
 s = """
@@ -40,7 +40,7 @@ function getTxtFromFile(filePath::Str)::Str
             read(file, Str)
         end
     catch
-        fileTxt = "Couldn't read '\$filePath'."
+        fileTxt = "Can't read '\$filePath'. Make sure it exists."
     end
     return fileTxt
 end
@@ -52,8 +52,8 @@ replace(sco(s), "./code_snippets/regex/loremJohnSmith.txt" => "./loremJohnSmith.
 ```
 
 This could be done, e.g. by replacing his last name with its first letter, but
-it's kind of tedious and boring to do this manually. It may be sped up with a
-[word processing
+it's kind of tedious and boring to do this manually while reading the text. It
+may be sped up with a [word processing
 program](https://en.wikipedia.org/wiki/List_of_word_processor_programs) in which
 `Ctrl+F` is a shortcut for a `find` command. In Julia this could be done with
 [eachmatch](https://docs.julialang.org/en/v1/base/strings/#Base.eachmatch) like
@@ -72,13 +72,13 @@ getAllMatches(eachmatch(r"John Smith", txt))[1:2]
 sco(s)
 ```
 
-Here we defined a little helper function (`getAllMatches`), that will help us to
-extract the matches as a vector of strings which is easier to read. Notice, the
-`r"John Smith"` argument in `eachmatch`. The `r` indicates that the following
-characters compose no ordinary string, but a special one that is called a
-[regular expression](https://en.wikipedia.org/wiki/Regular_expression) (or
-regex). It may not seem like much right now, but we'll see its potential in a
-moment.
+Here we defined a little function (`getAllMatches`), that will help us to
+extract the matches as a vector of strings, which is easier to read than the
+default structure returned by `eachmatch`. Notice, the `r"John Smith"` argument
+in `eachmatch`. The `r` indicates that the following characters compose no
+ordinary string, but a special one that is called a [regular
+expression](https://en.wikipedia.org/wiki/Regular_expression) (or regex). It may
+not seem like much right now, but we'll see its potential in a moment.
 
 Once we confirmed the phrase existence we may wish to obfuscate it. Again, in a
 word processing program this would be likely done with `Ctrl+H` that stands for
@@ -99,7 +99,7 @@ There, we did our job, the identity of an accused person is protected. We may
 now write the file on a disk and send the press report. I imagine now you're
 wondering what's the big deal with those regexes anyway. For a person with basic
 computer literacy what we've done doesn't seem particularly advanced. Well,
-you're right. We its not. That's because in order **to have a regex we need to
+you're right. It it not. That's because in order **to have a regex we need to
 use some meta-characters, i.e. special symbols that are interpreted beyond their
 literal meaning. On the other hand, as a general rule, any letter or digit in
 regex (like `r"JohnSmith"`) stands for itself**. Overall, the list of
@@ -125,8 +125,8 @@ replace(sco(s), "./code_snippets/regex/loremDates.txt" => "./loremDates.txt")
 This time, since I study for an exam, my `txt` contains a passage from a history
 book. I would like to extract the dates from it to make sure I know them
 all. Let's say that the dates cover years between 1000 AD and the present.
-Doing a standard string search is no good, after all I would have to list like a
-thousand numbers. But wait, a simple regex can save me a lot of work. Observe:
+Doing a standard string search is no good, after all I would have to check like
+a thousand numbers. But wait, a simple regex can save me a lot of work. Observe:
 
 ```jl
 s = """
@@ -174,9 +174,9 @@ eachmatch(r"\\d{4}", txt) |> getAllMatches
 sco(s)
 ```
 
-Where `\d` means any digit (usually `\` gives a special meaning to the following
-ordinary character) and `{4}` still designates exactly 4 repetitions of a
-previous token.
+Where `\d` means any digit (in general `\` gives a special meaning to the
+following ordinary character) and `{4}` still designates exactly 4 repetitions
+of a previous token.
 
 #### Example 2
 
@@ -214,10 +214,10 @@ eachmatch(r"\d.+\d", txt) |> getAllMatches
 
 Here `\d` means a digit, `.` is any character (except for newline), and `+`
 stands for one or more of the preceding tokens (so match a digit followed by one
-or more other character, followed by a digit). There is a small problem though,
-we caught more than we wanted. That's because by default, regexes are greedy
+or more characters, followed by a digit). There is a small problem though, we
+caught more than we wanted. That's because by default, regexes are greedy
 (usually they match as much as they can until a line ends) if we want to make it
-more temperate we need to follow `.+` with `?`  (one or more characters, but as
+more temperate we need to follow `.+` with `?` (one or more characters, but as
 few as you can to fulfill the condition).
 
 ```
@@ -268,8 +268,12 @@ Pretty good, here `{i,j}` means between `i` and `j` (inclusive - inclusive)
 occurrences of the previous token (`\d`). `{,j}` stands for 0 to `j` and `{i,}`
 stands for `i` or more. Therefore, we only match 1 or more digits in a row, so
 it seems that we are finally there. Well, not quite, right now we got no way to
-tell which digits denote money and which years (they're from file
+tell which digits denote money and which years (they're from the file
 `loremDollarsDates.txt`).
+
+> **_Note:_** You need to be precise while typing the quantifiers. Typing
+> `eachmatch(r"\d{1, }", txt) |> getAllMatches` (it contains an extra space in
+> `\d{1, }`) will give you no matches (empty vector).
 
 Let's try to change our regex a bit to extract only dollars.
 
@@ -291,7 +295,7 @@ gives a special meaning to an ordinary character, like in `\d,` and strips it
 away from a special character like `$`).
 
 ```
-getAllMatches(eachmatch(r"\$\d{1,}", txt))
+eachmatch(r"\$\d{1,}", txt) |> getAllMatches
 ```
 
 ```
@@ -312,7 +316,7 @@ getAllMatches(eachmatch(r"\$\d{1,}", txt))
 Finally, we can add it up using, e.g. this few liner:
 
 ```
-getAllMatches(eachmatch(r"\$\d{1,}", txt)) |>
+eachmatch(r"\$\d{1,}", txt) |> getAllMatches |>
 vecStrDollars -> replace.(vecStrDollars, "\$" => "") |>
 vecStrNumbers -> parse.(Int, vecStrNumbers) |>
 sum

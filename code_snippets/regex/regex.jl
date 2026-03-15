@@ -15,7 +15,7 @@ function getTxtFromFile(filePath::Str)::Str
             read(file, Str)
         end
     catch
-        fileTxt = "Couldn't read '$filePath', please make sure it exists."
+        fileTxt = "Can't read '$filePath'. Make sure it exists."
     end
     return fileTxt
 end
@@ -31,13 +31,11 @@ end
 
 getAllMatches(eachmatch(r"John Smith", txt))
 
-txt = replace(txt, r"John Smith" => "John S")
-getAllMatches(eachmatch(r"John Smith", txt))
-
 # in Julia strings are immutable
 # to make changes permament write it to `txt` and/or to a file
-txt = replace(txt, r"John Smith" => "John S")
+txt = replace(txt, r"John Smith" => "John S");
 eachmatch(r"John Smith", txt) |> getAllMatches
+println(txt)
 
 ### Example 1
 txt = getTxtFromFile("./loremDates.txt");
@@ -54,11 +52,11 @@ println(txt)
 eachmatch(r"\d.+\d", txt) |> getAllMatches
 eachmatch(r"\d.+?\d", txt) |> getAllMatches
 eachmatch(r"\d{1,}", txt) |> getAllMatches
-eachmatch(r"\d{1,3}", txt) |> getAllMatches
+eachmatch(r"\d{1, }", txt) |> getAllMatches # extra space, empty Vec as result
 eachmatch(r"$\d{1,}", txt) |> getAllMatches
-getAllMatches(eachmatch(r"\$\d{1,}", txt))
+eachmatch(r"\$\d{1,}", txt) |> getAllMatches
 
-getAllMatches(eachmatch(r"\$\d{1,}", txt)) |>
+eachmatch(r"\$\d{1,}", txt) |> getAllMatches |>
 vecStrDollars -> replace.(vecStrDollars, "\$" => "") |>
 vecStrNumbers -> parse.(Int, vecStrNumbers) |>
 sum
