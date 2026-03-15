@@ -88,14 +88,14 @@ replace.(snakeCasedWords, r"_[a-z]" => _atoz -> uppercase(strip(_atoz, '_')))
 # Solutions
 
 ## Task 1
-datesMMDDYYYY = ["01042025", "11012018", "12311999", "03202026"]
-replace.(datesMMDDYYYY, r"(\d{2})(\d{2})(\d{4})" => s"\3-\1-\2")
+datesMMDDYYYY = ["01.04.2025", "11.01.2018", "12.31.1999", "03.20.2026"]
+replace.(datesMMDDYYYY, r"(\d{2})\.(\d{2})\.(\d{4})" => s"\3-\1-\2")
 
 ## Task 2
 txt = getTxtFromFile("./loremMail.txt");
 println(txt)
 
-getAllMatches(eachmatch(r"[A-z0-9.]+@[A-z0-9.]+", txt)) |> unique
+getAllMatches(eachmatch(r"[A-z0-9._\-]+@[A-z0-9._\-]+", txt)) |> unique
 
 ## Task 3
 # random names
@@ -152,7 +152,7 @@ function fmtMoney(n::Flt)::Str
     @assert n >= 0 "n must be >= 0"
     dollars::Int, pennies::Int = getDollarsPennies(n)
     result::Str = fmtMoney(dollars)
-    return result * string(".", pennies)
+    return string(result, ".", pennies)
 end
 
 nums = [0, 0.1, 1, 1.2, 12., 12.34, 123.456, 1234, 12345, 12345.67, 123456.7, 1234567.89]

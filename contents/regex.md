@@ -24,7 +24,7 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/regex)
 
 > **_Note:_** This subsection provides a short description of regular
 > expressions. You may skip it if you know what a regex is. In that case go to
-> the task specification right away (see @sec:regex_problem_task).
+> the task specification right away (see @sec:regex_problem_tasks).
 
 Imagine you work at a police station that happened to arrest a John Smith who is
 a suspect in a certain case. In your country the identity of an accused person
@@ -499,23 +499,18 @@ Here's a quick reminder of what we learned about regexes and meta-characters:
    string and returns a string possibly applying some transformations on the
    way).
 
-### Regex Task {#sec:regex_problem_task}
+### Regex Tasks {#sec:regex_problem_tasks}
 
 OK, time to put what you've learned to good use. If, while solving the tasks,
-you want to look for a visual assistant that helps you with regular expressions,
-then you may try e.g. [regex101](https://regex101.com/).
+you need a visual assistant that helps you with regular expressions, then you
+may try e.g. [regex101](https://regex101.com/).
 
 #### Regex Task 1 {#sec:regex_problem_task1}
 
 You got a series of dates in the US format "MMDDYYYY":
 
 ```
-datesMMDDYYYY = [
-   "01042025",
-   "11012018",
-   "12311999",
-   "03202026"
-]
+datesMMDDYYYY = ["01.04.2025", "11.01.2018", "12.31.1999", "03.20.2026"]
 ```
 
 The format is confusing to some (e.g. European) people. Change it to
@@ -583,7 +578,7 @@ The solution is pretty straightforward if you read through Example 1 and 3 in
 @sec:regex_problem_intro.
 
 ```
-replace.(datesMMDDYYYY, r"(\d{2})(\d{2})(\d{4})" => s"\3-\1-\2")
+replace.(datesMMDDYYYY, r"(\d{2})\.(\d{2})\.(\d{4})" => s"\3-\1-\2")
 ```
 
 ```
@@ -595,10 +590,13 @@ replace.(datesMMDDYYYY, r"(\d{2})(\d{2})(\d{4})" => s"\3-\1-\2")
 ]
 ```
 
-You just go with capturing months (first two digits, `(\d{2})`), days (second
-pair of digits, `(\d{2})`) and years (last four digits, `(\d{4})`) and reference
-them back in the appropriate order (`\3`, `\1`, and `\2`) separated by hyphens
-(`-`). And that's it. Finito.
+We just go and capture the months (the first pair of digits, `(\d{2})`, followed
+by a literal dot, `\.`), the days (second pair of digits, `(\d{2})`, followed by
+a literal dot, `\.`) and the years (last four digits, `(\d{4})`). In the
+substitution string we reference them back in the appropriate order (`\3`, `\1`,
+and `\2`) separated by hyphens (`-`). So, we replaced the whole match
+(`(\d{2})\.(\d{2})\.(\d{4})`) with the remembered digits in the right order and
+with the right separators (`\3-\1-\2`). And that's it. Finito.
 
 ### Regex Solution 2 {#sec:regex_problem_solution2}
 
@@ -616,25 +614,41 @@ here](https://stackoverflow.com/questions/201323/how-can-i-validate-an-email-add
 Still, we can go a far way with a much simpler one, which in our particular case
 should do the trick:
 
-```jl
-s = """
-getAllMatches(eachmatch(r"[A-z0-9.]+@[A-z0-9.]+", txt)) |>
-	unique
-"""
-replace(sco(s), "es\"," => "es\",\n")
+```
+getAllMatches(eachmatch(r"[A-z0-9._\-]+@[A-z0-9._\-]+", txt)) |>
+unique
 ```
 
-The regex is composed of a few parts. First of all `[A-z0-9.]`. It searches for
-any letter (`A-z`, an email may contain a capital letter, although in general
-they are [case-insensitive](https://en.wikipedia.org/wiki/Case_sensitivity)) or
-digit (`0-9`) or literal dot (`.` inside a positive character class is just a
-dot, although in general inside a regex it stands for any character except for
-newline). This positive character class must be repeated at least one time (`+`)
-before the `@` symbol. On the other hand, the `@` symbol must be followed by at
-least one (`+`) letter or digit or dot (`[A-z0-9.]`). Notice, that there is no
-need to add `?` after the `+` to make a non-greedy match. That is because the
-email addresses are separated by one or more spaces and the positive character
-class (`[A-z0-9.]`) does not include spaces.
+```
+[
+	"tom@write2me.com",
+	"potential_contact@hello.pl",
+	"another.contact@yyy.es",
+	"other-potential-contact@hello.pl",
+	"eve@write2me.com",
+	"eve2@write2me.com"
+]
+```
+
+The regex is composed of a few parts, but mostly of `[A-z0-9._\-]`. It searches
+for:
+
+1) any letter (`A-z`, an email may contain a capital letter, although in
+general, they are
+[case-insensitive](https://en.wikipedia.org/wiki/Case_sensitivity)), or
+2) a digit (`0-9`), or
+3) a literal dot (`.` inside a positive character class is just a dot, although
+in general inside a regex it stands for any character except for newline), or
+4) an underscore (`_`), or
+5) a literal hyphen (`\-`, likely we didn't have to precede it with `\` since it
+wasn't between other 2 characters).
+
+This positive, character class must be repeated at least one time (`+`) before
+the `@`, symbol. On the other hand, the `@` symbol must be followed by at least
+one (`+`) character class that we already discussed (`[A-z0-9._\-]`). Notice,
+that there is no need to add `?`, after the `+` to make a non-greedy match. That
+is because the email addresses, are separated by one or more spaces and the
+positive character class, (`[A-z0-9._\-]`) does not include spaces.
 
 ### Regex Solution 3 {#sec:regex_problem_solution3}
 
@@ -723,9 +737,10 @@ character, one capital letter (`[A-Z]`), at least one small letter (`[a-z]+`)
 and a white-space character. Out of the whole match (`" ([A-Z])[a-z]+ "`) we
 captured (`()`) and remembered only the capital letter, which we used in the
 substitution string (`s""`) followed by a literal dot (`\1.`). Therefore, we
-replaced the whole match (`" ([A-Z])[a-z]+ "`) by its first letter (`\1`).
+replaced the whole match (`" ([A-Z])[a-z]+ "`) by its first capture group that
+we memorized and referred back to with (`\1`).
 
-Now, time for the swap.
+Now, time for the swap:
 
 ```
 replace.(names, r" ([A-Z])[a-z]+ " => s" \1. ") |>
@@ -742,12 +757,12 @@ abbrevNames -> replace.(abbrevNames, r"([A-z .]+) ([A-z]+)" => s"\2, \1")
 ```
 
 Here, instead of being clever and building a one complicated regex, we just
-passed the result of one `replace` function as an input to another one. The
-second regex looks for at least one letter, space or dot (`[A-z .]+`, this
-captures as many consecutive words as it can because of the greediness) followed
-by one word (`[A-z]+`, one or more letters). We captured the words with `()` and
-swapped them with back-references (`\2` and `\1`), while putting a comma (`,`)
-between them.
+passed the result of one `replace` function as an input to another `replace`
+function. The second regex looks for at least one letter, space or literal dot
+(`[A-z .]+`, this captures as many consecutive words as it can because of the
+greediness) followed by one word (`[A-z]+`, one or more letters). We captured
+the words with `()` and swapped them with back-references (`\2` and `\1`), while
+putting a comma (`,`) between them.
 
 OK, now for the last step, sorting:
 
@@ -782,7 +797,7 @@ replace.(string.(nums), r"(\d{3})" => s"\1,")
 ```
 
 ```
-# no comma separating elts of vector, to make it more legible
+# no commas separating elts of vector, to make it more legible
 [
 	"0"
 	"1"
@@ -810,7 +825,7 @@ replace.(reverse.(string.(nums)), r"(\d{3})" => s"\1,")
 ```
 
 ```
-# no comma separating elts of vector, to make it more legible
+# no commas separating elts of vector, to make it more legible
 [
 	"0"
 	"1"
@@ -836,7 +851,7 @@ reversedNums -> reverse.(replace.(reversedNums, r",$" => ""))
 ```
 
 ```
-# no comma separating elts of vector, to make it more legible
+# no commas separating elts of vector, to make it more legible
 [
 	"0"
 	"1"
@@ -910,7 +925,7 @@ function fmtMoney(n::Flt)::Str
     @assert n >= 0 "n must be >= 0"
     dollars::Int, pennies::Int = getDollarsPennies(n)
     result::Str = fmtMoney(dollars)
-    return result * string(".", pennies)
+    return string(result, ".", pennies)
 end
 ```
 
@@ -940,6 +955,6 @@ fmtMoney.(nums) .* " USD"
 ]
 ```
 
-Looks like we finished the job. Regular expressions are worth learning, even at
-a relatively basic level. Sometimes they can really speed things up or reduce
-the amount of code.
+Looks like we finished the job. Regular expressions are worth learning even at a
+relatively basic level. Sometimes they can really speed things up or reduce the
+amount of code.
