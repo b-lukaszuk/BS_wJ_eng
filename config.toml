@@ -10,6 +10,7 @@ contents = [
     "bile",
     "recursion",
     "randomness",
+    "sort",
     "the_doors",
     "progress_bar",
     "pascals_triangle",
