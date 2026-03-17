@@ -48,13 +48,13 @@ Since "eleven" comes before "one" and before "six" ("e" < "o" < "s").
 
 ## Solution {#sec:sort_solution}
 
-For our first choice we'll go with [bubble
+For our first choice we'll go with the [bubble
 sort](https://en.wikipedia.org/wiki/Bubble_sort) algorithm.
 
 ```jl
 s = """
-function bs(v::Vec{<:Union{Flt, Int}})::Vec{<:Union{Flt, Int}}
-    result::Vec{<:Union{Flt, Int}} = copy(v)
+function bs(v::Vec{A})::Vec{A} where A<:Union{Flt, Int}
+    result::Vec{A} = copy(v)
     swapped::Bool = true
     while swapped
         swapped = false
@@ -68,20 +68,21 @@ function bs(v::Vec{<:Union{Flt, Int}})::Vec{<:Union{Flt, Int}}
     return result
 end
 """
-sco(s)
+sc(s)
 ```
 
-Here, we implemented the algorithm for vectors that contain elements of type
-`Flt` (an alias for `Float64`) or `Int` (`Union{Flt, Int}`). We started, by
-copying the original vector to `result` and setting a variable named
-`swapped`. We will stop our sorting algorithm once there was no swap (`swapped`
-in `while` is `false`) during the last traversal of the vector (`result`,
-traversal in the `for` loop). We search through the vector starting from its
-second element (`i in eachindex(result)[2:end]`). Every time we compare the two
-nearby elements (`result[i-1]` vs. `result[i]`) If the elements aren't in a
-desired order (`if result[i-1] > result[i]`) we just swap them with each other
-(`result[i-1], result[i] = result[i], result[i-1]`) and set the `swapped` flag
-to `true`. Once we finish we return the result.
+Here, we implemented the algorithm for vectors that contain the elements of type
+`A`. In this case it is just a sub-type (`<:`) of `Flt` (an alias for `Float64`)
+or `Int` (`Union{Flt, Int}`). We started our function, by copying the original
+vector to `result` and setting a variable named `swapped`. We will stop our
+sorting algorithm once there was no swap (`swapped` in `while` is `false`)
+during the previous traversal of the whole vector (`result`, traversal in the
+`for` loop). We search through the vector starting from its second element (`i
+in eachindex(result)[2:end]`). Every time we compare the two nearby elements
+(`result[i-1]` vs. `result[i]`) If the elements aren't in a desired order (`if
+result[i-1] > result[i]`) we just swap them with each other (`result[i-1],
+result[i] = result[i], result[i-1]`) and set the `swapped` flag to `true`. Once
+we finish we return the result.
 
 Let's see how we did.
 
@@ -97,8 +98,8 @@ If you want to better visualize how the algorithm works, you may place `println`
 or `@show` constructs in few places inside the function, e.g.
 
 ```
-function bs(v::Vec{<:Union{Flt, Int}})::Vec{<:Union{Flt, Int}}
-    result::Vec{<:Union{Flt, Int}} = copy(v)
+function bs(v::Vec{A})::Vec{A} where A<:Union{Flt, Int}
+    result::Vec{A} = copy(v)
     swapped::Bool = true
     i::Int = 0
     while swapped
@@ -115,13 +116,14 @@ function bs(v::Vec{<:Union{Flt, Int}})::Vec{<:Union{Flt, Int}}
     end
     return result
 end
+```
 
+Which for `[0.75, 0.25, 0.5]` returns the following printout:
+
+```
 [0.75, 0.25, 0.5] |> bs
-```
 
-Which returns the following printout:
-
-```
+# printout
 i = 1
 result = [0.25, 0.75, 0.5]
 result = [0.25, 0.5, 0.75]
