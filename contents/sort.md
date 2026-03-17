@@ -92,3 +92,40 @@ s = """
 """
 replace(sco(s), "(" => "(\n", ", [" => ",\n[", ")" => "\n)")
 ```
+
+If you want to better visualize how the algorithm works, you may place `println`
+or `@show` constructs in few places inside the function, e.g.
+
+```
+function bs(v::Vec{<:Union{Flt, Int}})::Vec{<:Union{Flt, Int}}
+    result::Vec{<:Union{Flt, Int}} = copy(v)
+    swapped::Bool = true
+    i::Int = 0
+    while swapped
+        i += 1
+        @show i
+        swapped = false
+        for i in eachindex(result)[2:end]
+            if result[i-1] > result[i]
+                result[i-1], result[i] = result[i], result[i-1]
+                swapped = true
+            end
+            @show result
+        end
+    end
+    return result
+end
+
+[0.75, 0.25, 0.5] |> bs
+```
+
+Which returns the following printout:
+
+```
+i = 1
+result = [0.25, 0.75, 0.5]
+result = [0.25, 0.5, 0.75]
+i = 2
+result = [0.25, 0.5, 0.75]
+result = [0.25, 0.5, 0.75]
+```
