@@ -22,7 +22,7 @@ and implement one or two of them. As a minimum requirement your sorting function
 should correctly sort a vector of numbers (integers and floats), e.g.
 
 ```
-[47, 15, 23, 99, 4] |> yourSortFn
+yourSortFn([47, 15, 23, 99, 4])
 ```
 
 Should return:
@@ -30,6 +30,21 @@ Should return:
 ```
 [4, 15, 23, 47, 99]
 ```
+
+If you want to make it more challenging, try to sort the numbers from 1 to 10 in
+alphabetical order, e.g.
+
+```
+yourSortFn([1, 11, 6], possibleOtherArgs)
+```
+
+should return:
+
+```
+[11, 1, 6]
+```
+
+Since "eleven" comes before "one" and before "six" ("e" < "o" < "s").
 
 ## Solution {#sec:sort_solution}
 
