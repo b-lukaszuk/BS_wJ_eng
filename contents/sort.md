@@ -191,9 +191,13 @@ function qs(v::Vec{A},
         pivotElt::A = v[ind]
         restV::Vec{A} = v[ind+1:end]
         smallerElts::Vec{A} = filter(
-            elt -> lt(by(elt), by(pivotElt)), restV)
+            elt -> lt(by(elt), by(pivotElt)),
+			restV
+        )
         greaterEqElts::Vec{A} = filter(
-            elt -> !lt(by(elt), by(pivotElt)), restV)
+            elt -> !lt(by(elt), by(pivotElt)),
+			restV
+        )
         return [
             qs(smallerElts, by, lt);
             pivotElt;
@@ -203,4 +207,49 @@ function qs(v::Vec{A},
 end
 """
 sc(s)
+```
+
+Here, we added two more arguments to `qs`: 1) `by` which is a function applied
+to every element of the vector (`v`) before the sorting; 2) `lt` - a comparator
+function (`lt` - less than, `!lt` - negation of `lt`) that compares `pivotElt`
+with all the elements.  The comparison ocurrs after `by` was applied to all
+elements of `v`. The names `by` and `lt` were inspired by the names of the
+[keyword
+arguments](https://docs.julialang.org/en/v1/devdocs/functions/#Keyword-arguments)
+in [Base.sort](https://docs.julialang.org/en/v1/base/sort/#Base.sort). The
+default function for `by` is
+[identity](https://docs.julialang.org/en/v1/base/base/#Base.identity) (returns
+its argument unchanged) and the dfault function for `lt` is
+[Base.:<](https://docs.julialang.org/en/v1/base/math/#Base.:%3C).
+
+Let's see how it does:
+
+```jl
+s = """
+[0.75, 0.25, 0.5] |> qs
+"""
+sco(s)
+```
+
+And now for the alphabetical sort (`getEngNumeral` was a solution for
+@sec:cheque_problem, passed without `by` because in `qs` it is a positional
+argument).
+
+
+```jl
+s = """
+qs(collect(1:10), getEngNumeral)
+"""
+sco(s)
+```
+
+Which should work similar to the built-in `sort` (here we use `by=geEngNumeral`
+because that's how you pass keyword arguments to a function).
+
+```jl
+s = """
+qs([0.75, 0.25, 0.5]) == sort([0.75, 0.25, 0.5]),
+qs(collect(1:10), getEngNumeral) == sort(1:10, by=getEngNumeral)
+"""
+sco(s)
 ```
