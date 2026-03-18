@@ -131,3 +131,47 @@ i = 2
 result = [0.25, 0.5, 0.75]
 result = [0.25, 0.5, 0.75]
 ```
+
+For our next try we will go with the
+[quicksort](https://en.wikipedia.org/wiki/Quicksort) algorithm. Here, I'll try
+to implement it from memory based on the algorithm I once saw in "Learn You a
+Haskell for Great Good!" by Miran Lipovača. Of course, I'll try to adjust it for
+Julia syntax.
+
+```jl
+s = """
+function qs(v::Vec{Int})::Vec{Int}
+    if isempty(v)
+        return []
+    else
+        ind::Int = 1
+        pivotElt::Int = v[ind]
+        restV::Vec{Int} = v[ind+1:end]
+        smallerElts::Vec{Int} = filter(elt -> elt < pivotElt, restV)
+        greaterEqElts::Vec{Int} = filter(elt -> elt >= pivotElt, restV)
+        return [qs(smallerElts); pivotElt; qs(greaterEqElts)]
+    end
+end
+"""
+sc(s)
+```
+
+To do so, we choose a so called pivot element (`pivotElt`) that for simplicity
+is always the first element in a vector (`ind::Int = 1`). Next, we take the
+remaining part of the vector (`restV`) and separate its elements into smaller
+(`smallerElts`) and greater than or equal (`greaterEqElts`) than our `pivotElt`.
+The above is done with `filter` and an anonymous function. Once we got it we use
+recursion (e.g. `qs(unsorted_smaller_elts)` in `return`, compare with
+@sec:recursion_problem) and vector concatenation (`[vector_or_elt;
+vector_or_elt]`).
+
+Let's see how it works.
+
+```jl
+s = """
+[47, 15, 23, 99, 4] |> qs
+"""
+sc(s)
+```
+
+Flawless victory.
