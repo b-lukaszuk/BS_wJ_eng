@@ -171,7 +171,36 @@ Let's see how it works.
 s = """
 [47, 15, 23, 99, 4] |> qs
 """
-sc(s)
+sco(s)
 ```
 
-Flawless victory.
+Flawless victory, but we are still not able to sort the numbers in alphabetical
+order.  Let's fix that by modifying our `qs`.
+
+```jl
+s = """
+# by - fn(A) -> B; is applied to every elt of v before sorting
+# lt - fn(B) -> Bool; is applied to every elt of v after by was applied
+function qs(v::Vec{A},
+            by::Function=identity,
+            lt::Function=<)::Vec{A} where A
+    if isempty(v)
+        return []
+    else
+        ind::Int = 1
+        pivotElt::A = v[ind]
+        restV::Vec{A} = v[ind+1:end]
+        smallerElts::Vec{A} = filter(
+            elt -> lt(by(elt), by(pivotElt)), restV)
+        greaterEqElts::Vec{A} = filter(
+            elt -> !lt(by(elt), by(pivotElt)), restV)
+        return [
+            qs(smallerElts, by, lt);
+            pivotElt;
+            qs(greaterEqElts, by, lt)
+        ]
+    end
+end
+"""
+sc(s)
+```
