@@ -1,6 +1,7 @@
 # TODO: sort
 # https://en.wikipedia.org/wiki/Sorting_algorithm
 
+const Flt = Float64
 const Str = String
 const Vec = Vector
 
@@ -8,58 +9,68 @@ const Vec = Vector
 # it may not act correctly
 
 # https://en.wikipedia.org/wiki/Bubble_sort
-function bs(v::Vec{Int})::Vec{Int}
-    result::Vec{Int} = copy(v)
+# uncomment the commented lines to sneak peek how the algorithm works
+function bs(v::Vec{A})::Vec{A} where A<:Union{Flt, Int}
+    result::Vec{A} = copy(v)
     swapped::Bool = true
+    # i::Int = 0
     while swapped
+        # i += 1
+        # @show i
         swapped = false
         for i in eachindex(result)[2:end]
             if result[i-1] > result[i]
                 result[i-1], result[i] = result[i], result[i-1]
                 swapped = true
             end
+            # @show result, swapped
         end
     end
     return result
 end
 
-xs = [47, 15, 23, 99, 4]
-bs(xs)
+[47, 15, 23, 99, 4] |> bs
+[0.75, 0.25, 0.5] |> bs
 
 # https://en.wikipedia.org/wiki/Quicksort
 function qs(v::Vec{Int})::Vec{Int}
     if isempty(v)
         return []
     else
-        ind::Int = 1
-        pivotElt::Int = v[ind]
-        restV::Vec{Int} = v[ind+1:end]
+        pivotInd::Int = 1
+        pivotElt::Int = v[pivotInd]
+        restV::Vec{Int} = v[eachindex(v) .!= pivotInd]
         smallerElts::Vec{Int} = filter(elt -> elt < pivotElt, restV)
         greaterEqElts::Vec{Int} = filter(elt -> elt >= pivotElt, restV)
         return [qs(smallerElts); pivotElt; qs(greaterEqElts)]
     end
 end
 
-qs(xs)
-sort(xs) == qs(xs)
+[47, 15, 23, 99, 4] |> qs
 
-# by - (A) -> B is applied to every elt of v before sorting
-# lt - (B) -> Bool is applied to every elt of v after by was applied
-function qs(v::Vec{A}, by::Function, lt::Function)::Vec{A} where A
+# by - function(A) -> B; is applied to every elt of v before sorting
+# lt - function(B) -> Bool; is applied to every elt of v after by was applied
+function qs(v::Vec{A}, by::Function=identity, lt::Function=<)::Vec{A} where A
     if isempty(v)
         return []
     else
-        ind::Int = 1
-        pivotElt::A = v[ind]
-        restV::Vec{A} = v[ind+1:end]
-        smallerElts::Vec{A} = filter(elt -> lt(by(elt), by(pivotElt)), restV)
-        greaterEqElts::Vec{A} = filter(elt -> !lt(by(elt), by(pivotElt)), restV)
+        pivotInd::Int = 1
+        pivotElt::A = v[pivotInd]
+        restV::Vec{A} = v[eachindex(v) .!= pivotInd]
+        smallerElts::Vec{A} = filter(
+            elt -> lt(by(elt), by(pivotElt)), restV
+        )
+        greaterEqElts::Vec{A} = filter(
+            elt -> !lt(by(elt), by(pivotElt)), restV
+        )
         return [qs(smallerElts, by, lt); pivotElt; qs(greaterEqElts, by, lt)]
     end
 end
 
-qs(xs, identity, <) == sort(xs, by=identity, lt=<)
+[0.75, 0.25, 0.5] |> qs,
+['c', 'b', 'a', 'd'] |> qs
 
+# from ../cheque/cheque.jl
 # https://en.wikipedia.org/wiki/English_numerals
 const UNITS_AND_TEENS = Dict(1 => "one",
                              2 => "two", 3 => "three", 4 => "four",
@@ -75,7 +86,7 @@ const TENS = Dict(2 => "twenty", 3 => "thrity",
                   4 => "forty", 5 => "fifty", 6 => "sixty",
                   7 => "seventy", 8 => "eigthy", 9 => "ninety")
 
-function getEngNumeral(n::Int)::Str # uses recursion
+function getEngNumeral(n::Int)::Str
     @assert 0 < n < 1e6 "n must be in range (0-1e6)"
     major::Int, minor::Int = 0, 0
     if n < 20
@@ -100,6 +111,8 @@ function getEngNumeral(n::Int)::Str # uses recursion
     end
 end
 
-qs(xs, getEngNumeral, <) == sort(xs, by=getEngNumeral, lt=<)
-qs(1:100 |> collect, getEngNumeral, <) == sort(1:100 |> collect, by=getEngNumeral, lt=<)
-qs(1:100 |> collect, getEngNumeral, <)
+qs(collect(1:10), getEngNumeral)
+
+qs([0.75, 0.25, 0.5]) == sort([0.75, 0.25, 0.5]),
+qs(['c', 'b', 'a', 'd']) == sort(['c', 'b', 'a', 'd']),
+qs(collect(1:10), getEngNumeral) == sort(1:10, by=getEngNumeral)
