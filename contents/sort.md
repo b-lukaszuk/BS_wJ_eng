@@ -48,7 +48,7 @@ Since "eleven" comes before "one" and before "six" ("e" < "o" < "s").
 
 ## Solution {#sec:sort_solution}
 
-For our first choice we'll go with the [bubble
+For our first attempt we'll go with something simple like the [bubble
 sort](https://en.wikipedia.org/wiki/Bubble_sort) algorithm.
 
 ```jl
@@ -95,7 +95,8 @@ replace(sco(s), "(" => "(\n", ", [" => ",\n[", ")" => "\n)")
 ```
 
 If you want to better visualize how the algorithm works, you may place `println`
-or `@show` constructs in few places inside the function, e.g.
+or [\@show](https://docs.julialang.org/en/v1/base/base/#Base.@show) constructs
+in a few places inside the function, e.g.
 
 ```
 function bs(v::Vec{A})::Vec{A} where A<:Union{Flt, Int}
@@ -111,25 +112,25 @@ function bs(v::Vec{A})::Vec{A} where A<:Union{Flt, Int}
                 result[i-1], result[i] = result[i], result[i-1]
                 swapped = true
             end
-            @show result
+            @show result, swapped
         end
     end
     return result
 end
 ```
 
-Which for `[0.75, 0.25, 0.5]` returns the following printout:
+Which for `[0.75, 0.25, 0.5]` prints:
 
 ```
 [0.75, 0.25, 0.5] |> bs
 
 # printout
 i = 1
-result = [0.25, 0.75, 0.5]
-result = [0.25, 0.5, 0.75]
+(result, swapped) = ([0.25, 0.75, 0.5], true)
+(result, swapped) = ([0.25, 0.5, 0.75], true)
 i = 2
-result = [0.25, 0.5, 0.75]
-result = [0.25, 0.5, 0.75]
+(result, swapped) = ([0.25, 0.5, 0.75], false)
+(result, swapped) = ([0.25, 0.5, 0.75], false)
 ```
 
 For our next try we will go with the
@@ -144,9 +145,9 @@ function qs(v::Vec{Int})::Vec{Int}
     if isempty(v)
         return []
     else
-        ind::Int = 1
-        pivotElt::Int = v[ind]
-        restV::Vec{Int} = v[ind+1:end]
+        pivotInd::Int = 1
+        pivotElt::Int = v[pivotInd]
+        restV::Vec{Int} = v[eachindex(v) .!= pivotInd]
         smallerElts::Vec{Int} = filter(elt -> elt < pivotElt, restV)
         greaterEqElts::Vec{Int} = filter(elt -> elt >= pivotElt, restV)
         return [qs(smallerElts); pivotElt; qs(greaterEqElts)]
@@ -157,12 +158,12 @@ sc(s)
 ```
 
 To do so, we choose a so called pivot element (`pivotElt`) that for simplicity
-is always the first element in a vector (`ind::Int = 1`). Next, we take the
-remaining part of the vector (`restV`) and separate its elements into smaller
-(`smallerElts`) and greater than or equal (`greaterEqElts`) than our `pivotElt`.
-The above is done with `filter` and an anonymous function. Once we got it we use
-recursion (e.g. `qs(unsorted_smaller_elts)` in `return`, compare with
-@sec:recursion_problem) and vector concatenation (`[vector_or_elt;
+is always the first element in a vector (`pivotInd::Int = 1`). Next, we take the
+remaining part of the vector (`restV`) and separate its elements into elements
+that are smaller (`smallerElts`) and greater than or equal (`greaterEqElts`)
+than our `pivotElt`.  The above is done with `filter` and an anonymous
+function. Once we got it we use recursion (e.g. `qs(unsorted_smaller_elts)` in
+`return`) and vector concatenation (`[vector_or_elt; vector_or_elt;
 vector_or_elt]`).
 
 Let's see how it works.
@@ -187,9 +188,9 @@ function qs(v::Vec{A},
     if isempty(v)
         return []
     else
-        ind::Int = 1
-        pivotElt::A = v[ind]
-        restV::Vec{A} = v[ind+1:end]
+        pivotInd::Int = 1
+        pivotElt::A = v[pivotInd]
+        restV::Vec{A} = v[eachindex(v) .!= pivotInd]
         smallerElts::Vec{A} = filter(
             elt -> lt(by(elt), by(pivotElt)),
 			restV
@@ -209,31 +210,32 @@ end
 sc(s)
 ```
 
-Here, we added two more arguments to `qs`: 1) `by` which is a function applied
-to every element of the vector (`v`) before the sorting; 2) `lt` - a comparator
-function (`lt` - less than, `!lt` - negation of `lt`) that compares `pivotElt`
-with all the elements.  The comparison ocurrs after `by` was applied to all
-elements of `v`. The names `by` and `lt` were inspired by the names of the
-[keyword
+Here, we added two more positional arguments to `qs`: 1) `by` which is a
+function applied to every element of the vector (`v`) before the sorting; 2)
+`lt` - a comparator function (`lt` - less than, `!lt` - negation of `lt`) that
+compares `pivotElt` with all the elements.  The comparison occurs after `by` was
+applied to all the elements of `v`. The names `by` and `lt` were inspired by the
+names of the [keyword
 arguments](https://docs.julialang.org/en/v1/devdocs/functions/#Keyword-arguments)
 in [Base.sort](https://docs.julialang.org/en/v1/base/sort/#Base.sort). The
 default function for `by` is
 [identity](https://docs.julialang.org/en/v1/base/base/#Base.identity) (returns
-its argument unchanged) and the dfault function for `lt` is
+its argument unchanged) and the default function for `lt` is
 [Base.:<](https://docs.julialang.org/en/v1/base/math/#Base.:%3C).
 
 Let's see how it does:
 
 ```jl
 s = """
-[0.75, 0.25, 0.5] |> qs
+[0.75, 0.25, 0.5] |> qs,
+['c', 'b', 'a', 'd'] |> qs
 """
 sco(s)
 ```
 
-And now for the alphabetical sort (`getEngNumeral` was a solution for
-@sec:cheque_problem, passed without `by` because in `qs` it is a positional
-argument).
+And now for the alphabetical sort (`getEngNumeral` was a solution for the
+problem in @sec:cheque_problem. Here, we passed it without `by=` because in `qs`
+it is a positional argument).
 
 
 ```jl
@@ -243,12 +245,13 @@ qs(collect(1:10), getEngNumeral)
 sco(s)
 ```
 
-Which should work similar to the built-in `sort` (here we use `by=geEngNumeral`
-because that's how you pass keyword arguments to a function).
+The above should work similar to the built-in `sort` (here we use
+`by=geEngNumeral` because that's how you pass keyword arguments to a function).
 
 ```jl
 s = """
 qs([0.75, 0.25, 0.5]) == sort([0.75, 0.25, 0.5]),
+qs(['c', 'b', 'a', 'd']) == sort(['c', 'b', 'a', 'd']),
 qs(collect(1:10), getEngNumeral) == sort(1:10, by=getEngNumeral)
 """
 sco(s)
