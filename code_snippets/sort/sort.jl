@@ -1,6 +1,3 @@
-# TODO: sort
-# https://en.wikipedia.org/wiki/Sorting_algorithm
-
 const Flt = Float64
 const Str = String
 const Vec = Vector
@@ -33,6 +30,21 @@ end
 [0.75, 0.25, 0.5] |> bs
 
 # https://en.wikipedia.org/wiki/Quicksort
+# Haskell-ic version
+function qs(v::Vec{Int})::Vec{Int}
+    if isempty(v)
+        return []
+    else
+        head::Int, tail::Vec{Int}... = v
+        smallerElts::Vec{Int} = filter((<)(head), tail)
+        greaterEqElts::Vec{Int} = filter((>=)(head), tail)
+        return [qs(smallerElts); head; qs(greaterEqElts)]
+    end
+end
+
+[47, 15, 23, 99, 4] |> qs
+
+# more Julia-nic version
 function qs(v::Vec{Int})::Vec{Int}
     if isempty(v)
         return []
@@ -67,7 +79,7 @@ function qs(v::Vec{A}, by::Function=identity, lt::Function=<)::Vec{A} where A
     end
 end
 
-[0.75, 0.25, 0.5] |> qs,
+[0.75, 0.25, 0.5] |> qs
 ['c', 'b', 'a', 'd'] |> qs
 
 # from ../cheque/cheque.jl
@@ -113,6 +125,6 @@ end
 
 qs(collect(1:10), getEngNumeral)
 
-qs([0.75, 0.25, 0.5]) == sort([0.75, 0.25, 0.5]),
-qs(['c', 'b', 'a', 'd']) == sort(['c', 'b', 'a', 'd']),
+qs([0.75, 0.25, 0.5]) == sort([0.75, 0.25, 0.5])
+qs(['c', 'b', 'a', 'd']) == sort(['c', 'b', 'a', 'd'])
 qs(collect(1:10), getEngNumeral) == sort(1:10, by=getEngNumeral)
