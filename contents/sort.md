@@ -22,7 +22,7 @@ and implement one or two of them. As a minimum requirement your sorting function
 should correctly sort a vector of numbers (integers and floats), e.g.
 
 ```
-yourSortFn([47, 15, 23, 99, 4])
+yourSortingFn([47, 15, 23, 99, 4])
 ```
 
 Should return:
@@ -35,7 +35,7 @@ If you want to make it more challenging, try to sort the numbers from 1 to 10 in
 alphabetical order, e.g.
 
 ```
-yourSortFn([1, 11, 6], possibleOtherArgs)
+yourSortingFn([1, 11, 6], possibleOtherArgs)
 ```
 
 should return:
@@ -71,15 +71,15 @@ end
 sc(s)
 ```
 
-Here, we implemented the algorithm for vectors that contain the elements of type
-`A`. In this case it is just a sub-type (`<:`) of `Flt` (an alias for `Float64`)
-or `Int` (`Union{Flt, Int}`). We started our function, by copying the original
+Here, we implemented the algorithm for a vector that contains the elements of
+type `A`. In this case it is just a sub-type (`<:`) of `Flt` (an alias for
+`Float64`) or `Int` (`Union{Flt, Int}`). We started by copying the original
 vector to `result` and setting a variable named `swapped`. We will stop our
 sorting algorithm once there was no swap (`swapped` in `while` is `false`)
-during the previous traversal of the whole vector (`result`, traversal in the
-`for` loop). We search through the vector starting from its second element (`i
-in eachindex(result)[2:end]`). Every time we compare the two nearby elements
-(`result[i-1]` vs. `result[i]`) If the elements aren't in a desired order (`if
+during the previous traversal of the whole vector (traversal in the `for`
+loop). We search through the vector starting from its second element (`i in
+eachindex(result)[2:end]`). Every time we compare the two nearby elements
+(`result[i-1]` vs. `result[i]`). If the elements aren't in a desired order (`if
 result[i-1] > result[i]`) we just swap them with each other (`result[i-1],
 result[i] = result[i], result[i-1]`) and set the `swapped` flag to `true`. Once
 we finish we return the result.
@@ -91,7 +91,7 @@ s = """
 [47, 15, 23, 99, 4] |> bs,
 [47.3, 23.2, 47.2] |> bs
 """
-replace(sco(s), "(" => "(\n", ", [" => ",\n[", ")" => "\n)")
+sco(s)
 ```
 
 If you want to better visualize how the algorithm works, you may place `println`
@@ -119,7 +119,7 @@ function bs(v::Vec{A})::Vec{A} where A<:Union{Flt, Int}
 end
 ```
 
-Which for `[0.75, 0.25, 0.5]` prints:
+Which prints:
 
 ```
 [0.75, 0.25, 0.5] |> bs
@@ -155,15 +155,15 @@ end
 sc(s)
 ```
 
-To do so, we choose a so called pivot element (`head`) that for simplicity is
-always the first element in a vector. Next, we take the remaining part of the
-vector (`tail`). The `head, tail... = v` is a [destructuring
+To do so we choose a so called pivot element (`head`) that for simplicity is
+always the first element in a vector (`v`). Next, we take the remaining part of
+the vector (`tail`). The `head, tail... = v` is a [destructuring
 assignment](https://docs.julialang.org/en/v1/manual/functions/#destructuring-assignment)
-that puts the first elt of `v` to `head` and all the remaining elements to `tail`
-(if `v` is made of one element, then `tail` is `[]`).  Anyway, we separate
-`tail` elements into the ones that are smaller (`smallerElts`) and greater than
-or equal (`greaterEqElts`) than our pivot element (`head`).  The above is done
-with `filter` and [partial function
+that puts the first elt of `v` to `head` variable and all the remaining elements
+to `tail` (if `v` is made of one element, then `tail` is `[]`). Anyway, we
+separate `tail` elements into the ones that are smaller (`smallerElts`) and
+greater than or equal to (`greaterEqElts`) our pivot element (`head`). The above
+is done with `filter` and [partial function
 application](https://bkamins.github.io/julialang/2024/02/23/fix.html). Once we
 got it we use recursion (e.g. `qs(unsorted_smaller_elts)` in `return`) and
 vector concatenation (`[vector_or_elt; vector_or_elt; vector_or_elt]`).
@@ -178,7 +178,9 @@ sco(s)
 ```
 
 Looks good. OK, in case the above was too great of a squeeze, let's try to make
-it a bit less Haskell-ic and a bit more Julia-nic.
+it a bit less [functional](https://en.wikipedia.org/wiki/Functional_programming)
+(Haskell is a purely functional programming language) and a bit more
+[imperative](https://en.wikipedia.org/wiki/Imperative_programming).
 
 ```jl
 s1 = """
@@ -201,13 +203,12 @@ sc(s1)
 Once again, we choose a so called pivot element (`pivotElt`) that for simplicity
 is always the first element of a vector (`pivotInd::Int = 1`). Next, we take the
 remaining part of the vector (`restV`) and separate its elements into elements
-that are smaller (`smallerElts`) and greater than or equal (`greaterEqElts`)
-than our `pivotElt`.  The above is done with `filter` and an anonymous
-function. Once we got it we use recursion (e.g. `qs(unsorted_smaller_elts)` in
-`return`) and vector concatenation (`[vector_or_elt; vector_or_elt;
-vector_or_elt]`).
+that are smaller (`smallerElts`) and greater than or equal to (`greaterEqElts`)
+our `pivotElt`. The above is done with `filter` and an anonymous function. Once
+we got it we use recursion (e.g. `qs(unsorted_smaller_elts)` in `return`) and
+vector concatenation (`[vector_or_elt; vector_or_elt; vector_or_elt]`).
 
-Just a small test to make sure it still works.
+Just a small test to make sure it still works as intended.
 
 ```jl
 s1 = """
@@ -254,9 +255,9 @@ sc(s)
 Here, we added two more positional arguments to `qs`: 1) `by` which is a
 function applied to every element of the vector (`v`) before the sorting; 2)
 `lt` - a comparator function (`lt` - less than, `!lt` - negation of `lt`) that
-compares `pivotElt` with all the elements.  The comparison occurs after `by` was
-applied to all the elements of `v`. The names `by` and `lt` were inspired by the
-names of the [keyword
+compares `pivotElt` with all the other elements (`restV`). The comparison occurs
+after `by` was applied to all the elements of `restV`. The names `by` and `lt`
+were inspired by the names of the [keyword
 arguments](https://docs.julialang.org/en/v1/devdocs/functions/#Keyword-arguments)
 in [Base.sort](https://docs.julialang.org/en/v1/base/sort/#Base.sort). The
 default function for `by` is
