@@ -145,6 +145,47 @@ function qs(v::Vec{Int})::Vec{Int}
     if isempty(v)
         return []
     else
+        head, tail... = v
+        smallerElts::Vec{Int} = filter((<)(head), tail)
+        greaterEqElts::Vec{Int} = filter((>=)(head), tail)
+        return [qs(smallerElts); head; qs(greaterEqElts)]
+    end
+end
+"""
+sc(s)
+```
+
+To do so, we choose a so called pivot element (`head`) that for simplicity is
+always the first element in a vector. Next, we take the remaining part of the
+vector (`tail`). The `head, tail... = v` is a [destructuring
+assignment](https://docs.julialang.org/en/v1/manual/functions/#destructuring-assignment)
+that puts the first elt of `v` to `head` and all the remaining elements to `tail`
+(if `v` is made of one element, then `tail` is `[]`).  Anyway, we separate
+`tail` elements into the ones that are smaller (`smallerElts`) and greater than
+or equal (`greaterEqElts`) than our pivot element (`head`).  The above is done
+with `filter` and [partial function
+application](https://bkamins.github.io/julialang/2024/02/23/fix.html). Once we
+got it we use recursion (e.g. `qs(unsorted_smaller_elts)` in `return`) and
+vector concatenation (`[vector_or_elt; vector_or_elt; vector_or_elt]`).
+
+Let's see how it works.
+
+```jl
+s = """
+[47, 15, 23, 99, 4] |> qs
+"""
+sco(s)
+```
+
+Looks good. OK, in case the above was too great of a squeeze, let's try to make
+it a bit less Haskell-ic and a bit more Julia-nic.
+
+```jl
+s1 = """
+function qs(v::Vec{Int})::Vec{Int}
+    if isempty(v)
+        return []
+    else
         pivotInd::Int = 1
         pivotElt::Int = v[pivotInd]
         restV::Vec{Int} = v[eachindex(v) .!= pivotInd]
@@ -154,11 +195,11 @@ function qs(v::Vec{Int})::Vec{Int}
     end
 end
 """
-sc(s)
+sc(s1)
 ```
 
-To do so, we choose a so called pivot element (`pivotElt`) that for simplicity
-is always the first element in a vector (`pivotInd::Int = 1`). Next, we take the
+Once again, we choose a so called pivot element (`pivotElt`) that for simplicity
+is always the first element of a vector (`pivotInd::Int = 1`). Next, we take the
 remaining part of the vector (`restV`) and separate its elements into elements
 that are smaller (`smallerElts`) and greater than or equal (`greaterEqElts`)
 than our `pivotElt`.  The above is done with `filter` and an anonymous
@@ -166,13 +207,13 @@ function. Once we got it we use recursion (e.g. `qs(unsorted_smaller_elts)` in
 `return`) and vector concatenation (`[vector_or_elt; vector_or_elt;
 vector_or_elt]`).
 
-Let's see how it works.
+Just a small test to make sure it still works.
 
 ```jl
-s = """
+s1 = """
 [47, 15, 23, 99, 4] |> qs
 """
-sco(s)
+sco(s1)
 ```
 
 Flawless victory, but we are still not able to sort the numbers in alphabetical
@@ -246,7 +287,7 @@ sco(s)
 ```
 
 The above should work similar to the built-in `sort` (here we use
-`by=geEngNumeral` because that's how you pass keyword arguments to a function).
+`by=getEngNumeral` because that's how you pass keyword arguments to a function).
 
 ```jl
 s = """
