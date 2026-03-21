@@ -30,7 +30,7 @@ end
 [0.75, 0.25, 0.5] |> bs
 
 # https://en.wikipedia.org/wiki/Quicksort
-# Haskell-ic version
+# Haskell-ic version (biased towards functional programming)
 function qs(v::Vec{Int})::Vec{Int}
     if isempty(v)
         return []
@@ -44,38 +44,38 @@ end
 
 [47, 15, 23, 99, 4] |> qs
 
-# more Julia-nic version
+# more imperative programming version
 function qs(v::Vec{Int})::Vec{Int}
     if isempty(v)
         return []
     else
-        pivotInd::Int = 1
-        pivotElt::Int = v[pivotInd]
-        restV::Vec{Int} = v[eachindex(v) .!= pivotInd]
-        smallerElts::Vec{Int} = filter(elt -> elt < pivotElt, restV)
-        greaterEqElts::Vec{Int} = filter(elt -> elt >= pivotElt, restV)
-        return [qs(smallerElts); pivotElt; qs(greaterEqElts)]
+        firstElt::Int = v[1]
+        otherElts::Vec{Int} = v[2:end]
+        smallerElts::Vec{Int} = filter(elt -> elt < firstElt, otherElts)
+        greaterEqElts::Vec{Int} = filter(elt -> elt >= firstElt, otherElts)
+        return [qs(smallerElts); firstElt; qs(greaterEqElts)]
     end
 end
 
 [47, 15, 23, 99, 4] |> qs
 
 # by - function(A) -> B; is applied to every elt of v before sorting
-# lt - function(B) -> Bool; is applied to every elt of v after by was applied
+# lt - fn(B, B) -> Bool; compares pairs of elts after 'by' was applied
 function qs(v::Vec{A}, by::Function=identity, lt::Function=<)::Vec{A} where A
     if isempty(v)
         return []
     else
-        pivotInd::Int = 1
-        pivotElt::A = v[pivotInd]
-        restV::Vec{A} = v[eachindex(v) .!= pivotInd]
+        firstElt::A = v[1]
+        otherElts::Vec{A} = v[2:end]
         smallerElts::Vec{A} = filter(
-            elt -> lt(by(elt), by(pivotElt)), restV
+            elt -> lt(by(elt), by(firstElt)),
+            otherElts
         )
         greaterEqElts::Vec{A} = filter(
-            elt -> !lt(by(elt), by(pivotElt)), restV
+            elt -> !lt(by(elt), by(firstElt)),
+            otherElts
         )
-        return [qs(smallerElts, by, lt); pivotElt; qs(greaterEqElts, by, lt)]
+        return [qs(smallerElts, by, lt); firstElt; qs(greaterEqElts, by, lt)]
     end
 end
 

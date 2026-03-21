@@ -156,8 +156,8 @@ sc(s)
 ```
 
 To do so we choose a so called pivot element (`head`) that for simplicity is
-always the first element in a vector (`v`). Next, we take the remaining part of
-the vector (`tail`). The `head, tail... = v` is a [destructuring
+always the first element in the vector (`v`). Next, we take the remaining part
+of the vector (`tail`). The `head, tail... = v` is a [destructuring
 assignment](https://docs.julialang.org/en/v1/manual/functions/#destructuring-assignment)
 that puts the first elt of `v` to `head` variable and all the remaining elements
 to `tail` (if `v` is made of one element, then `tail` is `[]`). Anyway, we
@@ -188,24 +188,23 @@ function qs(v::Vec{Int})::Vec{Int}
     if isempty(v)
         return []
     else
-        pivotInd::Int = 1
-        pivotElt::Int = v[pivotInd]
-        restV::Vec{Int} = v[eachindex(v) .!= pivotInd]
-        smallerElts::Vec{Int} = filter(elt -> elt < pivotElt, restV)
-        greaterEqElts::Vec{Int} = filter(elt -> elt >= pivotElt, restV)
-        return [qs(smallerElts); pivotElt; qs(greaterEqElts)]
+        firstElt::Int = v[1]
+        otherElts::Vec{Int} = v[2:end]
+        smallerElts::Vec{Int} = filter(elt -> elt < firstElt, otherElts)
+        greaterEqElts::Vec{Int} = filter(elt -> elt >= firstElt, otherElts)
+        return [qs(smallerElts); firstElt; qs(greaterEqElts)]
     end
 end
 """
 sc(s1)
 ```
 
-Once again, we choose a so called pivot element (`pivotElt`) that for simplicity
-is always the first element of a vector (`pivotInd::Int = 1`). Next, we take the
-remaining part of the vector (`restV`) and separate its elements into elements
-that are smaller (`smallerElts`) and greater than or equal to (`greaterEqElts`)
-our `pivotElt`. The above is done with `filter` and an anonymous function. Once
-we got it we use recursion (e.g. `qs(unsorted_smaller_elts)` in `return`) and
+Once again, we choose a so called pivot element (`firstElt`) that for simplicity
+is always the first element of a vector. Next, we take the remaining elements
+(`otherElts`) and separate them into the elements that are smaller
+(`smallerElts`) and greater than or equal to (`greaterEqElts`) our pivot element
+(`firstElt`). The above is done with `filter` and an anonymous function. Once we
+got it we use recursion (e.g. `qs(unsorted_smaller_elts)` in `return`) and
 vector concatenation (`[vector_or_elt; vector_or_elt; vector_or_elt]`).
 
 Just a small test to make sure it still works as intended.
@@ -217,33 +216,32 @@ s1 = """
 sco(s1)
 ```
 
-Flawless victory, but we are still not able to sort the numbers in alphabetical
-order.  Let's fix that by modifying our `qs`.
+Flawless victory, but we are still unable to sort the numbers in alphabetical
+order. Let's fix that by modifying our `qs`.
 
 ```jl
 s = """
 # by - fn(A) -> B; is applied to every elt of v before sorting
-# lt - fn(B) -> Bool; is applied to every elt of v after by was applied
+# lt - fn(B, B) -> Bool; compares pairs of elts after 'by' was applied
 function qs(v::Vec{A},
             by::Function=identity,
             lt::Function=<)::Vec{A} where A
     if isempty(v)
         return []
     else
-        pivotInd::Int = 1
-        pivotElt::A = v[pivotInd]
-        restV::Vec{A} = v[eachindex(v) .!= pivotInd]
+        firstElt::A = v[1]
+        otherElts::Vec{A} = v[2:end]
         smallerElts::Vec{A} = filter(
-            elt -> lt(by(elt), by(pivotElt)),
-			restV
+            elt -> lt(by(elt), by(firstElt)),
+            otherElts
         )
         greaterEqElts::Vec{A} = filter(
-            elt -> !lt(by(elt), by(pivotElt)),
-			restV
+            elt -> !lt(by(elt), by(firstElt)),
+            otherElts
         )
         return [
             qs(smallerElts, by, lt);
-            pivotElt;
+            firstElt;
             qs(greaterEqElts, by, lt)
         ]
     end
@@ -255,9 +253,10 @@ sc(s)
 Here, we added two more positional arguments to `qs`: 1) `by` which is a
 function applied to every element of the vector (`v`) before the sorting; 2)
 `lt` - a comparator function (`lt` - less than, `!lt` - negation of `lt`) that
-compares `pivotElt` with all the other elements (`restV`). The comparison occurs
-after `by` was applied to all the elements of `restV`. The names `by` and `lt`
-were inspired by the names of the [keyword
+compares our pivot element (`firstElt`) with all the other elements
+(`otherElts`). The comparison occurs after `by` was applied to all the elements
+of `v` (`by(elt)` and `by(firstElt)` in `filter`). The names `by` and `lt` were
+inspired by the names of the [keyword
 arguments](https://docs.julialang.org/en/v1/devdocs/functions/#Keyword-arguments)
 in [Base.sort](https://docs.julialang.org/en/v1/base/sort/#Base.sort). The
 default function for `by` is
