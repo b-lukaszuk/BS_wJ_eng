@@ -169,132 +169,135 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="13.2" id="sec:tree_solution"><span class="header-section-number">13.2</span> Solution</h2>
-<p>Let’s start small with an initial definition of <code>printCatalogTree</code>.</p>
-<pre class="language-julia"><code>function printCatalogTree(path::Str, pad::Str)::Nothing
-    newPad::Str = pad * &quot;   &quot;
-    for name in readdir(path)
-        newPath::Str = joinpath(path, name)
-        if isfile(newPath)
-            println(newPad, name)
-        else
-            println(newPad, name, &quot;/&quot;)
-            printCatalogTree(newPath, newPad)
+<h2 data-number="17.2" id="sec:sort_solution"><span class="header-section-number">17.2</span> Solution</h2>
+<p>For our first attempt we’ll go with something simple like the <a href="https://en.wikipedia.org/wiki/Bubble_sort">bubble sort</a> algorithm.</p>
+<pre class="language-julia"><code>function bs(v::Vec{A})::Vec{A} where A&lt;:Union{Flt, Int}
+    result::Vec{A} = copy(v)
+    swapped::Bool = true
+    while swapped
+        swapped = false
+        for i in eachindex(result)[2:end]
+            if result[i-1] &gt; result[i]
+                result[i-1], result[i] = result[i], result[i-1]
+                swapped = true
+            end
         end
     end
-    return nothing
-end
-
-function printCatalogTree(path::Str)::Nothing
-    println(path, &quot;/&quot;)
-    printCatalogTree(path, &quot;&quot;)
-    return nothing
+    return result
 end</code></pre>
-<p>The function is rather simple. We walk through every entry (<code>for name</code>) in the examined directory (<code>path</code>). As we go <code>name</code> is converted to <code>newPath</code> which will be examined in a moment. If <code>newPath</code> is a file (<code>isfile</code>) we just print it, otherwise (<code>else</code>) it is a directory and we print it with <code>"/"</code> to make it stand out. Moreover we go inside of it with <code>printCatalogTree</code> (recursive call) to print its contents. For every nesting of <code>printCatalogTree</code> we update the padding <code>newPad</code> by increasing the indentation with <code>* " "</code>. We conclude with another version of <code>printCatalogTree</code>, the method will make the function’s invocation slightly easier and will add a header line for us (<code>println(path, "/")</code>) that will display the root directory (<code>path</code>).</p>
-<p>Let’s see how it works (remember to create <code>catalog_x</code> with its contents first).</p>
-<pre><code>printCatalogTree(joinpath(homedir(), &quot;Desktop&quot;, &quot;catalog_x&quot;))</code></pre>
-<pre><code>/home/user_name/Desktop/catalog_x/
-   catalog_y/
-      catalog_z/
-         file_z.txt
-      file_y.txt
-   file_x.txt</code></pre>
-<p>It looks quite alright. Time to replace the spaces on the left with some guideways that we may follow with our eyes.</p>
-<pre class="language-julia"><code>function printCatalogTree(path::Str, pad::Str)::Nothing
-    newPad::Str = pad * &quot;---&quot;
-    for name in readdir(path)
-        newPath::Str = joinpath(path, name)
-        if isfile(newPath)
-            println(newPad, name)
-        else
-            println(newPad, name, &quot;/&quot;)
-            printCatalogTree(newPath, pad * &quot;   |&quot;)
+<p>Here, we implemented the algorithm for a vector that contains the elements of type <code>A</code>. In this case it is just a sub-type (<code>&lt;:</code>) of <code>Flt</code> (an alias for <code>Float64</code>) or <code>Int</code> (<code>Union{Flt, Int}</code>). We started by copying the original vector to <code>result</code> and setting a variable named <code>swapped</code>. We will stop our sorting algorithm once there was no swap (<code>swapped</code> in <code>while</code> is <code>false</code>) during the previous traversal of the whole vector (traversal in the <code>for</code> loop). We search through the vector starting from its second element (<code>i in eachindex(result)[2:end]</code>). Every time we compare the two nearby elements (<code>result[i-1]</code> vs. <code>result[i]</code>). If the elements aren’t in a desired order (<code>if result[i-1] &gt; result[i]</code>) we just swap them with each other (<code>result[i-1], result[i] = result[i], result[i-1]</code>) and set the <code>swapped</code> flag to <code>true</code>. Once we finish we return the result.</p>
+<p>Let’s see how we did.</p>
+<pre class="language-julia"><code>[47, 15, 23, 99, 4] |&gt; bs,
+[47.3, 23.2, 47.2] |&gt; bs</code></pre>
+<pre class="output"><code>([4, 15, 23, 47, 99], [23.2, 47.2, 47.3])</code></pre>
+<p>If you want to better visualize how the algorithm works, you may place <code>println</code> or <a href="https://docs.julialang.org/en/v1/base/base/#Base.@show">@show</a> constructs in a few places inside the function, e.g.</p>
+<pre><code>function bs(v::Vec{A})::Vec{A} where A&lt;:Union{Flt, Int}
+    result::Vec{A} = copy(v)
+    swapped::Bool = true
+    i::Int = 0
+    while swapped
+        i += 1
+        @show i
+        swapped = false
+        for i in eachindex(result)[2:end]
+            if result[i-1] &gt; result[i]
+                result[i-1], result[i] = result[i], result[i-1]
+                swapped = true
+            end
+            @show result, swapped
         end
     end
-    return nothing
-end
-
-function printCatalogTree(path::Str)::Nothing
-    println(path, &quot;/&quot;)
-    printCatalogTree(path, &quot;|&quot;)
-    return nothing
+    return result
 end</code></pre>
-<p>To that end we changed the <code>pad</code>s. We begin with the first column on the left that should start with the pipe character (<code>printCatalogTree(path, "|")</code>). Each line containing a file or directory should continue with hyphens “—” (<code>newPad::Str = pad * "---"</code>), whereas a nested directory and its contents should be indented and start with the pipe character as well (<code>printCatalogTree(newPath, pad * " |")</code>). Let’s see did it work as intended.</p>
-<pre><code>printCatalogTree(joinpath(homedir(), &quot;Desktop&quot;, &quot;catalog_x&quot;))</code></pre>
-<pre><code>/home/user_name/Desktop/catalog_x/
-|---catalog_y/
-|   |---catalog_z/
-|   |   |---file_z.txt
-|   |---file_y.txt
-|---file_x.txt</code></pre>
-<p>Not bad at all. Time to add a summary line.</p>
-<pre class="language-julia"><code>function printCatalogTree!(path::Str, pad::Str,
-                           count::Dict{Str, Int})::Nothing
-    newPad::Str = pad * &quot;---&quot;
-    for name in readdir(path)
-        newPath::Str = joinpath(path, name)
-        if isfile(newPath)
-            println(newPad, name)
-            count[&quot;nFiles&quot;] += 1
-        else
-            println(newPad, name, &quot;/&quot;)
-            count[&quot;nDirs&quot;] += 1
-            printCatalogTree!(newPath, pad * &quot;   |&quot;, count)
-        end
+<p>Which prints:</p>
+<pre><code>[0.75, 0.25, 0.5] |&gt; bs
+
+# printout
+i = 1
+(result, swapped) = ([0.25, 0.75, 0.5], true)
+(result, swapped) = ([0.25, 0.5, 0.75], true)
+i = 2
+(result, swapped) = ([0.25, 0.5, 0.75], false)
+(result, swapped) = ([0.25, 0.5, 0.75], false)</code></pre>
+<p>For our next try we will go with the <a href="https://en.wikipedia.org/wiki/Quicksort">quicksort</a> algorithm. Here, I’ll try to implement it from memory based on the algorithm I once saw in “Learn You a Haskell for Great Good!” by Miran Lipovača. Of course, I’ll try to adjust it for Julia syntax.</p>
+<pre class="language-julia"><code>function qs(v::Vec{Int})::Vec{Int}
+    if isempty(v)
+        return []
+    else
+        head, tail... = v
+        smallerElts::Vec{Int} = filter((&lt;)(head), tail)
+        greaterEqElts::Vec{Int} = filter((&gt;=)(head), tail)
+        return [qs(smallerElts); head; qs(greaterEqElts)]
     end
-    return nothing
-end
-
-function printCatalogTree(path::Str)::Nothing
-    println(path, &quot;/&quot;)
-    count::Dict{Str, Int}= Dict(&quot;nDirs&quot; =&gt; 0, &quot;nFiles&quot; =&gt; 0)
-    printCatalogTree!(path, &quot;|&quot;, count)
-    print(&quot;\n&quot;, count[&quot;nDirs&quot;], &quot; directories, &quot;, count[&quot;nFiles&quot;], &quot; files&quot;)
-    return nothing
 end</code></pre>
-<p>The necessary data will be collected in a dictionary (<code>count</code>). It has two keys: <code>nDirs</code> and <code>nFiles</code> for the number of directories and files in the tree, respectively. Remember that in Julia dictionaries are passed by reference so any modification you make to them inside of a function will be visible outside. For that purpose <code>count</code> is defined in the outer <code>printCatalogTree</code>, whereas the inner <code>printCatalogTree!</code> got exclamation point per Julia’s convention to mark a function that modifies its arguments. Anyway, the <code>count</code> dictionary is updated for every file (<code>count["nFiles"] += 1</code>) and directory (<code>count["nDirs"] += 1</code>) encountered and a summary line is added at the very bottom of the output (<code>print("\n", count["nDirs"], " directories, ", count["nFiles"], " files")</code>). Let’s see how it works on a few examples (feel free to recreate mock directory structures as seen here).</p>
-<p>First, a simple, already familiar to us, case.</p>
-<pre><code>printCatalogTree(joinpath(homedir(), &quot;Desktop&quot;, &quot;catalog_x&quot;))</code></pre>
-<pre><code>/home/user_name/Desktop/catalog_x/
-|---catalog_y/
-|   |---catalog_z/
-|   |   |---file_z.txt
-|   |---file_y.txt
-|---file_x.txt
-
-2 directories, 3 files</code></pre>
-<p>Now, a bit more convoluted tree.</p>
-<pre><code>printCatalogTree(joinpath(homedir(), &quot;Desktop&quot;, &quot;catalog_a&quot;))</code></pre>
-<pre><code>/home/user_name/Desktop/catalog_a/
-|---catalog_b/
-|   |---catalog_d/
-|   |   |---file_d.txt
-|   |---file_b1.txt
-|   |---file_b2.txt
-|---catalog_c/
-|   |---catalog_e/
-|   |   |---file_e.txt
-|   |---catalog_f/
-|   |   |---file_f1.txt
-|   |   |---file_f2.txt
-|   |   |---file_f3.txt
-|   |   |---file_f4.txt
-|---file_a.txt
-
-5 directories, 9 files</code></pre>
-<p>And an empty directory.</p>
-<pre><code>printCatalogTree(joinpath(homedir(), &quot;Desktop&quot;, &quot;catalog_zzz&quot;))</code></pre>
-<pre><code>/home/user_name/Desktop/catalog_zzz/
-
-0 directories, 0 files</code></pre>
-<p>OK, that’s it. Another tiny utility under our belts.</p>
+<p>To do so we choose a so called pivot element (<code>head</code>) that for simplicity is always the first element in a vector (<code>v</code>). Next, we take the remaining part of the vector (<code>tail</code>). The <code>head, tail... = v</code> is a <a href="https://docs.julialang.org/en/v1/manual/functions/#destructuring-assignment">destructuring assignment</a> that puts the first elt of <code>v</code> to <code>head</code> variable and all the remaining elements to <code>tail</code> (if <code>v</code> is made of one element, then <code>tail</code> is <code>[]</code>). Anyway, we separate <code>tail</code> elements into the ones that are smaller (<code>smallerElts</code>) and greater than or equal to (<code>greaterEqElts</code>) our pivot element (<code>head</code>). The above is done with <code>filter</code> and <a href="https://bkamins.github.io/julialang/2024/02/23/fix.html">partial function application</a>. Once we got it we use recursion (e.g. <code>qs(unsorted_smaller_elts)</code> in <code>return</code>) and vector concatenation (<code>[vector_or_elt; vector_or_elt; vector_or_elt]</code>).</p>
+<p>Let’s see how it works.</p>
+<pre class="language-julia"><code>[47, 15, 23, 99, 4] |&gt; qs</code></pre>
+<pre class="output"><code>[4, 15, 23, 47, 99]</code></pre>
+<p>Looks good. OK, in case the above was too great of a squeeze, let’s try to make it a bit less <a href="https://en.wikipedia.org/wiki/Functional_programming">functional</a> (Haskell is a purely functional programming language) and a bit more <a href="https://en.wikipedia.org/wiki/Imperative_programming">imperative</a>.</p>
+<pre class="language-julia"><code>function qs(v::Vec{Int})::Vec{Int}
+    if isempty(v)
+        return []
+    else
+        pivotInd::Int = 1
+        pivotElt::Int = v[pivotInd]
+        restV::Vec{Int} = v[eachindex(v) .!= pivotInd]
+        smallerElts::Vec{Int} = filter(elt -&gt; elt &lt; pivotElt, restV)
+        greaterEqElts::Vec{Int} = filter(elt -&gt; elt &gt;= pivotElt, restV)
+        return [qs(smallerElts); pivotElt; qs(greaterEqElts)]
+    end
+end</code></pre>
+<p>Once again, we choose a so called pivot element (<code>pivotElt</code>) that for simplicity is always the first element of a vector (<code>pivotInd::Int = 1</code>). Next, we take the remaining part of the vector (<code>restV</code>) and separate its elements into elements that are smaller (<code>smallerElts</code>) and greater than or equal to (<code>greaterEqElts</code>) our <code>pivotElt</code>. The above is done with <code>filter</code> and an anonymous function. Once we got it we use recursion (e.g. <code>qs(unsorted_smaller_elts)</code> in <code>return</code>) and vector concatenation (<code>[vector_or_elt; vector_or_elt; vector_or_elt]</code>).</p>
+<p>Just a small test to make sure it still works as intended.</p>
+<pre class="language-julia"><code>[47, 15, 23, 99, 4] |&gt; qs</code></pre>
+<pre class="output"><code>[4, 15, 23, 47, 99]</code></pre>
+<p>Flawless victory, but we are still not able to sort the numbers in alphabetical order. Let’s fix that by modifying our <code>qs</code>.</p>
+<pre class="language-julia"><code># by - fn(A) -&gt; B; is applied to every elt of v before sorting
+# lt - fn(B) -&gt; Bool; is applied to every elt of v after by was applied
+function qs(v::Vec{A},
+            by::Function=identity,
+            lt::Function=&lt;)::Vec{A} where A
+    if isempty(v)
+        return []
+    else
+        pivotInd::Int = 1
+        pivotElt::A = v[pivotInd]
+        restV::Vec{A} = v[eachindex(v) .!= pivotInd]
+        smallerElts::Vec{A} = filter(
+            elt -&gt; lt(by(elt), by(pivotElt)),
+            restV
+        )
+        greaterEqElts::Vec{A} = filter(
+            elt -&gt; !lt(by(elt), by(pivotElt)),
+            restV
+        )
+        return [
+            qs(smallerElts, by, lt);
+            pivotElt;
+            qs(greaterEqElts, by, lt)
+        ]
+    end
+end</code></pre>
+<p>Here, we added two more positional arguments to <code>qs</code>: 1) <code>by</code> which is a function applied to every element of the vector (<code>v</code>) before the sorting; 2) <code>lt</code> - a comparator function (<code>lt</code> - less than, <code>!lt</code> - negation of <code>lt</code>) that compares <code>pivotElt</code> with all the other elements (<code>restV</code>). The comparison occurs after <code>by</code> was applied to all the elements of <code>restV</code>. The names <code>by</code> and <code>lt</code> were inspired by the names of the <a href="https://docs.julialang.org/en/v1/devdocs/functions/#Keyword-arguments">keyword arguments</a> in <a href="https://docs.julialang.org/en/v1/base/sort/#Base.sort">Base.sort</a>. The default function for <code>by</code> is <a href="https://docs.julialang.org/en/v1/base/base/#Base.identity">identity</a> (returns its argument unchanged) and the default function for <code>lt</code> is <a href="https://docs.julialang.org/en/v1/base/math/#Base.:%3C">Base.:&lt;</a>.</p>
+<p>Let’s see how it does:</p>
+<pre class="language-julia"><code>[0.75, 0.25, 0.5] |&gt; qs,
+[&#39;c&#39;, &#39;b&#39;, &#39;a&#39;, &#39;d&#39;] |&gt; qs</code></pre>
+<pre class="output"><code>([0.25, 0.5, 0.75], [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;, &#39;d&#39;])</code></pre>
+<p>And now for the alphabetical sort (<code>getEngNumeral</code> was a solution for the problem in Section <a href="./cheque_problem.html#sec:cheque_problem">16.1</a>. Here, we passed it without <code>by=</code> because in <code>qs</code> it is a positional argument).</p>
+<pre class="language-julia"><code>qs(collect(1:10), getEngNumeral)</code></pre>
+<pre class="output"><code>[8, 5, 4, 9, 1, 7, 6, 10, 3, 2]</code></pre>
+<p>The above should work similar to the built-in <code>sort</code> (here we use <code>by=getEngNumeral</code> because that’s how you pass keyword arguments to a function).</p>
+<pre class="language-julia"><code>qs([0.75, 0.25, 0.5]) == sort([0.75, 0.25, 0.5]),
+qs([&#39;c&#39;, &#39;b&#39;, &#39;a&#39;, &#39;d&#39;]) == sort([&#39;c&#39;, &#39;b&#39;, &#39;a&#39;, &#39;d&#39;]),
+qs(collect(1:10), getEngNumeral) == sort(1:10, by=getEngNumeral)</code></pre>
+<pre class="output"><code>(true, true, true)</code></pre>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-2" href="./tree_problem.html"><b>13.1</b> Problem</a> <kbd>←</kbd>
+        <a class="menu-level-2" href="./sort_problem.html"><b>17.1</b> Problem</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-1" href="./format_text.html"><b>14</b> Format text</a>
+            <kbd>→</kbd> <a class="menu-level-1" href="./regex.html"><b>18</b> Regex</a>
         </span>
     </p>
 </div>
