@@ -20,22 +20,6 @@ function isBaseN(num::Str, n::Int)::Bool
     return isBaseN.(collect(num), n) |> all
 end
 
-function getNumOfSlots2codeDec(dec::Int, nBase::Int)::Int
-    @assert MIN_BASE <= nBase <= MAX_BASE "n not in [$MIN_BASE - $MAX_BASE]"
-    @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
-    dec = (dec == 0) ? 1 : dec
-    for i in 1:dec
-        if nBase^i > dec
-            return i
-        end
-    end
-    return 0 # should never happen
-end
-
-getNumOfSlots2codeDec(12, 2)
-getNumOfSlots2codeDec(12, 3)
-getNumOfSlots2codeDec(12, 16)
-
 function dec2baseN(dec::Int, n::Int)::Str
     @assert MIN_BASE <= n <= MAX_BASE "n not in [$MIN_BASE - $MAX_BASE]"
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
@@ -48,9 +32,8 @@ function dec2baseN(dec::Int, n::Int)::Str
 end
 
 # test against Julia's built-it  functionality
-all([dec2baseN(i, b) == string(i, base=b)
-     for b in 2:16 for i in 0:1024]
-    )
+[dec2baseN(i, b) == string(i, base=b)
+ for b in 2:16 for i in 0:1024] |> all
 
 # returns (carried num, running num)
 function add(x::Char, y::Char, base::Int)::Tuple{Char, Char}
@@ -81,14 +64,14 @@ for b in 2:16
 end
 
 # without printout
-myStrip(numChar) = numChar == "00" ? "0" : lstrip(numChar, '0')
-
 tests = Bool[]
-for b in 2:16
-    for x in 0:(b-1), y in 0:(b-1)
+for b in 2:16 # base
+    for x in 0:(b-1), y in 0:(b-1) # nums
         n1 = dec2baseN(x, b)[1]
         n2 = dec2baseN(y, b)[1]
-        push!(tests, myStrip(join(add(n1, n2, b))) == dec2baseN(x+y, b))
+        result = join(add(n1, n2, b))
+        result = result == "00" ? "0" : lstrip(result, '0')
+        push!(tests, result == dec2baseN(x+y, b))
     end
 end
 all(tests)
