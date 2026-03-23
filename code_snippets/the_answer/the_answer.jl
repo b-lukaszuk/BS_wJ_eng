@@ -41,7 +41,7 @@ function dec2baseN(dec::Int, n::Int)::Str
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
     result::Str = ""
     while dec != 0
-        result *= CHARS[(dec % n) + 1]
+        result *= CHARS[(dec % n) + 1] # 0 based to 1 based
         dec = div(dec, n)
     end
     return isempty(result) ? "0" : reverse(result)
@@ -51,3 +51,44 @@ end
 all([dec2baseN(i, b) == string(i, base=b)
      for b in 2:16 for i in 0:1024]
     )
+
+# returns (carried num, running num)
+function add(x::Char, y::Char, base::Int)::Tuple{Char, Char}
+    @assert isBaseN(x, base) "$x is not a num of base $base"
+    @assert isBaseN(y, base) "$y is not a num of base $base"
+    @assert MIN_BASE <= base <= MAX_BASE "$base not in [$MIN_BASE - $MAX_BASE]"
+    ind1::Int = findfirst(x, CHARS |> join) - 1 # 0 based
+    ind2::Int = findfirst(y, CHARS |> join) - 1 # 0 based
+    sumInd::Int = ind1 + ind2 # 0 based
+    if sumInd >= base
+        carry::Char = '1'
+        runningInd::Int = (sumInd % base) + 1 # 1 based
+        return (carry, CHARS[runningInd])
+    else
+        return ('0', CHARS[sumInd+1]) # 1 based
+    end
+end
+
+# tests
+# with printout
+for b in 2:16
+    println("\n---base = $b---")
+    for x in 0:(b-1), y in 0:(b-1)
+        n1 = dec2baseN(x, b)[1]
+        n2 = dec2baseN(y, b)[1]
+        println("add($n1, $n2, base=$b) = $(add(n1, n2, b)) = $(dec2baseN(x+y, b))")
+    end
+end
+
+# without printout
+myStrip(numChar) = numChar == "00" ? "0" : lstrip(numChar, '0')
+
+tests = Bool[]
+for b in 2:16
+    for x in 0:(b-1), y in 0:(b-1)
+        n1 = dec2baseN(x, b)[1]
+        n2 = dec2baseN(y, b)[1]
+        push!(tests, myStrip(join(add(n1, n2, b))) == dec2baseN(x+y, b))
+    end
+end
+all(tests)
