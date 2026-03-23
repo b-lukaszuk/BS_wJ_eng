@@ -62,6 +62,7 @@ end
 
 bin2dec.(string.(0:1024, base=2)) == 0:1024
 
+# returns (carried bit, running bit)
 function add(bin1::Char, bin2::Char)::Tuple{Char, Char}
     @assert isBin(bin1) && isBin(bin2) "both inputs must be binary bits"
     if bin1 == '1' && bin2 == '1'
