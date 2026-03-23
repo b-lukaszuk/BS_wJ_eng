@@ -44,9 +44,10 @@ function dec2baseN(dec::Int, n::Int)::Str
         result *= CHARS[(dec % n) + 1]
         dec = div(dec, n)
     end
-    return reverse(result)
+    return isempty(result) ? "0" : reverse(result)
 end
 
-dec2baseN(3, 2)
-dec2baseN(7, 8)
-dec2baseN(15, 16)
+# test against Julia's built-it  functionality
+all([dec2baseN(i, b) == string(i, base=b)
+     for b in 2:16 for i in 0:1024]
+    )
