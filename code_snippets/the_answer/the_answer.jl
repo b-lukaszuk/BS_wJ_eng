@@ -96,3 +96,37 @@ end
 function isZero(num::Str)::Bool
     return isZero.(collect(num)) |> all
 end
+
+function add(num1::Str, num2::Str, baseNums::Int)::Str
+    num1, num2 = getEqlLenNums(num1, num2)
+    carriedSlot::Char = '0'
+    runningSlot::Char = '0'
+    runningSlots::Str = ""
+    carriedSlots::Str = "0"
+    for (n1, n2) in zip(reverse(num1), reverse(num2))
+        carriedSlot, runningSlot = add(n1, n2, baseNums)
+        runningSlots = runningSlot * runningSlots
+        carriedSlots = carriedSlot * carriedSlots
+    end
+    if isZero(carriedSlots)
+        return isZero(runningSlots) ? "0" : lstrip(isZero, runningSlots)
+    else
+        return add(runningSlots, carriedSlots, baseNums)
+    end
+end
+
+
+# baseNFn(Str, Str, Int) -> Str, decFn(Int, Int) -> Int
+function doesBaseNFnWork(dec1::Int, dec2::Int,
+                       baseNFn::Function, baseN::Int,
+                       decFn::Function)::Bool
+    num1::Str = baseNFn(dec2baseN(dec1, baseN), dec2baseN(dec2, baseN), baseN)
+    num2::Str = string(decFn(dec1, dec2), base=baseN)
+    return num1 == num2
+end
+
+# running this test may take a few seconds (513x513 matrix)
+for base in 2:16
+    tests = [doesBaseNFnWork(a, b, add, 2, +) for a in 0:100, b in 0:100];
+    println("base $base, tests passed? ", all(tests))
+end
