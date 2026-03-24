@@ -80,3 +80,19 @@ for base in 2:16
     end
 end
 all(tests)
+
+function getEqlLenNums(num1::Str, num2::Str)::Tuple{Str, Str}
+    if length(num1) >= length(num2)
+        return (num1, lpad(num2, length(num1), '0'))
+    else
+        return getEqlLenNums(num2, num1)
+    end
+end
+
+function isZero(num::Char)::Bool
+    return num == '0'
+end
+
+function isZero(num::Str)::Bool
+    return isZero.(collect(num)) |> all
+end
