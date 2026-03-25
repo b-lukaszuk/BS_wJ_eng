@@ -1,4 +1,4 @@
-# Pascal's triangle {#sec:pascals_triangle}
+# Pascal's Triangle {#sec:pascals_triangle}
 
 In this chapter I did not use any external libraries. Still, once you read the
 problem description you may decide to do otherwise. In that case don't let me

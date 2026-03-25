@@ -1,4 +1,4 @@
-# Camel case {#sec:camel_case}
+# Camel Case {#sec:camel_case}
 
 In this chapter I did not use any external libraries. Still, once you read the
 problem description you may decide to do otherwise. In that case don't let me

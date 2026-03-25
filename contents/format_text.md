@@ -1,4 +1,4 @@
-# Format text {#sec:format_text}
+# Format Text {#sec:format_text}
 
 In this chapter I used the following libraries.
 

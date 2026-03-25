@@ -1,4 +1,4 @@
-# Tic-tac-toe {#sec:tic_tac_toe}
+# Tic-Tac-Toe {#sec:tic_tac_toe}
 
 In this chapter I did not use any external libraries. Still, once you read the
 problem description you may decide to do otherwise. In that case don't let me

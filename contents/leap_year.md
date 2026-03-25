@@ -1,4 +1,4 @@
-# Leap year {#sec:leap_year}
+# Leap Year {#sec:leap_year}
 
 In this chapter I did not use any external libraries. Still, once you read the
 problem description you may decide to do otherwise. In that case don't let me
