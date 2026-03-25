@@ -21,6 +21,7 @@ contents = [
     "sort",
     "regex",
     "binary",
+    "the_answer",
     "leap_year",
     "calendar",
     "prime_numbers",
