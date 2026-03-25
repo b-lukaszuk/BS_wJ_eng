@@ -115,7 +115,6 @@ function add(num1::Str, num2::Str, baseNums::Int)::Str
     end
 end
 
-
 # baseNFn(Str, Str, Int) -> Str, decFn(Int, Int) -> Int
 function doesBaseNFnWork(dec1::Int, dec2::Int,
                        baseNFn::Function, baseN::Int,
@@ -129,4 +128,15 @@ end
 for base in 2:16
     tests = [doesBaseNFnWork(a, b, add, 2, +) for a in 0:100, b in 0:100];
     println("base $base, tests passed? ", all(tests))
+end
+
+for base in 2:15
+    for dec1 in 0:(base-1), dec2 in 0:(base-1)
+        n1 = dec2baseN(dec1, base)
+        n2 = dec2baseN(dec2, base)
+        product = dec2baseN(dec1 * dec2, base)
+        if product == "42"
+            println("base $base: $n1 * $n2 = $product")
+        end
+    end
 end
