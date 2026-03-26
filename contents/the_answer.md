@@ -16,7 +16,8 @@ In one of the novels of Douglas Adams a supercomputer was asked to provide [the
 Answer to the Ultimate Question of Life, the Universe, and
 Everything](https://en.wikipedia.org/wiki/Phrases_from_The_Hitchhiker%27s_Guide_to_the_Galaxy#The_Answer_to_the_Ultimate_Question_of_Life,_the_Universe,_and_Everything_is_42).
 The answer turned out to be 42. At first it seems to make no sense until you
-realize that the question was: "What do you get if you multiply six by nine?".
+realize that the ultimate question was: "What do you get if you multiply six by
+nine?".
 
 So here is a task for you: modify `dec2bin` function from @sec:binary and name
 it, e.g. `dec2baseN`. Use the latter to test numerical systems of the base 2
