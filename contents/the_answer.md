@@ -46,4 +46,49 @@ systems. In binary (`MIN_BASE = 2`) we use the first two characters
 the first three characters, i.e. `CHARS[1:3]`, i.e. `'0', '1', '2'`, and so
 forth up until the hexadecimal (`MAX_BASE = 16`).
 
-Now, for the converter.
+Now, for the converter:
+
+```jl
+s = """
+function dec2baseN(dec::Int, n::Int)::Str
+    @assert MIN_BASE <= n <= MAX_BASE "n not in [$MIN_BASE - $MAX_BASE]"
+    @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
+    result::Str = ""
+    while dec != 0
+		# (dec % n) - C-like indexing [0-(n-1)]
+        result *= CHARS[(dec % n) + 1]
+        dec = div(dec, n)
+    end
+    return isempty(result) ? "0" : reverse(result)
+end
+"""
+sc(s)
+```
+
+Here, we used a different algorithm to the one from @sec:binary_solution.
+Basically, we divide a decimal number (`dec`) by the base `n` in which it is to
+be coded. For that we used the algorithm from [the Wikipedia](https://en.wikipedia.org/wiki/Binary_number#Decimal_to_binary) that states:
+
+
+> To convert from a base-10 integer to its base-2 (binary) equivalent, the
+> number is divided by two. The remainder is the least-significant bit. The
+> quotient is again divided by two; its remainder becomes the next least
+> significant bit.
+
+Of course, instead of `2` we used a reminder of `n` and the quotient divided by
+`n` (`div(dec, n)`). Of note the modulo operator (`%`) returns the reminder in
+the range `[0 - (n-1)]`, e.g.
+
+```jl
+s = """
+[i % 3 for i in 0:6]
+"""
+sco(s)
+```
+
+Therefore, in order to convert it to Julia's indexing system we had to add `+1`.
+Moreover, during the turnovers of our `while` loop the least significant
+reminder was appended (`*=`) to the `result`, then the second least significant,
+then the third, etc. Due to this process the least significant slot of `result`
+was on the left side of the string, whereas the most important slot was on the
+right side of it.  Hence, we `reverse`d the `result` in our last step.
