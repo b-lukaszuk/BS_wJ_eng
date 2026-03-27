@@ -91,4 +91,46 @@ Moreover, during the turnovers of our `while` loop the least significant
 reminder was appended (`*=`) to the `result`, then the second least significant,
 then the third, etc. Due to this process the least significant slot of `result`
 was on the left side of the string, whereas the most important slot was on the
-right side of it.  Hence, we `reverse`d the `result` in our last step.
+right side of it. Hence, we `reverse`d the `result` in our last step.
+
+Let's compare its action against Julia's built-ins (the `string` function):
+
+```jl
+s = """
+[dec2baseN(i, b) == string(i, base=b)
+	for b in MIN_BASE:MAX_BASE for i in 0:1024] |> all
+"""
+sco(s)
+```
+
+Nothing to complain about. And now for the answer:
+
+```
+for base in MIN_BASE:MAX_BASE
+    for dec1 in 0:(base-1), dec2 in 0:(base-1)
+        n1 = dec2baseN(dec1, base)
+        n2 = dec2baseN(dec2, base)
+        product = dec2baseN(dec1 * dec2, base)
+        if product == "42"
+            println("base $base: $n1 * $n2 = $product")
+        end
+    end
+end
+```
+
+```
+base 7: 5 * 6 = 42
+base 7: 6 * 5 = 42
+base 10: 6 * 7 = 42
+base 10: 7 * 6 = 42
+base 12: 5 * a = 42
+base 12: a * 5 = 42
+base 13: 6 * 9 = 42
+base 13: 9 * 6 = 42
+base 16: 6 * b = 42
+base 16: b * 6 = 42
+```
+
+So it seems that by multiplying the above two single digit numbers in bases: 7,
+10, 12, 13, and 16 we get 42 as a result. Of the above only base 13 fulfills the
+criteria of both the question and the answer.
