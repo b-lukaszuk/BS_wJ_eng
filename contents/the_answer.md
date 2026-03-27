@@ -29,4 +29,21 @@ systems](https://en.wikipedia.org/wiki/Positional_notation).
 
 ## Solution {#sec:the_answer_solution}
 
-The solution goes here.
+OK, we'll start by defining a few constants that will be useful later on.
+
+```jl
+s = """
+CHARS = vcat('0':'9', 'a':'f')
+MIN_BASE = 2
+MAX_BASE = 16
+"""
+replace(sc(s), "CHARS" => "const CHARS", "MIN_BASE" => "const MIN_BASE", "MAX_BASE" => "const MAX_BASE")
+```
+
+`CHARS` contains symbols used to denote numbers in different positional number
+systems. In binary (`MIN_BASE = 2`) we use the first two characters
+(`CHARS[1:2]`, i.e. `'0' and '1'`) to code a number, in base three system we use
+the first three characters, i.e. `CHARS[1:3]`, i.e. `'0', '1', '2'`, and so
+forth up until the hexadecimal (`MAX_BASE = 16`).
+
+Now, for the converter.
