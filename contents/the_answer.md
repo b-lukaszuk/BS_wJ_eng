@@ -110,7 +110,7 @@ Nothing to complain about. And now for the answer:
 
 ```
 for base in MIN_BASE:MAX_BASE
-    for dec1 in 0:(base-1), dec2 in 0:(base-1) # 1 digit nums
+    for dec1 in 0:(base-1), dec2 in 0:(base-1) # 1 digit nums only
         n1 = dec2baseN(dec1, base)
         n2 = dec2baseN(dec2, base)
         product = dec2baseN(dec1 * dec2, base)
@@ -137,3 +137,14 @@ base 16: b * 6 = 42
 So it seems that by multiplying the above two single digit numbers in bases: 7,
 10, 12, 13, and 16 we get 42 as a result. Of the above only base 13 fulfills the
 criteria of both the question and the answer.
+
+If you feel that doing the multiplication in decimal and translating it to
+`product` in the desired based system was like cheating then you may try to
+re-implement `add` and `multiply` functions from @sec:binary_solution. One way
+to do that would be to create an addition table for `add(num1::Char, num2::Char,
+numsBase::Int)::Tuple{Char, Char}` and a multiplication table for
+`multiply(num1::Char, num2::Char, numsBase::Int)::Tuple{Char, Char}` to use.
+Thanks to them the functions would rely on the same process as longhand pen and
+paper calculations. But then again, the easiest way to create such tables would
+be to use conversion from decimals, so I think I will just stay with the
+solution presented above.
