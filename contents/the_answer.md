@@ -33,7 +33,7 @@ OK, we'll start by defining a few constants that will be useful later on.
 
 ```jl
 s = """
-CHARS = vcat('0':'9', 'a':'f')
+CHARS = vcat('0':'9', 'a':'f') # vcat - vector concatenate
 MIN_BASE = 2
 MAX_BASE = 16
 """
@@ -41,10 +41,11 @@ replace(sc(s), "CHARS" => "const CHARS", "MIN_BASE" => "const MIN_BASE", "MAX_BA
 ```
 
 `CHARS` contains symbols used to denote numbers in different positional number
-systems. In binary (`MIN_BASE = 2`) we use the first two characters
-(`CHARS[1:2]`, i.e. `'0' and '1'`) to code a number, in base three system we use
-the first three characters, i.e. `CHARS[1:3]`, i.e. `'0', '1', '2'`, and so
-forth up until the hexadecimal (`MAX_BASE = 16`).
+systems. In the binary numeral system (`MIN_BASE = 2`) we use the first two
+characters (`CHARS[1:2]`, i.e. `'0' and '1'`) to code a number. In the base-3
+system we use the first three characters, i.e. `CHARS[1:3]`, i.e.
+`'0', '1', '2'`. Next, the first four, five, six and so forth characters up
+until the hexadecimal numeral system (`MAX_BASE = 16`) where we use them all.
 
 Now, for the converter:
 
@@ -55,7 +56,7 @@ function dec2baseN(dec::Int, n::Int)::Str
     @assert 0 <= dec <= 1024 "dec must be in range [0-1024]"
     result::Str = ""
     while dec != 0
-		# (dec % n) - C-like indexing [0-(n-1)]
+		# (dec % n) - C-like indexing [0 - (n-1)]
         result *= CHARS[(dec % n) + 1]
         dec = div(dec, n)
     end
@@ -65,10 +66,12 @@ end
 sc(s)
 ```
 
-Here, we used a different algorithm to the one from @sec:binary_solution.
+Here, we used an algorithm that differs from to the one in @sec:binary_solution.
 Basically, we divide a decimal number (`dec`) by the base `n` in which it is to
-be coded. For that we used the algorithm from [the Wikipedia](https://en.wikipedia.org/wiki/Binary_number#Decimal_to_binary) that states:
-
+be coded. Our algorithm comes from [the
+Wikipedia](https://en.wikipedia.org/wiki/Binary_number#Decimal_to_binary) and
+although it was designed for a decimal to binary conversion it works also for
+other numerical systems. The page in the link states:
 
 > To convert from a base-10 integer to its base-2 (binary) equivalent, the
 > number is divided by two. The remainder is the least-significant bit. The
@@ -89,8 +92,8 @@ sco(s)
 Therefore, in order to convert it to Julia's indexing system we had to add `+1`.
 Moreover, during the turnovers of our `while` loop the least significant
 reminder was appended (`*=`) to the `result`, then the second least significant,
-then the third, etc. Due to this process the least significant slot of `result`
-was on the left side of the string, whereas the most important slot was on the
+then the third, etc. Due to this process the least significant slot was on the
+left side of the string (`result`), whereas the most important slot was on the
 right side of it. Hence, we `reverse`d the `result` in our last step.
 
 Let's compare its action against Julia's built-ins (the `string` function):
@@ -107,7 +110,7 @@ Nothing to complain about. And now for the answer:
 
 ```
 for base in MIN_BASE:MAX_BASE
-    for dec1 in 0:(base-1), dec2 in 0:(base-1)
+    for dec1 in 0:(base-1), dec2 in 0:(base-1) # 1 digit nums
         n1 = dec2baseN(dec1, base)
         n2 = dec2baseN(dec2, base)
         product = dec2baseN(dec1 * dec2, base)
