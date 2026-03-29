@@ -368,11 +368,11 @@ function multiply(bin1::Str, bin2::Str)::Str
     @assert isBin(bin1) && isBin(bin2) "both inputs must be binary numbers"
     total::Str = "0"
     curProd::Str = "0"
-    zerosToPad::Int = 0
+    nZerosToPad::Int = 0
     for b in reverse(bin2)
         curProd = multiply.(b, collect(bin1)) |> join
-        total = add(total, curProd * "0"^zerosToPad)
-        zerosToPad += 1
+        total = add(total, curProd * '0'^nZerosToPad)
+        nZerosToPad += 1
     end
     return total
 end
@@ -387,9 +387,9 @@ decimal system we multiply all the bits (from right to left) from the second
 number (`for b in reverse(bin2)`) by the bits in the first number
 (`multiply.(b, collect(bin1)) |> join`). After each multiplication the product
 (`curProd`) of `b` times `bin1` is summed
-(`add(total, curProd * "0"^zerosToPad`)) into a grand `total`. Just like in the
+(`add(total, curProd * '0'^nZerosToPad`)) into a grand `total`. Just like in the
 decimal system, `curProd` is shifted to left every time we do that, which is why
-we defined and increased `zerosToPad` variable. Let's test it out.
+we defined and increased `nZerosToPad` variable. Let's test it out.
 
 ```jl
 s = """

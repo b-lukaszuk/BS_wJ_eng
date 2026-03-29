@@ -134,11 +134,11 @@ function multiply(bin1::Str, bin2::Str)::Str
     @assert isBin(bin1) && isBin(bin2) "both inputs must be binary numbers"
     total::Str = "0"
     curProd::Str = "0"
-    zerosToPad::Int = 0
+    nZerosToPad::Int = 0
     for b in reverse(bin2)
         curProd = multiply.(b, collect(bin1)) |> join
-        total = add(total, curProd * "0"^zerosToPad)
-        zerosToPad += 1
+        total = add(total, curProd * '0'^nZerosToPad)
+        nZerosToPad += 1
     end
     return total
 end
