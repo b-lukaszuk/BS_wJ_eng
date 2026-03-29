@@ -24,9 +24,9 @@ for base in MIN_BASE:MAX_BASE
     end
 end
 
-# MULT_TBL alone is aleready sufficient to answer the question, i.e.
+# MULT_TBL alone is already sufficient to answer the question, i.e.
 # 6*9 in different base num systems
-# nevertheless, we modificated functions from ../binary/binary.jl
+# nevertheless, we'll modify the functions from ../binary/binary.jl
 # just for extra practice
 
 function isBaseN(num::Char, n::Int)::Bool
@@ -42,7 +42,6 @@ end
 function add(num1::Char, num2::Char, base::Int)::Tuple{Char, Char}
     @assert isBaseN(num1, base) "$num1 is not a num of base $base"
     @assert isBaseN(num2, base) "$num2 is not a num of base $base"
-    @assert MIN_BASE <= base <= MAX_BASE "$base not in [$MIN_BASE - $MAX_BASE]"
     return ADD_TBL[base][(num1, num2)]
 end
 
@@ -64,8 +63,7 @@ end
 
 function add(num1::Str, num2::Str, baseNums::Int)::Str
     num1, num2 = getEqlLenNums(num1, num2)
-    carriedSlot::Char = '0'
-    runningSlot::Char = '0'
+    carriedSlot::Char, runningSlot::Char = ('0', '0')
     runningSlots::Str = ""
     carriedSlots::Str = "0"
     for (n1, n2) in zip(reverse(num1), reverse(num2))
@@ -90,9 +88,9 @@ function doesBaseNFnWork(dec1::Int, dec2::Int,
     return num1 == num2
 end
 
-# running this test may take some time (513x513 matrix for each base num system)
+# running this test may take some time (512x512 matrix for each base num system)
 for base in MIN_BASE:MAX_BASE
-    tests = [doesBaseNFnWork(a, b, add, base, +) for a in 0:512, b in 0:512];
+    tests = [doesBaseNFnWork(a, b, add, base, +) for a in 0:511, b in 0:511];
     println("base $base, tests passed? ", all(tests))
 end
 
@@ -100,7 +98,6 @@ end
 function multiply(num1::Char, num2::Char, base::Int)::Tuple{Char, Char}
     @assert isBaseN(num1, base) "$num1 is not a num of base $base"
     @assert isBaseN(num2, base) "$num2 is not a num of base $base"
-    @assert MIN_BASE <= base <= MAX_BASE "$base not in [$MIN_BASE - $MAX_BASE]"
     return MULT_TBL[base][(num1, num2)]
 end
 
@@ -130,7 +127,7 @@ end
 
 # running this test may take some time (128x128 matrix for each base num system)
 for base in MIN_BASE:MAX_BASE
-    tests = [doesBaseNFnWork(a, b, multiply, base, *) for a in 0:128, b in 0:128];
+    tests = [doesBaseNFnWork(a, b, multiply, base, *) for a in 0:127, b in 0:127];
     println("base $base, tests passed? ", all(tests))
 end
 
