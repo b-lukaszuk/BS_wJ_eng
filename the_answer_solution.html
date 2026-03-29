@@ -172,100 +172,66 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h2 data-number="6.2" id="sec:bile_solution"><span class="header-section-number">6.2</span> Solution</h2>
-<p>To me the shape that resembles the droplet the most is <a href="https://en.wikipedia.org/wiki/Sphere">sphere</a>. Luckily, it also got well defined formulas for surface area and volume (see the link above), so this is what we will use in our solution.</p>
-<pre class="language-julia"><code>struct Sphere
-    radius::Flt
-    Sphere(r::Flt) = r &lt;= 0 ? error(&quot;radius must be &gt; 0&quot;) : new(r)
-end
-
-# formula from Wikipedia
-function getVolume(s::Sphere)::Flt
-    return (4/3) * pi * s.radius^3
-end
-
-# formula from Wikipedia
-function getSurfaceArea(s::Sphere)::Flt
-    return 4 * pi * s.radius^2
+<h2 data-number="20.2" id="sec:the_answer_solution"><span class="header-section-number">20.2</span> Solution</h2>
+<p>OK, we’ll start by defining a few constants that will be useful later on.</p>
+<pre class="language-julia"><code>const CHARS = vcat(&#39;0&#39;:&#39;9&#39;, &#39;a&#39;:&#39;f&#39;) # vcat - vector concatenate
+const MIN_BASE = 2
+const MAX_BASE = 16</code></pre>
+<p><code>CHARS</code> contains symbols used to denote numbers in different positional number systems. In the binary numeral system (<code>MIN_BASE = 2</code>) we use the first two characters (<code>CHARS[1:2]</code>, i.e. <code>'0' and '1'</code>) to code a number. In the base-3 system we use the first three characters, i.e. <code>CHARS[1:3]</code>, i.e. <code>'0', '1', '2'</code>. Next, the first four, five, six and so forth characters up until the hexadecimal numeral system (<code>MAX_BASE = 16</code>) where we use them all.</p>
+<p>Now, for the converter:</p>
+<pre class="language-julia"><code>function dec2baseN(dec::Int, n::Int)::Str
+    @assert MIN_BASE &lt;= n &lt;= MAX_BASE &quot;n not in [2 - 16]&quot;
+    @assert 0 &lt;= dec &lt;= 1024 &quot;dec must be in range [0-1024]&quot;
+    result::Str = &quot;&quot;
+    while dec != 0
+        # (dec % n) - C-like indexing [0 - (n-1)]
+        result *= CHARS[(dec % n) + 1]
+        dec = div(dec, n)
+    end
+    return isempty(result) ? &quot;0&quot; : reverse(result)
 end</code></pre>
-<p>Now, let’s define a big lipid droplet with a radius of, let’s say, 10 [μm].</p>
-<pre class="language-julia"><code>referenceDroplet = Sphere(10.0)</code></pre>
-<p>In the next step we will split this big droplet into a few smaller ones of equal sizes. Splitting the volume is easy, we just divide it by the number of droplets. However, we need a way to determine the size (<code>radius</code>) of each small droplet. Let’s try to transform the formula for a sphere’s volume and see if we can get a radius from that.</p>
-<p><span id="eq:sphere1"><span class="math display">\[ v = \frac{4}{3} * \pi * r^3 \qquad{(4)}\]</span></span></p>
-<p>If a = b, then b = a, so we may swap sides.</p>
-<p><span id="eq:sphere2"><span class="math display">\[ \frac{4}{3} * \pi * r^3 = v \qquad{(5)}\]</span></span></p>
-<p>The multiplication is commutative (the order does not matter), i.e. 2 * 3 * 4 is the same as 4 * 3 * 2 or 2 * 4 * 3, therefore we can rearrange elements on the left side of Equation <a href="#eq:sphere2">5</a> to:</p>
-<p><span id="eq:sphere3"><span class="math display">\[ r^3 * \frac{4}{3} * \pi = v \qquad{(6)}\]</span></span></p>
-<p>Now, one by one we can move *<span class="math inline">\(\frac{4}{3}\)</span> and *<span class="math inline">\(\pi\)</span> to the right side of Equation <a href="#eq:sphere3">6</a>. Of course, we change the mathematical operation to the opposite (division instead of multiplication) and get:</p>
-<p><span id="eq:sphere4"><span class="math display">\[ r^3 = v / \frac{4}{3} / \pi \qquad{(7)}\]</span></span></p>
-<p>All that’s left to do is to move exponentiation (<span class="math inline">\(x^3\)</span>) to the right side of Equation <a href="#eq:sphere4">7</a> while changing it to the opposite mathematical operation (cube root, i.e. <span class="math inline">\(\sqrt[3]{x}\)</span>).</p>
-<p><span id="eq:sphere5"><span class="math display">\[ r = \sqrt[3]{v / \frac{4}{3} / \pi} \qquad{(8)}\]</span></span></p>
-<p>Now, you might wanted to quickly verify the solution using <code>Symbolic.symbolic_linear_solve</code> we met in Section <a href="./bat_and_ball_solution.html#sec:bat_and_ball_solution">3.2</a>. Unfortunately, we cannot use <code>r^3</code> (<code>r</code> to the 3rd power) as an argument (and solve for <code>r</code>), since then it wouldn’t be a linear equation (to be linear the maximum power must be equal to 1) required by <code>_linear_solve</code>. We could have used other, more complicated solver, but instead we will keep things simple and apply a little trick:</p>
-<pre class="language-julia"><code>import Symbolics as Sym
-
-# fraction - 4/3, p - π, r3 - r^3, v - volume
-Sym.@variables fraction p r3 v
-Sym.symbolic_linear_solve(fraction * p * r3 ~ v, r3)</code></pre>
-<p>v / (fraction*p)</p>
-<p>So, instead of writing the formula as it is, we just named our variables <code>fraction</code>, <code>p</code>, <code>r3</code> and <code>v</code>. Anyway, according to <code>Sym.symbolic_linear_solve</code> <span class="math inline">\(r^3 = v / (\frac{4}{3} * \pi)\)</span>, which is actually the same as Equation <a href="#eq:sphere4">7</a> above [since e.g. 18 / 2 / 3 == 18 / (2 * 3)]. Ergo, we may be fairly certain we correctly solved Equation <a href="#eq:sphere4">7</a> and therefore Equation <a href="#eq:sphere5">8</a>.</p>
-<p>Once, we confirmed the validity of the formula in Equation <a href="#eq:sphere5">8</a>, all that’s left to do is to translate it into Julia code.</p>
-<pre class="language-julia"><code>function getSphere(volume::Flt)::Sphere
-    # cbrt - fn that calculates cube root of a number
-    radius::Flt = cbrt(volume / (4/3) / pi)
-    return Sphere(radius)
+<p>Here, we used an algorithm that differs from to the one in Section <a href="./binary_solution.html#sec:binary_solution">19.2</a>. Basically, we divide a decimal number (<code>dec</code>) by the base <code>n</code> in which it is to be coded. Our algorithm comes from <a href="https://en.wikipedia.org/wiki/Binary_number#Decimal_to_binary">the Wikipedia</a> and although it was designed for a decimal to binary conversion it works also for other numerical systems. The page in the link states:</p>
+<blockquote>
+<p>To convert from a base-10 integer to its base-2 (binary) equivalent, the number is divided by two. The remainder is the least-significant bit. The quotient is again divided by two; its remainder becomes the next least significant bit.</p>
+</blockquote>
+<p>Of course, instead of <code>2</code> we used a reminder of <code>n</code> and the quotient divided by <code>n</code> (<code>div(dec, n)</code>). Of note the modulo operator (<code>%</code>) returns the reminder in the range <code>[0 - (n-1)]</code>, e.g.</p>
+<pre class="language-julia"><code>[i % 3 for i in 0:6]</code></pre>
+<pre class="output"><code>[0, 1, 2, 0, 1, 2, 0]</code></pre>
+<p>Therefore, in order to convert it to Julia’s indexing system we had to add <code>+1</code>. Moreover, during the turnovers of our <code>while</code> loop the least significant reminder was appended (<code>*=</code>) to the <code>result</code>, then the second least significant, then the third, etc. Due to this process the least significant slot was on the left side of the string (<code>result</code>), whereas the most important slot was on the right side of it. Hence, we <code>reverse</code>d the <code>result</code> in our last step.</p>
+<p>Let’s compare its action against Julia’s built-ins (the <code>string</code> function):</p>
+<pre class="language-julia"><code>[dec2baseN(i, b) == string(i, base=b)
+    for b in MIN_BASE:MAX_BASE for i in 0:1024] |&gt; all</code></pre>
+<p>true</p>
+<p>Nothing to complain about. And now for the answer:</p>
+<pre><code>for base in MIN_BASE:MAX_BASE
+    for dec1 in 0:(base-1), dec2 in 0:(base-1) # 1 digit nums only
+        n1 = dec2baseN(dec1, base)
+        n2 = dec2baseN(dec2, base)
+        product = dec2baseN(dec1 * dec2, base)
+        if product == &quot;42&quot;
+            println(&quot;base $base: $n1 * $n2 = $product&quot;)
+        end
+    end
 end</code></pre>
-<blockquote>
-<p><strong><em>Note:</em></strong> If there were no function for <span class="math inline">\(\sqrt[3]{x}\)</span> you could easily define it yourself with: <code>getCbrt(x) = x^(1/3)</code> (here I used a <a href="https://en.wikibooks.org/wiki/Introducing_Julia/Functions#Single_expression_functions">single expression function</a> for brevity) since <span class="math inline">\(\sqrt[n]{x} = x^{1/n}\)</span>.</p>
-</blockquote>
-<p>Once we got that figured out, we evaluate the total area of the droplets of different size.</p>
-<pre class="language-julia"><code>nDroplets = [1, 4, 8, 12]
-totalVolumes = repeat([getVolume(referenceDroplet)], length(nDroplets))
-individualVolumes = totalVolumes ./ nDroplets
-droplets = getSphere.(individualVolumes)
-radii = map(s -&gt; s.radius, droplets)
-individualSurfaceAreas = getSurfaceArea.(droplets)
-totalSurfaceAreas = individualSurfaceAreas .* nDroplets</code></pre>
-<p>This seemed like a breeze thanks to the <a href="https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_repetition.html#sec:julia_language_dot_functions">dot operators</a>. We begin by by defining the <code>nDroplets</code>, i.e. the number of droplets that we will consider. Next, we divide their <code>totalVolumes</code> by their numbers (<code>nDroplets</code>) to get a volume of an individual droplet (<code>individualVolumes</code>). Based on the individual volumes we create the <code>droplets</code> of the appropriate radius (<code>getSphere.(individualVolumes)</code>). We also extract the <code>radii</code> for future use (the draw function below). Now, we calculate <code>individualSurfaceAreas</code> of our small droplets (<code>getSurfaceArea.(droplets)</code>) and then their <code>totalSurfaceAreas</code>. And we were able to achieve all that in only 7 lines of code.</p>
-<p>Anyway, now, we can either examine the vectors (<code>totalSurfaceAreas</code>, <code>radii</code>, <code>nDroplets</code>, <code>individualVolumes</code>) one by one, or do one better and present them on a graph with e.g. CairoMakie (I’m not going to explain the code below, for reference see <a href="https://b-lukaszuk.github.io/RJ_BS_eng/">my previous book</a> or <a href="https://docs.makie.org/stable/tutorials/getting-started">CairoMakie tutorial</a>).</p>
-<pre><code>import CairoMakie as Cmk
-
-fig = Cmk.Figure();
-ax = Cmk.Axis(fig[1, 1],
-              title=&quot;Lipid droplet size vs. summaric surface area&quot;,
-              xlabel=&quot;number of lipid droplets&quot;,
-              ylabel=&quot;total surface area [μm²]&quot;, xticks=0:13);
-Cmk.scatter!(ax, nDroplets, totalSurfaceAreas, markersize=radii .* 5,
-             color=&quot;gold1&quot;, strokecolor=&quot;black&quot;);
-Cmk.xlims!(ax, -3, 16);
-Cmk.ylims!(ax, 800, 3000);
-Cmk.text!(ax, nDroplets, totalSurfaceAreas .- 150,
-    text=map(r -&gt; &quot;single droplet radius = $(round(r, digits=2)) [μm]&quot;,
-             radii),
-    fontsize=12, align=(:center, :center)
-);
-Cmk.text!(ax, nDroplets, totalSurfaceAreas .- 250,
-          text=map((v, n) -&gt;
-              &quot;volume ($n droplet/s) = $(round(Int, v)) [μm³]&quot;,
-                   totalVolumes, nDroplets),
-    fontsize=12, align=(:center, :center)
-);
-fig</code></pre>
-<p>Behold.</p>
-<figure id="fig:bile">
-<img src="./images/bile.png" alt="Figure 1: Bile. Splitting a big lipid droplet into a few smaller ones and the effect it has on their total surface area." />
-<figcaption aria-hidden="true">Figure 1: Bile. Splitting a big lipid droplet into a few smaller ones and the effect it has on their total surface area.</figcaption>
-</figure>
-<p>So it turns out that what they taught me in the school all those years ago is actually true. But only now I can finally see it. Nice.</p>
-<blockquote>
-<p><strong><em>Note:</em></strong> The above was an example of a geometrical property called <a href="https://en.wikipedia.org/wiki/Surface-area-to-volume_ratio">surface-to-volume-ratio</a> that applies to more than just the spheres and got its implications for many fields of science.</p>
-</blockquote>
+<pre><code>base 7: 5 * 6 = 42
+base 7: 6 * 5 = 42
+base 10: 6 * 7 = 42
+base 10: 7 * 6 = 42
+base 12: 5 * a = 42
+base 12: a * 5 = 42
+base 13: 6 * 9 = 42
+base 13: 9 * 6 = 42
+base 16: 6 * b = 42
+base 16: b * 6 = 42</code></pre>
+<p>So it seems that by multiplying the above two single digit numbers in bases: 7, 10, 12, 13, and 16 we get 42 as a result. Of the above only base 13 fulfills the criteria of both the question and the answer.</p>
+<p>If you feel that doing the multiplication in decimal and translating it to <code>product</code> in the desired base system was like cheating then you may try to re-implement <code>add</code> and <code>multiply</code> functions from Section <a href="./binary_solution.html#sec:binary_solution">19.2</a>. A natural way to do that would be to create an addition table for <code>add(num1::Char, num2::Char, base::Int)::Tuple{Char, Char}</code> and a multiplication table for <code>multiply(num1::Char, num2::Char, base::Int)::Tuple{Char, Char}</code> to use. Thanks to them the functions would rely on the same process as longhand pen and paper calculations. Unfortunately, nobody taught us addition and multiplication tables in numerical systems of other bases when we were in school. And so, again, the easiest way to create such tables would be to use conversion from decimals. For that reason, here I will stay with the solution presented above. Still, you may check <a href="https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/the_answer">the code snippets for this chapter</a> as they contain the other method (or better try to implement it yourself).</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-2" href="./bile_problem.html"><b>6.1</b> Problem</a> <kbd>←</kbd>
+        <a class="menu-level-2" href="./the_answer_problem.html"><b>20.1</b> Problem</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-1" href="./recursion.html"><b>7</b> Recursion</a>
+            <kbd>→</kbd> <a class="menu-level-1" href="./leap_year.html"><b>21</b> Leap Year</a>
         </span>
     </p>
 </div>
