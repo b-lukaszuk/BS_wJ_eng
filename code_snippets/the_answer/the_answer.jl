@@ -24,7 +24,10 @@ for base in MIN_BASE:MAX_BASE
     end
 end
 
-# below modificated functions from ../binary/binary.jl
+# MULT_TBL alone is aleready sufficient to answer the question, i.e.
+# 6*9 in different base num systems
+# nevertheless, we modificated functions from ../binary/binary.jl
+# just for extra practice
 
 function isBaseN(num::Char, n::Int)::Bool
     @assert MIN_BASE <= n <= MAX_BASE "n not in [$MIN_BASE - $MAX_BASE]"
@@ -87,8 +90,52 @@ function doesBaseNFnWork(dec1::Int, dec2::Int,
     return num1 == num2
 end
 
-# running this test may take some time (513x513 matrix for each base system)
+# running this test may take some time (513x513 matrix for each base num system)
 for base in MIN_BASE:MAX_BASE
     tests = [doesBaseNFnWork(a, b, add, base, +) for a in 0:512, b in 0:512];
     println("base $base, tests passed? ", all(tests))
+end
+
+# returns (crried num, running num)
+function multiply(num1::Char, num2::Char, base::Int)::Tuple{Char, Char}
+    @assert isBaseN(num1, base) "$num1 is not a num of base $base"
+    @assert isBaseN(num2, base) "$num2 is not a num of base $base"
+    @assert MIN_BASE <= base <= MAX_BASE "$base not in [$MIN_BASE - $MAX_BASE]"
+    return MULT_TBL[base][(num1, num2)]
+end
+
+function multiply(num1::Char, num2::Str, base::Int)::Str
+    carriedSlot::Char, runningSlot::Char = ('0', '0')
+    carriedSlots::Str = "0"
+    runningSlots::Str = ""
+    for n in reverse(num2)
+        carriedSlot, runningSlot = multiply(n, num1, base)
+        runningSlots = runningSlot * runningSlots
+        carriedSlots = carriedSlot * carriedSlots
+    end
+    return add(carriedSlots, runningSlots, base)
+end
+
+function multiply(num1::Str, num2::Str, base::Int)::Str
+    total::Str = "0"
+    curProd::Str = ""
+    nZerosToPad::Int = 0
+    for n in reverse(num1)
+        curProd = multiply(n, num2, base) * ('0' ^ nZerosToPad)
+        total = add(total, curProd, base)
+        nZerosToPad += 1
+    end
+    return total
+end
+
+# running this test may take some time (128x128 matrix for each base num system)
+for base in MIN_BASE:MAX_BASE
+    tests = [doesBaseNFnWork(a, b, multiply, base, *) for a in 0:128, b in 0:128];
+    println("base $base, tests passed? ", all(tests))
+end
+
+# check 6*9 (the question) in different base num systems
+# alternatively you could just do the lookup in MULT_TBL
+for base in 10:MAX_BASE # 9 can be coded with 1 digit in base 10:16
+    println("base $base: 6 * 9 = $(multiply('6', '9', base) |> join)")
 end
