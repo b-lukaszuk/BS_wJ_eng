@@ -23,7 +23,7 @@ So here is a task for you: modify `dec2bin` function from @sec:binary and name
 it, e.g. `dec2baseN`. Use the latter to test numerical systems of the base 2
 ([binary](https://en.wikipedia.org/wiki/Binary_number)) to 16
 ([hexadecimal](https://en.wikipedia.org/wiki/Hexadecimal)) and see which numbers
-multiplied by each other give 42. Check if the question and the answer make
+multiplied by each other give 42. Check if both the question and the answer make
 sense in any of the different [positional number
 systems](https://en.wikipedia.org/wiki/Positional_notation).
 
@@ -139,12 +139,16 @@ So it seems that by multiplying the above two single digit numbers in bases: 7,
 criteria of both the question and the answer.
 
 If you feel that doing the multiplication in decimal and translating it to
-`product` in the desired based system was like cheating then you may try to
-re-implement `add` and `multiply` functions from @sec:binary_solution. One way
-to do that would be to create an addition table for `add(num1::Char, num2::Char,
-numsBase::Int)::Tuple{Char, Char}` and a multiplication table for
-`multiply(num1::Char, num2::Char, numsBase::Int)::Tuple{Char, Char}` to use.
-Thanks to them the functions would rely on the same process as longhand pen and
-paper calculations. But then again, the easiest way to create such tables would
-be to use conversion from decimals, so I think I will just stay with the
-solution presented above.
+`product` in the desired base system was like cheating then you may try to
+re-implement `add` and `multiply` functions from @sec:binary_solution. A natural
+way to do that would be to create an addition table for `add(num1::Char,
+num2::Char, base::Int)::Tuple{Char, Char}` and a multiplication table for
+`multiply(num1::Char, num2::Char, base::Int)::Tuple{Char, Char}` to use. Thanks
+to them the functions would rely on the same process as longhand pen and paper
+calculations. Unfortunately, nobody taught us addition and multiplication tables
+in numerical systems of other bases when we were in school. And so, again, the
+easiest way to create such tables would be to use conversion from decimals. For
+that reason, here I will stay with the solution presented above. Still, you may
+check [the code snippets for this
+chapter](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/the_answer)
+as they contain the other method (or better try to implement it yourself).
