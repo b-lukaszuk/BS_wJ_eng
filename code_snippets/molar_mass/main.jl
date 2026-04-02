@@ -63,3 +63,23 @@ end
 
 formulas[1:5]
 getAtomsAndNumbers.(formulas[1:5])
+
+function getAtom(atomAndNumber::Str)::Str
+    return getPatterns(atomAndNumber, "[A-Z][a-z]{0,1}")[1]
+end
+
+function getNumberOfAtoms(atomAndNumber::Str)::Str
+    nAtoms::Vec{Str} = getPatterns(atomAndNumber, "[0-9]{1,}")
+    return isempty(nAtoms) ? "1" : nAtoms[1]
+end
+
+function getmasssimple(formula::Str)::Flt
+    atomsNumbers::Vec{Str} = getAtomsAndNumbers(formula)
+    atoms::Vec{Str} = getAtom.(atomsNumbers)
+    numbers::Vec{Int} = getNumberOfAtoms.(atomsNumbers) .|> str2int
+    masses::Vec{Flt} = get.(Ref(ELTS_TBL), atoms, 1.0)
+    return sum(masses .* numbers )
+end
+
+map(isSameMass, getMolMassSimple.(formulas[1:5]), masses[1:5])
+map(isSameMass, getmasssimple.(formulas[1:5]), masses[1:5])
