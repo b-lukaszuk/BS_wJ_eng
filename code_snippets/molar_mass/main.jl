@@ -46,3 +46,20 @@ end
 
 isSameMass(x::Flt, y::Flt)::Bool = isapprox(x, y, rtol=0.0001)
 map(isSameMass, getMolMassSimple.(formulas[1:5]), masses[1:5])
+
+function getAllMatches(rmi::Base.RegexMatchIterator)::Vec{Str}
+    allMatches::Vec{RegexMatch} = collect(rmi)
+    return isempty(allMatches) ? [] :
+        [regMatch.match for regMatch in allMatches]
+end
+
+function getPatterns(txt::Str, pattern::Str)::Vec{Str}
+    eachmatch(Regex(pattern), txt) |> getAllMatches
+end
+
+function getAtomsAndNumbers(formula::Str)::Vec{Str}
+    return getPatterns(formula, "[A-Z][a-z]{0,1}[0-9]{0,}")
+end
+
+formulas[1:5]
+getAtomsAndNumbers.(formulas[1:5])
