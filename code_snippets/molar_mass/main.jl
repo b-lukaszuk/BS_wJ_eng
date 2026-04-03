@@ -83,3 +83,52 @@ end
 
 map(isSameMass, getMolMassSimple.(formulas[1:5]), masses[1:5])
 map(isSameMass, getmasssimple.(formulas[1:5]), masses[1:5])
+
+function getGroups(formula::Str)::Vec{Str}
+    return eachmatch(r"\(.+?\)\d{1,}", formula) |> getAllMatches
+end
+
+x = getGroups(formulas[6])
+
+function getInsides(group::Str)::Str
+    result::Vec{Str} = eachmatch(r"\((.+?)\)", group) |> getAllMatches
+    return  strip(result[1], ['(', ')'])
+end
+x .|> getInsides
+
+function getMultiplier(group::Str)::Str
+    result::Vec{Str} = eachmatch(r"\d{1,}$", group) |> getAllMatches
+    return result[1]
+end
+x .|> getMultiplier
+
+function remAll(txt::Str, spares::Vec{Str})::Str
+    for spare in spares
+        txt = replace(txt, spare => "")
+    end
+    return txt
+end
+
+function getMolMass(formula::Str)::Flt
+    groupFormulas::Vec{Str} = getGroups(formula)
+    groupInsides::Vec{Str} = getInsides.(groupFormulas)
+    groupMultipliers::Vec{Str} = getMultiplier.(groupFormulas)
+    formula = remAll(formula, groupFormulas)
+    push!(groupInsides, formula)
+    push!(groupMultipliers, "1")
+    masses::Vec{Flt} = map(getMolMassSimple, groupInsides) .*
+        map(str2int, groupMultipliers)
+    return sum(masses)
+end
+
+formulas[6]
+formulas[6] |> getMolMass
+masses[6]
+
+formulas[7]
+formulas[7] |> getMolMass
+masses[7]
+
+map(isSameMass, getMolMass.(formulas), masses)
+getMolMass.(formulas)
+
