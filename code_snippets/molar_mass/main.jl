@@ -132,3 +132,32 @@ masses[7]
 map(isSameMass, getMolMass.(formulas), masses)
 getMolMass.(formulas)
 
+function getPattern(txt::Str, pattern::Str)::Vec{Str}
+    eachmatch(Regex(pattern), txt) |> getAllMatches
+end
+
+function getAtomsNumbers(formula::Str)::Vec{Str}
+    return getPattern(formula, "[A-Z][a-z]{0,1}[0-9]{0,}")
+end
+
+getAtomsNumbers.(formulas[1:6])
+
+function getAtom(atomNumber::Str)::Str
+    return getPattern(atomNumber, "[A-Z][a-z]{0,1}")[1]
+end
+
+function getAtomNumber(atomNumber::Str)::Str
+    nAtoms::Vec{Str} = getPattern(atomNumber, "[0-9]{1,}")
+    return isempty(nAtoms) ? "1" : nAtoms[1]
+end
+
+function getmasssimple(formula::Str)::Flt
+    atomsNumbers::Vec{Str} = getAtomsNumbers(formula)
+    atoms::Vec{Str} = getAtom.(atomsNumbers)
+    numbers::Vec{Int} = getAtomNumber.(atomsNumbers) .|> str2int
+    masses::Vec{Flt} = get.(Ref(ELTS_TBL), atoms, 1.0)
+    return sum(masses .* numbers )
+end
+
+map(isSameMass, getMolMassSimple.(formulas[1:5]), masses[1:5])
+map(isSameMass, getmasssimple.(formulas[1:5]), masses[1:5])
