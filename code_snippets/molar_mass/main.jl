@@ -161,3 +161,31 @@ end
 
 map(isSameMass, getMolMassSimple.(formulas[1:5]), masses[1:5])
 map(isSameMass, getmasssimple.(formulas[1:5]), masses[1:5])
+
+function getmass(formula::Str)::Flt
+    groupFormulas::Vec{Str} = getGroups(formula)
+    groupInsides::Vec{Str} = getInsides.(groupFormulas)
+    groupMultipliers::Vec{Int} = getMultiplier.(groupFormulas) .|> str2int
+    formula = remAll(formula, groupFormulas)
+    push!(groupInsides, formula)
+    push!(groupMultipliers, 1)
+    masses::Vec{Flt} = map(getMolMassSimple, groupInsides)
+    return sum(masses .* groupMultipliers)
+end
+
+map(isSameMass, getMolMassSimple.(formulas[1:5]), masses[1:5])
+map(isSameMass, getmasssimple.(formulas[1:5]), masses[1:5])
+
+map(isSameMass, getMolMass.(formulas), masses)
+map(isSameMass, getmass.(formulas), masses)
+
+
+# methane, hydrochloric acid, propane, vinegar, acetate, palmitic acid,
+# tryptophane, hemeB, titin
+xs = ["CH4", "HCl", "C3H8", "C2H5OH", "CH3COOH", "CH3(CH2)14COOH", "C11H12N2O2",
+      "C34H32O4N4Fe", "C169719H270466N45688O52238S911"]
+ys = [16.043, 36.46, 44.097, 46.069, 60.052, 256.430, 204.229,
+      616.487, 3_816_030]
+
+map(isSameMass, getMolMass.(xs), ys)
+map(isSameMass, getmass.(xs), ys)
