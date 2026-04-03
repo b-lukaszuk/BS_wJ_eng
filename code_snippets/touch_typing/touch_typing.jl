@@ -104,13 +104,23 @@ function playTypingGame(text2beTyped::Str)::Str
     return typedTxt
 end
 
+function isMatch(typed::Char, standard::Char)::Bool
+    if typed == standard
+        return true
+    elseif typed == ' ' && standard == '\n'
+        return true
+    else
+        return false
+    end
+end
+
 function getAccuracy(typedTxt::Str, text2beTyped::Str)::Flt
     len1::Int = length(typedTxt)
     len2::Int = length(text2beTyped)
     @assert len1 <= len2 "len1 must be <= len2"
     correctlyTyped::Vec{Bool} = Vec{Bool}(undef, len1)
     for i in eachindex(correctlyTyped)
-        correctlyTyped[i] = typedTxt[i] == text2beTyped[i]
+        correctlyTyped[i] = isMatch(typedTxt[i], text2beTyped[i])
     end
     return sum(correctlyTyped) / length(correctlyTyped)
 end
