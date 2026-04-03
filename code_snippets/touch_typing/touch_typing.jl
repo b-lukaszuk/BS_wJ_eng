@@ -155,7 +155,7 @@ function getTxtFromFile(filePath::Str)::Str
 end
 
 function getTxtFormatedForTyping(txt::Str, lineLen::Int=60)::Str
-    @assert 40 <= lineLen <= 60 "lineLen must be in range [40-60]"
+    @assert 40 <= lineLen <= 60 "lineLen must be in range [40-$lineLen]"
     words::Vec{Str} = split(txt)
     result::Str = ""
     curLineLen::Int = 0
@@ -190,7 +190,7 @@ function isAnsiColorsSupport()::Bool
     end
 end
 
-function areRequirementsMet()::Bool
+function areRequirementsMet(txtForTyping::Str)::Bool
     requirementsMet::Bool = true
     println("Checking the requirements...")
     if !isAnsiColorsSupport()
@@ -201,36 +201,61 @@ function areRequirementsMet()::Bool
         requirementsMet &= false
         println("Didn't detect `stty` command.")
     end
+    if !isascii(txtForTyping)
+        requirementsMet &= false
+        println("Text to be typed contains non ASCII characters.")
+    end
     if requirementsMet
         println("Requirements seem to be met.\n")
     end
     return requirementsMet
 end
 
-function main()::Nothing
-
+function printInfo(text2TypeFilePath::Str)::Nothing
     println("\nHello. This is a toy program for touch typing.")
-    println("It should work well on terminals that: ")
+    println("It should work well on standard terminals that: ")
     println("- support ANSI escape codes,")
     println("- got stty.\n")
 
-    if !areRequirementsMet()
-        println("\nLeaving the program. Goodbye!\n")
-        return nothing
-    end
+    println("The program reads the text to be typed from '$text2TypeFilePath'.")
+    println("The text to be typed must contain only ASCII characters.\n")
 
+    return nothing
+end
+
+function promptForStartReturnChoice()::Str
     println("Press Enter (or any key and Enter) and start typing")
     println("(While typing you may quit by pressing Ctrl+C or Ctrl+D).")
     println("Press q and Enter to quit now.")
     choice::Str = readline()
+    return choice
+end
+
+function main()::Nothing
+
+    text2TypeFilePath::Str = "./text2beTyped.txt"
+    txt2type::Str = getTxtFromFile(text2TypeFilePath)
+    timeStart::Flt = 0.0
+    typedTxt::Str = ""
+    timeEnd::Flt = 0.0
+    elapsedTimeSeconds::Flt = 0.0
+    choice::Str = ""
+
+    printInfo(text2TypeFilePath)
+
+    if !areRequirementsMet(txt2type)
+        println("\nLeaving the program. Goodbye!\n")
+        return nothing
+    end
+
+    choice = promptForStartReturnChoice()
 
     if lowercase(strip(choice)) != "q"
-        txt2type::Str = getTxtFromFile("./text2beTyped.txt")
         txt2type = getTxtFormatedForTyping(txt2type)
-        timeStart::Flt = time()
-        typedTxt::Str = playTypingGame(txt2type)
-        timeEnd::Flt = time()
-        elapsedTimeSeconds::Flt = timeEnd - timeStart
+        timeStart = time()
+        typedTxt = playTypingGame(txt2type)
+        timeEnd = time()
+        elapsedTimeSeconds = timeEnd - timeStart
         printSummary(typedTxt, txt2type, elapsedTimeSeconds)
     end
 
