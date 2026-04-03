@@ -194,15 +194,15 @@ function areRequirementsMet(txtForTyping::Str)::Bool
     requirementsMet::Bool = true
     println("Checking the requirements...")
     if !isAnsiColorsSupport()
-        requirementsMet &= false
+        requirementsMet = false
         println("Didn't detect suport for ANSI escape codes.")
     end
     if !isSttyPresent()
-        requirementsMet &= false
+        requirementsMet = false
         println("Didn't detect `stty` command.")
     end
     if !isascii(txtForTyping)
-        requirementsMet &= false
+        requirementsMet = false
         println("Text to be typed contains non ASCII characters.")
     end
     if requirementsMet
