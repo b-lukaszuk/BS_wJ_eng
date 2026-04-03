@@ -22,25 +22,24 @@ function str2int(s::Str)::Int
     end
 end
 
-isUpLetter(c::Char)::Bool = isletter(c) && isuppercase(c)
-isLowLetter(c::Char)::Bool = isletter(c) && islowercase(c)
-
 function getMolMassSimple(formula::Str)::Flt
     mass::Flt = 0
     curElt::Str = ""
     curDigit::Str = ""
     for c in formula
-        if isUpLetter(c)
-            mass += (isempty(curElt) ? 0 : ELTS_TBL[curElt]) * str2int(curDigit)
+        if c in 'A':'Z'
+            mass += get(ELTS_TBL, curElt, 0) * str2int(curDigit)
             curElt = string(c)
             curDigit = ""
-        elseif isLowLetter(c)
+        elseif c in 'a':'z'
             curElt *= c
-        else # digit
+        elseif c in '0':'9'
             curDigit *= c
+        else # should not happen
+            return typemin(Flt)
         end
     end
-    mass += (isempty(curElt) ? 0 : ELTS_TBL[curElt]) * str2int(curDigit)
+    mass += get(ELTS_TBL, curElt, 0) * str2int(curDigit)
     return mass
 end
 
