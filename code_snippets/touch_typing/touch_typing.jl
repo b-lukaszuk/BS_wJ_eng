@@ -192,21 +192,23 @@ end
 
 function areRequirementsMet(txtForTyping::Str)::Bool
     requirementsMet::Bool = true
-    println("Checking the requirements...")
+    c(xs) = collect(xs)
+    j(xs) = join(xs)
+    println("Checking requirements...")
     if !isAnsiColorsSupport()
         requirementsMet = false
-        println("Didn't detect suport for ANSI escape codes.")
+        println(getRed.("No suport for ANSI color codes found." |> c) |> j)
     end
     if !isSttyPresent()
         requirementsMet = false
-        println("Didn't detect `stty` command.")
+        println(getRed.("Didn't detect `stty` command." |> c) |> j)
     end
     if !isascii(txtForTyping)
         requirementsMet = false
-        println("Text to be typed contains non ASCII characters.")
+        println(getRed.("Found non-ASCII characters." |> c) |> j)
     end
     if requirementsMet
-        println("Requirements seem to be met.\n")
+        println(getGreen.("Requirements seem to be met.\n" |> c) |> j)
     end
     return requirementsMet
 end
