@@ -23,7 +23,7 @@ function str2int(s::Str)::Int
 end
 
 function getMolMassSimple(formula::Str)::Flt
-    mass::Flt = 0
+    mass::Flt = 0.0
     curElt::Str = ""
     curDigit::Str = ""
     for c in formula
@@ -45,6 +45,43 @@ end
 
 isSameMass(x::Flt, y::Flt)::Bool = isapprox(x, y, rtol=0.0001)
 map(isSameMass, getMolMassSimple.(formulas[1:5]), masses[1:5])
+
+function getMolMass(formula::Str)::Flt
+    curCount::Str = ""
+    curGroup::Str = ""
+    bracketEnded::Bool = false
+    groups::Vec{Str} = []
+    counts::Vec{Int} = []
+    for c in formula
+        if !(c in '(':')') && !bracketEnded
+            curGroup *= c
+        end
+        if c in '0':'9' && bracketEnded
+            curCount *= c
+        end
+        if c in 'A':'Z' && bracketEnded
+            bracketEnded = false
+            push!(groups, curGroup)
+            push!(counts, str2int(curCount))
+            curGroup = string(c)
+            curCount = ""
+        end
+        if  c == '('
+            push!(groups, curGroup)
+            push!(counts, str2int(curCount))
+            curGroup = ""
+            curCount = ""
+        end
+        if c == ')'
+            bracketEnded = true
+        end
+    end
+    push!(groups, curGroup)
+    push!(counts, str2int(curCount))
+    return sum(getMolMassSimple.(groups) .* counts)
+end
+
+map(isSameMass, getMolMass.(formulas), masses)
 
 function getAllMatches(rmi::Base.RegexMatchIterator)::Vec{Str}
     allMatches::Vec{RegexMatch} = collect(rmi)
@@ -107,29 +144,6 @@ function remAll(txt::Str, spares::Vec{Str})::Str
     end
     return txt
 end
-
-function getMolMass(formula::Str)::Flt
-    groupFormulas::Vec{Str} = getGroups(formula)
-    groupInsides::Vec{Str} = getInsides.(groupFormulas)
-    groupMultipliers::Vec{Str} = getMultiplier.(groupFormulas)
-    formula = remAll(formula, groupFormulas)
-    push!(groupInsides, formula)
-    push!(groupMultipliers, "1")
-    masses::Vec{Flt} = map(getMolMassSimple, groupInsides) .*
-        map(str2int, groupMultipliers)
-    return sum(masses)
-end
-
-formulas[6]
-formulas[6] |> getMolMass
-masses[6]
-
-formulas[7]
-formulas[7] |> getMolMass
-masses[7]
-
-map(isSameMass, getMolMass.(formulas), masses)
-getMolMass.(formulas)
 
 function getPattern(txt::Str, pattern::Str)::Vec{Str}
     eachmatch(Regex(pattern), txt) |> getAllMatches
