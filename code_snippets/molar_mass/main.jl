@@ -93,8 +93,8 @@ function getPatterns(txt::Str, pattern::Str)::Vec{Str}
     eachmatch(Regex(pattern), txt) |> getAllMatches
 end
 
-function getAtomsAndNumbers(formula::Str)::Vec{Str}
-    return getPatterns(formula, "[A-Z][a-z]{0,1}[0-9]{0,}")
+function getAtomsAndNumbers(simpleFormula::Str)::Vec{Str}
+    return getPatterns(simpleFormula, "[A-Z][a-z]{0,1}[0-9]{0,}")
 end
 
 formulas[1:5]
@@ -109,7 +109,7 @@ function getNumberOfAtoms(atomAndNumber::Str)::Str
     return isempty(nAtoms) ? "1" : nAtoms[1]
 end
 
-function getmasssimple(formula::Str)::Flt
+function getmolmasssimple(formula::Str)::Flt
     atomsNumbers::Vec{Str} = getAtomsAndNumbers(formula)
     atoms::Vec{Str} = getAtom.(atomsNumbers)
     numbers::Vec{Int} = getNumberOfAtoms.(atomsNumbers) .|> str2int
@@ -118,7 +118,7 @@ function getmasssimple(formula::Str)::Flt
 end
 
 map(isSameMass, getMolMassSimple.(formulas[1:5]), masses[1:5])
-map(isSameMass, getmasssimple.(formulas[1:5]), masses[1:5])
+map(isSameMass, getmolmasssimple.(formulas[1:5]), masses[1:5])
 
 function getGroups(formula::Str)::Vec{Str}
     return eachmatch(r"\(.+?\)\d{1,}", formula) |> getAllMatches
@@ -126,17 +126,17 @@ end
 
 x = getGroups(formulas[6])
 
-function getInsides(group::Str)::Str
+function getInsidesOfGroup(group::Str)::Str
     result::Vec{Str} = eachmatch(r"\((.+?)\)", group) |> getAllMatches
     return  strip(result[1], ['(', ')'])
 end
-x .|> getInsides
+x .|> getInsidesOfGroup
 
-function getMultiplier(group::Str)::Str
+function getMultiplierForGroup(group::Str)::Str
     result::Vec{Str} = eachmatch(r"\d{1,}$", group) |> getAllMatches
     return result[1]
 end
-x .|> getMultiplier
+x .|> getMultiplierForGroup
 
 function remAll(txt::Str, spares::Vec{Str})::Str
     for spare in spares
@@ -145,40 +145,10 @@ function remAll(txt::Str, spares::Vec{Str})::Str
     return txt
 end
 
-function getPattern(txt::Str, pattern::Str)::Vec{Str}
-    eachmatch(Regex(pattern), txt) |> getAllMatches
-end
-
-function getAtomsNumbers(formula::Str)::Vec{Str}
-    return getPattern(formula, "[A-Z][a-z]{0,1}[0-9]{0,}")
-end
-
-getAtomsNumbers.(formulas[1:6])
-
-function getAtom(atomNumber::Str)::Str
-    return getPattern(atomNumber, "[A-Z][a-z]{0,1}")[1]
-end
-
-function getAtomNumber(atomNumber::Str)::Str
-    nAtoms::Vec{Str} = getPattern(atomNumber, "[0-9]{1,}")
-    return isempty(nAtoms) ? "1" : nAtoms[1]
-end
-
-function getmasssimple(formula::Str)::Flt
-    atomsNumbers::Vec{Str} = getAtomsNumbers(formula)
-    atoms::Vec{Str} = getAtom.(atomsNumbers)
-    numbers::Vec{Int} = getAtomNumber.(atomsNumbers) .|> str2int
-    masses::Vec{Flt} = get.(Ref(ELTS_TBL), atoms, 1.0)
-    return sum(masses .* numbers )
-end
-
-map(isSameMass, getMolMassSimple.(formulas[1:5]), masses[1:5])
-map(isSameMass, getmasssimple.(formulas[1:5]), masses[1:5])
-
-function getmass(formula::Str)::Flt
+function getmolmass(formula::Str)::Flt
     groupFormulas::Vec{Str} = getGroups(formula)
-    groupInsides::Vec{Str} = getInsides.(groupFormulas)
-    groupMultipliers::Vec{Int} = getMultiplier.(groupFormulas) .|> str2int
+    groupInsides::Vec{Str} = getInsidesOfGroup.(groupFormulas)
+    groupMultipliers::Vec{Int} = getMultiplierForGroup.(groupFormulas) .|> str2int
     formula = remAll(formula, groupFormulas)
     push!(groupInsides, formula)
     push!(groupMultipliers, 1)
@@ -187,10 +157,10 @@ function getmass(formula::Str)::Flt
 end
 
 map(isSameMass, getMolMassSimple.(formulas[1:5]), masses[1:5])
-map(isSameMass, getmasssimple.(formulas[1:5]), masses[1:5])
+map(isSameMass, getmolmasssimple.(formulas[1:5]), masses[1:5])
 
 map(isSameMass, getMolMass.(formulas), masses)
-map(isSameMass, getmass.(formulas), masses)
+map(isSameMass, getmolmass.(formulas), masses)
 
 
 # methane, hydrochloric acid, propane, vinegar, acetate, palmitic acid,
@@ -201,4 +171,7 @@ ys = [16.043, 36.46, 44.097, 46.069, 60.052, 256.430, 204.229,
       616.487, 3_816_030]
 
 map(isSameMass, getMolMass.(xs), ys)
-map(isSameMass, getmass.(xs), ys)
+map(isSameMass, getmolmass.(xs), ys)
+
+map(isSameMass, getMolMassSimple.(xs[1:5]), ys[1:5])
+map(isSameMass, getmolmasssimple.(xs[1:5]), ys[1:5])
