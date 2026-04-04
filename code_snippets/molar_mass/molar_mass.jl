@@ -44,9 +44,19 @@ const ELTS_TBL = Dict{Str, Flt}(
     "Og" => 295.216
 )
 
-# sodium chloride, carbon dioxide, water, carbonic acid, acetate, calcium hydroxyapatate
-formulas = ["NaCl", "CO2", "H2O", "H2CO3", "C6H12O6", "(CH3)2CO", "Ca10(PO4)6(OH)2"]
-masses = [58.443, 44.01, 18.01528, 62.03, 180.156, 58.08, 1004.61]
+# for testing purposes
+formulas = ["CH4", "H2O", "HCl", "CO2", "C3H8", "C2H5OH", "(CH3)2CO",
+            "NaCl", "CH3COOH", "H2CO3", "C6H12O6", "C11H12N2O2",
+            "CH3(CH2)14COOH", "C34H32O4N4Fe", "Ca10(PO4)6(OH)2",
+            "C169719H270466N45688O52238S911"]
+masses = [16.043, 18.01528, 36.46, 44.01, 44.097, 46.069, 58.08, 58.443,
+          60.052, 62.03, 180.156, 204.229, 256.43, 616.487, 1004.61,
+          3_816_030]
+names = ["methane", "water", "hydrochloric acid", "carbon dioxide", "propane",
+         "vinegar", "acetate", "sodium chloride",
+         "acetate", "carbonic acid", "glucose",
+         "tryptophane", "palmitic acid", "hemeB",
+         "calcium hydroxyapatate", "titin"]
 
 function str2int(s::Str)::Int
     try
@@ -81,7 +91,7 @@ function getMolMassSimple(formula::Str)::Flt
 end
 
 isSameMass(x::Flt, y::Flt)::Bool = isapprox(x, y, rtol=0.0001)
-map(isSameMass, getMolMassSimple.(formulas[1:5]), masses[1:5])
+map(isSameMass, getMolMassSimple.(formulas[1:6]), masses[1:6])
 
 function isInSimpleChemFormula(c::Char)::Bool
     return isAtoZ(c) || isatoz(c) || isdigit(c)
@@ -136,8 +146,8 @@ function getAtomsAndNumbers(simpleFormula::Str)::Vec{Str}
     return getPatterns(simpleFormula, "[A-Z][a-z]{0,1}[0-9]{0,}")
 end
 
-formulas[1:5]
-getAtomsAndNumbers.(formulas[1:5])
+formulas[1:6]
+getAtomsAndNumbers.(formulas[1:6])
 
 function getAtom(atomAndNumber::Str)::Str
     return getPatterns(atomAndNumber, "[A-Z][a-z]{0,1}")[1]
@@ -156,14 +166,13 @@ function getmolmasssimple(formula::Str)::Flt
     return sum(masses .* numbers )
 end
 
-map(isSameMass, getMolMassSimple.(formulas[1:5]), masses[1:5])
-map(isSameMass, getmolmasssimple.(formulas[1:5]), masses[1:5])
+map(isSameMass, getmolmasssimple.(formulas[1:6]), masses[1:6])
 
 function getGroups(formula::Str)::Vec{Str}
     return eachmatch(r"\(.+?\)\d{1,}", formula) |> getAllMatches
 end
 
-x = getGroups(formulas[6])
+x = getGroups(formulas[7])
 
 function getInsidesOfGroup(group::Str)::Str
     result::Vec{Str} = eachmatch(r"\((.+?)\)", group) |> getAllMatches
@@ -195,21 +204,5 @@ function getmolmass(formula::Str)::Flt
     return sum(masses .* groupMultipliers)
 end
 
-map(isSameMass, getMolMassSimple.(formulas[1:5]), masses[1:5])
-map(isSameMass, getmolmasssimple.(formulas[1:5]), masses[1:5])
-
 map(isSameMass, getMolMass.(formulas), masses)
 map(isSameMass, getmolmass.(formulas), masses)
-
-# methane, hydrochloric acid, propane, vinegar, acetate, palmitic acid,
-# tryptophane, hemeB, titin
-xs = ["CH4", "HCl", "C3H8", "C2H5OH", "CH3COOH", "CH3(CH2)14COOH", "C11H12N2O2",
-      "C34H32O4N4Fe", "C169719H270466N45688O52238S911"]
-ys = [16.043, 36.46, 44.097, 46.069, 60.052, 256.430, 204.229,
-      616.487, 3_816_030]
-
-map(isSameMass, getMolMass.(xs), ys)
-map(isSameMass, getmolmass.(xs), ys)
-
-map(isSameMass, getMolMassSimple.(xs[1:5]), ys[1:5])
-map(isSameMass, getmolmasssimple.(xs[1:5]), ys[1:5])
