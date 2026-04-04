@@ -8,6 +8,7 @@ const Flt = Float64
 const Str = String
 const Vec = Vector
 
+# https://en.wikipedia.org/wiki/List_of_chemical_elements
 # mass table elt_abbrev => g_per_mol
 const ELTS_TBL = Dict{Str, Flt}(
     "H" => 1.008, "He" => 4.0026, "Li" => 7, "Be" => 9.012183,
@@ -55,18 +56,21 @@ function str2int(s::Str)::Int
     end
 end
 
+isAtoZ(c::Char)::Bool = c in 'A':'Z'
+isatoz(c::Char)::Bool = c in 'a':'z'
+
 function getMolMassSimple(formula::Str)::Flt
     mass::Flt = 0.0
     curElt::Str = ""
     curDigit::Str = ""
     for c in formula
-        if c in 'A':'Z'
+        if isAtoZ(c)
             mass += get(ELTS_TBL, curElt, 0) * str2int(curDigit)
             curElt = string(c)
             curDigit = ""
-        elseif c in 'a':'z'
+        elseif isatoz(c)
             curElt *= c
-        elseif c in '0':'9'
+        elseif isdigit(c)
             curDigit *= c
         else # should not happen
             return typemin(Flt)
@@ -79,6 +83,10 @@ end
 isSameMass(x::Flt, y::Flt)::Bool = isapprox(x, y, rtol=0.0001)
 map(isSameMass, getMolMassSimple.(formulas[1:5]), masses[1:5])
 
+function isInSimpleChemFormula(c::Char)::Bool
+    return isAtoZ(c) || isatoz(c) || isdigit(c)
+end
+
 function getMolMass(formula::Str)::Flt
     curCount::Str = ""
     curGroup::Str = ""
@@ -86,27 +94,25 @@ function getMolMass(formula::Str)::Flt
     groups::Vec{Str} = []
     counts::Vec{Int} = []
     for c in formula
-        if !(c in '(':')') && !bracketEnded
+        if isInSimpleChemFormula(c) && !bracketEnded
             curGroup *= c
-        end
-        if c in '0':'9' && bracketEnded
+        elseif isdigit(c) && bracketEnded
             curCount *= c
-        end
-        if c in 'A':'Z' && bracketEnded
+        elseif isAtoZ(c) && bracketEnded
             bracketEnded = false
             push!(groups, curGroup)
             push!(counts, str2int(curCount))
             curGroup = string(c)
             curCount = ""
-        end
-        if  c == '('
+        elseif c == '('
             push!(groups, curGroup)
             push!(counts, str2int(curCount))
             curGroup = ""
             curCount = ""
-        end
-        if c == ')'
+        elseif c == ')'
             bracketEnded = true
+        else # should never happen
+            curGroup = "J" # no chemical elt abbrev as J
         end
     end
     push!(groups, curGroup)
@@ -194,7 +200,6 @@ map(isSameMass, getmolmasssimple.(formulas[1:5]), masses[1:5])
 
 map(isSameMass, getMolMass.(formulas), masses)
 map(isSameMass, getmolmass.(formulas), masses)
-
 
 # methane, hydrochloric acid, propane, vinegar, acetate, palmitic acid,
 # tryptophane, hemeB, titin
