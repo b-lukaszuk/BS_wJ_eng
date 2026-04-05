@@ -10,38 +10,37 @@ const Vec = Vector
 
 # https://en.wikipedia.org/wiki/List_of_chemical_elements
 # mass table elt_abbrev => g_per_mol
-const ELTS_TBL = Dict{Str, Flt}(
-    "H" => 1.008, "He" => 4.0026, "Li" => 7, "Be" => 9.012183,
+const ELTS_MASS_TBL = Dict{Str, Flt}(
+    "H" => 1.008, "He" => 4.0026, "Li" => 6.94, "Be" => 9.0122,
     "B" => 10.81, "C" => 12.011, "N" => 14.007, "O" => 15.999,
-    "F" => 18.99840316, "Ne" => 20.18, "Na" => 22.9897693,
-    "Mg" => 24.305, "Al" => 26.981538, "Si" => 28.085, "P" => 30.973762,
-    "S" => 32.07, "Cl" => 35.45, "Ar" => 39.9, "K" => 39.0983,
-    "Ca" => 40.08, "Sc" => 44.95591, "Ti" => 47.867, "V" => 50.9415,
-    "Cr" => 51.996, "Mn" => 54.93804, "Fe" => 55.84, "Co" => 58.93319,
-    "Ni" => 58.693, "Cu" => 63.55, "Zn" => 65.4, "Ga" => 69.723,
-    "Ge" => 72.63, "As" => 74.92159, "Se" => 78.97, "Br" => 79.9,
-    "Kr" => 83.8, "Rb" => 85.468, "Sr" => 87.62, "Y" => 88.90584,
-    "Zr" => 91.22, "Nb" => 92.90637, "Mo" => 95.95, "Tc" => 96.90636,
-    "Ru" => 101.1, "Rh" => 102.9055, "Pd" => 106.42, "Ag" => 107.868,
-    "Cd" => 112.41, "In" => 114.818, "Sn" => 118.71, "Sb" => 121.76,
-    "Te" => 127.6, "I" => 126.9045, "Xe" => 131.29, "Cs" => 132.905452,
-    "Ba" => 137.33, "La" => 138.9055, "Ce" => 140.116, "Pr" => 140.90766,
-    "Nd" => 144.24, "Pm" => 144.91276, "Sm" => 150.4, "Eu" => 151.964,
-    "Gd" => 157.2, "Tb" => 158.92535, "Dy" => 162.5, "Ho" => 164.93033,
-    "Er" => 167.26, "Tm" => 168.93422, "Yb" => 173.05, "Lu" => 174.9668,
-    "Hf" => 178.49, "Ta" => 180.9479, "W" => 183.84, "Re" => 186.207,
-    "Os" => 190.2, "Ir" => 192.22, "Pt" => 195.08, "Au" => 196.96657,
-    "Hg" => 200.59, "Tl" => 204.383, "Pb" => 207, "Bi" => 208.9804,
-    "Po" => 208.98243, "At" => 209.98715, "Rn" => 222.01758,
-    "Fr" => 223.01973, "Ra" => 226.02541, "Ac" => 227.02775,
-    "Th" => 232.038, "Pa" => 231.03588, "U" => 238.0289, "Np" => 237.048172,
-    "Pu" => 244.0642, "Am" => 243.06138, "Cm" => 247.07035, "Bk" => 247.07031,
-    "Cf" => 251.07959, "Es" => 252.083, "Fm" => 257.09511, "Md" => 258.09843,
-    "No" => 259.101, "Lr" => 266.12, "Rf" => 267.122, "Db" => 268.126,
-    "Sg" => 269.128, "Bh" => 270.133, "Hs" => 269.1336, "Mt" => 277.154,
-    "Ds" => 282.166, "Rg" => 282.169, "Cn" => 286.179, "Nh" => 286.182,
-    "Fl" => 290.192, "Mc" => 290.196, "Lv" => 293.205, "Ts" => 294.211,
-    "Og" => 295.216
+    "F" => 18.998, "Ne" => 20.18, "Na" => 22.99, "Mg" => 24.305,
+    "Al" => 26.982, "Si" => 28.085, "P" => 30.974, "S" => 32.06,
+    "Cl" => 35.45, "Ar" => 39.95, "K" => 39.098, "Ca" => 40.078,
+    "Sc" => 44.956, "Ti" => 47.867, "V" => 50.942, "Cr" => 51.996,
+    "Mn" => 54.938, "Fe" => 55.845, "Co" => 58.933, "Ni" => 58.693,
+    "Cu" => 63.546, "Zn" => 65.38, "Ga" => 69.723, "Ge" => 72.63,
+    "As" => 74.922, "Se" => 78.971, "Br" => 79.904, "Kr" => 83.798,
+    "Rb" => 85.468, "Sr" => 87.62, "Y" => 88.906, "Zr" => 91.224,
+    "Nb" => 92.906, "Mo" => 95.95, "Tc" => 96.906, "Ru" => 101.07,
+    "Rh" => 102.91, "Pd" => 106.42, "Ag" => 107.87, "Cd" => 112.41,
+    "In" => 114.82, "Sn" => 118.71, "Sb" => 121.76, "Te" => 127.6,
+    "I" => 126.9, "Xe" => 131.29, "Cs" => 132.91, "Ba" => 137.33,
+    "La" => 138.91, "Ce" => 140.12, "Pr" => 140.91, "Nd" => 144.24,
+    "Pm" => 144.913, "Sm" => 150.36, "Eu" => 151.96, "Gd" => 157.25,
+    "Tb" => 158.93, "Dy" => 162.5, "Ho" => 164.93, "Er" => 167.26,
+    "Tm" => 168.93, "Yb" => 173.05, "Lu" => 174.97, "Hf" => 178.49,
+    "Ta" => 180.95, "W" => 183.84, "Re" => 186.21, "Os" => 190.23,
+    "Ir" => 192.22, "Pt" => 195.08, "Au" => 196.97, "Hg" => 200.59,
+    "Tl" => 204.38, "Pb" => 207.2, "Bi" => 208.98, "Po" => 208.982,
+    "At" => 209.987, "Rn" => 222.018, "Fr" => 223.02, "Ra" => 226.025,
+    "Ac" => 227.028, "Th" => 232.04, "Pa" => 231.04, "U" => 238.03,
+    "Np" => 237.048, "Pu" => 244.064, "Am" => 243.061, "Cm" => 247.070,
+    "Bk" => 247.070, "Cf" => 251.08, "Es" => 252.083, "Fm" => 257.095,
+    "Md" => 258.098, "No" => 259.101, "Lr" => 266.12, "Rf" => 267.122,
+    "Db" => 268.126, "Sg" => 269.128, "Bh" => 270.133, "Hs" => 269.134,
+    "Mt" => 277.154, "Ds" => 282.166, "Rg" => 282.169, "Cn" => 286.179,
+    "Nh" => 286.182, "Fl" => 290.192, "Mc" => 290.196, "Lv" => 293.205,
+    "Ts" => 294.211, "Og" => 295.216
 )
 
 # for testing purposes
@@ -52,17 +51,18 @@ formulas = ["CH4", "H2O", "HCl", "CO2", "C3H8", "C2H5OH", "(CH3)2CO",
 masses = [16.043, 18.01528, 36.46, 44.01, 44.097, 46.069, 58.08, 58.443,
           60.052, 62.03, 180.156, 204.229, 256.43, 616.487, 1004.61,
           3_816_030]
+# for curiosity
 names = ["methane", "water", "hydrochloric acid", "carbon dioxide", "propane",
-         "vinegar", "acetate", "sodium chloride",
-         "acetate", "carbonic acid", "glucose",
-         "tryptophane", "palmitic acid", "hemeB",
-         "calcium hydroxyapatate", "titin"]
+         "vinegar", "acetate", "sodium chloride", "acetate", "carbonic acid",
+         "glucose", "tryptophane", "palmitic acid", "hemeB",
+         "calcium hydroxyapatite", "titin"]
 
-function str2int(s::Str)::Int
+# 1 is neutral for multiplication
+function str2int(s::Str, def::Int=1)::Int
     try
         return parse(Int, s)
     catch
-        return 1
+        return def
     end
 end
 
@@ -75,7 +75,7 @@ function getMolMassSimple(formula::Str)::Flt
     curDigit::Str = ""
     for c in formula
         if isAtoZ(c)
-            mass += get(ELTS_TBL, curElt, 0) * str2int(curDigit)
+            mass += get(ELTS_MASS_TBL, curElt, 0.0) * str2int(curDigit)
             curElt = string(c)
             curDigit = ""
         elseif isatoz(c)
@@ -86,7 +86,7 @@ function getMolMassSimple(formula::Str)::Flt
             return typemin(Flt)
         end
     end
-    mass += get(ELTS_TBL, curElt, 0) * str2int(curDigit)
+    mass += get(ELTS_MASS_TBL, curElt, 0.0) * str2int(curDigit)
     return mass
 end
 
@@ -162,7 +162,7 @@ function getmolmasssimple(formula::Str)::Flt
     atomsNumbers::Vec{Str} = getAtomsAndNumbers(formula)
     atoms::Vec{Str} = getAtom.(atomsNumbers)
     numbers::Vec{Int} = getNumberOfAtoms.(atomsNumbers) .|> str2int
-    masses::Vec{Flt} = get.(Ref(ELTS_TBL), atoms, 1.0)
+    masses::Vec{Flt} = get.(Ref(ELTS_MASS_TBL), atoms, 1.0)
     return sum(masses .* numbers )
 end
 
