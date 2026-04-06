@@ -36,6 +36,24 @@ different chemical formulas like:
 - $Ca_{10}(PO_{4})_{6}(OH)_{2}$ (calcium hydroxyapatite found in your bones)
 - $C_{169719}H_{270466}N_{45688}O_{52238}S_{911}$ (titin, a protein that builds your muscles)
 
+Below I paste the formulas and their masses for testing purposes.
+
+```jl
+s = """
+formulas = ["CH4", "H2O", "HCl", "CO2", "C3H8", "C2H5OH", "(CH3)2CO",
+            "NaCl", "CH3COOH", "H2CO3", "C6H12O6", "C11H12N2O2",
+            "CH3(CH2)14COOH", "C34H32O4N4Fe", "Ca10(PO4)6(OH)2",
+            "C169719H270466N45688O52238S911"]
+masses = [16.043, 18.01528, 36.46, 44.01, 44.097, 46.069, 58.08, 58.443,
+          60.052, 62.03, 180.156, 204.229, 256.43, 616.487, 1004.61,
+          3_816_030]
+"""
+sc(s)
+```
+
+A list of chemical elements and their masses is to be found, e.g. on [this
+Wikipedia page](https://en.wikipedia.org/wiki/List_of_chemical_elements#List).
+
 ## Solution {#sec:molar_mass_solution}
 
 The solution goes here.
