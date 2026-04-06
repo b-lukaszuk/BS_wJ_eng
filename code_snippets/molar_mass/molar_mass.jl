@@ -132,29 +132,24 @@ end
 
 map(isSameMass, getMolMass.(formulas), masses)
 
-function getAllMatches(rmi::Base.RegexMatchIterator)::Vec{Str}
-    allMatches::Vec{RegexMatch} = collect(rmi)
-    return isempty(allMatches) ? [] :
-        [regMatch.match for regMatch in allMatches]
-end
-
-function getPatterns(txt::Str, pattern::Str)::Vec{Str}
-    eachmatch(Regex(pattern), txt) |> getAllMatches
+function getPatternsInTxt(pattern::Regex, txt::Str)::Vec{Str}
+    matches::Vec{RegexMatch} = collect(eachmatch(pattern, txt))
+    return isempty(matches) ? [] : [regMatch.match for regMatch in matches]
 end
 
 function getAtomsAndNumbers(simpleFormula::Str)::Vec{Str}
-    return getPatterns(simpleFormula, "[A-Z][a-z]{0,1}[0-9]{0,}")
+    return getPatternsInTxt(r"[A-Z][a-z]{0,1}[0-9]{0,}", simpleFormula)
 end
 
 formulas[1:6]
 getAtomsAndNumbers.(formulas[1:6])
 
 function getAtom(atomAndNumber::Str)::Str
-    return getPatterns(atomAndNumber, "[A-Z][a-z]{0,1}")[1]
+    return getPatternsInTxt(r"[A-Z][a-z]{0,1}", atomAndNumber)[1]
 end
 
 function getNumberOfAtoms(atomAndNumber::Str)::Str
-    nAtoms::Vec{Str} = getPatterns(atomAndNumber, "[0-9]{1,}")
+    nAtoms::Vec{Str} = getPatternsInTxt(r"[0-9]{1,}", atomAndNumber)
     return isempty(nAtoms) ? "1" : nAtoms[1]
 end
 
@@ -169,19 +164,19 @@ end
 map(isSameMass, getmolmasssimple.(formulas[1:6]), masses[1:6])
 
 function getGroups(formula::Str)::Vec{Str}
-    return eachmatch(r"\(.+?\)\d{1,}", formula) |> getAllMatches
+    return getPatternsInTxt(r"\(.+?\)\d{1,}", formula)
 end
 
 x = getGroups(formulas[7])
 
 function getInsidesOfGroup(group::Str)::Str
-    result::Vec{Str} = eachmatch(r"\((.+?)\)", group) |> getAllMatches
+    result::Vec{Str} = getPatternsInTxt(r"\((.+?)\)", group)
     return  strip(result[1], ['(', ')'])
 end
 x .|> getInsidesOfGroup
 
 function getMultiplierForGroup(group::Str)::Str
-    result::Vec{Str} = eachmatch(r"\d{1,}$", group) |> getAllMatches
+    result::Vec{Str} = getPatternsInTxt(r"\d{1,}$", group)
     return result[1]
 end
 x .|> getMultiplierForGroup
