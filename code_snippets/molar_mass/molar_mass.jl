@@ -1,14 +1,11 @@
 # the code in this file is meant to serve as a programming exercise only
 # it may not act correctly
 
-# TODO: molar mass
-
-# custom type definitions
 const Flt = Float64
 const Str = String
 const Vec = Vector
 
-# https://en.wikipedia.org/wiki/List_of_chemical_elements
+# https://en.wikipedia.org/wiki/List_of_chemical_elements#List
 # mass table elt_abbrev => g_per_mol
 const ELTS_MASS_TBL = Dict{Str, Flt}(
     "H" => 1.008, "He" => 4.0026, "Li" => 6.94, "Be" => 9.0122,
@@ -98,8 +95,8 @@ function isInSimpleChemFormula(c::Char)::Bool
 end
 
 function getMolMass(formula::Str)::Flt
-    curCount::Str = ""
     curGroup::Str = ""
+    curCount::Str = ""
     bracketEnded::Bool = false
     groups::Vec{Str} = []
     counts::Vec{Int} = []
