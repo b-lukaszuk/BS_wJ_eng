@@ -20,6 +20,7 @@ contents = [
     "cheque",
     "sort",
     "regex",
+    "molar_mass",
     "binary",
     "the_answer",
     "leap_year",
