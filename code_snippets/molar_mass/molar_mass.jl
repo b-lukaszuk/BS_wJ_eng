@@ -50,9 +50,9 @@ masses = [16.043, 18.01528, 36.46, 44.01, 44.097, 46.069, 58.08, 58.443,
           3_816_030]
 # for curiosity
 names = ["methane", "water", "hydrochloric acid", "carbon dioxide", "propane",
-         "vinegar", "acetate", "sodium chloride", "acetate", "carbonic acid",
-         "glucose", "tryptophane", "palmitic acid", "hemeB",
-         "calcium hydroxyapatite", "titin"]
+         "ehtanol", "acetone", "sodium chloride", "acetic acid",
+         "carbonic acid", "glucose", "tryptophane", "palmitic acid",
+         "hemeB", "calcium hydroxyapatite", "titin"]
 
 # 1 is neutral for multiplication
 function str2int(s::Str, def::Int=1)::Int
