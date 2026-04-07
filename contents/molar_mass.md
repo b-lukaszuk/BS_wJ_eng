@@ -54,6 +54,10 @@ sc(s)
 A list of chemical elements and their masses is to be found, e.g. on [this
 Wikipedia page](https://en.wikipedia.org/wiki/List_of_chemical_elements#List).
 
+For simplicity, you may assume, that a chemical formula (at least the one at a
+high-school level) is composed of ASCII characters (capital/small letters +
+digits) and non-nested parentheses.
+
 ## Solution {#sec:molar_mass_solution}
 
 The solution goes here.
