@@ -12,12 +12,12 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/molar_
 
 ## Problem {#sec:molar_mass_problem}
 
-I remember that back in a day when I was in high-school we used to solve a lot of
-activities involving calculations. The essential part of them was to calculate a
-molar mass of different molecules.
+I remember that back in the day when I was in high-school we used to have a lot
+of chemistry classes filled with problem solving. The essential part of them was
+to calculate a molar mass of different molecules.
 
-So here is a task for you. Write a solver that will calculate a molar mass of
-different chemical formulas like:
+So here is a task for you. Write a solver that will calculate a molar mass of a
+chemical formula. Specifically, may use it on the following input:
 
 - $CH_{4}$ (methane, natural gas, fossil fuel),
 - $H_{2}O$ (water),
