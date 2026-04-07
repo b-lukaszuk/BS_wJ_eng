@@ -12,12 +12,15 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/molar_
 
 ## Problem {#sec:molar_mass_problem}
 
-I remember that back in the day when I was in high-school we used to have a lot
-of chemistry classes filled with problem solving. The essential part of them was
-to calculate a molar mass of different molecules.
+I remember that when I was in high-school we used to have a lot of chemistry
+classes filled with problem solving. The key part of them was to calculate molar
+masses of different molecules. That segment, although essential, was rather
+boring. So I always wanted to have something that would speed up the
+calculations for me.
 
-So here is a task for you. Write a solver that will calculate a molar mass of a
-chemical formula. Specifically, may use it on the following input:
+This time your job is to write a solver that will calculate a molar mass of a
+chemical formula. Make sure your solution works by using it on the following
+input:
 
 - $CH_{4}$ (methane, natural gas, fossil fuel),
 - $H_{2}O$ (water),
@@ -55,9 +58,47 @@ A list of chemical elements and their masses is to be found, e.g. on [this
 Wikipedia page](https://en.wikipedia.org/wiki/List_of_chemical_elements#List).
 
 For simplicity, you may assume, that a chemical formula (at least the one at a
-high-school level) is composed of ASCII characters (capital/small letters +
-digits) and non-nested parentheses.
+high-school level) is composed of [ASCII](https://en.wikipedia.org/wiki/ASCII)
+characters (capital/small letters + digits) and non-nested parentheses.
 
 ## Solution {#sec:molar_mass_solution}
 
-The solution goes here.
+We start by defining the elements mass table.
+
+```jl
+s = """
+ELTS_MASS_TBL = Dict{Str, Flt}(
+    "H" => 1.008, "He" => 4.0026, "Li" => 6.94, "Be" => 9.0122,
+    "B" => 10.81, "C" => 12.011, "N" => 14.007, "O" => 15.999,
+    "F" => 18.998, "Ne" => 20.18, "Na" => 22.99, "Mg" => 24.305,
+    "Al" => 26.982, "Si" => 28.085, "P" => 30.974, "S" => 32.06,
+    "Cl" => 35.45, "Ar" => 39.95, "K" => 39.098, "Ca" => 40.078,
+    "Sc" => 44.956, "Ti" => 47.867, "V" => 50.942, "Cr" => 51.996,
+    "Mn" => 54.938, "Fe" => 55.845, "Co" => 58.933, "Ni" => 58.693,
+    "Cu" => 63.546, "Zn" => 65.38, "Ga" => 69.723, "Ge" => 72.63,
+    "As" => 74.922, "Se" => 78.971, "Br" => 79.904, "Kr" => 83.798,
+    "Rb" => 85.468, "Sr" => 87.62, "Y" => 88.906, "Zr" => 91.224,
+    "Nb" => 92.906, "Mo" => 95.95, "Tc" => 96.906, "Ru" => 101.07,
+    "Rh" => 102.91, "Pd" => 106.42, "Ag" => 107.87, "Cd" => 112.41,
+    "In" => 114.82, "Sn" => 118.71, "Sb" => 121.76, "Te" => 127.6,
+    "I" => 126.9, "Xe" => 131.29, "Cs" => 132.91, "Ba" => 137.33,
+    "La" => 138.91, "Ce" => 140.12, "Pr" => 140.91, "Nd" => 144.24,
+    "Pm" => 144.913, "Sm" => 150.36, "Eu" => 151.96, "Gd" => 157.25,
+    "Tb" => 158.93, "Dy" => 162.5, "Ho" => 164.93, "Er" => 167.26,
+    "Tm" => 168.93, "Yb" => 173.05, "Lu" => 174.97, "Hf" => 178.49,
+    "Ta" => 180.95, "W" => 183.84, "Re" => 186.21, "Os" => 190.23,
+    "Ir" => 192.22, "Pt" => 195.08, "Au" => 196.97, "Hg" => 200.59,
+    "Tl" => 204.38, "Pb" => 207.2, "Bi" => 208.98, "Po" => 208.982,
+    "At" => 209.987, "Rn" => 222.018, "Fr" => 223.02, "Ra" => 226.025,
+    "Ac" => 227.028, "Th" => 232.04, "Pa" => 231.04, "U" => 238.03,
+    "Np" => 237.048, "Pu" => 244.064, "Am" => 243.061, "Cm" => 247.070,
+    "Bk" => 247.070, "Cf" => 251.08, "Es" => 252.083, "Fm" => 257.095,
+    "Md" => 258.098, "No" => 259.101, "Lr" => 266.12, "Rf" => 267.122,
+    "Db" => 268.126, "Sg" => 269.128, "Bh" => 270.133, "Hs" => 269.134,
+    "Mt" => 277.154, "Ds" => 282.166, "Rg" => 282.169, "Cn" => 286.179,
+    "Nh" => 286.182, "Fl" => 290.192, "Mc" => 290.196, "Lv" => 293.205,
+    "Ts" => 294.211, "Og" => 295.216
+)
+"""
+replace(sc(s), "ELTS_MASS_TBL" => "const ELTS_MASS_TBL")
+```
