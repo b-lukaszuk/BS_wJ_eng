@@ -102,3 +102,37 @@ ELTS_MASS_TBL = Dict{Str, Flt}(
 """
 replace(sc(s), "ELTS_MASS_TBL" => "const ELTS_MASS_TBL")
 ```
+
+All right, let's start with a simple formula solver, but first some helper
+functions.
+
+```jl
+s = """
+# 1 is neutral for multiplication
+function str2int(s::Str, def::Int=1)::Int
+    try
+        return parse(Int, s)
+    catch
+        return def
+    end
+end
+
+isAtoZ(c::Char)::Bool = c in 'A':'Z'
+isatoz(c::Char)::Bool = c in 'a':'z'
+"""
+sc(s)
+```
+
+Calculating molar weight of a molecule will require us to proceed atom by
+atom. At times an element will be followed by a number (by which we'll have to
+multiply its mass). Therefore, we define `str2int` that transforms a string (`s`)
+into an integer (`parse(Int, s)`) and if it fails (e.g. in the case of an empty
+string) it returns a default (`def`) value (here we go with 1 as it's neutral
+for multiplication). Next, we will need to discern between capital (beginning of
+a new element) and small letters (continuation of an element that started
+previously). For that we define `isAtoZ` and `isatoz`. The above are one-liners,
+hence they are defined as [single expression
+functions](https://en.wikibooks.org/wiki/Introducing_Julia/Functions#Single_expression_functions). We
+could go wit the built-it `isuppercase` and `islowercase` but I prefer it may
+way since our custom functions will allow us to detect incorrectly typed
+elements, e.g. `"Cą"` instead `"Ca"`.
