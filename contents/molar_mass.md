@@ -123,17 +123,19 @@ isatoz(c::Char)::Bool = c in 'a':'z'
 sc(s)
 ```
 
-Calculating molar weight of a molecule will require us to proceed atom by
-atom. At times an element will be followed by a number (by which we'll have to
-multiply its mass). Therefore, we define `str2int` that transforms a string (`s`)
-into an integer (`parse(Int, s)`) and if it fails (e.g. in the case of an empty
-string) it returns a default (`def`) value (here we go with 1 as it's neutral
-for multiplication). Next, we will need to discern between capital (beginning of
-a new element) and small letters (continuation of an element that started
-previously). For that we define `isAtoZ` and `isatoz`. The above are one-liners,
-hence they are defined as [single expression
+To calculate the molar mass of a molecule we plan to proceed atom by atom. At
+times an element will be followed by a number (by which we'll have to multiply
+its mass). Therefore, we define `str2int` that `try`ies to transform a string
+(`s`) into an integer (`parse(Int, s)`). Normally, when it fails (e.g. in the
+case of an empty string) it throws an error. But we
+[catch](https://docs.julialang.org/en/v1/manual/control-flow/#The-try/catch-statement)
+it and `return` a default value (`def`) instead (here we go with 1 as it's
+neutral for multiplication). Next, we will need to discern between capital
+(beginning of a new element) and small letters (continuation of an element that
+started previously). For that we define `isAtoZ` and `isatoz`. The above are
+one-liners, hence they are defined as [single expression
 functions](https://en.wikibooks.org/wiki/Introducing_Julia/Functions#Single_expression_functions). We
-could go wit the built-it `isuppercase` and `islowercase` but I prefer it may
+could go with the built-it `isuppercase` and `islowercase` but I prefer it may
 way since our custom functions will allow us to detect incorrectly typed
 elements, e.g. `"Cą"` instead `"Ca"`.
 
@@ -166,17 +168,19 @@ sc(s)
 ```
 
 The algorithm is rather mundane. We start by initializing a few variables,
-`mass` - for holding the result, `curElt` for keeping the currently examined
-element, `curNum` - that stores current number of atoms of a given elements.
-Next we traverse the formula one character at a time (`for c in formula`). If
-the examined character is a capital letter (`isAtoZ`) we calculate the mass of
-previously stored element (`curElt` multiplied by `curNum` ) and reset the
-`curElt` and `curNum` to their new values. If a character is a small letter
-(`elseif isatoz(c)`) or a digit (`elseif isdigit(c)`) we just append it to the
-previously encountered element (`curElt *= c`) or number (`curNum`),
-respectively. If the character (`c`) passes through all our guards (`else`) then
-we return `typemin(Flt)` which is `-Inf` a special value that indicates that
-something went wrong (`-Inf` propagates since virtually any value added to
-`-Inf` is `Inf`). Given, that the mass is calculated only when we encounter a
-capital letter `isAtoZ(c)` we need to remember to add a mass of the final
-element (`mass += etc.`) in a formula before we `return` from our function.
+`mass` - to hold the result, `curElt` to keep the currently examined element,
+`curNum` - that stores current number of atoms of a given element. Next, we
+traverse the `formula` one character at a time (`for c in formula`). If the
+examined character is a capital letter (`isAtoZ(c)`) we calculate the mass of
+previously stored element (`curElt` multiplied by `curNum` ) and add it to
+`mass` (`mass += etc.`). Of course, we remember to reset the `curElt` and
+`curNum` to their new values. If a character is a small letter (`elseif
+isatoz(c)`) or a digit (`elseif isdigit(c)`) we just append it to the previously
+encountered element (`curElt *= c`) or number (`curNum *= c`), respectively. If
+the character (`c`) passes through all our guards (`else`) then we return
+`typemin(Flt)` which is `-Inf` a special value that we want to use as an
+indicator that something went wrong (`-Inf` propagates since virtually any value
+added to `-Inf` is `Inf`). Given, that the mass is calculated only when we
+encounter a capital letter `isAtoZ(c)` we need to remember to add a mass of the
+final element (`mass += etc.`) in a formula before we `return` from our
+function.
