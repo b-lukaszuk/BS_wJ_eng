@@ -136,3 +136,47 @@ functions](https://en.wikibooks.org/wiki/Introducing_Julia/Functions#Single_expr
 could go wit the built-it `isuppercase` and `islowercase` but I prefer it may
 way since our custom functions will allow us to detect incorrectly typed
 elements, e.g. `"Cą"` instead `"Ca"`.
+
+OK, now back to the simple formula solver.
+
+```jl
+s = """
+function getMolMassSimple(formula::Str)::Flt
+    mass::Flt = 0.0
+    curElt::Str = ""
+    curNum::Str = ""
+    for c in formula
+        if isAtoZ(c)
+            mass += get(ELTS_MASS_TBL, curElt, 0.0) * str2int(curNum)
+            curElt = string(c)
+            curNum = ""
+        elseif isatoz(c)
+            curElt *= c
+        elseif isdigit(c)
+            curNum *= c
+        else # should not happen
+            return typemin(Flt)
+        end
+    end
+    mass += get(ELTS_MASS_TBL, curElt, 0.0) * str2int(curNum)
+    return mass
+end
+"""
+sc(s)
+```
+
+The algorithm is rather mundane. We start by initializing a few variables,
+`mass` - for holding the result, `curElt` for keeping the currently examined
+element, `curNum` - that stores current number of atoms of a given elements.
+Next we traverse the formula one character at a time (`for c in formula`). If
+the examined character is a capital letter (`isAtoZ`) we calculate the mass of
+previously stored element (`curElt` multiplied by `curNum` ) and reset the
+`curElt` and `curNum` to their new values. If a character is a small letter
+(`elseif isatoz(c)`) or a digit (`elseif isdigit(c)`) we just append it to the
+previously encountered element (`curElt *= c`) or number (`curNum`),
+respectively. If the character (`c`) passes through all our guards (`else`) then
+we return `typemin(Flt)` which is `-Inf` a special value that indicates that
+something went wrong (`-Inf` propagates since virtually any value added to
+`-Inf` is `Inf`). Given, that the mass is calculated only when we encounter a
+capital letter `isAtoZ(c)` we need to remember to add a mass of the final
+element (`mass += etc.`) in a formula before we `return` from our function.
