@@ -184,3 +184,24 @@ added to `-Inf` is `Inf`). Given, that the mass is calculated only when we
 encounter a capital letter `isAtoZ(c)` we need to remember to add a mass of the
 final element (`mass += etc.`) in a formula before we `return` from our
 function.
+
+Let's do some minimal testing.
+
+```jl
+s = """
+isSameMass(x::Flt, y::Flt)::Bool = isapprox(x, y, rtol=0.0001)
+
+map(isSameMass, getMolMassSimple.(formulas[1:6]), masses[1:6])
+"""
+sco(s)
+```
+
+For that we used
+[isapprox](https://docs.julialang.org/en/v1/base/math/#Base.isapprox) with
+relative tolerance (`rtol`) set to `0.0001`. The function is used to account for
+any rounding errors in `ELTS_MASS_TBL` or `masses`. It considers two numbers
+equal if they differ by no more than 1/10,000th (i.e. `isSameMass(10_000.0,
+9_999.0` is `true`, but `isSameMass(10_000, 9_998.9)` is `false`)). Anyway, all
+the masses of all the tested simple formulas were roughly equal to those in the
+`masses` vector (`1` is an abbreviated printout for `true`, `0` would be an
+abbreviated printout for `false`).
