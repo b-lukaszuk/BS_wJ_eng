@@ -205,3 +205,81 @@ equal if they differ by no more than 1/10,000th (i.e. `isSameMass(10_000.0,
 the masses of all the tested simple formulas were roughly equal to those in the
 `masses` vector (`1` is an abbreviated printout for `true`, `0` would be an
 abbreviated printout for `false`).
+
+OK, time for more complicated formulas.
+
+```jl
+s = """
+function isInSimpleChemFormula(c::Char)::Bool
+    return isAtoZ(c) || isatoz(c) || isdigit(c)
+end
+
+function getMolMass(formula::Str)::Flt
+    curGroup::Str = ""
+    curCount::Str = ""
+    bracketEnded::Bool = false
+    groups::Vec{Str} = []
+    counts::Vec{Int} = []
+    for c in formula
+        if isInSimpleChemFormula(c) && !bracketEnded
+            curGroup *= c
+        elseif isdigit(c) && bracketEnded
+            curCount *= c
+        elseif isAtoZ(c) && bracketEnded
+            bracketEnded = false
+            push!(groups, curGroup)
+            push!(counts, str2int(curCount))
+            curGroup = string(c)
+            curCount = ""
+        elseif c == '('
+            push!(groups, curGroup)
+            push!(counts, str2int(curCount))
+            curGroup = ""
+            curCount = ""
+        elseif c == ')'
+            bracketEnded = true
+        else # should never happen
+			# no chem elt abbrev as J, 
+            curGroup = "J" # triggers fallback in getMolMassSimple
+        end
+    end
+    push!(groups, curGroup)
+    push!(counts, str2int(curCount))
+    return sum(getMolMassSimple.(groups) .* counts)
+end
+"""
+sco(s)
+```
+
+Here, we decided to split a complicated `formula` into `group`s of simple
+formulas that we already can solve correctly. We also added a `counts` so
+multipliers for our `group`s and `bracketEnded` a flag that tells us whether the
+previous character (`c`) was an end of group (`c == ')`). Just like in
+`getMolMassSimple` we move one character at a time (`for c in formula`) and do
+some consecutive checks. If a character belongs to a simple formula (`if
+isInSimpleChemFormula`) and (`&&`) it is not right after the parentheses
+(`!bracketEnded`) then we just append it to the current group (`curGroup *= c`).
+If it is a digit (`elseif isdigit(c)`) right after the bracket end (`&&
+bracketEnded`) we append it to the count for the current group
+(`curCount`). Else if it is a capital letter `elseif isAtoZ(c)` that follows the
+closing bracket (`&& bracketEnded`) then we start a new group (`curGroup =
+string(c)`) and count (`curCount = ""`). Additionally, we do some cleanup (reset
+the `bracketEnded` and `push` previous group and count to the appropriate
+collections). Likewise, if the parentheses just started (`elseif c == '(`) we
+push the previous group and count to the collections and reset the current
+values (`curGroup = ""` and `curCount = ""`). Of course we must remember to set
+the `bracketEnded` flag to `true` when the parentheses end `elseif c == ')'`.
+Once again, before we `return` our value we `push` the last group and multiplier
+(cleanup). Our final result is just a `sum` of mass of each group
+(`getMolMassSimple.(groups)`) muliplied by counts (`.* counts`).
+
+Let's see how we did.
+
+```jl
+s = """
+map(isSameMass, getMolMass.(formulas), masses)
+"""
+sco(s)
+```
+
+Apparently, we did just fine.
