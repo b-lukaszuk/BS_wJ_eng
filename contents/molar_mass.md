@@ -147,9 +147,10 @@ function getMolMassSimple(formula::Str)::Flt
     mass::Flt = 0.0
     curElt::Str = ""
     curNum::Str = ""
+    fallback::Flt = typemin(Flt)
     for c in formula
         if isAtoZ(c)
-            mass += get(ELTS_MASS_TBL, curElt, 0.0) * str2int(curNum)
+            mass += get(ELTS_MASS_TBL, curElt, fallback) * str2int(curNum)
             curElt = string(c)
             curNum = ""
         elseif isatoz(c)
@@ -157,10 +158,10 @@ function getMolMassSimple(formula::Str)::Flt
         elseif isdigit(c)
             curNum *= c
         else # should not happen
-            return typemin(Flt)
+            return fallback
         end
     end
-    mass += get(ELTS_MASS_TBL, curElt, 0.0) * str2int(curNum)
+    mass += get(ELTS_MASS_TBL, curElt, fallback) * str2int(curNum)
     return mass
 end
 """
@@ -169,18 +170,21 @@ sc(s)
 
 The algorithm is rather mundane. We start by initializing a few variables,
 `mass` - to hold the result, `curElt` to keep the currently examined element,
-`curNum` - that stores current number of atoms of a given element. Next, we
-traverse the `formula` one character at a time (`for c in formula`). If the
-examined character is a capital letter (`isAtoZ(c)`) we calculate the mass of
-previously stored element (`curElt` multiplied by `curNum` ) and add it to
-`mass` (`mass += etc.`). Of course, we remember to reset the `curElt` and
-`curNum` to their new values. If a character is a small letter (`elseif
-isatoz(c)`) or a digit (`elseif isdigit(c)`) we just append it to the previously
-encountered element (`curElt *= c`) or number (`curNum *= c`), respectively. If
-the character (`c`) passes through all our guards (`else`) then we return
-`typemin(Flt)` which is `-Inf` a special value that we want to use as an
-indicator that something went wrong (`-Inf` propagates since virtually any value
-added to `-Inf` is `Inf`). Given, that the mass is calculated only when we
+`curNum` - that stores current number of atoms of a given element, `fallback` -
+an element mass used in case something goes wrong. Next, we traverse the
+`formula` one character at a time (`for c in formula`). If the examined
+character is a capital letter (`isAtoZ(c)`) we calculate the mass of previously
+stored element (`curElt` multiplied by `curNum` ) and add it to `mass` (`mass +=
+etc.`). Of course, we remember to reset the `curElt` and `curNum` to their new
+values. If a character is a small letter (`elseif isatoz(c)`) or a digit
+(`elseif isdigit(c)`) we just append it to the previously encountered element
+(`curElt *= c`) or number (`curNum *= c`), respectively. If the character (`c`)
+passes through all our guards (`else`) then we return `fallback`. We use that
+last variable in quite a few places in our function. It is equal to `-Inf`, a
+special value that we want to use as an indicator that something went wrong. In
+general, `-Inf` propagates since almost any value added to `-Inf` is
+`-Inf`. Anyway, after leaving the `for` loop and before the `return` statement
+we must do some cleanup. That's because, the mass is calculated only when we
 encounter a capital letter `isAtoZ(c)` we need to remember to add a mass of the
 final element (`mass += etc.`) in a formula before we `return` from our
 function.
@@ -271,7 +275,7 @@ values (`curGroup = ""` and `curCount = ""`). Of course we must remember to set
 the `bracketEnded` flag to `true` when the parentheses end `elseif c == ')'`.
 Once again, before we `return` our value we `push` the last group and multiplier
 (cleanup). Our final result is just a `sum` of mass of each group
-(`getMolMassSimple.(groups)`) muliplied by counts (`.* counts`).
+(`getMolMassSimple.(groups)`) multiplied by counts (`.* counts`).
 
 Let's see how we did.
 
