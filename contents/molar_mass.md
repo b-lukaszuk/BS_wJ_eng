@@ -220,62 +220,63 @@ end
 
 function getMolMass(formula::Str)::Flt
     curGroup::Str = ""
-    curCount::Str = ""
+    curMultiplier::Str = ""
     bracketEnded::Bool = false
     groups::Vec{Str} = []
-    counts::Vec{Int} = []
+    multipliers::Vec{Int} = []
     for c in formula
         if isInSimpleChemFormula(c) && !bracketEnded
             curGroup *= c
         elseif isdigit(c) && bracketEnded
-            curCount *= c
+            curMultiplier *= c
         elseif isAtoZ(c) && bracketEnded
             bracketEnded = false
             push!(groups, curGroup)
-            push!(counts, str2int(curCount))
+            push!(multipliers, str2int(curMultiplier))
             curGroup = string(c)
-            curCount = ""
+            curMultiplier = ""
         elseif c == '('
             push!(groups, curGroup)
-            push!(counts, str2int(curCount))
+            push!(multipliers, str2int(curMultiplier))
             curGroup = ""
-            curCount = ""
+            curMultiplier = ""
         elseif c == ')'
             bracketEnded = true
         else # should never happen
-			# no chem elt abbrev as J, 
+            # no chem elt abbrev as J
             curGroup = "J" # triggers fallback in getMolMassSimple
         end
     end
     push!(groups, curGroup)
-    push!(counts, str2int(curCount))
-    return sum(getMolMassSimple.(groups) .* counts)
+    push!(multipliers, str2int(curMultiplier))
+    return sum(getMolMassSimple.(groups) .* multipliers)
 end
 """
 sco(s)
 ```
 
 Here, we decided to split a complicated `formula` into `group`s of simple
-formulas that we already can solve correctly. We also added a `counts` so
-multipliers for our `group`s and `bracketEnded` a flag that tells us whether the
-previous character (`c`) was an end of group (`c == ')`). Just like in
+formulas that we already can solve correctly. We also added `multipliers ` for
+our `group`s and `bracketEnded`, a flag that tells us whether the previous
+character (`c`) was an end of a parenthesized group (`c == ')'`). Just like in
 `getMolMassSimple` we move one character at a time (`for c in formula`) and do
-some consecutive checks. If a character belongs to a simple formula (`if
-isInSimpleChemFormula`) and (`&&`) it is not right after the parentheses
+some checks. If a character belongs to a simple formula (`if
+isInSimpleChemFormula(c)`) and (`&&`) it is not right after the parentheses
 (`!bracketEnded`) then we just append it to the current group (`curGroup *= c`).
 If it is a digit (`elseif isdigit(c)`) right after the bracket end (`&&
-bracketEnded`) we append it to the count for the current group
-(`curCount`). Else if it is a capital letter `elseif isAtoZ(c)` that follows the
-closing bracket (`&& bracketEnded`) then we start a new group (`curGroup =
-string(c)`) and count (`curCount = ""`). Additionally, we do some cleanup (reset
-the `bracketEnded` and `push` previous group and count to the appropriate
-collections). Likewise, if the parentheses just started (`elseif c == '(`) we
-push the previous group and count to the collections and reset the current
-values (`curGroup = ""` and `curCount = ""`). Of course we must remember to set
-the `bracketEnded` flag to `true` when the parentheses end `elseif c == ')'`.
-Once again, before we `return` our value we `push` the last group and multiplier
-(cleanup). Our final result is just a `sum` of mass of each group
-(`getMolMassSimple.(groups)`) multiplied by counts (`.* counts`).
+bracketEnded`) we append it to the multiplier for the current group
+(`curMultiplier`). Else, if it is a capital letter (`elseif isAtoZ(c)`) that
+follows the closing bracket (`&& bracketEnded`) then we start a new group
+(`curGroup = string(c)`) and multiplier (`curMultiplier = ""`). Additionally, we
+do some cleanup (reset `bracketEnded` and `push` previous group and multiplier
+to the appropriate collections). Likewise, if the parentheses just started
+(`elseif c == '('`) we push the previous group and multiplier to the collections
+and reset the current values (`curGroup = ""` and `curMultiplier = ""`). Of
+course we must remember to set the `bracketEnded` flag to `true` when the
+parentheses end (`elseif c == ')'`). Once again, before we `return` our result
+we `push` the last group and multiplier (cleanup). Our final result is just a
+`sum` of masses of all groups (`getMolMassSimple.(groups)`) multiplied by the
+appropriate numbers (`.* multipliers`).
 
 Let's see how we did.
 
