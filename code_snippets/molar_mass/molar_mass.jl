@@ -67,8 +67,8 @@ end
 isAtoZ(c::Char)::Bool = c in 'A':'Z'
 isatoz(c::Char)::Bool = c in 'a':'z'
 
-function getEltMass(elt::Str, def::Flt=0.0)::Flt
-    return isempty(elt) ? def : get(ELTS_MASS_TBL, elt, MASS_FALLBACK)
+function getEltMass(elt::Str)::Flt
+    return isempty(elt) ? 0.0 : get(ELTS_MASS_TBL, elt, MASS_FALLBACK)
 end
 
 function getMolMassSimple(formula::Str)::Flt
