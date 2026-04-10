@@ -122,15 +122,12 @@ function str2int(s::Str, def::Int=1)::Int
         return def
     end
 end
-
-isAtoZ(c::Char)::Bool = c in 'A':'Z'
-isatoz(c::Char)::Bool = c in 'a':'z'
 """
 replace(sc(s), "MASS_FALLBACK =" => "const MASS_FALLBACK =")
 ```
 
 First we define `getEltMass` that for an empty string (`isempty(elt)` - no
-element at all) returns the mass equal 0.0 (no mass at all). Otherwise, it
+element at all) returns the mass equal `0.0` (no mass at all). Otherwise, it
 fetches the mass out of `ELTS_MASS_TBL`. If the element (`elt`) is not there it
 returns `MASS_FALLBACK` which is `typemin(Flt)`. That last expression is equal
 to `-Inf`, a special value that we want to use as an indicator that something
@@ -144,14 +141,7 @@ its mass). Therefore, we define `str2int` that `try`ies to transform a string
 case of an empty string) it throws an error. But we
 [catch](https://docs.julialang.org/en/v1/manual/control-flow/#The-try/catch-statement)
 it and `return` a default value (`def`) instead (here we go with 1 as it's
-neutral for multiplication). Next, we will need to discern between capital
-(beginning of a new element) and small letters (continuation of an element that
-started previously). For that we define `isAtoZ` and `isatoz`. The above are
-one-liners, hence they are defined as [single expression
-functions](https://en.wikibooks.org/wiki/Introducing_Julia/Functions#Single_expression_functions). We
-could go with the built-it `isuppercase` and `islowercase` but I prefer it may
-way since our custom functions will allow us to detect incorrectly typed
-elements, e.g. `"Cą"` instead `"Ca"`.
+neutral for multiplication).
 
 OK, now back to the simple formula solver.
 
@@ -162,11 +152,11 @@ function getMolMassSimple(formula::Str)::Flt
     curElt::Str = ""
     curNum::Str = ""
     for c in formula
-        if isAtoZ(c)
+        if isuppercase(c)
             mass += getEltMass(curElt) * str2int(curNum)
             curElt = string(c)
             curNum = ""
-        elseif isatoz(c)
+        elseif islowercase(c)
             curElt *= c
         elseif isdigit(c)
             curNum *= c
@@ -185,18 +175,18 @@ The algorithm is rather mundane. We start by initializing a few variables,
 `mass` - to hold the result, `curElt` to keep the currently examined element,
 `curNum` - that stores current number of atoms of a given element. Next, we
 traverse the `formula` one character at a time (`for c in formula`). If the
-examined character is a capital letter (`isAtoZ(c)`) we calculate the mass of
-previously stored element (`curElt` multiplied by `curNum` ) and add it to
+examined character is a capital letter (`isuppercase(c)`) we calculate the mass
+of previously stored element (`curElt` multiplied by `curNum` ) and add it to
 `mass` (`mass += etc.`). Of course, we remember to reset the `curElt` and
 `curNum` to their new values. If a character is a small letter (`elseif
-isatoz(c)`) or a digit (`elseif isdigit(c)`) we just append it to the previously
-encountered element (`curElt *= c`) or number (`curNum *= c`), respectively. If
-the character (`c`) passes through all our guards (`else`) then we return
-`MASS_FALLBACK`. Anyway, after leaving the `for` loop and before the `return`
-statement we must do some cleanup. That's because, the mass is calculated only
-when we encounter a capital letter `isAtoZ(c)` we need to remember to add a mass
-of the final element (`mass += etc.`) in a formula before we `return` from our
-function.
+islowercase(c)`) or a digit (`elseif isdigit(c)`) we just append it to the
+previously encountered element (`curElt *= c`) or number (`curNum *= c`),
+respectively. If the character (`c`) passes through all our guards (`else`) then
+we return `MASS_FALLBACK`. Anyway, after leaving the `for` loop and before the
+`return` statement we must do some cleanup. That's because the mass is
+calculated only when we encounter a capital letter (`isuppercase(c)`), so we
+need to remember to add a mass of the final element (`mass += etc.`) in a
+formula before we `return` from our function.
 
 Let's do some minimal testing.
 
@@ -214,9 +204,9 @@ For that we used
 relative tolerance (`rtol`) set to `0.0001`. The function is used to account for
 any rounding errors in `ELTS_MASS_TBL` or `masses`. It considers two numbers
 equal if they differ by no more than 1/10,000th (i.e. `isSameMass(10_000.0,
-9_999.0` is `true`, but `isSameMass(10_000, 9_998.9)` is `false`)). Anyway, all
-the masses of all the tested simple formulas were roughly equal to those in the
-`masses` vector (`1` is an abbreviated printout for `true`, `0` would be an
+9_999.0` is `true`, but `isSameMass(10_000.0, 9_998.9)` is `false`)). Anyway,
+all the masses of all the tested simple formulas were roughly equal to those in
+the `masses` vector (`1` is an abbreviated printout for `true`, `0` would be an
 abbreviated printout for `false`).
 
 OK, time for more complicated formulas.
@@ -224,7 +214,7 @@ OK, time for more complicated formulas.
 ```jl
 s = """
 function isInSimpleChemFormula(c::Char)::Bool
-    return isAtoZ(c) || isatoz(c) || isdigit(c)
+    return isuppercase(c) || islowercase(c) || isdigit(c)
 end
 
 function getMolMass(formula::Str)::Flt

@@ -64,9 +64,6 @@ function str2int(s::Str, def::Int=1)::Int
     end
 end
 
-isAtoZ(c::Char)::Bool = c in 'A':'Z'
-isatoz(c::Char)::Bool = c in 'a':'z'
-
 function getEltMass(elt::Str)::Flt
     return isempty(elt) ? 0.0 : get(ELTS_MASS_TBL, elt, MASS_FALLBACK)
 end
@@ -76,11 +73,11 @@ function getMolMassSimple(formula::Str)::Flt
     curElt::Str = ""
     curNum::Str = ""
     for c in formula
-        if isAtoZ(c)
+        if isuppercase(c)
             mass += getEltMass(curElt) * str2int(curNum)
             curElt = string(c)
             curNum = ""
-        elseif isatoz(c)
+        elseif islowercase(c)
             curElt *= c
         elseif isdigit(c)
             curNum *= c
@@ -96,7 +93,7 @@ isSameMass(x::Flt, y::Flt)::Bool = isapprox(x, y, rtol=0.0001)
 map(isSameMass, getMolMassSimple.(formulas[1:6]), masses[1:6])
 
 function isInSimpleChemFormula(c::Char)::Bool
-    return isAtoZ(c) || isatoz(c) || isdigit(c)
+    return isuppercase(c) || islowercase(c) || isdigit(c)
 end
 
 function getMolMass(formula::Str)::Flt
