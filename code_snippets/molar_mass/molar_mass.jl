@@ -39,6 +39,7 @@ const ELTS_MASS_TBL = Dict{Str, Flt}(
     "Nh" => 286.182, "Fl" => 290.192, "Mc" => 290.196, "Lv" => 293.205,
     "Ts" => 294.211, "Og" => 295.216
 )
+const MASS_FALLBACK = typemin(Flt)
 
 # for testing purposes
 formulas = ["CH4", "H2O", "HCl", "CO2", "C3H8", "C2H5OH", "(CH3)2CO",
@@ -66,24 +67,28 @@ end
 isAtoZ(c::Char)::Bool = c in 'A':'Z'
 isatoz(c::Char)::Bool = c in 'a':'z'
 
+function getEltMass(elt::Str, def::Flt=0.0)::Flt
+    return isempty(elt) ? def : get(ELTS_MASS_TBL, elt, MASS_FALLBACK)
+end
+
 function getMolMassSimple(formula::Str)::Flt
     mass::Flt = 0.0
     curElt::Str = ""
-    curDigit::Str = ""
+    curNum::Str = ""
     for c in formula
         if isAtoZ(c)
-            mass += get(ELTS_MASS_TBL, curElt, 0.0) * str2int(curDigit)
+            mass += getEltMass(curElt) * str2int(curNum)
             curElt = string(c)
-            curDigit = ""
+            curNum = ""
         elseif isatoz(c)
             curElt *= c
         elseif isdigit(c)
-            curDigit *= c
+            curNum *= c
         else # should not happen
-            return typemin(Flt)
+            return MASS_FALLBACK
         end
     end
-    mass += get(ELTS_MASS_TBL, curElt, 0.0) * str2int(curDigit)
+    mass += getEltMass(curElt) * str2int(curNum)
     return mass
 end
 
@@ -96,35 +101,36 @@ end
 
 function getMolMass(formula::Str)::Flt
     curGroup::Str = ""
-    curCount::Str = ""
+    curMultiplier::Str = ""
     bracketEnded::Bool = false
     groups::Vec{Str} = []
-    counts::Vec{Int} = []
+    multipliers::Vec{Int} = []
     for c in formula
         if isInSimpleChemFormula(c) && !bracketEnded
             curGroup *= c
         elseif isdigit(c) && bracketEnded
-            curCount *= c
+            curMultiplier *= c
         elseif isAtoZ(c) && bracketEnded
             bracketEnded = false
             push!(groups, curGroup)
-            push!(counts, str2int(curCount))
+            push!(multipliers, str2int(curMultiplier))
             curGroup = string(c)
-            curCount = ""
+            curMultiplier = ""
         elseif c == '('
             push!(groups, curGroup)
-            push!(counts, str2int(curCount))
+            push!(multipliers, str2int(curMultiplier))
             curGroup = ""
-            curCount = ""
+            curMultiplier = ""
         elseif c == ')'
             bracketEnded = true
         else # should never happen
-            curGroup = "J" # no chemical elt abbrev as J
+            # no chem elt abbrev as J
+            curGroup = "J" # triggers fallback in getMolMassSimple
         end
     end
     push!(groups, curGroup)
-    push!(counts, str2int(curCount))
-    return sum(getMolMassSimple.(groups) .* counts)
+    push!(multipliers, str2int(curMultiplier))
+    return sum(getMolMassSimple.(groups) .* multipliers)
 end
 
 map(isSameMass, getMolMass.(formulas), masses)
