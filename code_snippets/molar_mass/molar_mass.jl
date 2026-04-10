@@ -107,7 +107,7 @@ function getMolMass(formula::Str)::Flt
             curGroup *= c
         elseif isdigit(c) && bracketEnded
             curMultiplier *= c
-        elseif isAtoZ(c) && bracketEnded
+        elseif isuppercase(c) && bracketEnded
             bracketEnded = false
             push!(groups, curGroup)
             push!(multipliers, str2int(curMultiplier))

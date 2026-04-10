@@ -230,7 +230,7 @@ function getMolMass(formula::Str)::Flt
             curGroup *= c
         elseif isdigit(c) && bracketEnded
             curMultiplier *= c
-        elseif isAtoZ(c) && bracketEnded
+        elseif isuppercase(c) && bracketEnded
             bracketEnded = false
             push!(groups, curGroup)
             push!(multipliers, str2int(curMultiplier))
@@ -266,8 +266,8 @@ isInSimpleChemFormula(c)`) and (`&&`) it is not right after the parentheses
 (`!bracketEnded`) then we just append it to the current group (`curGroup *= c`).
 If it is a digit (`elseif isdigit(c)`) right after the bracket end (`&&
 bracketEnded`) we append it to the multiplier for the current group
-(`curMultiplier`). Else, if it is a capital letter (`elseif isAtoZ(c)`) that
-follows the closing bracket (`&& bracketEnded`) then we start a new group
+(`curMultiplier`). Else, if it is a capital letter (`elseif isuppercase(c)`)
+that follows the closing bracket (`&& bracketEnded`) then we start a new group
 (`curGroup = string(c)`) and multiplier (`curMultiplier = ""`). Additionally, we
 do some cleanup (reset `bracketEnded` and `push` previous group and multiplier
 to the appropriate collections). Likewise, if the parentheses just started
