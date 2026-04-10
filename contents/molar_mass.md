@@ -199,7 +199,9 @@ map(isSameMass, getMolMassSimple.(formulas[1:6]), masses[1:6])
 sco(s)
 ```
 
-For that we used
+For that we defined `isSameMass` using [single expression function
+syntax](https://en.wikibooks.org/wiki/Introducing_Julia/Functions#Single_expression_functions).
+Inside it relies on
 [isapprox](https://docs.julialang.org/en/v1/base/math/#Base.isapprox) with
 relative tolerance (`rtol`) set to `0.0001`. The function is used to account for
 any rounding errors in `ELTS_MASS_TBL` or `masses`. It considers two numbers
