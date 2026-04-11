@@ -501,3 +501,27 @@ sc(s)
 ```
 
 Appears to be working as intended.
+
+We may compare our functions (`getMolMass` and `getmolmass`) with
+[@time](https://docs.julialang.org/en/v1/base/base/#Base.@time) macro (just make
+sure that both functions are run at least once beforehand).
+
+```
+@time map(isSameMass, getMolMass.(formulas), masses)
+# and
+@time map(isSameMass, getmolmass.(formulas), masses)
+```
+
+Which will return (except for the results) a printout simplar to:
+
+```
+0.001191 seconds (451 allocations: 14.984 KiB)
+# and
+0.000589 seconds (1.37 k allocations: 86.281 KiB)
+```
+
+The above indicates that our regex version is roughly 2 times faster than its
+counterpart, but it uses up more memory. For more serious benchmarking we should
+probably us [BenchmarkTools.jl](https://github.com/juliaci/benchmarktools.jl) as
+indicated in the documentation. We will demonstrate that briefly in
+@sec:translation_solution.
