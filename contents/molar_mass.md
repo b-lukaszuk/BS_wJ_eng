@@ -322,24 +322,24 @@ function getAtom(atomAndNumber::Str)::Str
     return getPatternsInTxt(r"[A-Z][a-z]{0,1}", atomAndNumber)[1]
 end
 
-function getNumberAtEnd(atomAndNumber::Str)::Str
-    nAtoms::Vec{Str} = getPatternsInTxt(r"[0-9]{1,}\$", atomAndNumber)
+function getNumberAtEnd(txt::Str)::Str
+    nAtoms::Vec{Str} = getPatternsInTxt(r"[0-9]{1,}\$", txt)
     return isempty(nAtoms) ? "" : nAtoms[1]
 end
 """
 sc(s)
 ```
 
-Here, the function do what their names promise. While the regeses say:
+Here, the functions do what their names promise. While the regexes say:
 
 - `[A-Z][a-z]{0,1}[0-9]{0,}` - match exactly one capital letter, followed by
-  zero or one small letter, followed by zero or more digits.
+  none or one small letter, followed by zero or more digits.
 - `[A-Z][a-z]{0,1}` - match exactly one capital letter, followed by
-  zero or one small letter
-- `[0-9]{1,}$` - match zero or more digits that are at the end of the subject
+  none or one small letter
+- `[0-9]{1,}$` - match one or more digits that are at the end of the subject
   (here a string)
 
-Let's see how they work.
+Let's see how they work:
 
 ```jl
 s = """
@@ -363,10 +363,10 @@ formulas[3] |> getAtomsAndNumbers .|> getNumberAtEnd
 replace(sco(s), "(" => "(\n", ", [" => ",\n[", ")" => "\n)")
 ```
 
-Looks good, we don't worry about the empty strings in numbers of atoms, since
-`str2int` will handle them and return `1's` here.
+Looks good. We don't worry about the empty strings in numbers of atoms, since
+`str2int` will handle them and return `1's`.
 
-Ok, time for another simple formula solver.
+OK, time for another simple formula solver.
 
 ```jl
 s = """
@@ -401,7 +401,8 @@ sco(s)
 
 The ride was satisfactory.
 
-Now, for the more complicated formulas, but first some helper functions.
+Now, before we go to more complicated formulas we'll write some helper
+functions.
 
 ```jl
 s = """
@@ -413,16 +414,22 @@ function getInsideOfBrackets(group::Str)::Str
     return replace(group, "(" => "", r"\\)\\d{0,}" => "")
 end
 """
-sco(s)
+sc(s)
 ```
 
 The regex in `getBracketedGroups` is `\(.+?\)\d{0,}` which states:
 
 - match any character (`.`) repeated one or more times (`+`), but as few as
   possible (`?`) that is inside the literal brackets (`\(` and `\)`).  The
-  brackets are followed by zero or more digits (`\d{0,}`). Notice, that inside a
-  regex `(sth)` - is a capture and remember, so we strip the special meaning by
-  using `\`.
+  brackets are followed by zero or more digits (`\d{0,}`). Notice that inside a
+  regex `(sth)` - is a capture and remember command, so we strip the special
+  meaning by using `\`.
+
+As for `getInsideOfBrackets` we just replace opening brackets with nothing (`"("
+=> ""`), and closing bracket followed by an optional digit (`r"\)\d{0,1}"`) with
+nothing (`""` - empty string). This effectively removes brackets and their outer
+surroundings. BTW, did you notice the difference in "`(`" and "`\)`" when used
+in normal string and in the regex?
 
 Let's see how can we use it.
 
@@ -435,7 +442,7 @@ formulas[15] |> getBracketedGroups .|> getNumberAtEnd
 """
 replace(sco(s), "(\"" => "(\n\"", ", [" => ",\n[", "])" => "]\n)")
 ```
-And again.
+And again (`String[]` in the output is an empty vector of strings).
 
 ```jl
 s = """
@@ -448,7 +455,6 @@ replace(sco(s), "(\"" => "(\n\"", ", S" => ",\nS", "])" => "]\n)")
 ```
 
 Now, for the 'full' solver.
-
 
 ```jl
 s = """
@@ -474,9 +480,10 @@ sc(s)
 
 Our plan is to subtract the groups with parentheses (if any) from a `formula`
 and then to remove them from it (so that only simple part remains). The removal
-will be done wit the `replace(txt, toFindInTxt1 => toReplaceInTxt1, toFindInTxt1
-=> toReplaceInTxt1)` syntax. Hence a pair creator (`getPair`) and the remover
-(`remAll` where `...` unpacks the vector of pairs produced by `map`).
+will be done wit the `replace(txt, to_find_in_txt_1 => to_replace_in_txt_1,
+to_find_in_txt_2 => to_replace_in_txt_2, ...)` syntax. Hence a pair creator
+(`getPair`) and the remover (`remAll` where `...` unpacks the vector of pairs
+produced by `map`).
 
 Inside `getmolmass` we:
 
@@ -486,7 +493,8 @@ Inside `getmolmass` we:
 4) remove the groups from `formula`, so only simple part remains
 5) calculate the `masses` for groups (only their parts within brackets)
 6) multiply (`.*`) the `masses` by `groupMultipliers` and `sum` it
-7) add the mass (`getmolmasssimple(formula)`) of the remaining simple part
+7) add the mass (`getmolmasssimple(formula)`) of the remaining simple part to
+the result
 
 Notice, that strings are immutable so `remAll` does not change the `formula`
 sent as an argument to `getmolmass`.
@@ -497,14 +505,14 @@ Time for testing.
 s = """
 map(isSameMass, getmolmass.(formulas), masses)
 """
-sc(s)
+sco(s)
 ```
 
 Appears to be working as intended.
 
 We may compare our functions (`getMolMass` and `getmolmass`) with
-[@time](https://docs.julialang.org/en/v1/base/base/#Base.@time) macro (just make
-sure that both functions are run at least once beforehand).
+[\@time](https://docs.julialang.org/en/v1/base/base/#Base.@time) macro (just
+make sure that both the functions are run at least once beforehand).
 
 ```
 @time map(isSameMass, getMolMass.(formulas), masses)

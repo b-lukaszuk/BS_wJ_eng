@@ -90,6 +90,7 @@ function getMolMassSimple(formula::Str)::Flt
 end
 
 isSameMass(x::Flt, y::Flt)::Bool = isapprox(x, y, rtol=0.0001)
+
 map(isSameMass, getMolMassSimple.(formulas[1:6]), masses[1:6]) # testing
 
 function isInSimpleChemFormula(c::Char)::Bool
@@ -146,8 +147,8 @@ function getAtom(atomAndNumber::Str)::Str
     return getPatternsInTxt(r"[A-Z][a-z]{0,1}", atomAndNumber)[1]
 end
 
-function getNumberAtEnd(atomAndNumber::Str)::Str
-    nAtoms::Vec{Str} = getPatternsInTxt(r"[0-9]{1,}$", atomAndNumber)
+function getNumberAtEnd(txt::Str)::Str
+    nAtoms::Vec{Str} = getPatternsInTxt(r"[0-9]{1,}$", txt)
     return isempty(nAtoms) ? "" : nAtoms[1]
 end
 
