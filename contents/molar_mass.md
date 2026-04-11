@@ -365,3 +365,38 @@ replace(sco(s), "(" => "(\n", ", [" => ",\n[", ")" => "\n)")
 
 Looks good, we don't worry about the empty strings in numbers of atoms, since
 `str2int` will handle them and return `1's` here.
+
+Ok, time for another simple formula solver.
+
+```jl
+s = """
+function getmolmasssimple(formula::Str)::Flt
+    atomsAndNumbers::Vec{Str} = getAtomsAndNumbers(formula)
+    atoms::Vec{Str} = getAtom.(atomsAndNumbers)
+    numbers::Vec{Int} = getNumberAtEnd.(atomsAndNumbers) .|> str2int
+    atomsMasses::Vec{Flt} = getEltMass.(atoms)
+    return sum(atomsMasses .* numbers)
+end
+"""
+sc(s)
+```
+
+Here, we used an all lowercase name, since eventually we would like to test the
+performance of our solvers and we don't want to override `getMolMassSimple`.
+Anyway, we proceed in a series of a few logical steps (notice the `.` symbols
+that indicate when a function is used on a vector). First we subtract atoms and
+their numbers (`atomsAndNumbers`). Then, we use them (`atomsAndNumbers`) to
+subtract atoms (`atoms`) and the number of their occurrences (`numbers`). Next,
+we calculate the masses of our atoms (`atomsMasses`), which we multiply (`.*`)
+by the numbers of their occurrences (`numbers`) and `sum` it all together.
+
+Time for a test ride.
+
+```jl
+s = """
+map(isSameMass, getmolmasssimple.(formulas[1:6]), masses[1:6])
+"""
+sco(s)
+```
+
+The ride was satisfactory.
