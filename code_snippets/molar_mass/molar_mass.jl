@@ -90,7 +90,7 @@ function getMolMassSimple(formula::Str)::Flt
 end
 
 isSameMass(x::Flt, y::Flt)::Bool = isapprox(x, y, rtol=0.0001)
-map(isSameMass, getMolMassSimple.(formulas[1:6]), masses[1:6])
+map(isSameMass, getMolMassSimple.(formulas[1:6]), masses[1:6]) # testing
 
 function isInSimpleChemFormula(c::Char)::Bool
     return isuppercase(c) || islowercase(c) || isdigit(c)
@@ -130,7 +130,9 @@ function getMolMass(formula::Str)::Flt
     return sum(getMolMassSimple.(groups) .* multipliers)
 end
 
-map(isSameMass, getMolMass.(formulas), masses)
+map(isSameMass, getMolMass.(formulas), masses) # testing
+
+# alternative solution
 
 function getPatternsInTxt(pattern::Regex, txt::Str)::Vec{Str}
     return [regMatch.match for regMatch in eachmatch(pattern, txt)]
@@ -139,9 +141,6 @@ end
 function getAtomsAndNumbers(simpleFormula::Str)::Vec{Str}
     return getPatternsInTxt(r"[A-Z][a-z]{0,1}[0-9]{0,}", simpleFormula)
 end
-
-formulas[1:6]
-getAtomsAndNumbers.(formulas[1:6])
 
 function getAtom(atomAndNumber::Str)::Str
     return getPatternsInTxt(r"[A-Z][a-z]{0,1}", atomAndNumber)[1]
@@ -160,26 +159,22 @@ function getmolmasssimple(formula::Str)::Flt
     return sum(masses .* numbers )
 end
 
-map(isSameMass, getmolmasssimple.(formulas[1:6]), masses[1:6])
+map(isSameMass, getmolmasssimple.(formulas[1:6]), masses[1:6]) # testing
 
 function getBracketedGroups(formula::Str)::Vec{Str}
     return getPatternsInTxt(r"\(.+?\)\d{0,}", formula)
 end
 
-x = getBracketedGroups(formulas[7])
-
 function getInsideOfBrackets(group::Str)::Str
-    result::Vec{Str} = getPatternsInTxt(r"\((.+?)\)", group)
-    return  strip(result[1], ['(', ')'])
+    return replace(group, "(" => "", r"\)\d{0,}" => "")
 end
-x .|> getInsideOfBrackets
-x .|> getNumberAtEnd
 
-function remAll(txt::Str, spares::Vec{Str})::Str
-    for spare in spares
-        txt = replace(txt, spare => "")
-    end
-    return txt
+function getPair(x::Str)::Pair{Str, Str}
+    return Pair(x, "") # alternative to: return x => ""
+end
+
+function remAll(txt::Str, extras::Vec{Str})::Str
+    return replace(txt, map(getPair, extras)...)
 end
 
 function getmolmass(formula::Str)::Flt
@@ -187,14 +182,13 @@ function getmolmass(formula::Str)::Flt
     groupInsides::Vec{Str} = getInsideOfBrackets.(groupFormulas)
     groupMultipliers::Vec{Int} = getNumberAtEnd.(groupFormulas) .|> str2int
     formula = remAll(formula, groupFormulas)
-    push!(groupInsides, formula)
-    push!(groupMultipliers, 1)
     masses::Vec{Flt} = map(getMolMassSimple, groupInsides)
-    return sum(masses .* groupMultipliers)
+    return sum(masses .* groupMultipliers) + getmolmasssimple(formula)
 end
 
-map(isSameMass, getMolMass.(formulas), masses)
-map(isSameMass, getmolmass.(formulas), masses)
+map(isSameMass, getmolmass.(formulas), masses) # testing
 
+# minibenchmark, make sure `getMolMass` and `getmolmass` are run at least once
+# before it
 @time map(isSameMass, getMolMass.(formulas), masses)
 @time map(isSameMass, getmolmass.(formulas), masses)
