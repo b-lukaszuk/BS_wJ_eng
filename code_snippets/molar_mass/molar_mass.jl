@@ -144,42 +144,37 @@ end
 formulas[1:6]
 getAtomsAndNumbers.(formulas[1:6])
 
-function getAtom(atomAndNumber::Str)::Str
+function getAtomAtFront(atomAndNumber::Str)::Str
     return getPatternsInTxt(r"[A-Z][a-z]{0,1}", atomAndNumber)[1]
 end
 
-function getNumberOfAtoms(atomAndNumber::Str)::Str
-    nAtoms::Vec{Str} = getPatternsInTxt(r"[0-9]{1,}", atomAndNumber)
+function getNumberAtEnd(atomAndNumber::Str)::Str
+    nAtoms::Vec{Str} = getPatternsInTxt(r"[0-9]{1,}$", atomAndNumber)
     return isempty(nAtoms) ? "1" : nAtoms[1]
 end
 
 function getmolmasssimple(formula::Str)::Flt
     atomsNumbers::Vec{Str} = getAtomsAndNumbers(formula)
-    atoms::Vec{Str} = getAtom.(atomsNumbers)
-    numbers::Vec{Int} = getNumberOfAtoms.(atomsNumbers) .|> str2int
-    masses::Vec{Flt} = get.(Ref(ELTS_MASS_TBL), atoms, 1.0)
+    atoms::Vec{Str} = getAtomAtFront.(atomsNumbers)
+    numbers::Vec{Int} = getNumberAtEnd.(atomsNumbers) .|> str2int
+    masses::Vec{Flt} = getEltMass.(atoms)
     return sum(masses .* numbers )
 end
 
 map(isSameMass, getmolmasssimple.(formulas[1:6]), masses[1:6])
 
-function getGroups(formula::Str)::Vec{Str}
-    return getPatternsInTxt(r"\(.+?\)\d{1,}", formula)
+function getBracketedGroups(formula::Str)::Vec{Str}
+    return getPatternsInTxt(r"\(.+?\)\d{0,}", formula)
 end
 
-x = getGroups(formulas[7])
+x = getBracketedGroups(formulas[7])
 
-function getInsidesOfGroup(group::Str)::Str
+function getInsideOfBrackets(group::Str)::Str
     result::Vec{Str} = getPatternsInTxt(r"\((.+?)\)", group)
     return  strip(result[1], ['(', ')'])
 end
-x .|> getInsidesOfGroup
-
-function getMultiplierForGroup(group::Str)::Str
-    result::Vec{Str} = getPatternsInTxt(r"\d{1,}$", group)
-    return result[1]
-end
-x .|> getMultiplierForGroup
+x .|> getInsideOfBrackets
+x .|> getNumberAtEnd
 
 function remAll(txt::Str, spares::Vec{Str})::Str
     for spare in spares
@@ -189,9 +184,9 @@ function remAll(txt::Str, spares::Vec{Str})::Str
 end
 
 function getmolmass(formula::Str)::Flt
-    groupFormulas::Vec{Str} = getGroups(formula)
-    groupInsides::Vec{Str} = getInsidesOfGroup.(groupFormulas)
-    groupMultipliers::Vec{Int} = getMultiplierForGroup.(groupFormulas) .|> str2int
+    groupFormulas::Vec{Str} = getBracketedGroups(formula)
+    groupInsides::Vec{Str} = getInsideOfBrackets.(groupFormulas)
+    groupMultipliers::Vec{Int} = getNumberAtEnd.(groupFormulas) .|> str2int
     formula = remAll(formula, groupFormulas)
     push!(groupInsides, formula)
     push!(groupMultipliers, 1)
@@ -201,3 +196,6 @@ end
 
 map(isSameMass, getMolMass.(formulas), masses)
 map(isSameMass, getmolmass.(formulas), masses)
+
+@time map(isSameMass, getMolMass.(formulas), masses)
+@time map(isSameMass, getmolmass.(formulas), masses)
