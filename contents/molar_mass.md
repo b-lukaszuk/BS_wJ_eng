@@ -59,7 +59,7 @@ Wikipedia page](https://en.wikipedia.org/wiki/List_of_chemical_elements#List).
 
 For simplicity, you may assume, that a chemical formula (at least the one at a
 high-school level) is composed of [ASCII](https://en.wikipedia.org/wiki/ASCII)
-characters (capital/small letters + digits) and non-nested parentheses.
+characters (capital/small letters + digits) and non-nested brackets.
 
 ## Solution {#sec:molar_mass_solution}
 
@@ -289,3 +289,79 @@ sco(s)
 ```
 
 Apparently, we did just fine.
+
+The solution works, but may be considered inelegant (long functions, mostly
+[imperative programming
+style](https://en.wikipedia.org/wiki/Imperative_programming)).
+
+Let's try to change it using what we learned about regexes in @sec:regex.
+
+Again, we'll start with simple formulas, but first some helper functions.
+
+```jl
+s = """
+function getPatternsInTxt(pattern::Regex, txt::Str)::Vec{Str}
+    return [regMatch.match for regMatch in eachmatch(pattern, txt)]
+end
+"""
+sc(s)
+```
+
+`getPatternsInTxt` is just a modification and contraction of `eachmatch(etc.) |>
+getAllMatches` functionality from @sec:regex_problem_intro. It returns the
+matches as a vector (possibly empty) of strings. We'll use it to extract atoms
+and their numbers from a simple formula.
+
+```jl
+s = """
+function getAtomsAndNumbers(simpleFormula::Str)::Vec{Str}
+    return getPatternsInTxt(r"[A-Z][a-z]{0,1}[0-9]{0,}", simpleFormula)
+end
+
+function getAtom(atomAndNumber::Str)::Str
+    return getPatternsInTxt(r"[A-Z][a-z]{0,1}", atomAndNumber)[1]
+end
+
+function getNumberAtEnd(atomAndNumber::Str)::Str
+    nAtoms::Vec{Str} = getPatternsInTxt(r"[0-9]{1,}\$", atomAndNumber)
+    return isempty(nAtoms) ? "" : nAtoms[1]
+end
+"""
+sc(s)
+```
+
+Here, the function do what their names promise. While the regeses say:
+
+- `[A-Z][a-z]{0,1}[0-9]{0,}` - match exactly one capital letter, followed by
+  zero or one small letter, followed by zero or more digits.
+- `[A-Z][a-z]{0,1}` - match exactly one capital letter, followed by
+  zero or one small letter
+- `[0-9]{1,}$` - match zero or more digits that are at the end of the subject
+  (here a string)
+  
+Let's see how they work.
+
+```jl
+s = """
+formulas[6],
+formulas[6] |> getAtomsAndNumbers,
+formulas[6] |> getAtomsAndNumbers .|> getAtom,
+formulas[6] |> getAtomsAndNumbers .|> getNumberAtEnd
+"""
+replace(sco(s), "(" => "(\n", ", [" => ",\n[", ")" => "\n)")
+```
+
+and
+
+```jl
+s = """
+formulas[3],
+formulas[3] |> getAtomsAndNumbers,
+formulas[3] |> getAtomsAndNumbers .|> getAtom,
+formulas[3] |> getAtomsAndNumbers .|> getNumberAtEnd
+"""
+replace(sco(s), "(" => "(\n", ", [" => ",\n[", ")" => "\n)")
+```
+
+Looks good, we don't worry about the empty strings in numbers of atoms, since
+`str2int` will handle them and return `1's` here.
