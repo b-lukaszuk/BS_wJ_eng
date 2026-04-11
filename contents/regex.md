@@ -905,11 +905,11 @@ assertions](https://en.wikipedia.org/wiki/Regular_expression#Assertions) (we
 didn't use them, since they had not been discussed in @sec:regex_problem_intro).
 
 Now, let's go one step further and try to format also decimals. For that, we'll
-split a number into dollars (integers) and pennies (two digits after comma,
+split a number into dollars (integers) and cents (two digits after comma,
 rounded if necessary).
 
 ```
-function getDollarsPennies(money::Flt)::Tuple{Int, Int}
+function getDollarsCents(money::Flt)::Tuple{Int, Int}
     @assert money >= 0 "money must be >= 0"
     integralPart::Int = floor(Int, money)
     decimalPart::Flt = money % 1
@@ -918,14 +918,14 @@ end
 ```
 
 Once we got it, we will use `fmtMoney(n::Int)::Str` to format the dollars to
-which we'll append the pennies:
+which we'll append the cents:
 
 ```
 function fmtMoney(n::Flt)::Str
     @assert n >= 0 "n must be >= 0"
-    dollars::Int, pennies::Int = getDollarsPennies(n)
+    dollars::Int, cents::Int = getDollarsCents(n)
     result::Str = fmtMoney(dollars)
-    return string(result, ".", pennies)
+    return string(result, ".", cents)
 end
 ```
 

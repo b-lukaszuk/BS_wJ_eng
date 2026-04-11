@@ -141,7 +141,7 @@ end
 
 fmtMoney.(nums) .* " USD"
 
-function getDollarsPennies(money::Flt)::Tuple{Int, Int}
+function getDollarsCents(money::Flt)::Tuple{Int, Int}
     @assert money >= 0 "money must be >= 0"
     integralPart::Int = floor(Int, money)
     decimalPart::Flt = money % 1
@@ -150,9 +150,9 @@ end
 
 function fmtMoney(n::Flt)::Str
     @assert n >= 0 "n must be >= 0"
-    dollars::Int, pennies::Int = getDollarsPennies(n)
+    dollars::Int, cents::Int = getDollarsCents(n)
     result::Str = fmtMoney(dollars)
-    return string(result, ".", pennies)
+    return string(result, ".", cents)
 end
 
 nums = [0, 0.1, 1, 1.2, 12., 12.34, 123.456, 1234, 12345, 12345.67, 123456.7, 1234567.89]
