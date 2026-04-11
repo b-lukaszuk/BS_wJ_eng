@@ -338,7 +338,7 @@ Here, the function do what their names promise. While the regeses say:
   zero or one small letter
 - `[0-9]{1,}$` - match zero or more digits that are at the end of the subject
   (here a string)
-  
+
 Let's see how they work.
 
 ```jl
@@ -400,3 +400,51 @@ sco(s)
 ```
 
 The ride was satisfactory.
+
+Now, for the more complicated formulas, but first some helper functions.
+
+```jl
+s = """
+function getBracketedGroups(formula::Str)::Vec{Str}
+    return getPatternsInTxt(r"\\(.+?\\)\\d{0,}", formula)
+end
+
+function getInsideOfBrackets(group::Str)::Str
+    return replace(group, "(" => "", r"\\)\\d{0,}" => "")
+end
+"""
+sco(s)
+```
+
+The regex in `getBracketedGroups` is `\(.+?\)\d{0,}` which states:
+
+- match any character (`.`) repeated one or more times (`+`), but as few as
+  possible (`?`) that is inside the literal brackets (`\(` and `\)`).  The
+  brackets are followed by zero or more digits (`\d{0,}`). Notice, that inside a
+  regex `(sth)` - is a capture and remember, so we strip the special meaning by
+  using `\`.
+
+Let's see how can we use it.
+
+```jl
+s = """
+formulas[15],
+formulas[15] |> getBracketedGroups,
+formulas[15] |> getBracketedGroups .|> getInsideOfBrackets,
+formulas[15] |> getBracketedGroups .|> getNumberAtEnd
+"""
+replace(sco(s), "(\"" => "(\n\"", ", [" => ",\n[", "])" => "]\n)")
+```
+And again.
+
+```jl
+s = """
+formulas[6],
+formulas[6] |> getBracketedGroups,
+formulas[6] |> getBracketedGroups .|> getInsideOfBrackets,
+formulas[6] |> getBracketedGroups .|> getNumberAtEnd
+"""
+replace(sco(s), "(\"" => "(\n\"", ", S" => ",\nS", "])" => "]\n)")
+```
+
+
