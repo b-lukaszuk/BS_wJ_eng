@@ -447,4 +447,57 @@ formulas[6] |> getBracketedGroups .|> getNumberAtEnd
 replace(sco(s), "(\"" => "(\n\"", ", S" => ",\nS", "])" => "]\n)")
 ```
 
+Now, for the 'full' solver.
 
+
+```jl
+s = """
+function getPair(x::Str)::Pair{Str, Str}
+    return Pair(x, "") # alternative to: return x => ""
+end
+
+function remAll(txt::Str, extras::Vec{Str})::Str
+    return replace(txt, map(getPair, extras)...)
+end
+
+function getmolmass(formula::Str)::Flt
+    groupFormulas::Vec{Str} = getBracketedGroups(formula)
+    groupInsides::Vec{Str} = getInsideOfBrackets.(groupFormulas)
+    groupMultipliers::Vec{Int} = getNumberAtEnd.(groupFormulas) .|> str2int
+    formula = remAll(formula, groupFormulas)
+    masses::Vec{Flt} = map(getMolMassSimple, groupInsides)
+    return sum(masses .* groupMultipliers) + getmolmasssimple(formula)
+end
+"""
+sc(s)
+```
+
+Our plan is to subtract the groups with parentheses (if any) from a `formula`
+and then to remove them from it (so that only simple part remains). The removal
+will be done wit the `replace(txt, toFindInTxt1 => toReplaceInTxt1, toFindInTxt1
+=> toReplaceInTxt1)` syntax. Hence a pair creator (`getPair`) and the remover
+(`remAll` where `...` unpacks the vector of pairs produced by `map`).
+
+Inside `getmolmass` we:
+
+1) extract the groups with brackets (`groupFormulas`)
+2) extract the group insides (`groupInsides`)
+3) get the multipliers for each group (`groupMultipliers`)
+4) remove the groups from `formula`, so only simple part remains
+5) calculate the `masses` for groups (only their parts within brackets)
+6) multiply (`.*`) the `masses` by `groupMultipliers` and `sum` it
+7) add the mass (`getmolmasssimple(formula)`) of the remaining simple part
+
+Notice, that strings are immutable so `remAll` does not change the `formula`
+sent as an argument to `getmolmass`.
+
+Time for testing.
+
+```jl
+s = """
+map(isSameMass, getmolmass.(formulas), masses)
+"""
+sc(s)
+```
+
+Appears to be working as intended.
