@@ -133,8 +133,7 @@ end
 map(isSameMass, getMolMass.(formulas), masses)
 
 function getPatternsInTxt(pattern::Regex, txt::Str)::Vec{Str}
-    matches::Vec{RegexMatch} = collect(eachmatch(pattern, txt))
-    return isempty(matches) ? [] : [regMatch.match for regMatch in matches]
+    return [regMatch.match for regMatch in eachmatch(pattern, txt)]
 end
 
 function getAtomsAndNumbers(simpleFormula::Str)::Vec{Str}
@@ -144,18 +143,18 @@ end
 formulas[1:6]
 getAtomsAndNumbers.(formulas[1:6])
 
-function getAtomAtFront(atomAndNumber::Str)::Str
+function getAtom(atomAndNumber::Str)::Str
     return getPatternsInTxt(r"[A-Z][a-z]{0,1}", atomAndNumber)[1]
 end
 
 function getNumberAtEnd(atomAndNumber::Str)::Str
     nAtoms::Vec{Str} = getPatternsInTxt(r"[0-9]{1,}$", atomAndNumber)
-    return isempty(nAtoms) ? "1" : nAtoms[1]
+    return isempty(nAtoms) ? "" : nAtoms[1]
 end
 
 function getmolmasssimple(formula::Str)::Flt
     atomsNumbers::Vec{Str} = getAtomsAndNumbers(formula)
-    atoms::Vec{Str} = getAtomAtFront.(atomsNumbers)
+    atoms::Vec{Str} = getAtom.(atomsNumbers)
     numbers::Vec{Int} = getNumberAtEnd.(atomsNumbers) .|> str2int
     masses::Vec{Flt} = getEltMass.(atoms)
     return sum(masses .* numbers )
