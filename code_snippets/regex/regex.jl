@@ -24,9 +24,7 @@ txt = getTxtFromFile("./loremJohnSmith.txt");
 println(txt)
 
 function getAllMatches(rmi::Base.RegexMatchIterator)::Vec{Str}
-    allMatches::Vec{RegexMatch} = collect(rmi)
-    return isempty(allMatches) ? [] :
-        [regMatch.match for regMatch in allMatches]
+    return [regMatch.match for regMatch in rmi]
 end
 
 getAllMatches(eachmatch(r"John Smith", txt))
