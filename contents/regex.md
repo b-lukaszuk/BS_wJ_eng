@@ -518,7 +518,7 @@ a less ambiguous "YYYY-MM-DD" configuration.
 
 Read the contents of `loremMail.txt` that is to be found in [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/regex).
-It contains 8 random e-mail addresses (with repetitions). Use Julia to list the
+It contains random e-mail addresses (with repetitions). Use Julia to list the
 unique e-mail addresses found in the text.
 
 #### Regex Task 3 {#sec:regex_problem_task3}
