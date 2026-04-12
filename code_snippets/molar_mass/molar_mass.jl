@@ -122,8 +122,7 @@ function getMolMass(formula::Str)::Flt
         elseif c == ')'
             bracketEnded = true
         else # should never happen
-            # no chem elt abbrev as J
-            curGroup = "J" # triggers fallback in getMolMassSimple
+            return MASS_FALLBACK
         end
     end
     push!(groups, curGroup)
