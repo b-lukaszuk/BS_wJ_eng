@@ -155,8 +155,8 @@ function getmolmasssimple(formula::Str)::Flt
     atomsNumbers::Vec{Str} = getAtomsAndNumbers(formula)
     atoms::Vec{Str} = getAtom.(atomsNumbers)
     numbers::Vec{Int} = getNumberAtEnd.(atomsNumbers) .|> str2int
-    masses::Vec{Flt} = getEltMass.(atoms)
-    return sum(masses .* numbers )
+    atomsMasses::Vec{Flt} = getEltMass.(atoms)
+    return sum(atomsMasses .* numbers)
 end
 
 map(isSameMass, getmolmasssimple.(formulas[1:6]), masses[1:6]) # testing
@@ -169,8 +169,8 @@ function getInsideOfBrackets(group::Str)::Str
     return replace(group, "(" => "", r"\)\d{0,}" => "")
 end
 
-function getPair(x::Str)::Pair{Str, Str}
-    return Pair(x, "") # alternative to: return x => ""
+function getPair(fst::Str, snd::Str="")::Pair{Str, Str}
+    return Pair(fst, snd) # alternative to: return fst => snd
 end
 
 function remAll(txt::Str, extras::Vec{Str})::Str
@@ -179,11 +179,11 @@ end
 
 function getmolmass(formula::Str)::Flt
     groupFormulas::Vec{Str} = getBracketedGroups(formula)
-    groupInsides::Vec{Str} = getInsideOfBrackets.(groupFormulas)
-    groupMultipliers::Vec{Int} = getNumberAtEnd.(groupFormulas) .|> str2int
+    groupsInsides::Vec{Str} = getInsideOfBrackets.(groupFormulas)
+    groupsMultipliers::Vec{Int} = getNumberAtEnd.(groupFormulas) .|> str2int
     formula = remAll(formula, groupFormulas)
-    masses::Vec{Flt} = map(getMolMassSimple, groupInsides)
-    return sum(masses .* groupMultipliers) + getmolmasssimple(formula)
+    grInsMasses::Vec{Flt} = map(getMolMassSimple, groupsInsides)
+    return sum(grInsMasses .* groupsMultipliers) + getmolmasssimple(formula)
 end
 
 map(isSameMass, getmolmass.(formulas), masses) # testing

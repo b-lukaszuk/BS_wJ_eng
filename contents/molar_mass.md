@@ -12,7 +12,7 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/molar_
 
 ## Problem {#sec:molar_mass_problem}
 
-I remember that when I was in high-school we used to have a lot of chemistry
+I remember that when I was in high school we used to have a lot of chemistry
 classes filled with problem solving. The key part of them was to calculate molar
 masses of different molecules. That segment, although essential, was rather
 boring. So I always wanted to have something that would speed up the
@@ -30,7 +30,7 @@ input:
 - $C_{2}H_{5}OH$ (ethanol, is it time to quit drinking?),
 - $(CH_{3})_{2}CO$ (acetone, nail polish remover),
 - $NaCl$ (sodium chloride, kitchen salt),
-- $CH_{3}COOH$ (acetic acid, vinegar),
+- $CH_{3}COOH$ (acetic acid, it's in vinegar),
 - $H_{2}CO_{3}$ (carbonic acid present in your blood),
 - $C_{6}H_{12}O_{6}$ (glucose, it gives you energy),
 - $C_{11}H_{12}N_{2}O_{2}$ (tryptophan, amino acid, builds proteins),
@@ -58,12 +58,12 @@ A list of chemical elements and their masses is to be found, e.g. on [this
 Wikipedia page](https://en.wikipedia.org/wiki/List_of_chemical_elements#List).
 
 For simplicity, you may assume, that a chemical formula (at least the one at a
-high-school level) is composed of [ASCII](https://en.wikipedia.org/wiki/ASCII)
+high school level) is composed of [ASCII](https://en.wikipedia.org/wiki/ASCII)
 characters (capital/small letters + digits) and non-nested brackets.
 
 ## Solution {#sec:molar_mass_solution}
 
-We start by defining the elements mass table.
+Let's start by defining the elements mass table.
 
 ```jl
 s = """
@@ -103,7 +103,7 @@ ELTS_MASS_TBL = Dict{Str, Flt}(
 replace(sc(s), "ELTS_MASS_TBL" => "const ELTS_MASS_TBL")
 ```
 
-All right, let's start with a simple formula solver, but first some helper
+All right, now we may write a simple formula solver, but first some helper
 functions.
 
 ```jl
@@ -135,10 +135,10 @@ went wrong. In general, `-Inf` propagates since almost any value added to `-Inf`
 is `-Inf`.
 
 To calculate the molar mass of a molecule we plan to proceed atom by atom. At
-times an element will be followed by a number (by which we'll have to multiply
-its mass). Therefore, we define `str2int` that `try`ies to transform a string
-(`s`) into an integer (`parse(Int, s)`). Normally, when it fails (e.g. in the
-case of an empty string) it throws an error. But we
+times an element will be followed by a number (by which we will multiply its
+mass). Therefore, we define `str2int` that `try`ies to transform a string (`s`)
+into an integer (`parse(Int, s)`). Normally, when the `parse`r fails (e.g. in
+the case of an empty string) it throws an error. But we
 [catch](https://docs.julialang.org/en/v1/manual/control-flow/#The-try/catch-statement)
 it and `return` a default value (`def`) instead (here we go with 1 as it's
 neutral for multiplication).
@@ -151,7 +151,7 @@ function getMolMassSimple(formula::Str)::Flt
     mass::Flt = 0.0
     curElt::Str = ""
     curNum::Str = ""
-    for c in formula
+    for c in formula # c - a character in formula
         if isuppercase(c)
             mass += getEltMass(curElt) * str2int(curNum)
             curElt = string(c)
@@ -205,8 +205,8 @@ Inside it relies on
 [isapprox](https://docs.julialang.org/en/v1/base/math/#Base.isapprox) with
 relative tolerance (`rtol`) set to `0.0001`. The function is used to account for
 any rounding errors in `ELTS_MASS_TBL` or `masses`. It considers two numbers
-equal if they differ by no more than 1/10,000th (i.e. `isSameMass(10_000.0,
-9_999.0` is `true`, but `isSameMass(10_000.0, 9_998.9)` is `false`)). Anyway,
+equal if they differ by no more than 1/10,000th part (i.e. `isSameMass(10_000.0,
+9_999.0)` is `true`, but `isSameMass(10_000.0, 9_998.9)` is `false`). Anyway,
 all the masses of all the tested simple formulas were roughly equal to those in
 the `masses` vector (`1` is an abbreviated printout for `true`, `0` would be an
 abbreviated printout for `false`).
@@ -257,26 +257,25 @@ sco(s)
 
 Here, we decided to split a complicated `formula` into `group`s of simple
 formulas that we already can solve correctly. We also added `multipliers ` for
-our `group`s and `bracketEnded`, a flag that tells us whether the previous
-character (`c`) was an end of a parenthesized group (`c == ')'`). Just like in
-`getMolMassSimple` we move one character at a time (`for c in formula`) and do
-some checks. If a character belongs to a simple formula (`if
-isInSimpleChemFormula(c)`) and (`&&`) it is not right after the parentheses
-(`!bracketEnded`) then we just append it to the current group (`curGroup *= c`).
-If it is a digit (`elseif isdigit(c)`) right after the bracket end (`&&
-bracketEnded`) we append it to the multiplier for the current group
-(`curMultiplier`). Else, if it is a capital letter (`elseif isuppercase(c)`)
-that follows the closing bracket (`&& bracketEnded`) then we start a new group
-(`curGroup = string(c)`) and multiplier (`curMultiplier = ""`). Additionally, we
-do some cleanup (reset `bracketEnded` and `push` previous group and multiplier
-to the appropriate collections). Likewise, if the parentheses just started
-(`elseif c == '('`) we push the previous group and multiplier to the collections
-and reset the current values (`curGroup = ""` and `curMultiplier = ""`). Of
-course we must remember to set the `bracketEnded` flag to `true` when the
-parentheses end (`elseif c == ')'`). Once again, before we `return` our result
-we `push` the last group and multiplier (cleanup). Our final result is just a
-`sum` of masses of all groups (`getMolMassSimple.(groups)`) multiplied by the
-appropriate numbers (`.* multipliers`).
+our `group`s and `bracketEnded`, a flag that tells us whether we just examined
+the end of a parenthesized group (`c == ')'`). Just like in `getMolMassSimple`
+we move one character at a time (`for c in formula`) and do some checks. If a
+character belongs to a simple formula (`if isInSimpleChemFormula(c)`) and (`&&`)
+it is not right after the parentheses (`!bracketEnded`) then we just append it
+to the current group (`curGroup *= c`). If it is a digit (`elseif isdigit(c)`)
+right after the bracket end (`&& bracketEnded`) we append it to the multiplier
+for the current group (`curMultiplier`). Else, if it is a capital letter
+(`elseif isuppercase(c)`) that follows the closing bracket (`&& bracketEnded`)
+then we reset `bracketEnded` and `push` previous group and multiplier to the
+appropriate collections. Additionally, we do some cleanup (reset `curGroup` and
+`curMultiplier`). Likewise, if the parentheses just started (`elseif c == '('`)
+we push the previous group and multiplier to the collections and reset the
+current values (`curGroup = ""` and `curMultiplier = ""`). Of course we must
+remember to set the `bracketEnded` flag to `true` when the parentheses end
+(`elseif c == ')'`). Once again, before we `return` our result we `push` the
+last group and multiplier (cleanup). Our final result is just a `sum` of masses
+of all groups (`getMolMassSimple.(groups)`) multiplied by the appropriate
+numbers (`.* multipliers`).
 
 Let's see how we did.
 
@@ -289,8 +288,8 @@ sco(s)
 
 Apparently, we did just fine.
 
-The solution works, but may be considered inelegant (long functions, mostly
-[imperative programming
+The solution works, but may be considered inelegant and hard to follow (long
+functions, mostly [imperative programming
 style](https://en.wikipedia.org/wiki/Imperative_programming)).
 
 Let's try to change it using what we learned about regexes in @sec:regex.
@@ -362,7 +361,7 @@ formulas[3] |> getAtomsAndNumbers .|> getNumberAtEnd
 replace(sco(s), "(" => "(\n", ", [" => ",\n[", ")" => "\n)")
 ```
 
-Looks good. We don't worry about the empty strings in numbers of atoms, since
+Looks good. We aren't worried about the empty strings in numbers of atoms, since
 `str2int` will handle them and return `1's`.
 
 OK, time for another simple formula solver.
@@ -420,15 +419,16 @@ The regex in `getBracketedGroups` is `\(.+?\)\d{0,}` which states:
 
 - match any character (`.`) repeated one or more times (`+`), but as few as
   possible (`?`) that is inside the literal brackets (`\(` and `\)`).  The
-  brackets are followed by zero or more digits (`\d{0,}`). Notice that inside a
-  regex `(sth)` - is a capture and remember command, so we strip the special
-  meaning by using `\`.
+  closing bracket is followed by zero or more digits (`\d{0,}`). Notice that
+  inside a regex `(sth)` - is a capture and remember command (usually used with
+  [replace](https://docs.julialang.org/en/v1/base/collections/#Base.replace-Tuple%7BAny,%20Vararg%7BPair%7D%7D)),
+  so we strip the special meaning by using `\` before `(` and `)`.
 
-As for `getInsideOfBrackets` we just replace opening brackets with nothing (`"("
-=> ""`), and closing bracket followed by an optional digit (`r"\)\d{0,1}"`) with
-nothing (`""` - empty string). This effectively removes brackets and their outer
-surroundings. BTW, did you notice the difference in "`(`" and "`\)`" when used
-in normal string and in the regex?
+As for `getInsideOfBrackets` we just `replace` the opening brackets with nothing
+(`"(" => ""`), and closing bracket followed by optional digits
+(`r"\)\d{0,}"`) with nothing (`""` - empty string). This effectively removes
+brackets and their outer surroundings. BTW, did you notice the difference in
+"`(`" and "`\)`" when used in normal string and in the regex?
 
 Let's see how can we use it.
 
@@ -457,8 +457,8 @@ Now, for the 'full' solver.
 
 ```jl
 s = """
-function getPair(x::Str)::Pair{Str, Str}
-    return Pair(x, "") # alternative to: return x => ""
+function getPair(fst::Str, snd::Str="")::Pair{Str, Str}
+    return Pair(fst, snd) # alternative to: return fst => snd
 end
 
 function remAll(txt::Str, extras::Vec{Str})::Str
@@ -467,11 +467,11 @@ end
 
 function getmolmass(formula::Str)::Flt
     groupFormulas::Vec{Str} = getBracketedGroups(formula)
-    groupInsides::Vec{Str} = getInsideOfBrackets.(groupFormulas)
-    groupMultipliers::Vec{Int} = getNumberAtEnd.(groupFormulas) .|> str2int
+    groupsInsides::Vec{Str} = getInsideOfBrackets.(groupFormulas)
+    groupsMultipliers::Vec{Int} = getNumberAtEnd.(groupFormulas) .|> str2int
     formula = remAll(formula, groupFormulas)
-    masses::Vec{Flt} = map(getMolMassSimple, groupInsides)
-    return sum(masses .* groupMultipliers) + getmolmasssimple(formula)
+    grInsMasses::Vec{Flt} = map(getMolMassSimple, groupsInsides)
+    return sum(grInsMasses .* groupsMultipliers) + getmolmasssimple(formula)
 end
 """
 sc(s)
@@ -487,16 +487,17 @@ produced by `map`).
 Inside `getmolmass` we:
 
 1) extract the groups with brackets (`groupFormulas`)
-2) extract the group insides (`groupInsides`)
-3) get the multipliers for each group (`groupMultipliers`)
+2) extract the groups insides (`groupsInsides`)
+3) get the multipliers for each group (`groupsMultipliers`)
 4) remove the groups from `formula`, so only simple part remains
-5) calculate the `masses` for groups (only their parts within brackets)
-6) multiply (`.*`) the `masses` by `groupMultipliers` and `sum` it
+5) calculate the masses for groups insides (`grInsMasses`)
+6) multiply (`.*`) `grInsMasses` by `groupMultipliers` and `sum` the products
 7) add the mass (`getmolmasssimple(formula)`) of the remaining simple part to
 the result
 
 Notice, that strings are immutable so `remAll` does not change the `formula`
-sent as an argument to `getmolmass`.
+sent as an argument to `getmolmass` (in `formula = remAll(formula,
+groupFormulas)`).
 
 Time for testing.
 
@@ -511,7 +512,8 @@ Appears to be working as intended.
 
 We may compare our functions (`getMolMass` and `getmolmass`) with
 [\@time](https://docs.julialang.org/en/v1/base/base/#Base.@time) macro (just
-make sure that both the functions are run at least once beforehand).
+make sure that both the functions are run at least once beforehand, since
+functions are compiled at their first run).
 
 ```
 @time map(isSameMass, getMolMass.(formulas), masses)
@@ -528,7 +530,14 @@ Which will return (except for the results) a printout simplar to:
 ```
 
 The above indicates that our regex version is roughly 2 times faster than its
-counterpart, but it uses up more memory. For more serious benchmarking we should
-probably us [BenchmarkTools.jl](https://github.com/juliaci/benchmarktools.jl) as
-indicated in the documentation. We will demonstrate that briefly in
-@sec:translation_solution.
+counterpart, but it uses up more memory. Moreover, I suspect `getmolmass` is
+likely to be less
+[robust](https://en.wikipedia.org/wiki/Robustness_(computer_science)). If you're
+still not tired you may test `getMolMass` and `getmolmass` with weird, made up
+formulas and see which one is easier to fall for it without telling you there's
+something wrong. So as you can see there are always some trade-offs.
+
+Anyway, for more serious benchmarking we should probably use
+[BenchmarkTools.jl](https://github.com/juliaci/benchmarktools.jl) as indicated
+in the documentation. We will demonstrate that briefly in
+@sec:translation_solution, but for now you may take a rest.
