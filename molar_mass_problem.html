@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
   <meta name="author" content="Bartlomiej Lukaszuk" />
-  <title>Lattice Paths - Build SH*T with Julia</title>
+  <title>Problem - Build SH*T with Julia</title>
   <link rel="stylesheet" href="./style.css"/>
     <script src="./mousetrap.min.js"></script>
     <style>
@@ -175,18 +175,44 @@ Mousetrap.bind('l', click_next);
 </aside>
 
 <div class="books-content">
-<h1 data-number="32" id="sec:lattice_paths"><span class="header-section-number">32</span> Lattice Paths</h1>
-<p>In this chapter I used the following libraries.</p>
-<pre class="language-julia"><code>import CairoMakie as Cmk</code></pre>
-<p>Still, once you read the problem description you may decide to do otherwise.</p>
-<p>I recommend you try to solve the task on your own first. Once you finish you may compare your own solution with the one in this chapter (with explanations) or with <a href="https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/lattice_paths">the code snippets</a> (without explanations).</p>
+<h2 data-number="19.1" id="sec:molar_mass_problem"><span class="header-section-number">19.1</span> Problem</h2>
+<p>I remember that when I was in high school we used to have a lot of chemistry classes filled with problem solving. The key part of them was to calculate molar masses of different molecules. That segment, although essential, was rather boring. So I always wanted to have something that would speed up the calculations for me.</p>
+<p>This time your job is to write a solver that will calculate a molar mass of a chemical formula. Make sure your solution works by using it on the following input:</p>
+<ul>
+<li><span class="math inline">\(CH_{4}\)</span> (methane, natural gas, fossil fuel),</li>
+<li><span class="math inline">\(H_{2}O\)</span> (water),</li>
+<li><span class="math inline">\(HCl\)</span> (hydrochloric acid produced in your stomach),</li>
+<li><span class="math inline">\(CO_{2}\)</span> (carbon dioxide, breath it out),</li>
+<li><span class="math inline">\(C_{3}H_{8}\)</span> (propane, natural gas, fossil fuel),</li>
+<li><span class="math inline">\(C_{2}H_{5}OH\)</span> (ethanol, is it time to quit drinking?),</li>
+<li><span class="math inline">\((CH_{3})_{2}CO\)</span> (acetone, nail polish remover),</li>
+<li><span class="math inline">\(NaCl\)</span> (sodium chloride, kitchen salt),</li>
+<li><span class="math inline">\(CH_{3}COOH\)</span> (acetic acid, it’s in vinegar),</li>
+<li><span class="math inline">\(H_{2}CO_{3}\)</span> (carbonic acid present in your blood),</li>
+<li><span class="math inline">\(C_{6}H_{12}O_{6}\)</span> (glucose, it gives you energy),</li>
+<li><span class="math inline">\(C_{11}H_{12}N_{2}O_{2}\)</span> (tryptophan, amino acid, builds proteins),</li>
+<li><span class="math inline">\(CH_{3}(CH_{2})_{14}COOH\)</span> (palmitic acid, builds fat),</li>
+<li><span class="math inline">\(C_{34}H_{32}O_{4}N_{4}Fe\)</span> (heme B, located in your red blood cells)</li>
+<li><span class="math inline">\(Ca_{10}(PO_{4})_{6}(OH)_{2}\)</span> (calcium hydroxyapatite found in your bones)</li>
+<li><span class="math inline">\(C_{169719}H_{270466}N_{45688}O_{52238}S_{911}\)</span> (titin, a protein that builds your muscles)</li>
+</ul>
+<p>Below I paste the formulas and their masses for testing purposes.</p>
+<pre class="language-julia"><code>formulas = [&quot;CH4&quot;, &quot;H2O&quot;, &quot;HCl&quot;, &quot;CO2&quot;, &quot;C3H8&quot;, &quot;C2H5OH&quot;, &quot;(CH3)2CO&quot;,
+            &quot;NaCl&quot;, &quot;CH3COOH&quot;, &quot;H2CO3&quot;, &quot;C6H12O6&quot;, &quot;C11H12N2O2&quot;,
+            &quot;CH3(CH2)14COOH&quot;, &quot;C34H32O4N4Fe&quot;, &quot;Ca10(PO4)6(OH)2&quot;,
+            &quot;C169719H270466N45688O52238S911&quot;]
+masses = [16.043, 18.01528, 36.46, 44.01, 44.097, 46.069, 58.08, 58.443,
+          60.052, 62.03, 180.156, 204.229, 256.43, 616.487, 1004.61,
+          3_816_030]</code></pre>
+<p>A list of chemical elements and their masses is to be found, e.g. on <a href="https://en.wikipedia.org/wiki/List_of_chemical_elements#List">this Wikipedia page</a>.</p>
+<p>For simplicity, you may assume, that a chemical formula (at least the one at a high school level) is composed of <a href="https://en.wikipedia.org/wiki/ASCII">ASCII</a> characters (capital/small letters + digits) and non-nested brackets.</p>
 
 
 <div class="bottom-nav">
     <p id="nav-prev" style="text-align: left;">
-        <a class="menu-level-2" href="./logo_solution.html"><b>31.2</b> Solution</a> <kbd>←</kbd>
+        <a class="menu-level-1" href="./molar_mass.html"><b>19</b> Molar Mass</a> <kbd>←</kbd>
         <span id="nav-next" style="float: right;">
-            <kbd>→</kbd> <a class="menu-level-2" href="./lattice_paths_problem.html"><b>32.1</b> Problem</a>
+            <kbd>→</kbd> <a class="menu-level-2" href="./molar_mass_solution.html"><b>19.2</b> Solution</a>
         </span>
     </p>
 </div>
