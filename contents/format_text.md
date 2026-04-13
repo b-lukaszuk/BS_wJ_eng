@@ -152,33 +152,33 @@ end
 ```
 
 For that we break our text (`txt`) into `words` with the
- [split](https://docs.julialang.org/en/v1/base/strings/#Base.split)
- function. Then, `for` each `word` we calculate the `difference` between our
- desired line length (`targetLineLen`) and the current line length
- (`length(curLine)`) plus the length of the word (`length(word)`) we want to add
- to that line. If we still got room for one more word (`if difference >= 0`)
- then we just add it with a padding on the right side (`curLine *= word *
- PAD`). Otherwise (`else`), we add `curLine` to the vector of `lines` with
- `push!` and make our `word` the beginning of a new line (`curLine = word *
- PAD`). Notice, that before `push`ing the old line to the collection, first, we
- `strip`ped it from any possible extra spaces on the edges. Afterwards (`end` of
- `for`), we `push` the last line to `lines` and return the latter from inside
- the function.
+[split](https://docs.julialang.org/en/v1/base/strings/#Base.split)
+function. Then, `for` each `word` we calculate the `difference` between our
+desired line length (`targetLineLen`) and the current line length
+(`length(curLine)`) plus the length of the word (`length(word)`) we want to add
+to that line. If we still got room for one more word (`if difference >= 0`) then
+we just add it with a padding on the right side (`curLine *= word *
+PAD`). Otherwise (`else`), we add `curLine` to the vector of `lines` with
+`push!` and make our `word` the beginning of a new line (`curLine = word *
+PAD`). Notice, that before `push`ing the old line to the collection, first, we
+`strip`ped it from any possible extra spaces on the edges. Afterwards (`end` of
+`for`), we `push` the last line to `lines` and return the latter from inside the
+function.
 
 Now, for left-, right- and center alignment, each line will have to be padded
 with space characters (`PAD`) placed on the right, left, and both sides,
 respectively. For that we need to know the difference between the number of
 characters in our line and its target length. Moreover, we need a padding
-function that we will name `padLine`. To practice coding we didn't use the built
-in [sprintf](https://docs.julialang.org/en/v1/stdlib/Printf/#Printf.@sprintf)
-(it would be just to easy to type something like `@sprintf("%60s",
-"xxx")`/`@sprintf("%-60s", "xxx")` to get the `"xxx"` right/left justified for
-us). For the same reason we didn't use
-[lpad](https://docs.julialang.org/en/v1/base/strings/#Base.lpad) nor
-[rpad](https://docs.julialang.org/en/v1/base/strings/#Base.rpad). Instead, we
-went with the `*` operator that glues two strings together and the `^` symbol
-that repeats the string on its left the number of times on its right (remember
-about the operator precedence from mathematics).
+function that we will name `padLine`. Here, we went with the `*` operator that
+glues two strings together and the `^` symbol that repeats the string on its
+left the number of times on its right (remember about the operator precedence
+from mathematics). Alternatively, we could have used the built in
+[\@sprintf](https://docs.julialang.org/en/v1/stdlib/Printf/#Printf.@sprintf)
+(e.g. `@sprintf("%60s", "xxx")`/`@sprintf("%-60s", "xxx")` to get the `"xxx"`
+right/left justified for
+us). [Lpad](https://docs.julialang.org/en/v1/base/strings/#Base.lpad) and
+[rpad](https://docs.julialang.org/en/v1/base/strings/#Base.rpad) were also a
+viable option.
 
 ```
 function getLenDiffs(lines::Vec{Str},
