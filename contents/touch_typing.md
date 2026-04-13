@@ -169,8 +169,10 @@ function playTypingGame(text2beTyped::Str)::Str
             typedTxt = typedTxt[1:(end-1)]
         elseif isAbort(c)
             break
-        else
+        elseif isascii(c)
             typedTxt *= c
+        else # do noting if user types e.g. ś ć or other strange chars
+            nothing
         end
         cursorCol = length(typedTxt) + 1
     end

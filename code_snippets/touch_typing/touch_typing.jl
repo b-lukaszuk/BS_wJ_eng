@@ -91,8 +91,10 @@ function playTypingGame(text2beTyped::Str)::Str
             break
         elseif isEnter(c)
             typedTxt *= '\n'
-        else
+        elseif isascii(c)
             typedTxt *= c
+        else
+            nothing
         end
         setCursor()
         printColoredTxt(typedTxt, text2beTyped)
