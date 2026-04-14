@@ -40,6 +40,10 @@ function getRed(s::Str)::Str
     return "\x1b[31m" * s * "\x1b[0m"
 end
 
+function getGreen(c::Char)::Str
+    return "\x1b[32m" * c * "\x1b[0m"
+end
+
 function colorFieldNumbers(board::Vec{Str})::Vec{Str}
     result::Vec{Str} = copy(board)
     for i in eachindex(board)
@@ -231,12 +235,14 @@ end
 function areRequirementsMet()::Bool
     requirementsMet::Bool = true
     println("Checking the requirements...")
+    c(xs) = collect(xs)
+    j(xs) = join(xs)
     if !isAnsiColorSupport()
         requirementsMet &= false
-        println("Didn't detect suport for ANSI escape codes.")
+        println(getRed.("No suport for ANSI color codes found." |> c) |> j)
     end
     if requirementsMet
-        println("Requirements seem to be met.\n")
+        println(getGreen.("Requirements seem to be met.\n" |> c) |> j)
     end
     return requirementsMet
 end
