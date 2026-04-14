@@ -198,15 +198,15 @@ function areRequirementsMet(txtForTyping::Str)::Bool
     j(xs) = join(xs)
     println("Checking requirements...")
     if !isAnsiColorsSupport()
-        requirementsMet = false
+        requirementsMet &= false
         println(getRed.("No suport for ANSI color codes found." |> c) |> j)
     end
     if !isSttyPresent()
-        requirementsMet = false
+        requirementsMet &= false
         println(getRed.("Didn't detect `stty` command." |> c) |> j)
     end
     if !isascii(txtForTyping)
-        requirementsMet = false
+        requirementsMet &= false
         println(getRed.("Found non-ASCII characters." |> c) |> j)
     end
     if requirementsMet
