@@ -10,7 +10,7 @@
 # perhaps I should remove sqrt(2nD⧋t) to simplify it
 # plus need collision detection
 
-const Pos = Tuple{Int, Int} # position, (row, col) in canvas
+const Pos = Tuple{Int, Int} # position, (row, col) in 2D container
 const Str = String
 const Vec = Vector
 
@@ -62,10 +62,10 @@ function isWithinContainer(molecule::Pos, container::Matrix{Char})::Bool
     return (0 < row <= nRows) && (0 < col <= nCols)
 end
 
-function addMolecules!(molecules::Vec{Pos}, container::Matrix{Char})::Nothing
+function addMolecules!(molecules::Vec{Pos}, container!::Matrix{Char})::Nothing
     for molecule in molecules
-        if isWithinContainer(molecule, container)
-            container[molecule...] = MOLECULE
+        if isWithinContainer(molecule, container!)
+            container![molecule...] = MOLECULE
         end
     end
     return nothing
