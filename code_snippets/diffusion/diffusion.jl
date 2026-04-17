@@ -11,6 +11,7 @@
 # plus need collision detection
 
 const Pos = Tuple{Int, Int} # position, (row, col) in canvas
+const Str = String
 const Vec = Vector
 
 const N_COLS = 80
@@ -18,23 +19,20 @@ const N_ROWS = 40
 const N_MOLECULES = 30
 const MOLECULE = '.'
 
-# marix of chars
-container = fill(' ', N_ROWS, N_COLS);
-
-function printContainer(cvs::Matrix{Char}=container)::Nothing
-    nRows, _ = size(cvs)
+function printContainer(container::Matrix{Char})::Nothing
+    nRows, _ = size(container)
     for r in 1:nRows
-        println(cvs[r, :] |> join)
+        println(container[r, :] |> join)
     end
     return nothing
 end
 
-function clearContainer!(container::Matrix{Char}=container)::Nothing
+function clearContainer!(container::Matrix{Char})::Nothing
     container .= ' '
     return nothing
 end
 
-function addBorders!(container::Matrix{Char}=container)::Nothing
+function addBorders!(container::Matrix{Char})::Nothing
     container[:, 1] .= '|'
     container[:, N_COLS] .= '|'
     container[1, :] .= '—'
@@ -42,12 +40,7 @@ function addBorders!(container::Matrix{Char}=container)::Nothing
     return nothing
 end
 
-addBorders!()
-printContainer()
-
-molecules = fill((0, 0), N_MOLECULES)
-
-function rndPlaceMolecules!(molecules::Vec{Pos}=molecules,
+function rndPlaceMolecules!(molecules::Vec{Pos},
                             nMolecules::Int=N_MOLECULES)::Nothing
     i::Int = 1
     r::Int = 0
@@ -63,21 +56,44 @@ function rndPlaceMolecules!(molecules::Vec{Pos}=molecules,
     return nothing
 end
 
-function isWithinContainer(molecule::Pos, container::Matrix{Char}=container)::Bool
+function isWithinContainer(molecule::Pos, container::Matrix{Char})::Bool
     nRows, nCols = size(container)
     row, col = molecule
     return (0 < row <= nRows) && (0 < col <= nCols)
 end
 
-function addMolecules!(molecules=Vec{Pos}, container::Matrix{Char}=container)::Nothing
+function addMolecules!(molecules::Vec{Pos}, container::Matrix{Char})::Nothing
     for molecule in molecules
         if isWithinContainer(molecule, container)
-            container[molecule...] = '.'
+            container[molecule...] = MOLECULE
         end
     end
     return nothing
 end
 
-rndPlaceMolecules!()
-addMolecules!(molecules)
-printContainer()
+function main()::Nothing
+    println("\nThis is a (UNFINISHED) toy program that models simplified diffusion.")
+    println("Note: your terminal must support ANSI escape codes.\n")
+
+    # y(es) - default choice (also with Enter), anything else: no
+    println("Continue with the simulation? [Y/n]")
+    choice::Str = readline()
+    if lowercase(strip(choice)) in ["y", "yes", ""]
+
+        container::Matrix{Char} = fill(' ', N_ROWS, N_COLS);
+        molecules::Vec{Pos} = fill((0, 0), N_MOLECULES)
+
+        addBorders!(container)
+        rndPlaceMolecules!(molecules)
+        addMolecules!(molecules, container)
+        printContainer(container)
+    end
+
+    println("\nThat's all. Goodbye!")
+
+    return nothing
+end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
+end
