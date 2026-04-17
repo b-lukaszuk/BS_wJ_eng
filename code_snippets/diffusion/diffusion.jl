@@ -26,4 +26,13 @@ function clearContainer!(container::Matrix{Char}=container)::Nothing
     return nothing
 end
 
+function addBorders!(container::Matrix{Char}=container)::Nothing
+    container[:, 1] .= '|'
+    container[:, N_COLS] .= '|'
+    container[1, :] .= '—'
+    container[N_ROWS, :] .= '—'
+    return nothing
+end
+
+addBorders!()
 printContainer()
