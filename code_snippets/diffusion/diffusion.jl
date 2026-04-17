@@ -3,6 +3,12 @@
 
 # TODO: diffusion
 # https://en.wikipedia.org/wiki/Diffusion
+# https://en.wikipedia.org/wiki/Brownian_motion
+# molecule shift
+# new_pos = old_pos + sqrt(2nD⧋t)  * randn()
+# where n - dimension, D - diffusion coefficient, t - time
+# perhaps I should remove sqrt(2nD⧋t) to simplify it
+# plus need collision detection
 
 const Pos = Tuple{Int, Int} # position, (row, col) in canvas
 const Vec = Vector
