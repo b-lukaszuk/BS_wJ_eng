@@ -10,7 +10,6 @@
 # perhaps I should remove sqrt(2nD⧋t) to simplify it
 # plus need collision detection
 # (or maybe just let them pass through in 3rd D, like in: https://en.wikipedia.org/wiki/File:Brownian_motion_large.gif
-
 const Flt = Float64
 const Pos = Tuple{Int, Int} # position, (row, col) in 2D container
 const Str = String
@@ -111,23 +110,51 @@ function clearLines(nLines::Int)::Nothing
     return nothing
 end
 
-# function simulateBrownian!(nSimulations::Int=1_000)::Nothing
-function simulateBrownian!(nSimulations::Int=100)::Nothing
-    # @assert 500 < nSimulations < 1e5 "nSimulations must be in range (500, 1e5)"
+function padLine(line::Str, lPadLen::Int, rPadLen::Int,
+                 lPad::Str=" ", rPad::Str=" ")::Str
+    @assert lPadLen >= 0 && rPadLen >= 0 "padding lengths must be >= 0"
+    return lPad ^ lPadLen * line * rPad ^ rPadLen
+end
+
+println("alal")
+
+getSnd(p::Pos)::Int = p[2]
+
+function printCount(molecules::Vec{Pos})::Nothing
+    cols::Vec{Int} = map(getSnd, molecules)
+    midCol::Int = roundFlt2int(N_COLS/2)
+    lCount::Int = sum(cols .<= midCol)
+    rCount::Int = sum(cols .> midCol)
+    println("Left count: $lCount\t|\tRight count: $rCount")
+    return nothing
+end
+
+function redrawDisplay(container::Matrix{Char},
+                       molecules::Vec{Pos},
+                       nCycle::Int)::Nothing
+    clearLines(N_ROWS+1)
+    print("Cycle no: $nCycle\t|\t")
+    printCount(molecules)
+    printContainer(container)
+    return nothing
+end
+
+function simulateBrownian!(nCycles::Int=5_000)::Nothing
+    @assert 500 < nCycles < 1e5 "nCycles must be in range (500, 1e5)"
     container::Matrix{Char} = fill(' ', N_ROWS, N_COLS);
     addBorders!(container)
     molecules::Vec{Pos} = fill((0, 0), N_MOLECULES)
     rndPlaceMolecules!(molecules, (2, N_ROWS), (2, roundFlt2int(N_COLS/2)))
     addMolecules!(molecules, container)
-    printContainer(container)
 
-    for _ in 1:nSimulations
-        clearLines(N_ROWS)
-        clearContainer!(container)
+    redrawDisplay(container, molecules, 0)
+
+    for i in 1:nCycles
         moveBrownian!(molecules, container)
+        clearContainer!(container)
         addMolecules!(molecules, container)
-        printContainer(container)
-        sleep(rand(0.1:0.05:0.2))
+        sleep(0.15)
+        redrawDisplay(container, molecules, i)
     end
     return nothing
 end
