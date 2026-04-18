@@ -1,24 +1,16 @@
 # the code in this file is meant to serve as a programming exercise only
 # it may not act correctly
 
-# TODO: diffusion
-# https://en.wikipedia.org/wiki/Diffusion
-# https://en.wikipedia.org/wiki/Brownian_motion
-# molecule shift
-# new_pos = old_pos + sqrt(2nD⧋t)  * randn()
-# where n - dimension, D - diffusion coefficient, t - time
-# perhaps I should remove sqrt(2nD⧋t) to simplify it
-# plus need collision detection
-# (or maybe just let them pass through in 3rd D, like in: https://en.wikipedia.org/wiki/File:Brownian_motion_large.gif)
 const Flt = Float64
 const Pos = Tuple{Int, Int} # position, (row, col) in 2D container
 const Str = String
 const Vec = Vector
 
-const DELAY_SEC = 0.1
+const DELAY_SEC = 0.2
 const N_CYCLES = 2_500
+const SECS_PER_MIN = 60
 const DURATION_SEC = DELAY_SEC * N_CYCLES
-const DURATION_MIN = DURATION_SEC / 60
+const DURATION_MIN = DURATION_SEC / SECS_PER_MIN
 const N_COLS = 80
 const N_ROWS = 40
 const MOLECULE = '.'
@@ -174,6 +166,7 @@ function main()::Nothing
 
     println("Estimated execution time of the program:")
     println("$(rnd2(DURATION_SEC)) seconds or $(rnd2(DURATION_MIN)) minutes.")
+    println("WARNING: the screen will flicker (Ctrl-C should abort the program).")
 
     # y(es) - default choice (also with Enter), anything else: no
     println("\nContinue with the simulation? [Y/n]")
