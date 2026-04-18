@@ -15,10 +15,12 @@ const Pos = Tuple{Int, Int} # position, (row, col) in 2D container
 const Str = String
 const Vec = Vector
 
-const N_COLS = 80
-const N_ROWS = 40
-const N_MOLECULES = 100
+const DELAY_SEC = 0.1
 const MOLECULE = '.'
+const N_COLS = 80
+const N_CYCLES = 2_500
+const N_MOLECULES = 100
+const N_ROWS = 40
 
 function printContainer(container::Matrix{Char})::Nothing
     nRows, _ = size(container)
@@ -110,36 +112,27 @@ function clearLines(nLines::Int)::Nothing
     return nothing
 end
 
-function padLine(line::Str, lPadLen::Int, rPadLen::Int,
-                 lPad::Str=" ", rPad::Str=" ")::Str
-    @assert lPadLen >= 0 && rPadLen >= 0 "padding lengths must be >= 0"
-    return lPad ^ lPadLen * line * rPad ^ rPadLen
-end
+getSnd((_, y)::Pos)::Int = y
 
-println("alal")
-
-getSnd(p::Pos)::Int = p[2]
-
-function printCount(molecules::Vec{Pos})::Nothing
+function getCount(molecules::Vec{Pos})::Str
     cols::Vec{Int} = map(getSnd, molecules)
     midCol::Int = roundFlt2int(N_COLS/2)
     lCount::Int = sum(cols .<= midCol)
     rCount::Int = sum(cols .> midCol)
-    println("Left count: $lCount\t|\tRight count: $rCount")
-    return nothing
+    return "Left count: $lCount | Right count: $rCount"
 end
 
 function redrawDisplay(container::Matrix{Char},
                        molecules::Vec{Pos},
                        nCycle::Int)::Nothing
-    clearLines(N_ROWS+1)
-    print("Cycle no: $nCycle\t|\t")
-    printCount(molecules)
+    clearLines(N_ROWS+2)
+    println("Cycle no: $nCycle/$N_CYCLES")
+    println(getCount(molecules))
     printContainer(container)
     return nothing
 end
 
-function simulateBrownian!(nCycles::Int=5_000)::Nothing
+function simulateBrownian!(nCycles::Int=N_CYCLES)::Nothing
     @assert 500 < nCycles < 1e5 "nCycles must be in range (500, 1e5)"
     container::Matrix{Char} = fill(' ', N_ROWS, N_COLS);
     addBorders!(container)
@@ -153,18 +146,25 @@ function simulateBrownian!(nCycles::Int=5_000)::Nothing
         moveBrownian!(molecules, container)
         clearContainer!(container)
         addMolecules!(molecules, container)
-        sleep(0.15)
+        sleep(DELAY_SEC)
         redrawDisplay(container, molecules, i)
     end
     return nothing
 end
 
+rnd2(x::Flt)::Flt = round(x, digits=2)
+
 function main()::Nothing
+    durationSec::Flt = DELAY_SEC * N_CYCLES
+    durationMin::Flt = durationSec / 60
+
     println("\nThis is a (UNFINISHED) toy program that models simplified diffusion.")
     println("Note: your terminal must support ANSI escape codes.\n")
 
     # y(es) - default choice (also with Enter), anything else: no
-    println("Continue with the simulation? [Y/n]")
+    println("Estimated execution time of the program:")
+    println("$(rnd2(durationSec)) seconds or $(rnd2(durationMin)) minutes.")
+    println("\nContinue with the simulation? [Y/n]")
     choice::Str = readline()
     if lowercase(strip(choice)) in ["y", "yes", ""]
         simulateBrownian!()
