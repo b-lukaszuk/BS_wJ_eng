@@ -33,6 +33,7 @@ contents = [
     "mortgage",
     "overpayment",
     "logo",
+    "diffusion",
     "lattice_paths",
     "transcription",
     "translation",
