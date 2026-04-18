@@ -16,10 +16,12 @@ const Str = String
 const Vec = Vector
 
 const DELAY_SEC = 0.1
-const MOLECULE = '.'
+const N_CYCLES = 2_500
+const DURATION_SEC = DELAY_SEC * N_CYCLES
+const DURATION_MIN = DURATION_SEC / 60
 const N_COLS = 80
 const N_ROWS = 40
-const N_CYCLES = 2_500
+const MOLECULE = '.'
 const N_MOLECULES = 150
 
 function addBorders!(container::Matrix{Char})::Nothing
@@ -37,23 +39,21 @@ function getEmptyContainer()::Matrix{Char}
 end
 
 function printContainer(container::Matrix{Char})::Nothing
-    nRows, _ = size(container)
-    for r in 1:nRows
+    for r in 1:N_ROWS
         println(container[r, :] |> join)
     end
     return nothing
 end
 
-function isWithinContainer(molecule::Pos, container::Matrix{Char})::Bool
-    nRows, nCols = size(container)
+function isWithinContainer(molecule::Pos)::Bool
     row, col = molecule
-    # (-1) because corrected for borders
-    return (1 < row <= nRows-1) && (1 < col <= nCols-1)
+    # corrected for borders
+    return (1 < row < N_ROWS) && (1 < col < N_COLS)
 end
 
 function emptyContainer!(container::Matrix{Char})::Nothing
     for c in 1:N_COLS, r in 1:N_ROWS
-        if isWithinContainer((r, c), container)
+        if isWithinContainer((r, c))
             container[r, c] = ' '
         end
     end
@@ -64,11 +64,14 @@ end
 # since they move past each other in the third (not drawn) dimension
 function placeMoleculesRandomly!(molecules::Vec{Pos},
                                  rowsMinMax::Tuple{Int, Int},
-                                 colsMinMax::Tuple{Int, Int},
-                                 nMolecules::Int=N_MOLECULES)::Nothing
+                                 colsMinMax::Tuple{Int, Int})::Nothing
+    rMin::Int, rMax::Int = rowsMinMax
+    cMin::Int, cMax::Int = colsMinMax
+    @assert isWithinContainer((rMin, cMin)) "(rMin, cMin) outside of container"
+    @assert isWithinContainer((rMax, cMax)) "(rMax, cMax) outside of container"
     i::Int = 1
     r::Int, c::Int = 0, 0
-    while i <= nMolecules
+    while i <= N_MOLECULES
         r = rand(range(rowsMinMax...))
         c = rand(range(colsMinMax...))
         molecules[i] = (r, c)
@@ -80,7 +83,7 @@ end
 function addMolecules2container!(molecules::Vec{Pos},
                                  container!::Matrix{Char})::Nothing
     for molecule in molecules
-        if isWithinContainer(molecule, container!)
+        if isWithinContainer(molecule)
             container![molecule...] = MOLECULE
         end
     end
@@ -97,14 +100,13 @@ end
 
 # assumption: molecules may pass through each other (or occupy the same pixel in 2D)
 # since they move past each other in the third (not drawn) dimension
-function make1BrownianCycleShift!(molecules!::Vec{Pos},
-                                  container::Matrix{Char})::Nothing
+function make1BrownianCycleShift!(molecules::Vec{Pos})::Nothing
     i::Int = 1
     newPos::Pos = (0, 0)
     while i <= N_MOLECULES
-        newPos = getNewPosition(molecules![i])
-        if isWithinContainer(newPos, container)
-            molecules![i] = newPos
+        newPos = getNewPosition(molecules[i])
+        if isWithinContainer(newPos)
+            molecules[i] = newPos
             i += 1
         end
     end
@@ -123,59 +125,61 @@ end
 getCol((_, c)::Pos)::Int = c
 
 function getRightLeftCountsInfo(molecules::Vec{Pos})::Str
-    cols::Vec{Int} = map(getCol, molecules)
+    colsWithMolecules::Vec{Int} = map(getCol, molecules)
     midCol::Int = round2int(N_COLS/2)
-    lCount::Int = sum(cols .<= midCol)
-    rCount::Int = sum(cols .> midCol)
+    lCount::Int = sum(colsWithMolecules .<= midCol)
+    rCount::Int = sum(colsWithMolecules .> midCol)
     return "Left count: $lCount | Right count: $rCount"
 end
 
 function redrawDisplay(container::Matrix{Char},
                        molecules::Vec{Pos},
                        nCycle::Int)::Nothing
-    clearDisplay(N_ROWS+2) # container + 2 info lines
+    clearDisplay(N_ROWS+2) # container + 2 info lines below
     println("Cycle no: $nCycle/$N_CYCLES")
     println(getRightLeftCountsInfo(molecules))
     printContainer(container)
     return nothing
 end
 
-function simulateBrownianMotion!(nCycles::Int=N_CYCLES)::Nothing
+function simulateBrownianMotions(nCycles::Int=N_CYCLES)::Nothing
     @assert 500 < nCycles < 1e5 "nCycles must be in range (500, 1e5)"
     container::Matrix{Char} = getEmptyContainer()
     molecules::Vec{Pos} = fill((0, 0), N_MOLECULES)
-    placeMoleculesRandomly!(molecules, (2, N_ROWS), (2, round2int(N_COLS/2)))
-    addMolecules2container!(molecules, container)
 
+
+    placeMoleculesRandomly!(molecules,
+                            # adjusted for borders
+                            (2, N_ROWS-1),
+                            (2, round2int((N_COLS-2)/2)))
+    addMolecules2container!(molecules, container)
     redrawDisplay(container, molecules, 0)
 
     for cycleNumber in 1:nCycles
-        make1BrownianCycleShift!(molecules, container)
+        make1BrownianCycleShift!(molecules)
         emptyContainer!(container)
         addMolecules2container!(molecules, container)
         sleep(DELAY_SEC)
         redrawDisplay(container, molecules, cycleNumber)
     end
+
     return nothing
 end
 
 rnd2(x::Flt)::Flt = round(x, digits=2)
 
 function main()::Nothing
-    durationSec::Flt = DELAY_SEC * N_CYCLES
-    durationMin::Flt = durationSec / 60
-
     println("\nThis is a toy program that models simplified diffusion.")
     println("Note: your terminal must support ANSI escape codes.\n")
 
     println("Estimated execution time of the program:")
-    println("$(rnd2(durationSec)) seconds or $(rnd2(durationMin)) minutes.")
+    println("$(rnd2(DURATION_SEC)) seconds or $(rnd2(DURATION_MIN)) minutes.")
 
     # y(es) - default choice (also with Enter), anything else: no
     println("\nContinue with the simulation? [Y/n]")
     choice::Str = readline()
     if lowercase(strip(choice)) in ["y", "yes", ""]
-        simulateBrownianMotion!()
+        simulateBrownianMotions()
     end
 
     println("\nThat's all. Goodbye!")
