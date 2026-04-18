@@ -22,6 +22,11 @@ motion](https://en.wikipedia.org/wiki/Brownian_motion). See if the diffusion
 works, by comparing initial distribution of particles with the distribution
 after a few thousand cycles.
 
+> **_WARNING:_** While running the program in terminal the screen may
+> flicker. If that's a problem (you will feel unwell) then you may skip this
+> exercise. Remember that you should be able to abort the program (terminal
+> application) at any time by pressing Ctrl-C.
+
 ## Solution {#sec:diffusion_solution}
 
 The solution goes here.
