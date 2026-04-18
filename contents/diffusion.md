@@ -31,4 +31,46 @@ distribution after a few thousand cycles.
 
 ## Solution {#sec:diffusion_solution}
 
-The solution goes here.
+Let's start with the container and its functionality.
+
+```jl
+s = """
+N_COLS = 80
+N_ROWS = 40
+
+function addBorders!(container::Matrix{Char})::Nothing
+    container[:, 1] .= '|'
+    container[:, N_COLS] .= '|'
+    container[1, :] .= '-'
+    container[N_ROWS, :] .= '-'
+    return nothing
+end
+
+function getEmptyContainer()::Matrix{Char}
+    container::Matrix{Char} = fill(' ', N_ROWS, N_COLS);
+    addBorders!(container)
+    return container
+end
+
+function printContainer(container::Matrix{Char})::Nothing
+    for r in 1:N_ROWS
+        println(container[r, :] |> join)
+    end
+    return nothing
+end
+
+function clearDisplay(nLinesUp::Int)::Nothing
+    @assert 0 < nLinesUp "nLinesUp must be a positive integer"
+    # "\\033[xxxA" - xxx moves cursor up xxx LINES
+    print("\\033[" * string(nLinesUp) * "A")
+    # "\\033[0J" - clears from cursor position till the end of the screen
+    print("\\033[0J")
+    return nothing
+end
+"""
+replace(sc(s), "N_COLS" => "const N_COLS", "N_ROWS" => "const N_ROWS")
+```
+
+The `container` is just a `Matrix` (a table) of characters (`Chars`) that's
+constrained by the borders (`|` and `-`) and initially contains nothing inside
+(`fill(' ', N_ROWS, N_COLS)`).
