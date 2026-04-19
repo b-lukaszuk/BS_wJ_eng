@@ -141,3 +141,53 @@ emphasize that only it will be modified by the function
 (`placeMoleculesRandomly!` may modify only `molecules` so there is no need for
 an extra `!` which might be confusing at first glance).
 
+Each molecule does [Brownian motion](https://en.wikipedia.org/wiki/Brownian_motion):
+
+> [...] a normal distribution with the mean $\mu = 0$ and variance $\sigma^{2} =
+> 2Dt$ usually called Brownian motion $B_{t}$ [...]
+
+Here, we are OK with all the molecules being identical (and sharing identical
+properties). Therefore, for simplicity we'll just assume that `D = 0.5` and `t =
+1`, hence `2Dt = 1`. This last action will give us normal distribution with mean
+$\mu = 0$ and variance $\sigma^{2} = 1$ (standard deviation `sd` is also 1,
+since $sd = \sqrt{variance}$). Luckily, that is what the built-in
+[randn](https://docs.julialang.org/en/v1/stdlib/Random/#Base.randn) function
+provides. Hence, we will calculate the new position of a molecule to be
+`new_position = old_position + randn()` and implement it like so:
+
+```jl
+s = """
+round2int(f::Flt)::Int = round(Int, f)
+
+function getNewPosition(molecule::Pos)::Pos
+    r::Int = round2int(randn())
+    c::Int = round2int(randn())
+    return molecule .+ (r, c)
+end
+
+# assumption: molecules may pass through each other
+# (or occupy the same pixel in 2D) since they move
+# past each other in the third (not drawn) dimension
+function make1BrownianCycleShift!(molecules::Vec{Pos})::Nothing
+    i::Int = 1
+    newPos::Pos = (0, 0)
+    while i <= N_MOLECULES
+        newPos = getNewPosition(molecules[i])
+        if isWithinContainer(newPos)
+            molecules[i] = newPos
+            i += 1
+        end
+    end
+    return nothing
+end
+"""
+sc(s)
+```
+
+The terminal display requires us to give a shift in integers, hence `round2int`
+implemented as [single expression function
+syntax](https://en.wikibooks.org/wiki/Introducing_Julia/Functions#Single_expression_functions).
+Moreover, we cannot allow a particle to go outside the walls of the container,
+thus the `if isWithinContainer(newPos), etc.` statement. It makes sure that the
+molecule 'falls back' to the container. Effectively, it kind of simulates its
+reflection from the walls of the vessel.
