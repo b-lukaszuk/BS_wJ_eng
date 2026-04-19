@@ -1,12 +1,14 @@
 # the code in this file is meant to serve as a programming exercise only
 # it may not act correctly
 
+# custom data types
 const Flt = Float64
-const Pos = Tuple{Int, Int} # position, (row, col) in 2D container
+const Pos = Tuple{Int, Int} # position (row, col) in 2D container
 const Str = String
 const Vec = Vector
 
-const DELAY_SEC = 0.2
+# just constants
+const DELAY_SEC = 0.1
 const N_CYCLES = 2_500
 const SECS_PER_MIN = 60
 const DURATION_SEC = DELAY_SEC * N_CYCLES
@@ -39,7 +41,7 @@ end
 
 function isWithinContainer(molecule::Pos)::Bool
     row, col = molecule
-    # corrected for borders
+    # accounts for borders
     return (1 < row < N_ROWS) && (1 < col < N_COLS)
 end
 
@@ -52,22 +54,21 @@ function emptyContainer!(container::Matrix{Char})::Nothing
     return nothing
 end
 
-# assumption: molecules may pass through each other (or occupy the same pixel in 2D)
-# since they move past each other in the third (not drawn) dimension
+# assumption: molecules may pass through each other
+# (or occupy the same pixel in 2D), since they move past each other
+# in the third (not drawn) dimension
 function placeMoleculesRandomly!(molecules::Vec{Pos},
-                                 rowsMinMax::Tuple{Int, Int},
-                                 colsMinMax::Tuple{Int, Int})::Nothing
-    rMin::Int, rMax::Int = rowsMinMax
-    cMin::Int, cMax::Int = colsMinMax
-    @assert isWithinContainer((rMin, cMin)) "(rMin, cMin) outside of container"
-    @assert isWithinContainer((rMax, cMax)) "(rMax, cMax) outside of container"
-    i::Int = 1
+                                 rowMin::Int, rowMax::Int,
+                                 colMin::Int, colMax::Int)::Nothing
+    @assert(isWithinContainer((rowMin, colMin)),
+            "(rowMin, colMin) outside of container")
+    @assert(isWithinContainer((rowMax, colMax)),
+            "(rowMax, colMax) outside of container")
     r::Int, c::Int = 0, 0
-    while i <= N_MOLECULES
-        r = rand(range(rowsMinMax...))
-        c = rand(range(colsMinMax...))
+    for i in eachindex(molecules)
+        r = rand(rowMin:rowMax)
+        c = rand(colMin:colMax)
         molecules[i] = (r, c)
-        i += 1
     end
     return nothing
 end
@@ -85,9 +86,9 @@ end
 round2int(f::Flt)::Int = round(Int, f)
 
 function getNewPosition(molecule::Pos)::Pos
-    r::Int = round2int(randn())
-    c::Int = round2int(randn())
-    return molecule .+ (r, c)
+    rowShift::Int = randn() |> round2int
+    colShift::Int = randn() |> round2int
+    return molecule .+ (rowShift, colShift)
 end
 
 # assumption: molecules may pass through each other (or occupy the same pixel in 2D)
@@ -135,15 +136,15 @@ function redrawDisplay(container::Matrix{Char},
 end
 
 function simulateBrownianMotions(nCycles::Int=N_CYCLES)::Nothing
-    @assert 500 < nCycles < 1e5 "nCycles must be in range (500, 1e5)"
+    @assert 500 <= nCycles <= 1e5 "nCycles must be in range [500, 1e5]"
+
     container::Matrix{Char} = getEmptyContainer()
     molecules::Vec{Pos} = fill((0, 0), N_MOLECULES)
-
-
     placeMoleculesRandomly!(molecules,
                             # adjusted for borders
-                            (2, N_ROWS-1),
-                            (2, round2int((N_COLS-2)/2)))
+                            2, N_ROWS-1,
+                            2, round2int((N_COLS-2)/2)
+                            )
     addMolecules2container!(molecules, container)
     redrawDisplay(container, molecules, 0)
 
@@ -166,7 +167,7 @@ function main()::Nothing
 
     println("Estimated execution time of the program:")
     println("$(rnd2(DURATION_SEC)) seconds or $(rnd2(DURATION_MIN)) minutes.")
-    println("WARNING: the screen will flicker (Ctrl-C should abort the program).")
+    println("WARNING: the screen may flicker (Ctrl-C should abort the program).")
 
     # y(es) - default choice (also with Enter), anything else: no
     println("\nContinue with the simulation? [Y/n]")
