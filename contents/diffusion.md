@@ -74,3 +74,20 @@ replace(sc(s), "N_COLS" => "const N_COLS", "N_ROWS" => "const N_ROWS")
 The `container` is just a `Matrix` (a table) of characters (`Chars`) that's
 constrained by the borders (`|` and `-`) and initially contains nothing inside
 (`fill(' ', N_ROWS, N_COLS)`).
+
+The container will contain `molecules` inside. The above will be defined as a
+vector of positions denoting their locations (row and column) within the matrix
+(our `container`).
+
+```jl
+s = """
+Pos = Tuple{Int, Int} # position (row, col) in 2D container
+
+function isWithinContainer(molecule::Pos)::Bool
+    row, col = molecule
+    # accounts for borders
+    return (1 < row < N_ROWS) && (1 < col < N_COLS)
+end
+"""
+replace(sc(s), "Pos =" => "const Pos =")
+```
