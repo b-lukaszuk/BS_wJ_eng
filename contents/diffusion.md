@@ -191,3 +191,72 @@ Moreover, we cannot allow a particle to go outside the walls of the container,
 thus the `if isWithinContainer(newPos), etc.` statement. It makes sure that the
 molecule 'falls back' to the container. Effectively, it kind of simulates its
 reflection from the walls of the vessel.
+
+Now, we are almost ready for running our simulation, but first two more, rather
+self-explanatory functions:
+
+```jl
+s = """
+N_CYCLES = 500
+
+function getRightLeftCountsInfo(molecules::Vec{Pos})::Str
+    colsWithMolecules::Vec{Int} = map(getCol, molecules)
+    midCol::Int = round2int(N_COLS/2)
+    lCount::Int = sum(colsWithMolecules .<= midCol)
+    rCount::Int = sum(colsWithMolecules .> midCol)
+    return "Left count: \$lCount | Right count: \$rCount"
+end
+
+function redrawDisplay(container::Matrix{Char},
+                       molecules::Vec{Pos},
+                       nCycle::Int)::Nothing
+    clearDisplay(N_ROWS+2) # container + 2 info lines below
+    println("Cycle no: \$nCycle/\$N_CYCLES")
+    println(getRightLeftCountsInfo(molecules))
+    printContainer(container)
+    return nothing
+end
+"""
+replace(sc(s), "N_CYCLES =" => "const N_CYCLES =")
+```
+
+Finally, crème de la crème, the simulation itself.
+
+```jl
+s = """
+DELAY_SEC = 0.2
+
+function simulateBrownianMotions(nCycles::Int=N_CYCLES)::Nothing
+    @assert 500 <= nCycles <= 1e5 "nCycles must be in range [500, 1e5]"
+    container::Matrix{Char} = getEmptyContainer()
+    molecules::Vec{Pos} = fill((0, 0), N_MOLECULES)
+
+
+    placeMoleculesRandomly!(molecules,
+                            # adjusted for borders
+                            2, N_ROWS-1,
+                            2, round2int((N_COLS-2)/2)
+                            )
+    addMolecules2container!(molecules, container)
+    redrawDisplay(container, molecules, 0)
+
+    for cycleNumber in 1:nCycles
+        emptyContainer!(container)
+        make1BrownianCycleShift!(molecules)
+        addMolecules2container!(molecules, container)
+        sleep(DELAY_SEC)
+        redrawDisplay(container, molecules, cycleNumber)
+    end
+
+    return nothing
+end
+"""
+replace(sc(s), "DELAY_SEC =" => "const DELAY_SEC =")
+```
+
+Nothing special here, we just declare the `container` and `molecules` and
+initialize them with the appropriate values. Then, `for` each cycle `1:nCycles`
+we `make1BrownianCycleShift`, remove the old molecules symbols from container
+(`emptyContainer`), add the new, shifted molecules (`addMolecules2container`),
+pause for a moment (`sleep`) and redraw everything (`redrawDisplay`).
+
