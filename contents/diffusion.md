@@ -91,3 +91,53 @@ end
 """
 replace(sc(s), "Pos =" => "const Pos =")
 ```
+
+At first `molecules` will be placed randomly within the `container`.
+
+```jl
+s = """
+# assumption: molecules may pass through each other
+# (or occupy the same pixel in 2D) since they move
+# past each other in the third (not drawn) dimension
+function placeMoleculesRandomly!(molecules::Vec{Pos},
+                                 rowMin::Int, rowMax::Int,
+                                 colMin::Int, colMax::Int)::Nothing
+    @assert(isWithinContainer((rowMin, colMin)),
+            "(rowMin, colMin) outside of container")
+    @assert(isWithinContainer((rowMax, colMax)),
+            "(rowMax, colMax) outside of container")
+    r::Int, c::Int = 0, 0
+    for i in eachindex(molecules)
+        r = rand(rowMin:rowMax)
+        c = rand(colMin:colMax)
+        molecules[i] = (r, c)
+    end
+    return nothing
+end
+
+const MOLECULE = '.'
+
+function addMolecules2container!(molecules::Vec{Pos},
+                                 container!::Matrix{Char})::Nothing
+    for molecule in molecules
+        if isWithinContainer(molecule)
+            container![molecule...] = MOLECULE
+        end
+    end
+    return nothing
+end
+"""
+sc(s)
+```
+
+Using `rowMin`/`rowMax`, `colMin`/`colMax` allows to place the molecules only in
+some part of the matrix (per task specification it will be the left
+side). Notice `!` character in `addMolecules2container!`. Per Julia's convention
+it was added to the name of the function that modifies its contents. However,
+both `molecules` (`Vec{Pos}`) and `container` (`Matrix{Char}`) are passed by
+reference. So a question may arise which one of the two (or maybe both) will get
+modified. To help with the answer the second parameter was named `container!` to
+emphasize that only it will be modified by the function
+(`placeMoleculesRandomly!` may modify only `molecules` so there is no need for
+an extra `!` which might be confusing at first glance).
+
