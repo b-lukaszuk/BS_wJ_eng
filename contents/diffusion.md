@@ -260,3 +260,46 @@ we `make1BrownianCycleShift`, remove the old molecules symbols from container
 (`emptyContainer`), add the new, shifted molecules (`addMolecules2container`),
 pause for a moment (`sleep`) and redraw everything (`redrawDisplay`).
 
+All that's left to do is to add `main` function for terminal execution.
+
+```
+const SECS_PER_MIN = 60
+const DURATION_SEC = DELAY_SEC * N_CYCLES
+const DURATION_MIN = DURATION_SEC / SECS_PER_MIN
+
+rnd2(x::Flt)::Flt = round(x, digits=2)
+
+function main()::Nothing
+    println("\nThis is a toy program that models simplified diffusion.")
+    println("Note: your terminal must support ANSI escape codes.\n")
+
+    println("Estimated execution time of the program:")
+    print("$(rnd2(DURATION_SEC)) seconds or $(rnd2(DURATION_MIN)) ")
+	println("minutes.")
+    print("WARNING: the screen will flicker ")
+	println("(Ctrl-C should abort the program).")
+
+    # y(es) - default choice (also with Enter), anything else: no
+    println("\nContinue with the simulation? [Y/n]")
+    choice::Str = readline()
+    if lowercase(strip(choice)) in ["y", "yes", ""]
+        simulateBrownianMotions()
+    end
+
+    println("\nThat's all. Goodbye!")
+
+    return nothing
+end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
+end
+```
+
+The end result is below (@fig:diffusionFinalFrame).
+
+![Simplified diffusion simulation (final frame).](./images/diffusionFinalFrame.png){#fig:diffusionFinalFrame}
+
+Amazing, so the diffusion works, even simplified as ours. All it took was a
+simulation of Brownian motion, a reflection from a wall of container and a few
+thousand cycles to prove it.
