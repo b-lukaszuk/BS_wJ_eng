@@ -14,16 +14,18 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/diffus
 
 This time your job is to write a simplified
 [diffusion](https://en.wikipedia.org/wiki/Diffusion) simulator. It may or may
-not be a terminal app.
+not be a terminal app (mine runs in terminal).
 
 For that purpose create a container (let's say 40x80) and fill its left half
 with let's say 150 molecules (like in @fig:diffusionFirstFrame) that are sped by
 [Brownian motion](https://en.wikipedia.org/wiki/Brownian_motion). See if the
 diffusion works, by comparing initial distribution of particles with the
-distribution after a few thousand cycles.
+distribution after a few thousand cycles. To make it simpler you don't have to
+handle the collisions between the molecules (assume they pass each other in the
+third dimension), but make sure they won't go out of the container.
 
 > **_WARNING:_** While running the program in terminal the screen may
-> flicker. If that's a problem (you will feel unwell) then you may skip this
+> flicker. If that's a problem (you may feel unwell) then you can skip this
 > exercise. Remember that you should be able to abort the program (terminal
 > application) at any time by pressing Ctrl-C.
 
@@ -68,16 +70,15 @@ function clearDisplay(nLinesUp::Int)::Nothing
     return nothing
 end
 """
-replace(sc(s), "N_COLS" => "const N_COLS", "N_ROWS" => "const N_ROWS")
+replace(sc(s), "N_COLS =" => "const N_COLS =", "N_ROWS =" => "const N_ROWS =")
 ```
 
 The `container` is just a `Matrix` (a table) of characters (`Chars`) that's
 constrained by the borders (`|` and `-`) and initially contains nothing inside
 (`fill(' ', N_ROWS, N_COLS)`).
 
-The container will contain `molecules` inside. The above will be defined as a
-vector of positions denoting their locations (row and column) within the matrix
-(our `container`).
+Now we need our `molecules`. The above will be defined as a vector of positions
+denoting their locations (row and column) within the matrix (our `container`).
 
 ```jl
 s = """
@@ -92,7 +93,7 @@ end
 replace(sc(s), "Pos =" => "const Pos =")
 ```
 
-At first `molecules` will be placed randomly within the `container`.
+At first `molecules` will occupy random positions.
 
 ```jl
 s = """
@@ -139,31 +140,39 @@ reference. So a question may arise which one of the two (or maybe both) will get
 modified. To help with the answer the second parameter was named `container!` to
 emphasize that only it will be modified by the function
 (`placeMoleculesRandomly!` may modify only `molecules` so there is no need for
-an extra `!` which might be confusing at first glance).
+an extra `!` which might be confusing at first glance). Anyway, the key thing is
+that based on the positions (`molecules`) we placed a marker `MOLECULE = '.'` in
+our `container` which later on will be displayed to the user.
 
-Each molecule does [Brownian motion](https://en.wikipedia.org/wiki/Brownian_motion):
+Each molecule is characterized by [Brownian
+motion](https://en.wikipedia.org/wiki/Brownian_motion) or:
 
 > [...] a normal distribution with the mean $\mu = 0$ and variance $\sigma^{2} =
 > 2Dt$ usually called Brownian motion $B_{t}$ [...]
 
+> (quote from the Wiki link provided above)
+
 Here, we are OK with all the molecules being identical (and sharing identical
-properties). Therefore, for simplicity we'll just assume that `D = 0.5` and `t =
-1`, hence `2Dt = 1`. This last action will give us normal distribution with mean
-$\mu = 0$ and variance $\sigma^{2} = 1$ (standard deviation `sd` is also 1,
-since $sd = \sqrt{variance}$). Luckily, that is what the built-in
+properties). Moreover, for simplicity we'll just assume that `D = 0.5` and `t =
+1`, hence `2Dt = 1`. This last action will give us a normal distribution with
+the mean $\mu = 0$ and variance $\sigma^{2} = 1$ (standard deviation `sd` is
+also 1, since $sd = \sqrt{variance}$). Luckily, that is what the built-in
 [randn](https://docs.julialang.org/en/v1/stdlib/Random/#Base.randn) function
 provides. Hence, we will calculate the new position of a molecule to be
-`new_position = old_position + randn()` and implement it like so:
+`new_position = old_position + shift` (`randn()` provides the shift) and
+implement it like so:
 
 ```jl
 s = """
 round2int(f::Flt)::Int = round(Int, f)
 
 function getNewPosition(molecule::Pos)::Pos
-    r::Int = round2int(randn())
-    c::Int = round2int(randn())
-    return molecule .+ (r, c)
+    rowShift::Int = randn() |> round2int
+    colShift::Int = randn() |> round2int
+    return molecule .+ (rowShift, colShift)
 end
+
+N_MOLECULES = 150
 
 # assumption: molecules may pass through each other
 # (or occupy the same pixel in 2D) since they move
@@ -181,23 +190,26 @@ function make1BrownianCycleShift!(molecules::Vec{Pos})::Nothing
     return nothing
 end
 """
-sc(s)
+replace(sc(s), "N_MOLECULES =" => "const N_MOLECULES =")
 ```
 
-The terminal display requires us to give a shift in integers, hence `round2int`
+The terminal display will require to give a shift in integers, hence `round2int`
 implemented as [single expression function
 syntax](https://en.wikibooks.org/wiki/Introducing_Julia/Functions#Single_expression_functions).
 Moreover, we cannot allow a particle to go outside the walls of the container,
-thus the `if isWithinContainer(newPos), etc.` statement. It makes sure that the
-molecule 'falls back' to the container. Effectively, it kind of simulates its
-reflection from the walls of the vessel.
+thus the `if isWithinContainer(newPos), etc.` statement. Together with the
+surrounding `while` block it makes sure that the molecule 'falls back' to the
+container. Effectively, it kind of simulates a reflection of a molecule from the
+walls of the vessel in a random direction.
 
 Now, we are almost ready for running our simulation, but first two more, rather
-self-explanatory functions:
+self-explanatory, functions:
 
 ```jl
 s = """
-N_CYCLES = 500
+N_CYCLES = 2_500
+
+getCol((_, c)::Pos)::Int = c
 
 function getRightLeftCountsInfo(molecules::Vec{Pos})::Str
     colsWithMolecules::Vec{Int} = map(getCol, molecules)
@@ -224,14 +236,13 @@ Finally, crème de la crème, the simulation itself.
 
 ```jl
 s = """
-DELAY_SEC = 0.2
+DELAY_SEC = 0.1
 
 function simulateBrownianMotions(nCycles::Int=N_CYCLES)::Nothing
     @assert 500 <= nCycles <= 1e5 "nCycles must be in range [500, 1e5]"
+
     container::Matrix{Char} = getEmptyContainer()
     molecules::Vec{Pos} = fill((0, 0), N_MOLECULES)
-
-
     placeMoleculesRandomly!(molecules,
                             # adjusted for borders
                             2, N_ROWS-1,
@@ -241,8 +252,8 @@ function simulateBrownianMotions(nCycles::Int=N_CYCLES)::Nothing
     redrawDisplay(container, molecules, 0)
 
     for cycleNumber in 1:nCycles
-        emptyContainer!(container)
         make1BrownianCycleShift!(molecules)
+        emptyContainer!(container)
         addMolecules2container!(molecules, container)
         sleep(DELAY_SEC)
         redrawDisplay(container, molecules, cycleNumber)
@@ -256,11 +267,13 @@ replace(sc(s), "DELAY_SEC =" => "const DELAY_SEC =")
 
 Nothing special here, we just declare the `container` and `molecules` and
 initialize them with the appropriate values. Then, `for` each cycle `1:nCycles`
-we `make1BrownianCycleShift`, remove the old molecules symbols from container
-(`emptyContainer`), add the new, shifted molecules (`addMolecules2container`),
-pause for a moment (`sleep`) and redraw everything (`redrawDisplay`).
+we `make1BrownianCycleShift`, remove the old molecules symbols from the
+`container` (`emptyContainer`), add the symbols of new, shifted molecules
+(`addMolecules2container`), pause for a moment (`sleep`) and redraw everything
+(`redrawDisplay`).
 
-All that's left to do is to add `main` function for terminal execution.
+All that's left to do is to add the `main` function since the app is meant to be
+run from terminal.
 
 ```
 const SECS_PER_MIN = 60
@@ -276,7 +289,7 @@ function main()::Nothing
     println("Estimated execution time of the program:")
     print("$(rnd2(DURATION_SEC)) seconds or $(rnd2(DURATION_MIN)) ")
 	println("minutes.")
-    print("WARNING: the screen will flicker ")
+    print("WARNING: the screen may flicker ")
 	println("(Ctrl-C should abort the program).")
 
     # y(es) - default choice (also with Enter), anything else: no
@@ -301,5 +314,5 @@ The end result is below (@fig:diffusionFinalFrame).
 ![Simplified diffusion simulation (final frame).](./images/diffusionFinalFrame.png){#fig:diffusionFinalFrame}
 
 Amazing, so the diffusion works, even simplified as ours. All it took was a
-simulation of Brownian motion, a reflection from a wall of container and a few
-thousand cycles to prove it.
+simulation of Brownian motion, a reflection from a wall of the container and a
+few thousand cycles of random shifts to properly mix the particles.
