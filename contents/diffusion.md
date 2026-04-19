@@ -138,13 +138,14 @@ it was added to the name of the function that modifies its contents. However,
 both `molecules` (`Vec{Pos}`) and `container` (`Matrix{Char}`) are passed by
 reference. So a question may arise which one of the two (or maybe both) will get
 modified. To help with the answer the second parameter was named `container!` to
-emphasize that only it will be modified by the function
-(`placeMoleculesRandomly!` may modify only `molecules` so there is no need for
-an extra `!` which might be confusing at first glance). Anyway, the key thing is
-that based on the positions (`molecules`) we placed a marker `MOLECULE = '.'` in
-our `container` which later on will be displayed to the user.
+emphasize that only it will be modified by the function. On the other hand,
+`placeMoleculesRandomly!` may modify at most one of its arguments (`molecules`)
+so there is no need for an extra `!` which might be confusing at first
+glance. Anyway, the key thing is that based on the positions (`molecules`) we
+placed a marker `MOLECULE = '.'` in our `container` which later on will be
+displayed to the user.
 
-Each molecule is characterized by [Brownian
+Time to implement [Brownian
 motion](https://en.wikipedia.org/wiki/Brownian_motion) or:
 
 > [...] a normal distribution with the mean $\mu = 0$ and variance $\sigma^{2} =
@@ -154,9 +155,10 @@ motion](https://en.wikipedia.org/wiki/Brownian_motion) or:
 
 Here, we are OK with all the molecules being identical (and sharing identical
 properties). Moreover, for simplicity we'll just assume that `D = 0.5` and `t =
-1`, hence `2Dt = 1`. This last action will give us a normal distribution with
-the mean $\mu = 0$ and variance $\sigma^{2} = 1$ (standard deviation `sd` is
-also 1, since $sd = \sqrt{variance}$). Luckily, that is what the built-in
+1`, hence `2Dt = 1`. This last action will give us [a normal
+distribution](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_normal_distribution.html)
+with the mean $\mu = 0$ and variance $\sigma^{2} = 1$ (standard deviation `sd`
+is also 1, since $sd = \sqrt{variance}$). Luckily, that is what the built-in
 [randn](https://docs.julialang.org/en/v1/stdlib/Random/#Base.randn) function
 provides. Hence, we will calculate the new position of a molecule to be
 `new_position = old_position + shift` (`randn()` provides the shift) and
@@ -202,7 +204,7 @@ surrounding `while` block it makes sure that the molecule 'falls back' to the
 container. Effectively, it kind of simulates a reflection of a molecule from the
 walls of the vessel in a random direction.
 
-Now, we are almost ready for running our simulation, but first two more, rather
+Now we are almost ready for running our simulation, but first two, rather
 self-explanatory, functions:
 
 ```jl
@@ -265,10 +267,10 @@ end
 replace(sc(s), "DELAY_SEC =" => "const DELAY_SEC =")
 ```
 
-Nothing special here, we just declare the `container` and `molecules` and
-initialize them with the appropriate values. Then, `for` each cycle `1:nCycles`
-we `make1BrownianCycleShift`, remove the old molecules symbols from the
-`container` (`emptyContainer`), add the symbols of new, shifted molecules
+Nothing special here, we just declare `container`/`molecules` and initialize
+them with the appropriate values. Then, `for` each cycle `1:nCycles` we
+`make1BrownianCycleShift`, remove the old molecules symbols from the `container`
+(`emptyContainer`), add the symbols of new, shifted molecules
 (`addMolecules2container`), pause for a moment (`sleep`) and redraw everything
 (`redrawDisplay`).
 
@@ -309,10 +311,11 @@ if abspath(PROGRAM_FILE) == @__FILE__
 end
 ```
 
-The end result is below (@fig:diffusionFinalFrame).
+The end result is to be seen below (@fig:diffusionFinalFrame).
 
 ![Simplified diffusion simulation (final frame).](./images/diffusionFinalFrame.png){#fig:diffusionFinalFrame}
 
-Amazing, so the diffusion works, even simplified as ours. All it took was a
-simulation of Brownian motion, a reflection from a wall of the container and a
-few thousand cycles of random shifts to properly mix the particles.
+Amazing. So the diffusion works in the room you find yourself in and even in our
+oversimplified simulation. All it took was a mock-up of Brownian motion, a
+reflection from a wall of the container and a few thousand cycles of random
+shifts to properly mix the particles.
