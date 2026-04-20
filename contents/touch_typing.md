@@ -17,7 +17,7 @@ In this exercise your job is to write a
 similar to the one presented in the GIF below, that measures your (touch) typing
 speed.
 
-![A terminal based application that measures typing speed.](./images/touchTyping.gif){#fig:touchTyping}
+![A terminal based application that measures typing speed (animation works only in an HTML document).](./images/touchTyping.gif){#fig:touchTyping}
 
 Your program should:
 
