@@ -73,3 +73,23 @@ function getNumLiveNeighbours(universe::Universe, row::Int, col::Int)::Int
     end
     return nAlive
 end
+
+function shouldCellBeAlive(univere::Universe, row::Int, col::Int)::Bool
+    nLiveNeighbours::Int = getNumLiveNeighbours(univere, row, col)
+    if univere[row, col]
+        return 2 <= nLiveNeighbours <= 3
+    end
+    return nLiveNeighbours == 3
+end
+
+function getUniverseNextState(univere::Universe)::Universe
+    newUniverse::Universe = getEmptyUniverse()
+    for r in 1:N_ROWS, c in 1:N_COLS
+        newUniverse[r, c] = shouldCellBeAlive(univere, r, c)
+    end
+    return newUniverse
+end
+
+function areAllCellsDead(univere::Universe)::Bool
+    return sum(univere) == 0
+end
