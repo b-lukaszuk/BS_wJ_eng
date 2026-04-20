@@ -32,3 +32,44 @@ function printUniverse(u::Universe, cycleNum::Int)::Nothing
     end
     return nothing
 end
+
+# https://en.wikipedia.org/wiki/ANSI_escape_code
+function clearDisplay(nLinesUp::Int)::Nothing
+    @assert 0 < nLinesUp "nLinesUp must be a positive integer"
+    # "\033[xxxA" - xxx moves cursor up xxx LINES
+    print("\033[" * string(nLinesUp) * "A")
+    # "\033[0J" - clears from cursor position till the end of the screen
+    print("\033[0J")
+    return nothing
+end
+
+function reprintUniverse(u::Universe, cycleNum::Int)::Nothing
+    clearDisplay(N_ROWS+1) # +1 cause info line
+    printUniverse(u, cycleNum)
+    return nothing
+end
+
+function isCellWithinRange(row::Int, col::Int)::Bool
+    return (1 <= row <= N_ROWS) && (1 <= col <= N_COLS)
+end
+
+function getNumLiveNeighbours(universe::Universe, row::Int, col::Int)::Int
+    if !isCellWithinRange(row, col)
+        return 0
+    end
+    nAlive::Int = 0
+    neighbourRow::Int, neighbourCol::Int = 0, 0
+    for r in -1:1, c in -1:1
+        neighbourRow, neighbourCol = row+r, col+c
+        if !isCellWithinRange(neighbourRow, neighbourCol)
+            continue
+        end
+        if (neighbourRow == row && neighbourCol == col)
+            continue
+        end
+        if universe[neighbourRow, neighbourCol]
+            nAlive += 1
+        end
+    end
+    return nAlive
+end
