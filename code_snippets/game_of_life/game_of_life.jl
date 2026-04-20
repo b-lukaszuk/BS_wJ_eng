@@ -7,8 +7,10 @@
 const N_COLS = 80
 const N_ROWS = 40
 const PROB_ALIVE = 0.25
-const ALIVE_SYMBOL = '#'
+const ALIVE_SYMBOL = 'O'
 const DEAD_SYMBOL = '.'
+const DELAY_MS = 500
+const NUM_CYCLES = 50
 
 const Universe = Matrix{Bool}
 
@@ -93,4 +95,38 @@ end
 # early stop
 function areAllCellsDead(univere::Universe)::Bool
     return sum(univere) == 0
+end
+
+# prints the universe, runs cycle, repeats
+function runGameOfLife()
+    u::Universe = getRandUniverse()
+    printUniverse(u, 0)
+    for i in 1:NUM_CYCLES
+        u = getUniverseNextState(u)
+        reprintUniverse(u, i)
+        sleep(DELAY_MS / 1000)
+        if areAllCellsDead(u)
+            println("All cells are dead.")
+            break
+        end
+    end
+end
+
+function main()
+    println("Toy program.")
+    println("It displays a so called game of life.")
+    println("Note: your terminal must support ANSI escape codes.\n")
+
+    println("The game will run through $NUM_CYCLES cycles.")
+    println("You can abort it any time by pressing Ctrl+C.")
+    println("Press Enter to begin.")
+    _ = readline() # start game of life animation on keypress
+
+    runGameOfLife()
+
+    println("\nThat's all. Goodbye!")
+end
+
+if abspath(PROGRAM_FILE) == @__FILE__
+    main()
 end
