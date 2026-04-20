@@ -58,8 +58,8 @@ function getNumLiveNeighbours(universe::Universe, row::Int, col::Int)::Int
         return 0
     end
     nAlive::Int = 0
-    neighbourRow::Int, neighbourCol::Int = 0, 0
-    for r in -1:1, c in -1:1
+    neighbourCol::Int, neighbourRow::Int = 0, 0
+    for c in -1:1, r in -1:1
         neighbourRow, neighbourCol = row+r, col+c
         if !isCellWithinRange(neighbourRow, neighbourCol)
             continue
@@ -84,12 +84,13 @@ end
 
 function getUniverseNextState(univere::Universe)::Universe
     newUniverse::Universe = getEmptyUniverse()
-    for r in 1:N_ROWS, c in 1:N_COLS
+    for c in 1:N_COLS, r in 1:N_ROWS
         newUniverse[r, c] = shouldCellBeAlive(univere, r, c)
     end
     return newUniverse
 end
 
+# early stop
 function areAllCellsDead(univere::Universe)::Bool
     return sum(univere) == 0
 end
