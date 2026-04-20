@@ -12,6 +12,7 @@ const DEAD_SYMBOL = '.'
 const DELAY_MS = 500
 const NUM_CYCLES = 50
 
+const Str = String
 const Universe = Matrix{Bool}
 
 function getEmptyUniverse()::Universe
@@ -97,15 +98,14 @@ function areAllCellsDead(univere::Universe)::Bool
     return sum(univere) == 0
 end
 
-# prints the universe, runs cycle, repeats
 function runGameOfLife()
-    u::Universe = getRandUniverse()
-    printUniverse(u, 0)
+    universe::Universe = getRandUniverse()
+    printUniverse(universe, 0)
     for i in 1:NUM_CYCLES
-        u = getUniverseNextState(u)
-        reprintUniverse(u, i)
+        universe = getUniverseNextState(universe)
+        reprintUniverse(universe, i)
         sleep(DELAY_MS / 1000)
-        if areAllCellsDead(u)
+        if areAllCellsDead(universe)
             println("All cells are dead.")
             break
         end
@@ -113,16 +113,18 @@ function runGameOfLife()
 end
 
 function main()
-    println("Toy program.")
-    println("It displays a so called game of life.")
+    println("\nThis is a toy program, it displays a so called game of life.")
     println("Note: your terminal must support ANSI escape codes.\n")
 
     println("The game will run through $NUM_CYCLES cycles.")
-    println("You can abort it any time by pressing Ctrl+C.")
-    println("Press Enter to begin.")
-    _ = readline() # start game of life animation on keypress
+    println("WARNING: the screen may flicker (Ctrl-C should abort the program).")
 
-    runGameOfLife()
+    # y(es) - default choice (also with Enter), anything else: no
+    println("\nContinue with the game? [Y/n]")
+    choice::Str = readline()
+    if lowercase(strip(choice)) in ["y", "yes", ""]
+        runGameOfLife()
+    end
 
     println("\nThat's all. Goodbye!")
 end
