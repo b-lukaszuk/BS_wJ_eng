@@ -42,6 +42,7 @@ contents = [
     "shift",
     "caesar",
     "vigenere",
+    "game_of_life",
     "the_end",
 ]
 
