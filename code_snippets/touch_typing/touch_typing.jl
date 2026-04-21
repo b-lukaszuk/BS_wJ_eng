@@ -6,12 +6,16 @@ const Str = String
 const Vec = Vector
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
-function getGreen(c::Char)::Str
+function getGreenFG(c::Char)::Str
     return "\x1b[32m" * c * "\x1b[0m"
 end
 
-function getRed(c::Char)::Str
+function getRedFG(c::Char)::Str
     return "\x1b[31m" * c * "\x1b[0m"
+end
+
+function getRedBG(c::Char)::Str
+    return "\x1b[41m" * c * "\x1b[0m"
 end
 
 function isAbort(c::Char)::Bool
@@ -46,9 +50,11 @@ function printColoredTxt(typedTxt::Str, referenceTxt::Str)::Nothing
         if i > len
             print(referenceTxt[i])
         elseif typedTxt[i] == referenceTxt[i]
-            print(getGreen(referenceTxt[i]))
-        else
-            print(getRed(referenceTxt[i]))
+            print(getGreenFG(referenceTxt[i]))
+        elseif (typedTxt[i] != referenceTxt[i]) && (referenceTxt[i] == ' ')
+            print(getRedBG(referenceTxt[i])) # typing error, space
+        else # typing error other character
+            print(getRedFG(referenceTxt[i]))
         end
     end
     println()
@@ -199,18 +205,18 @@ function areRequirementsMet(txtForTyping::Str)::Bool
     println("Checking requirements...")
     if !isAnsiColorsSupport()
         requirementsMet &= false
-        println(getRed.("No suport for ANSI color codes found." |> c) |> j)
+        println(getRedFG.("No suport for ANSI color codes found." |> c) |> j)
     end
     if !isSttyPresent()
         requirementsMet &= false
-        println(getRed.("Didn't detect `stty` command." |> c) |> j)
+        println(getRedFG.("Didn't detect `stty` command." |> c) |> j)
     end
     if !isascii(txtForTyping)
         requirementsMet &= false
-        println(getRed.("Found non-ASCII characters." |> c) |> j)
+        println(getRedFG.("Found non-ASCII characters." |> c) |> j)
     end
     if requirementsMet
-        println(getGreen.("Requirements seem to be met.\n" |> c) |> j)
+        println(getGreenFG.("Requirements seem to be met.\n" |> c) |> j)
     end
     return requirementsMet
 end
