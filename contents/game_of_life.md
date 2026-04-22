@@ -27,6 +27,11 @@ The end result may look something like @fig:gameOfLife.
 
 ![A frame from the Conway's Game of Life.](./images/gameOfLife.png){#fig:gameOfLife}
 
+> **_WARNING:_** While running the program in terminal the screen may
+> flicker. If that's a problem (you may feel unwell) then you can skip this
+> exercise. Remember that you should be able to abort the program (terminal
+> application) at any time by pressing Ctrl-C.
+
 ## Solution {#sec:game_of_life_solution}
 
 The solution goes here.
