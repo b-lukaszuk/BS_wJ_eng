@@ -209,7 +209,3 @@ julia other_file_that_imports_progress_bar.jl
 ```
 
 will not.
-
-The final effect (at least a part of it) is to be seen below.
-
-![A mock progress bar (animation works only in an HTML document)](./images/progressBar.gif)
