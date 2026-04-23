@@ -35,12 +35,12 @@ function isFree2Take(field::Str)::Bool
     return !(field in PLAYERS)
 end
 
-function getRed(s::Str)::Str
+function getRed(s::Union{Char, Str})::Str
     # "\x1b[31m" sets forground color to red
     return "\x1b[31m" * s * "\x1b[0m"
 end
 
-function getGreen(c::Char)::Str
+function getGreen(c::Union{Char, Str})::Str
     return "\x1b[32m" * c * "\x1b[0m"
 end
 
@@ -232,18 +232,18 @@ function isAnsiColorSupport()::Bool
     end
 end
 
-function areRequirementsMet()::Bool
+function areRequirementsMet(verbose::Bool=true)::Bool
     requirementsMet::Bool = true
-    println("Checking the requirements...")
-    c(xs) = collect(xs)
-    j(xs) = join(xs)
+    verbose ? println("Checking requirements...") : nothing
     if !isAnsiColorSupport()
         requirementsMet &= false
-        println(getRed.("No suport for ANSI color codes found." |> c) |> j)
+        verbose ?
+            println(getRed("No suport for ANSI colors found.")) :
+            nothing
     end
-    if requirementsMet
-        println(getGreen.("Requirements seem to be met.\n" |> c) |> j)
-    end
+    (requirementsMet && verbose) ?
+        println(getGreen("Requirements seem to be met.\n")) :
+        nothing
     return requirementsMet
 end
 
