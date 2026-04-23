@@ -6,15 +6,15 @@ const Str = String
 const Vec = Vector
 
 # https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
-function getGreenFG(c::Char)::Str
+function getGreenFG(c::Union{Char, Str})::Str
     return "\x1b[32m" * c * "\x1b[0m"
 end
 
-function getRedFG(c::Char)::Str
+function getRedFG(c::Union{Char, Str})::Str
     return "\x1b[31m" * c * "\x1b[0m"
 end
 
-function getRedBG(c::Char)::Str
+function getRedBG(c::Union{Char, Str})::Str
     return "\x1b[41m" * c * "\x1b[0m"
 end
 
@@ -198,26 +198,30 @@ function isAnsiColorsSupport()::Bool
     end
 end
 
-function areRequirementsMet(txtForTyping::Str)::Bool
+function areRequirementsMet(txtForTyping::Str, verbose::Bool=true)::Bool
     requirementsMet::Bool = true
-    c(xs) = collect(xs)
-    j(xs) = join(xs)
-    println("Checking requirements...")
+    verbose ? println("Checking requirements...") : nothing
     if !isAnsiColorsSupport()
         requirementsMet &= false
-        println(getRedFG.("No suport for ANSI color codes found." |> c) |> j)
+        verbose ?
+            println(getRedFG("No suport for ANSI colors found.")) :
+            nothing
     end
     if !isSttyPresent()
         requirementsMet &= false
-        println(getRedFG.("Didn't detect `stty` command." |> c) |> j)
+        verbose ?
+            println(getRedFG("Didn't detect `stty` command.")) :
+            nothing
     end
     if !isascii(txtForTyping)
         requirementsMet &= false
-        println(getRedFG.("Found non-ASCII characters." |> c) |> j)
+        verbose ?
+            println(getGreenFG("Found non-ASCII characters.")) :
+            nothing
     end
-    if requirementsMet
-        println(getGreenFG.("Requirements seem to be met.\n" |> c) |> j)
-    end
+    (requirementsMet && verbose) ?
+        println(getGreenFG("Requirements seem to be met.\n")) :
+        nothing
     return requirementsMet
 end
 
