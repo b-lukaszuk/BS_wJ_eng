@@ -258,7 +258,8 @@ function main()::Nothing
     printInfo(text2TypeFilePath)
 
     if !areRequirementsMet(txt2type)
-        println("\nLeaving the program. Goodbye!\n")
+        println("Requirements not met!")
+        println("\nLeaving the program. Goodbye!")
         return nothing
     end
 

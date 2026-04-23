@@ -252,7 +252,8 @@ function main()::Nothing
     println("Note: your terminal must support ANSI escape codes.\n")
 
     if !areRequirementsMet()
-        println("\nLeaving the program. Goodbye!\n")
+        println("Requirements not met!")
+        println("\nLeaving the program. Goodbye!")
         return nothing
     end
 
