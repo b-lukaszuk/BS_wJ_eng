@@ -157,3 +157,36 @@ next coordinates). The same goes for examining the coordinates of the cell
 itself (since both `r` and `c` may be equal 0). Otherwise, if a neighbor is
 alive (`if universe[neighbourRow, neighbourCol]`) we add 1 to the count (`nAlive
 += 1`), which we eventually `return` from the function.
+
+Now we are ready to calculate our `universe`s next state.
+
+```jl
+s = """
+function shouldCellBeAlive(univere::Universe, row::Int, col::Int)::Bool
+    nLiveNeighbours::Int = getNumLiveNeighbours(univere, row, col)
+    if univere[row, col] && nLiveNeighbours in 2:3
+        return true
+    end
+    return nLiveNeighbours == 3
+end
+
+function getUniverseNextState(universe::Universe)::Universe
+    newUniverse::Universe = getEmptyUniverse()
+    for c in 1:N_COLS, r in 1:N_ROWS
+        newUniverse[r, c] = shouldCellBeAlive(universe, r, c)
+    end
+    return newUniverse
+end
+"""
+sc(s)
+```
+
+We start by figuring out if a cell should be alive in the next turn
+(`shouldCellBeAlive`). Per task specification if a cell was previously alive
+(`if universe[row, col]`) and it got 2 or 3 live neighbors (`nLiveNeighbours in
+2:3`) then yes (`return true`). Otherwise, only if it was previously dead and
+got exactly three live neighbors (`nLiveNeighbours == 3`).
+
+All that's left to do is to `getUniverseNextState` by examining each cell (`r`
+and `c`) in the universe and deciding its fate in the next turn
+(`shouldCellBeAlive(universe, r, c)`).
