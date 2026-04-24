@@ -14,16 +14,16 @@ snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/game_o
 
 Let's finish with another classic. This time your job is to implement [Conway's
 Game of Life](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) with a
-finite two dimensional grid called the universe. Each cell on the grid
-got some initial probability (let's say [0.2-0.5]) of being alive. Per the Wikipedia's
-description the next state of the universe is calculated as follows:
+finite two dimensional grid called the universe. Each cell on the grid got some
+initial probability of being alive. Per the Wikipedia's description the next
+state of the universe is calculated as follows:
 
 > 1. Any live cell with fewer than two live neighbours dies, as if by underpopulation.
 > 2. Any live cell with two or three live neighbours lives on to the next generation.
 > 3. Any live cell with more than three live neighbours dies, as if by overpopulation.
 > 4. Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
-The end result may look something like @fig:gameOfLife.
+The game may look something like @fig:gameOfLife.
 
 ![A frame from the Conway's Game of Life.](./images/gameOfLife.png){#fig:gameOfLife}
 
@@ -58,9 +58,10 @@ replace(sc(s), "N_COLS =" => "const N_COLS =", "N_ROWS =" => "const N_ROWS =",
 	"PROB_ALIVE =" => "const PROB_ALIVE =", "Universe =" => "const Universe =")
 ```
 
-For that we define a few `const`ants, the `Universe` data type, which is a
-synonym for a `Matrix` (`N_ROWS`x`N_COLS`) of `Bool`s. This is a natural choice
-since each cell can be either alive (with the probability of `0.25`) or dead.
+For that we defined a few `const`ants and functions. The `Universe` data type,
+is a synonym for a `Matrix` (`N_ROWS`x`N_COLS`) of `Bool`s. This is a natural
+choice since each cell can be either alive (with the probability of `0.25`) or
+dead.
 
 Next, time for printing.
 
@@ -109,8 +110,8 @@ The above (printing and reprinting) is basically a modified code from
 @sec:diffusion_solution. Of note, here we do not draw the borders, instead we
 use dead (`DEAD_SYMBOL`) and live (`ALIVE_SYMBOL`) cells.
 
-Time to determine the next state of our `universe`. But first, per task
-specification, we need to know to number of a cell neighbors that are alive.
+Time to determine the next state of our `universe`. But first we need to know
+the number of a cell's neighbors that are alive.
 
 ```jl
 s = """
@@ -118,21 +119,21 @@ function isCellWithinRange(row::Int, col::Int)::Bool
     return (1 <= row <= N_ROWS) && (1 <= col <= N_COLS)
 end
 
-function getNumLiveNeighbours(universe::Universe, row::Int, col::Int)::Int
+function getNumLiveNeighbors(universe::Universe, row::Int, col::Int)::Int
     if !isCellWithinRange(row, col)
         return 0
     end
     nAlive::Int = 0
-    neighbourCol::Int, neighbourRow::Int = 0, 0
+    neighborCol::Int, neighborRow::Int = 0, 0
     for c in -1:1, r in -1:1
-        neighbourRow, neighbourCol = row+r, col+c
-        if !isCellWithinRange(neighbourRow, neighbourCol)
+        neighborRow, neighborCol = row+r, col+c
+        if !isCellWithinRange(neighborRow, neighborCol)
             continue
         end
-        if (neighbourRow == row && neighbourCol == col)
+        if (neighborRow == row && neighborCol == col)
             continue
         end
-        if universe[neighbourRow, neighbourCol]
+        if universe[neighborRow, neighborCol]
             nAlive += 1
         end
     end
@@ -142,32 +143,32 @@ end
 sc(s)
 ```
 
-We assign this task to `getNumLiveNeighbours` that accepts our `universe` and the
-cell of interest coordinates (`row` and `col`) as its parameters. The
-neighbors of a cell are located in a row below, the same row as the cell, and a
-row above the cell's own row (`r in -1:1`). Similarly, we look for a column on
-the left, the same column as the cell, and a column to the right of the cell's
-own column (`c in -1:1`). Hence, a neighbor coordinates are calculated as
-`neighbourRow = row+r` (`row` is the cell's own row, `r` is the row shift) and
-`neighbourCol = col+c` (`col` is the cell's own column, `c` is the column
-shift). We examine all the possible neighbor locations with the `for` loop. If
-the coordinates fall outside the grid (`!isCellWithinRange` - the cell does
-exist in our `universe`) then we `continue` to the next iteration (we examine
-next coordinates). The same goes for examining the coordinates of the cell
-itself (since both `r` and `c` may be equal 0). Otherwise, if a neighbor is
-alive (`if universe[neighbourRow, neighbourCol]`) we add 1 to the count (`nAlive
-+= 1`), which we eventually `return` from the function.
+We assign this task to `getNumLiveNeighbors` that accepts our `universe` and the
+cell of interest coordinates (`row` and `col`) as its parameters. The neighbors
+of a cell are located in a row below, the same row as the cell, and a row above
+the cell's own row (`r in -1:1`). Similarly, we look at a column to the left,
+the same column as the cell, and a column to the right of the cell's own column
+(`c in -1:1`). Hence, a neighbor's coordinates are calculated as `neighborRow =
+row+r` (`row` is the cell's own row, `r` is the row shift) and `neighborCol =
+col+c` (`col` is the cell's own column, `c` is the column shift). We examine all
+the possible neighbor locations with the `for` loop. If the coordinates fall
+outside the grid (`!isCellWithinRange` - the cell does not exist in our
+`universe`) then we `continue` to the next iteration (we examine next
+coordinates). The same goes for examining the coordinates of the cell itself
+(since both `r` and `c` may be equal 0). Otherwise, if a neighbor is alive (`if
+universe[neighborRow, neighborCol]`) we add 1 to the count (`nAlive += 1`),
+which we eventually `return` from the function.
 
-Now we are ready to calculate our `universe`s next state.
+Now we are ready to calculate the next state of our `universe`.
 
 ```jl
 s = """
-function shouldCellBeAlive(univere::Universe, row::Int, col::Int)::Bool
-    nLiveNeighbours::Int = getNumLiveNeighbours(univere, row, col)
-    if univere[row, col] && nLiveNeighbours in 2:3
+function shouldCellBeAlive(universe::Universe, row::Int, col::Int)::Bool
+    nLiveNeighbors::Int = getNumLiveNeighbors(universe, row, col)
+    if universe[row, col] && nLiveNeighbors in 2:3
         return true
     end
-    return nLiveNeighbours == 3
+    return nLiveNeighbors == 3
 end
 
 function getUniverseNextState(universe::Universe)::Universe
@@ -182,21 +183,21 @@ sc(s)
 ```
 
 We start by figuring out if a cell should be alive in the next turn
-(`shouldCellBeAlive`). Per task specification if a cell was previously alive
-(`if universe[row, col]`) and it got 2 or 3 live neighbors (`nLiveNeighbours in
-2:3`) then yes (`return true`). Otherwise, only if it was previously dead and
-got exactly three live neighbors (`nLiveNeighbours == 3`).
+(`shouldCellBeAlive`). Per task specification, if a cell was previously alive
+(`if universe[row, col]`) and it got 2 or 3 live neighbors (`nLiveNeighbors in
+2:3`) then it should be alive (`return true`). Otherwise, it should live if it
+was previously dead and got exactly three live neighbors (`nLiveNeighbors ==
+3`).
 
 All that's left to do is to `getUniverseNextState` by examining each cell (`r`
-and `c`) in the universe and deciding its fate in the next turn
+and `c`) in the `universe` and deciding its fate in the next turn
 (`shouldCellBeAlive(universe, r, c)`).
 
 And now for the final touch.
 
 ```jl
 s = """
-DELAY_MS = 500
-MS_PER_SEC = 1000
+DELAY_SEC = 0.5
 
 # early stop
 function areAllCellsDead(universe::Universe)::Bool
@@ -206,10 +207,10 @@ end
 function runGameOfLife()
     universe::Universe = getRandUniverse()
     printUniverse(universe, 0)
-    for i in 1:N_GENERATIONS
+    for nGeneration in 1:N_GENERATIONS
         universe = getUniverseNextState(universe)
-        reprintUniverse(universe, i)
-        sleep(DELAY_MS / MS_PER_SEC)
+        reprintUniverse(universe, nGeneration)
+        sleep(DELAY_SEC)
         if areAllCellsDead(universe)
             println("All cells are dead.")
             break
@@ -217,8 +218,7 @@ function runGameOfLife()
     end
 end
 """
-replace(sc(s), "DELAY_MS =" => "const DELAY_MS =",
-	"MS_PER_SEC =" => "const MS_PER_SEC =")
+replace(sc(s), "DELAY_SEC =" => "const DELAY_SEC =")
 ```
 
-And so let the game of life begin (type `runGameOfLife()` and what it happens).
+Let the games begin (type `runGameOfLife()` and see what happens).

@@ -7,8 +7,7 @@ const N_ROWS = 40
 const PROB_ALIVE = 0.25
 const ALIVE_SYMBOL = 'O'
 const DEAD_SYMBOL = '.'
-const DELAY_MS = 500
-const MS_PER_SEC = 1000
+const DELAY_SEC = 0.5
 const N_GENERATIONS = 50
 
 const Str = String
@@ -55,33 +54,33 @@ function isCellWithinRange(row::Int, col::Int)::Bool
     return (1 <= row <= N_ROWS) && (1 <= col <= N_COLS)
 end
 
-function getNumLiveNeighbours(universe::Universe, row::Int, col::Int)::Int
+function getNumLiveNeighbors(universe::Universe, row::Int, col::Int)::Int
     if !isCellWithinRange(row, col)
         return 0
     end
     nAlive::Int = 0
-    neighbourCol::Int, neighbourRow::Int = 0, 0
+    neighborCol::Int, neighborRow::Int = 0, 0
     for c in -1:1, r in -1:1
-        neighbourRow, neighbourCol = row+r, col+c
-        if !isCellWithinRange(neighbourRow, neighbourCol)
+        neighborRow, neighborCol = row+r, col+c
+        if !isCellWithinRange(neighborRow, neighborCol)
             continue
         end
-        if (neighbourRow == row && neighbourCol == col)
+        if (neighborRow == row && neighborCol == col)
             continue
         end
-        if universe[neighbourRow, neighbourCol]
+        if universe[neighborRow, neighborCol]
             nAlive += 1
         end
     end
     return nAlive
 end
 
-function shouldCellBeAlive(univere::Universe, row::Int, col::Int)::Bool
-    nLiveNeighbours::Int = getNumLiveNeighbours(univere, row, col)
-    if univere[row, col] && nLiveNeighbours in 2:3
+function shouldCellBeAlive(universe::Universe, row::Int, col::Int)::Bool
+    nLiveNeighbors::Int = getNumLiveNeighbors(universe, row, col)
+    if universe[row, col] && nLiveNeighbors in 2:3
         return true
     end
-    return nLiveNeighbours == 3
+    return nLiveNeighbors == 3
 end
 
 function getUniverseNextState(universe::Universe)::Universe
@@ -100,10 +99,10 @@ end
 function runGameOfLife()
     universe::Universe = getRandUniverse()
     printUniverse(universe, 0)
-    for i in 1:N_GENERATIONS
+    for nGeneration in 1:N_GENERATIONS
         universe = getUniverseNextState(universe)
-        reprintUniverse(universe, i)
-        sleep(DELAY_MS / MS_PER_SEC)
+        reprintUniverse(universe, nGeneration)
+        sleep(DELAY_SEC)
         if areAllCellsDead(universe)
             println("All cells are dead.")
             break
