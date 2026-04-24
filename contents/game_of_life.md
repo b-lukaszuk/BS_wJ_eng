@@ -49,7 +49,6 @@ function getEmptyUniverse()::Universe
     return zeros(Bool, N_ROWS, N_COLS)
 end
 
-
 function getRandUniverse()::Universe
 	# rand gives val [0-1) and not [0-1] like prob, but it will do
     return rand(Float64, N_ROWS, N_COLS) .<= PROB_ALIVE
@@ -62,3 +61,50 @@ replace(sc(s), "N_COLS =" => "const N_COLS =", "N_ROWS =" => "const N_ROWS =",
 For that we define a few `const`ants, the `Universe` data type, which is a
 synonym for a `Matrix` (`N_ROWS`x`N_COLS`) of `Bool`s. This is a natural choice
 since each cell can be either alive (with the probability of `0.25`) or dead.
+
+Next, time for printing.
+
+```jl
+s = """
+ALIVE_SYMBOL = 'O'
+DEAD_SYMBOL = '.'
+N_GENERATIONS = 50
+
+function getFieldSymbol(field::Bool)::Char
+    return field ? ALIVE_SYMBOL : DEAD_SYMBOL
+end
+
+function printUniverse(universe::Universe, nGeneration::Int)::Nothing
+    population::Int = sum(universe)
+    print("Generation: \$nGeneration/\$N_GENERATIONS, ")
+	println("population: \$population\\n")
+    for r in 1:N_ROWS
+        println(map(getFieldSymbol, universe[r, :]) |> join)
+    end
+    return nothing
+end
+
+# https://en.wikipedia.org/wiki/ANSI_escape_code
+function clearDisplay(nLinesUp::Int)::Nothing
+    @assert 0 < nLinesUp "nLinesUp must be a positive integer"
+    # "\\033[xxxA" - xxx moves cursor up xxx LINES
+    print("\\033[" * string(nLinesUp) * "A")
+    # "\\033[0J" - clears from cursor position till the end of the screen
+    print("\\033[0J")
+    return nothing
+end
+
+function reprintUniverse(universe::Universe, nGeneration::Int)::Nothing
+    clearDisplay(N_ROWS+2) # +2 cause info line and newline
+    printUniverse(universe, nGeneration)
+    return nothing
+end
+"""
+replace(sc(s), "ALIVE_SYMBOL =" => "const ALIVE_SYMBOL =",
+	"DEAD_SYMBOL =" => "const DEAD_SYMBOL =",
+	"N_GENERATIONS =" => "const N_GENERATIONS =")
+```
+
+The above (printing and reprinting) is basically a modified code from
+@sec:diffusion_solution. Of note, here we do not draw the borders, instead we
+use dead (`DEAD_SYMBOL`) and live (`ALIVE_SYMBOL`) cells.
