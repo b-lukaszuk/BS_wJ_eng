@@ -1,16 +1,15 @@
 # the code in this file is meant to serve as a programming exercise only
 # it may not act correctly
 
-# TODO: game of life
 # https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
-
 const N_COLS = 80
 const N_ROWS = 40
 const PROB_ALIVE = 0.25
 const ALIVE_SYMBOL = 'O'
 const DEAD_SYMBOL = '.'
 const DELAY_MS = 500
-const NUM_CYCLES = 50
+const MS_PER_SEC = 1000
+const N_GENERATIONS = 50
 
 const Str = String
 const Universe = Matrix{Bool}
@@ -27,11 +26,11 @@ function getFieldSymbol(field::Bool)::Char
     return field ? ALIVE_SYMBOL : DEAD_SYMBOL
 end
 
-function printUniverse(u::Universe, cycleNum::Int)::Nothing
-    population::Int = sum(u)
-    println("cycle: $cycleNum, population: $population")
+function printUniverse(universe::Universe, nGeneration::Int)::Nothing
+    population::Int = sum(universe)
+    println("Generation: $nGeneration/$N_GENERATIONS, population: $population\n")
     for r in 1:N_ROWS
-        println(map(getFieldSymbol, u[r, :]) |> join)
+        println(map(getFieldSymbol, universe[r, :]) |> join)
     end
     return nothing
 end
@@ -46,9 +45,9 @@ function clearDisplay(nLinesUp::Int)::Nothing
     return nothing
 end
 
-function reprintUniverse(u::Universe, cycleNum::Int)::Nothing
-    clearDisplay(N_ROWS+1) # +1 cause info line
-    printUniverse(u, cycleNum)
+function reprintUniverse(universe::Universe, nGeneration::Int)::Nothing
+    clearDisplay(N_ROWS+2) # +2 cause info line and newline
+    printUniverse(universe, nGeneration)
     return nothing
 end
 
@@ -79,32 +78,32 @@ end
 
 function shouldCellBeAlive(univere::Universe, row::Int, col::Int)::Bool
     nLiveNeighbours::Int = getNumLiveNeighbours(univere, row, col)
-    if univere[row, col]
-        return 2 <= nLiveNeighbours <= 3
+    if univere[row, col] && nLiveNeighbours in 2:3
+        return true
     end
     return nLiveNeighbours == 3
 end
 
-function getUniverseNextState(univere::Universe)::Universe
+function getUniverseNextState(universe::Universe)::Universe
     newUniverse::Universe = getEmptyUniverse()
     for c in 1:N_COLS, r in 1:N_ROWS
-        newUniverse[r, c] = shouldCellBeAlive(univere, r, c)
+        newUniverse[r, c] = shouldCellBeAlive(universe, r, c)
     end
     return newUniverse
 end
 
 # early stop
-function areAllCellsDead(univere::Universe)::Bool
-    return sum(univere) == 0
+function areAllCellsDead(universe::Universe)::Bool
+    return sum(universe) == 0
 end
 
 function runGameOfLife()
     universe::Universe = getRandUniverse()
     printUniverse(universe, 0)
-    for i in 1:NUM_CYCLES
+    for i in 1:N_GENERATIONS
         universe = getUniverseNextState(universe)
         reprintUniverse(universe, i)
-        sleep(DELAY_MS / 1000)
+        sleep(DELAY_MS / MS_PER_SEC)
         if areAllCellsDead(universe)
             println("All cells are dead.")
             break
@@ -112,23 +111,6 @@ function runGameOfLife()
     end
 end
 
-function main()
-    println("\nThis is a toy program, it displays a so called game of life.")
-    println("Note: your terminal must support ANSI escape codes.\n")
-
-    println("The game will run through $NUM_CYCLES cycles.")
-    println("WARNING: the screen may flicker (Ctrl-C should abort the program).")
-
-    # y(es) - default choice (also with Enter), anything else: no
-    println("\nContinue with the game? [Y/n]")
-    choice::Str = readline()
-    if lowercase(strip(choice)) in ["y", "yes", ""]
-        runGameOfLife()
-    end
-
-    println("\nThat's all. Goodbye!")
-end
-
-if abspath(PROGRAM_FILE) == @__FILE__
-    main()
-end
+# make sure your terminal supports ANSI escape codes
+# if you need it: Ctrl-C should abort the game
+runGameOfLife()
