@@ -190,3 +190,35 @@ got exactly three live neighbors (`nLiveNeighbours == 3`).
 All that's left to do is to `getUniverseNextState` by examining each cell (`r`
 and `c`) in the universe and deciding its fate in the next turn
 (`shouldCellBeAlive(universe, r, c)`).
+
+And now for the final touch.
+
+```jl
+s = """
+DELAY_MS = 500
+MS_PER_SEC = 1000
+
+# early stop
+function areAllCellsDead(universe::Universe)::Bool
+    return sum(universe) == 0
+end
+
+function runGameOfLife()
+    universe::Universe = getRandUniverse()
+    printUniverse(universe, 0)
+    for i in 1:N_GENERATIONS
+        universe = getUniverseNextState(universe)
+        reprintUniverse(universe, i)
+        sleep(DELAY_MS / MS_PER_SEC)
+        if areAllCellsDead(universe)
+            println("All cells are dead.")
+            break
+        end
+    end
+end
+"""
+replace(sc(s), "DELAY_MS =" => "const DELAY_MS =",
+	"MS_PER_SEC =" => "const MS_PER_SEC =")
+```
+
+And so let the game of life begin (type `runGameOfLife()` and what it happens).
