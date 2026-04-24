@@ -7,7 +7,6 @@ import Random as Rnd
 const Flt = Float64
 const Vec = Vector
 
-# TODO extend the solutions for 5 and 7 doors scenarios
 ###############################################################################
 #                                  solution 1                                 #
 ###############################################################################
