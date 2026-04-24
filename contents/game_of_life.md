@@ -34,4 +34,31 @@ The end result may look something like @fig:gameOfLife.
 
 ## Solution {#sec:game_of_life_solution}
 
-The solution goes here.
+Let's start with our universe.
+
+
+```jl
+s = """
+N_COLS = 80
+N_ROWS = 40
+PROB_ALIVE = 0.25
+
+Universe = Matrix{Bool}
+
+function getEmptyUniverse()::Universe
+    return zeros(Bool, N_ROWS, N_COLS)
+end
+
+
+function getRandUniverse()::Universe
+	# rand gives val [0-1) and not [0-1] like prob, but it will do
+    return rand(Float64, N_ROWS, N_COLS) .<= PROB_ALIVE
+end
+"""
+replace(sc(s), "N_COLS =" => "const N_COLS =", "N_ROWS =" => "const N_ROWS =",
+	"PROB_ALIVE =" => "const PROB_ALIVE =", "Universe =" => "const Universe =")
+```
+
+For that we define a few `const`ants, the `Universe` data type, which is a
+synonym for a `Matrix` (`N_ROWS`x`N_COLS`) of `Bool`s. This is a natural choice
+since each cell can be either alive (with the probability of `0.25`) or dead.
