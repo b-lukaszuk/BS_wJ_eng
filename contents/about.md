@@ -2,7 +2,13 @@
 
 Hi, I'm Bart and this is my second open access book entitled:
 
-"Build SH\*T with Julia".
+"Build Super Helpful and Interesting Things with Julia"
+
+or
+
+"Build SH\*T with Julia"
+
+for short.
 
 The book contains a set of challenges of varying level of complexity (most
 likely in the range of easy to moderate). The exercises are for the problems
@@ -43,19 +49,48 @@ sc(s)
 This will allow for a shorter code when type declarations are used,
 e.g. `Vec{Flt}` instead `Vector{Float64}`. Notice, that the type synonyms are
 declared with `const` keyword, since they will not change for as long as a
-program runs. Nevertheless, the naming convention is similar to the name of a
-data type in Julia (first letter is uppercased, the rest of the characters are
-lowercased).
+program runs. The naming convention for the custom types is similar to the name
+of built in data types in Julia (first letter is uppercased, the rest of the
+characters are lowercased).
+
+I wrote this book using Julia:
+
+```jl
+s = """
+VERSION
+"""
+sco(s)
+```
+
+so an [LTS](https://en.wikipedia.org/wiki/Long-term_support) edition with the
+following internal (available to you after installment):
+
+- Base
+- Dates
+- Random
+- Statistics
+- Test
+
+and external (downloaded from the internet)
+
+- BenchmarkTools
+- CairoMakie
+- DataFrames
+- Makie
+- Symbolics
+
+libraries. Still, you should be able to solve the tasks with the functionality
+that comes with your installation (not necessarily the one named above).
 
 If, for any reason, this book is not to your taste then feel free to visit,
 e.g. Adam Wysokinski's the [Big Book of
-Julia](https://adamwysokinski.codeberg.page/bbj/) and choose a learning
-resource of your liking. Alternatively you may visit [Rosetta Code
+Julia](https://adamwysokinski.codeberg.page/bbj/) and choose a learning resource
+of your liking. Alternatively you may visit [Rosetta Code
 web-page](https://rosettacode.org/wiki/Category:Solutions_by_Programming_Task)
 that contains over 1'000 programming exercises with solutions in different
 programming languages. Chances are that many of the exercises presented here are
 to be found there (not that I copied them, it's just that they've been around
-for quite some time).
+for quite some time and I don't even know whom should I give credit for them).
 
 Finally, just like in the previous book, I'll try to write in a possibly simple
 (clarity over cleverness and performance) and correct manner. Still, I'm only
@@ -63,3 +98,5 @@ human, so watch out for possible errors and bugs. Anyway, I hope the book will
 satisfy your appetite, it is available freely under [Creative Commons
 Attribution-NonCommercial-ShareAlike 4.0
 International](http://creativecommons.org/licenses/by-nc-sa/4.0/) license.
+
+Let the games begin.
