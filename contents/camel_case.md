@@ -5,7 +5,7 @@ problem description you may decide to do otherwise. In that case don't let me
 stop you.
 
 I recommend you try to solve the task on your own first. Once you finish you may
-compare your own solution with the one in this chapter (with explanations) or
+compare your solution with the one in this chapter (with explanations) or
 with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/camel_case)
 (without explanations).
@@ -15,7 +15,7 @@ A reminder of how to deal with packages and \*.toml files can be found
 
 ## Problem {#sec:camel_case_problem}
 
-In programming there are a few different type of naming conventions, the two
+In programming there are a few different types of naming conventions, the two
 most popular of them are:
 [smallCamelCase](https://en.wikipedia.org/wiki/Camel_case) and
 [snake_case](https://en.wikipedia.org/wiki/Snake_case).
@@ -52,10 +52,9 @@ underscores ("_") and the characters from the Latin alphabet.
 One of the most succinct (and quite performant) solutions would be based on
 [regular expressions](https://en.wikipedia.org/wiki/Regular_expression) (also
 called regexes). Julia does have a regex support (see [the
-docs](https://docs.julialang.org/en/v1/base/strings/#Base.Regex)). Although at
-first glance such regexes seem arcane and off-putting, we'll explore this venue
-in @sec:regex_problem. For now, in order to keep things simple our approach will
-rely on good old for loops and conditionals.
+docs](https://docs.julialang.org/en/v1/base/strings/#Base.Regex)) and we will
+explore this venue in @sec:regex_problem. For now, in order to keep things
+simple our approach will rely on good old for loops and conditionals.
 
 First `changeToSnakeCase` as it is simpler to write (start small and build).
 
@@ -114,12 +113,13 @@ One more time, we begin with an empty result (`result::Str = ""`), but this time
 we also declare an indicator that tells us whether the previously examined
 letter was an underscore (`prevUnderscore`). Next, we traverse the
 `snakeCasedWord` character by character (`for c in snakeCasedWord`) and build up
-the result. If the currently examined character is an underscore (`if c ==
-'_'`) we set the indicator to true and skip rest of the code in the for loop (in
-this iteration only) with `continue`. Otherwise (`else`), we append the
-character to the result (`result *=`) with the proper casing based on the value
-of `prevUnderscore` and set this last variable to `false`. Once we're done, we
-`return` the `result`.
+the result. If the currently examined character is an underscore (`if c == '_'`)
+we set the indicator to true and skip rest of the code in the for loop (in this
+iteration only) with
+[continue](https://docs.julialang.org/en/v1/base/base/#continue). Otherwise
+(`else`), we append the character to the result (`result *=`) with the proper
+casing based on the value of `prevUnderscore` and set this last variable to
+`false`. Once we're done, we `return` the `result`.
 
 Time for another test.
 
@@ -131,4 +131,4 @@ map(changeToCamelCase,
 sco(s)
 ```
 
-And another small success.
+And another small victory.
