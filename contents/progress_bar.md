@@ -5,8 +5,8 @@ problem description you may decide to do otherwise. In that case don't let me
 stop you.
 
 I recommend you try to solve the task on your own first. Once you finish you may
-compare your own solution with the one in this chapter (with explanations) or
-with [the code
+compare your solution with the one in this chapter (with explanations) or with
+[the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/progress_bar)
 (without explanations).
 
@@ -21,7 +21,7 @@ provide the user with visual cues as to the course of its execution.
 So here is a task for you. Write a computer program that will animate a mock
 progress bar that goes from 0% to 100% (if you want, make it similar to the one
 in @fig:progressBar1). Don't worry about the complex calculations (the task is
-just to animate the bar) and use
+just to animate the bar), use
 [sleep](https://docs.julialang.org/en/v1/base/parallel/#Base.sleep) before
 printing the bar in each iteration. In order to redraw a bar in a
 [terminal](https://en.wikipedia.org/wiki/Terminal_emulator) you may want to read
@@ -103,7 +103,7 @@ impression of a fan). Note, the double
 [backslash](https://en.wikipedia.org/wiki/Backslash) character (`"\\"`) in
 `fans`. The `\` symbol got a particular meaning in programming. It is used to
 designate that the next character(s) is/are special. For instance
-`println("and")` will just print the conjunction 'and'. On the other hand
+`println("and")` will just print the conjunction 'and'. On the other hand,
 `println("a\nd")` will print 'a' and 'd', one below the other, since in Julia
 `"\n"` stands for newline. To get rid of the special meaning of `"\"` we
 precede it with another backslash, hence `"\\"`.
@@ -130,12 +130,12 @@ animateProgressBar()
 |||||||||||||||||||||||||||||||||||||||||||||||||| 100%
 ```
 
-Pretty good. However, there is a small problem. Namely, the output is printed
-on the screen instantaneously with one line beneath the other. The first problem
+Pretty good. However, there is a small problem. Namely, the output is printed on
+the screen instantaneously with one line beneath the other. The first problem
 will be solved with
 [sleep](https://docs.julialang.org/en/v1/base/parallel/#Base.sleep) that makes
-the program wait for a specific number of milliseconds before executing the next
-line of code. The second problem will be solved with [ANSI escape
+the program wait for a specific number of seconds before executing the next line
+of code. The second problem will be solved with [ANSI escape
 codes](https://en.wikipedia.org/wiki/ANSI_escape_code) a sequence of characters
 with a special meaning [as found in the link (see this sentence) to the
 Wikipedia's page].
@@ -196,7 +196,7 @@ if abspath(PROGRAM_FILE) == @__FILE__
 end
 ```
 
-Although not strictly required in Julia the `main` function is by convention a
+Although not strictly required in Julia, the `main` function is by convention a
 starting point of any (big or small) program (in many programming
 languages). Whereas the `if abspath` part makes sure that our `main` function is
 run only if the program was called directly from the terminal, i.e.
