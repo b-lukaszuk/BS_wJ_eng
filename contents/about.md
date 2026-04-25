@@ -18,7 +18,7 @@ explanations). Still, I recommend you try to solve the tasks yourself.
 Alternatively you may read the solutions and try to recreate them as much as you
 can on your own. The key thing is, if you want to learn, write the da\*n code.
 
-For practical reasons, I will assume this book to be read by curious readers of
+For practical reasons, I will assume this book is read by curious readers of
 non-mathematical (i.e. resembling mine) background. Moreover, I expect that the
 readers have already mastered the language basics and now are on a lookout for a
 way to hone their newly acquired skills. To that end, I'll imagine you have read
@@ -47,7 +47,7 @@ sc(s)
 ```
 
 This will allow for a shorter code when type declarations are used,
-e.g. `Vec{Flt}` instead `Vector{Float64}`. Notice, that the type synonyms are
+e.g. `Vec{Flt}` instead of `Vector{Float64}`. Notice, that the type synonyms are
 declared with `const` keyword, since they will not change for as long as a
 program runs. The naming convention for the custom types is similar to the name
 of built in data types in Julia (first letter is uppercased, the rest of the
