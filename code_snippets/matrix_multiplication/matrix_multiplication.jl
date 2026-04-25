@@ -22,6 +22,12 @@ function getDotProduct(row::Vec{Int}, col::Vec{Int})
     return map(*, row, col) |> sum
 end
 
+# alternative version of getDotProduct
+function getDotProduct(row::Vec{Int}, col::Vec{Int})
+    @assert length(row) == length(col) "row & col must be of equal length"
+    return sum(row .* col)
+end
+
 function multiply(m1::Matrix{Int}, m2::Matrix{Int})::Matrix{Int}
     nRowsMat1, nColsMat1 = size(m1)
     nRowsMat2, nColsMat2 = size(m2)

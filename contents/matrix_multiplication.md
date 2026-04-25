@@ -5,8 +5,8 @@ problem description you may decide to do otherwise. In that case don't let me
 stop you.
 
 I recommend you try to solve the task on your own first. Once you finish you may
-compare your own solution with the one in this chapter (with explanations) or
-with [the code
+compare your solution with the one in this chapter (with explanations) or with
+[the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/matrix_multiplication)
 (without explanations).
 
@@ -17,9 +17,9 @@ A reminder of how to deal with packages and \*.toml files can be found
 
 In Julia a
 [matrix](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_variables.html#sec:julia_arrays)
-is a tabular representation of numeric, two-dimensional (rows and columns)
-data. We declare it with a friendly syntax (columns separated by spaces, rows
-separated by semicolons).
+is a tabular representation of two-dimensional (rows and columns) data. We
+declare it with a friendly syntax (columns separated by spaces, rows separated
+by semicolons).
 
 ```jl
 s = """
@@ -100,7 +100,7 @@ sc(s)
 > Note. Thanks to the previously defined (@sec:about) type synonyms we saved
 > some typing and used `Vec{Int}` instead of `Vector{Int}`. We will use such
 > small convenience(s) throughout the book. The type synonyms are defined in
-> @sec:about and in the code snippets for each chapter.
+> @sec:about and/or in the code snippets for each chapter.
 
 First, we place a simple assumption check with the
 [assert](https://docs.julialang.org/en/v1/base/base/#Base.@assert). Then we
@@ -155,9 +155,11 @@ s = """
 sco(s)
 ```
 
-Anyway, once we got the products vector we send it (`|>`) as an input to `sum`.
+Anyway, once we got the vector of products we send it
+([|>](https://docs.julialang.org/en/v1/base/base/#Base.:%7C%3E)) as an input to
+`sum`.
 
-OK, time for multiplication itself.
+OK, time for the multiplication itself.
 
 ```jl
 s = """
@@ -178,9 +180,9 @@ sc(s)
 ```
 
 The above is a translation of the algorithm from the links provided in the task
-description earlier on. First we get our matrices dimensions and perform a
-compatibility check with `@assert`. Then we initialize an empty matrix
-(`result`) with the appropriate dimensions (we use `zeros` so 0s are the
+description (see @sec:mat_multip_problem). First we get our matrices dimensions
+and perform a compatibility check with `@assert`. Then we initialize an empty
+matrix (`result`) with the appropriate dimensions (we use `zeros`, so 0s are the
 placeholders stored in its cells). Finally, we get the dot products of every row
 (`for r`) in `m1` by every column (`for c`) in `m2` and place them to the
 appropriate cells in the `result` matrix.
