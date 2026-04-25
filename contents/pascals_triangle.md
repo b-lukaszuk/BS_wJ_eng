@@ -5,8 +5,8 @@ problem description you may decide to do otherwise. In that case don't let me
 stop you.
 
 I recommend you try to solve the task on your own first. Once you finish you may
-compare your own solution with the one in this chapter (with explanations) or
-with [the code
+compare your solution with the one in this chapter (with explanations) or with
+[the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/pascals_triangle)
 (without explanations).
 
@@ -62,7 +62,7 @@ noticed this cool animation (see below).
 ![Construction of a Pascal's triangle. Source:
 [Wikipedia](https://en.wikipedia.org/wiki/File:PascalTriangleAnimated2.gif)
 (public domain, used in accordance with the Licensing
-section).](./images/PascalTriangleAnimated2.gif){#fig:pascalsTriangle}
+section, animation works only in an HTML document).](./images/PascalTriangleAnimated2.gif){#fig:pascalsTriangle}
 
 It indicates that in order to create a new row of the triangle you just take the
 previous row and add pair of its elements together to create the next
@@ -125,7 +125,7 @@ sc(s)
 
 We define our triangle with initial two rows. Next, we move downwards through
 the possible triangle rows (`for row in 2:n`) and build the next row based on
-the previous one `getRow(triangle[row-1])`. All that's left to do is to return
+the previous one `getRow(triangle[row-1])`. All that's left to do is to `return`
 the triangle as a vector of vectors (`Vec{Vec{Int}})`) which will give us a
 right triangle printed in the output by default. For instance, let's get the
 Pascal's triangle from @fig:pascalsTriangle.
@@ -225,21 +225,22 @@ sc(s)
 ```
 
 Since `getFmtPascTriangle` is a graphical equivalent of `binomial(n, k)` then
-it's only fitting to accept the two letters as its input. We begin by obtaining
-the `triangle`, its `lastRow` and based on it the maximum width of a number in
-the triangle (`maxNumWidth`, `+1` produces more pleasing output). Next, we
-determine the width of the last row. Notice the `n+1` part (here and below in
-the function) as well as `k+1` part later on. In, general Julia and humans count
-elements starting from 1, whereas a Pascal's triangle is 0 indexed, hence we
-added `+1` to help us translate one system into the other. Anyway, the length of
-`lastRow` (the longest row in `triangle`) is the number of digits in the row
-(`(n+1)`) times the width of a formatted digit (`maxNumWidth`) plus the number
-of spaces between the formatted digits. The number of spaces is 1 less than the
-number of slots, e.g., humans got 5 fingers, and 4 spaces between them, hence
-here we used `+n` since the number of digits was `(n+1)`. Next, we obtain the
-`formattedTriangle` by `map`ing `fmtRow` on its each row and separating the rows
-with newlines (`\n`). We finish, by adding the indicator (`"∆"`) under our `k`
-and voila, we are finally ready to answer our question.
+it's only fitting to accept the two letters (`n` and `k`) as its input. We begin
+by obtaining the `triangle`, its `lastRow` and based on it the maximum width of
+a number in the triangle (`maxNumWidth`, the magic number `+1` is to produce
+more visually pleasing output). Next, we determine the width of the last
+row. Notice the `n+1` part (here and below in the function) as well as `k+1`
+part later on. In, general Julia and humans count elements starting from 1,
+whereas a Pascal's triangle is 0 indexed, hence we added `+1` to help us
+translate one system into the other. Anyway, the length of `lastRow` (the
+longest row in `triangle`) is the number of digits in the row (`(n+1)`) times
+the width of a formatted digit (`maxNumWidth`) plus the number of spaces between
+the formatted digits. The number of spaces is 1 less than the number of slots,
+e.g., humans got 5 fingers, and 4 spaces between them, hence here we used `+n`
+since the number of digits was `(n+1)`. Next, we obtain the `formattedTriangle`
+by `map`ing `fmtRow` on its each row and separating the rows with newlines
+(`\n`). We finish, by adding the indicator (`"∆"`) under our `k` and voila, we
+are finally ready to answer our question.
 
 ```
 # how many different teams of 5 players
