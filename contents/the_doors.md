@@ -13,8 +13,8 @@ sc(s2)
 Still, once you read the problem description you may decide to do otherwise.
 
 I recommend you try to solve the task on your own first. Once you finish you may
-compare your own solution with the one in this chapter (with explanations) or
-with [the code
+compare your solution with the one in this chapter (with explanations) or with
+[the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/the_doors)
 (without explanations).
 
@@ -166,12 +166,12 @@ end
 sc(s)
 ```
 
-We start by defining a `Door` structure that has all the necessary fields in
-order to simulate our game-show. Notice the `mutable` keyword, it will allow us
-to change a property of a `Door` in-place. Anyway, we follow the structure
-definition with a random generator of three doors (`get3RandDoors`) door opener
-`openEligibleDoor` and `swapChoice`. All the above act per the game description.
-Of note,
+We start by defining a `Door` structure that has all the necessary fields so
+that we can simulate our game-show. Notice the `mutable` keyword, it will allow
+us to change a property of a `Door` in-place. Anyway, we follow the structure
+definition with a random generator of three doors (`get3RandDoors`), a door
+opener (`openEligibleDoor`) and `swapChoice`. All the above act per the game
+description.  Of note,
 [findfirst](https://docs.julialang.org/en/v1/base/arrays/#Base.findfirst-Tuple%7BFunction,%20Any%7D)
 accepts a predicate and a vector. The predicate is a function that is executed
 on consecutive elements of the vector (`doors`) and returns `true` or `false`
@@ -211,7 +211,7 @@ trader is a car or `nothing` otherwise). Lastly, we handle such a situation with
 [isnothing](https://docs.julialang.org/en/v1/base/base/#Base.isnothing) and a
 [ternary expression](https://docs.julialang.org/en/v1/base/base/#?:).
 
-Anyway, now we are ready to estimate the probability:
+Now we are ready to estimate the probability:
 
 ```jl
 s = """
@@ -234,7 +234,7 @@ sco(s)
 
 which ends up to be equivalent to our theoretical calculations.
 
-Now, you could argue the doing 10,000 computer simulations to estimate the
+I suppose you could argue the doing 10,000 computer simulations to estimate the
 probability is overkill, after all the total number of possibilities cannot be
 that big for this simple case. Well, I guess you're right. So, let's try again,
 this time we will list all the possible scenarios and see in how many of them we
@@ -305,5 +305,5 @@ sco(s)
 And that's it. Three methods, three similar results. Time to make that door
 swap.
 
-> Note, the code presented above will likely work right only for the three doors
-> scenario. Other number of doors will require some modifications.
+> Note, the code presented above may not work for other number of doors
+> scenarios.
