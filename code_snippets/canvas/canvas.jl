@@ -24,8 +24,10 @@ const BG_COLORS = Dict(
 
 # "\x1b[0m" resets background color to default value
 # default color: "\x1b[48:5:13m" - pink
-function getBgColor(color::Symbol, colors::Dict{Symbol, Str}=BG_COLORS)::Str
-    return get(colors, color, "\x1b[48:5:13m") * PIXEL * "\x1b[0m"
+function getBgColor(color::Symbol,
+                    colors::Dict{Symbol, Str}=BG_COLORS,
+                    defColor::Str="\x1b[48:5:13m")::Str
+    return get(colors, color, defColor) * PIXEL * "\x1b[0m"
 end
 
 canvas = fill(getBgColor(:gray), 30, 60);
@@ -58,7 +60,7 @@ end
 
 # moves a shape by (nRows, nCols)
 function nudge(shape::Vec{Pos}, by::Pos)::Vec{Pos}
-    return map(pt -> pt .+ by, shape)
+    return map(pos -> pos .+ by, shape)
 end
 
 # shifts a shape so that its anchor point starts where we want
@@ -78,10 +80,10 @@ function isWithinCanvas(point::Pos, cvs::Matrix{Str}=canvas)::Bool
 end
 
 function addPoints!(shape::Vec{Pos}, color::Symbol,
-                    cvs::Matrix{Str}=canvas)::Nothing
+                    cvs!::Matrix{Str}=canvas)::Nothing
     for pt in shape
-        if isWithinCanvas(pt, cvs)
-            cvs[pt...] = getBgColor(color)
+        if isWithinCanvas(pt, cvs!)
+            cvs![pt...] = getBgColor(color)
         end
     end
     return nothing
@@ -111,14 +113,14 @@ function getCircle(radius::Int)::Vec{Pos}
     @assert 1 < radius < 6 "radius must be in range [2-5]"
     cols::Vec{Vec{Int}} = [collect((-1-r):(2+r)) for r in 0:(radius-1)]
     cols = [cols..., reverse(cols)...]
-    triangle::Vec{Pos} = []
+    circle::Vec{Pos} = []
     rowStart::Int, _ = COORD_ORIGIN
     for row in rowStart:(radius*2)
         for col in cols[row]
-            push!(triangle, (row, col))
+            push!(circle, (row, col))
         end
     end
-    return triangle
+    return circle
 end
 
 function getCircle(radius::Int, topCenter::Pos)::Vec{Pos}

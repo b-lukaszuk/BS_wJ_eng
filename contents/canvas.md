@@ -5,8 +5,8 @@ problem description you may decide to do otherwise. In that case don't let me
 stop you.
 
 I recommend you try to solve the task on your own first. Once you finish you may
-compare your own solution with the one in this chapter (with explanations) or
-with [the code
+compare your solution with the one in this chapter (with explanations) or with
+[the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/canvas)
 (without explanations).
 
@@ -30,7 +30,6 @@ codes](https://en.wikipedia.org/wiki/ANSI_escape_code#Colors).
 
 ```
 const PIXEL = " "
-const COORD_ORIGIN = (1, 1) # origin or the coordinate system (row, col)
 
 # "\x1b[48:5:XXXm" sets background color to XXX color code (256-color mode)
 const BG_COLORS = Dict(
@@ -47,8 +46,10 @@ const BG_COLORS = Dict(
 
 # "\x1b[0m" resets background color to default value
 # default color: "\x1b[48:5:13m" - pink
-function getBgColor(color::Symbol, colors::Dict{Symbol, Str}=BG_COLORS)::Str
-    return get(colors, color, "\x1b[48:5:13m") * PIXEL * "\x1b[0m"
+function getBgColor(color::Symbol,
+                    colors::Dict{Symbol, Str}=BG_COLORS,
+                    defColor::Str="\x1b[48:5:13m")::Str
+    return get(colors, color, defColor) * PIXEL * "\x1b[0m"
 end
 
 canvas = fill(getBgColor(:gray), 30, 60)
@@ -88,6 +89,8 @@ specific color to visualize an object. Let's start with a rectangle as this
 should be the easiest shape to obtain.
 
 ```
+const COORD_ORIGIN = (1, 1) # origin or the coordinate system (row, col)
+
 const Pos = Tuple{Int, Int} # position, (row, col) in canvas
 
 function getRectangle(width::Int, height::Int)::Vec{Pos}
@@ -107,15 +110,15 @@ end
 Each `rectangle` is represented as a vector of positions (`Vec{Pos}`). It will
 start at the origin of our coordinate system (`COORD_ORIGIN` - top left corner
 of our matrix). It will spread through as many `row`s and `col`umns as there are
-needed. Their numbers will be calculated based on the `height` (`startX:height`)
-and width (`startY:width`) of the `canvas`. Such a rectangle (the one that
-starts in the coordinate system origin point) is a good start, but to draw a
-picture we need to be able to place a shape in any location on the canvas.
+needed. Their numbers will be calculated based on the `height` and `width` of
+the rectangle. Such a rectangle (the one that starts in the coordinate system
+origin point) is a good start, but to draw a picture we need to be able to place
+a shape in any location on the canvas.
 
 ```
 # moves a shape by (nRows, nCols)
 function nudge(shape::Vec{Pos}, by::Pos)::Vec{Pos}
-    return map(pt -> pt .+ by, shape)
+    return map(pos -> pos .+ by, shape)
 end
 
 # shifts a shape so that its anchor point starts where we want
@@ -140,17 +143,25 @@ function isWithinCanvas(point::Pos, cvs::Matrix{Str}=canvas)::Bool
 end
 
 function addPoints!(shape::Vec{Pos}, color::Symbol,
-                    cvs::Matrix{Str}=canvas)::Nothing
+                    cvs!::Matrix{Str}=canvas)::Nothing
     for pt in shape
-        if isWithinCanvas(pt, cvs)
-            cvs[pt...] = getBgColor(color)
+        if isWithinCanvas(pt, cvs!)
+            cvs![pt...] = getBgColor(color)
         end
     end
     return nothing
 end
 ```
 
-Once, we got it we can move to another shape, i.e. a triangle.
+Notice `!` character in `addPoints!`. Per Julia's convention it was added to the
+name of the function that modifies its contents. However, both `shape`
+(`Vec{Pos}`) and `cvs` (`Matrix{Str}`) are passed by reference. So a question
+may arise which one of the two (or maybe both) will get modified. To help with
+the answer the second parameter was named `cvs!` to emphasize that only it will
+be modified by the function (the `!` is just a part of the function's
+parameter's name).
+
+Once we got it we can move to another shape, i.e. a triangle.
 
 ```
 function getTriangle(height::Int)::Vec{Pos}
@@ -192,14 +203,14 @@ function getCircle(radius::Int)::Vec{Pos}
     @assert 1 < radius < 6 "radius must be in range [2-5]"
     cols::Vec{Vec{Int}} = [collect((-1-r):(2+r)) for r in 0:(radius-1)]
     cols = [cols..., reverse(cols)...]
-    triangle::Vec{Pos} = []
+    circle::Vec{Pos} = []
     rowStart::Int, _ = COORD_ORIGIN
     for row in rowStart:(radius*2)
         for col in cols[row]
-            push!(triangle, (row, col))
+            push!(circle, (row, col))
         end
     end
-    return triangle
+    return circle
 end
 
 function getCircle(radius::Int, topCenter::Pos)::Vec{Pos}
