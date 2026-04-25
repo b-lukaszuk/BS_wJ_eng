@@ -12,8 +12,8 @@ sc(s2)
 Still, once you read the problem description you may decide to do otherwise.
 
 I recommend you try to solve the task on your own first. Once you finish you may
-compare your own solution with the one in this chapter (with explanations) or
-with [the code
+compare your solution with the one in this chapter (with explanations) or with
+[the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/bat_and_ball)
 (without explanations).
 
@@ -76,9 +76,10 @@ $$ ball = 0.05 $$
 
 So it turns out that, counter-intuitively, the ball costs \$0.05 or 5 cents.
 
-That's all very interesting, but what any of this got to do with Julia? Well, we
-can solve this and more complicated equations with it. For that purpose we will
-use matrices and their multiplications as explained in
+That's all very interesting, but what any of this got to do with Julia? Well,
+just that we can solve this and more complicated equations with our favorite
+programming language. For that purpose we will use matrices and their
+multiplications as explained in
 [this](https://www.youtube.com/watch?v=AUqeb9Z3y3k) Khan Academy's video.
 
 ```jl
@@ -141,7 +142,7 @@ result = Sym.symbolic_linear_solve(
 	],
 	[bat, ball]
 );
-round.(result, digits=4)
+map(x -> round(x.val, digits=4), result)
 """
 sco(s)
 ```
@@ -159,5 +160,5 @@ ball]`). The number of variables should be equal to the number of equations in
 the first argument, and if it is greater than 1 then we place them between
 square braces and separate them with comas. And that's it.
 
-Pretty neat trick. Worth to know if your math is rusty (like mine is) and you
-want to confirm your pen and paper results.
+Pretty neat trick. Worth to know if your math is rusty (like mine) and you want
+to confirm your pen and paper calculations.
