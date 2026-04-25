@@ -4,7 +4,7 @@ In this chapter I used the following libraries.
 
 ```jl
 s2 = """
-import Symbolics as Sym
+import Symbolics as Sym # external library
 """
 sc(s2)
 ```
@@ -16,6 +16,9 @@ compare your own solution with the one in this chapter (with explanations) or
 with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/bat_and_ball)
 (without explanations).
+
+A reminder of how to deal with packages and \*.toml files can be found
+[here](https://docs.julialang.org/en/v1/stdlib/Pkg/).
 
 ## Problem {#sec:bat_and_ball_problem}
 

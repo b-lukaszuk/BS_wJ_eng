@@ -10,6 +10,9 @@ with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/the_answer)
 (without explanations).
 
+A reminder of how to deal with packages and \*.toml files can be found
+[here](https://docs.julialang.org/en/v1/stdlib/Pkg/).
+
 ## Problem {#sec:the_answer_problem}
 
 In one of the novels of Douglas Adams a supercomputer was asked to provide [the

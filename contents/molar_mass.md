@@ -10,6 +10,9 @@ with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/molar_mass)
 (without explanations).
 
+A reminder of how to deal with packages and \*.toml files can be found
+[here](https://docs.julialang.org/en/v1/stdlib/Pkg/).
+
 ## Problem {#sec:molar_mass_problem}
 
 I remember that when I was in high school we used to have a lot of chemistry

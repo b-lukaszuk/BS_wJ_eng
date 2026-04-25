@@ -10,6 +10,9 @@ with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/recursion)
 (without explanations).
 
+A reminder of how to deal with packages and \*.toml files can be found
+[here](https://docs.julialang.org/en/v1/stdlib/Pkg/).
+
 ## Problem {#sec:recursion_problem}
 
 [Recursion](https://en.wikipedia.org/wiki/Recursion_(computer_science)) is a

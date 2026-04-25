@@ -10,6 +10,9 @@ with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/compound_interest)
 (without explanations).
 
+A reminder of how to deal with packages and \*.toml files can be found
+[here](https://docs.julialang.org/en/v1/stdlib/Pkg/).
+
 ## Problem {#sec:compound_interest_problem}
 
 There is this cartoon [Futurama](https://en.wikipedia.org/wiki/Futurama) that

@@ -4,8 +4,8 @@ In this chapter I used the following libraries.
 
 ```jl
 s2 = """
-import Dates as Dt
-import Statistics as St
+import Dates as Dt # internal library
+import Statistics as St # internal library
 """
 sc(s2)
 ```
@@ -17,6 +17,9 @@ compare your own solution with the one in this chapter (with explanations) or
 with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/randomness)
 (without explanations).
+
+A reminder of how to deal with packages and \*.toml files can be found
+[here](https://docs.julialang.org/en/v1/stdlib/Pkg/).
 
 ## Problem {#sec:randomness_problem}
 

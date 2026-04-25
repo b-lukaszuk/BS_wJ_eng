@@ -10,6 +10,9 @@ with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/cheque)
 (without explanations).
 
+A reminder of how to deal with packages and \*.toml files can be found
+[here](https://docs.julialang.org/en/v1/stdlib/Pkg/).
+
 ## Problem {#sec:cheque_problem}
 
 Every now and then it comes in handy to be able to write down an [English

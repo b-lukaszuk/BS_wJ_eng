@@ -71,7 +71,7 @@ following internal (available to you after installment):
 - Statistics
 - Test
 
-and external (downloaded from the internet)
+and external (downloaded from the internet separately) libraries:
 
 - BenchmarkTools
 - CairoMakie
@@ -79,8 +79,8 @@ and external (downloaded from the internet)
 - Makie
 - Symbolics
 
-libraries. Still, you should be able to solve the tasks with the functionality
-that comes with your installation (not necessarily the one named above).
+Still, you should be able to solve the tasks with the functionality that comes
+with your installation (not necessarily the ones named above).
 
 If, for any reason, this book is not to your taste then feel free to visit,
 e.g. Adam Wysokinski's the [Big Book of

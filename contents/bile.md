@@ -4,8 +4,8 @@ In this chapter I used the following libraries.
 
 ```jl
 s2 = """
-import CairoMakie as Cmk
-import Symbolics as Sym
+import CairoMakie as Cmk # external library
+import Symbolics as Sym # external library
 """
 sc(s2)
 ```
@@ -17,6 +17,9 @@ compare your own solution with the one in this chapter (with explanations) or
 with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/bile)
 (without explanations).
+
+A reminder of how to deal with packages and \*.toml files can be found
+[here](https://docs.julialang.org/en/v1/stdlib/Pkg/).
 
 ## Problem {#sec:bile_problem}
 

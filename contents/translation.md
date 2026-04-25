@@ -19,6 +19,9 @@ explanations) or with [the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/translation)
 (without explanations).
 
+A reminder of how to deal with packages and \*.toml files can be found
+[here](https://docs.julialang.org/en/v1/stdlib/Pkg/).
+
 ## Problem {#sec:translation_problem}
 
 Let's start from where we left. Read the data from the file: `mrna_seq.txt` (to
