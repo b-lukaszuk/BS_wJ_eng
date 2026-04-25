@@ -20,6 +20,10 @@ function printCatalogTree!(path::Str, pad::Str, count::Dict{Str, Int})::Nothing
 end
 
 function printCatalogTree(path::Str)::Nothing
+    if !isdir(path)
+        println("The path $path does not exist.")
+        return nothing
+    end
     println(path, "/")
     count::Dict{Str, Int}= Dict("nDirs" => 0, "nFiles" => 0)
     printCatalogTree!(path, "|", count)
@@ -31,3 +35,6 @@ end
 printCatalogTree(joinpath(homedir(), "Desktop", "catalog_x"))
 printCatalogTree(joinpath(homedir(), "Desktop", "catalog_a"))
 printCatalogTree(joinpath(homedir(), "Desktop", "catalog_zzz"))
+
+
+printCatalogTree(joinpath(homedir(), "Desktop", "BS_wJ_eng", "code_snippets"))

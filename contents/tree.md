@@ -5,8 +5,8 @@ problem description you may decide to do otherwise. In that case don't let me
 stop you.
 
 I recommend you try to solve the task on your own first. Once you finish you may
-compare your own solution with the one in this chapter (with explanations) or
-with [the code
+compare your solution with the one in this chapter (with explanations) or with
+[the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/tree)
 (without explanations).
 
@@ -17,8 +17,8 @@ A reminder of how to deal with packages and \*.toml files can be found
 
 There is this nice little command
 [tree](https://en.wikipedia.org/wiki/Tree_(command)) that recursively lists
-files and subdirectories in a given location. Let's try to get some of that with
-Julia.
+files and sub-directories in a given location. Let's try to get some of that
+with Julia.
 
 Write a function `printCatalogTree` that displays the contents of a given
 directory like so (the output doesn't have to be exact):
@@ -73,7 +73,7 @@ The function is rather simple. We walk through every entry (`for name`) in the
 examined directory (`path`). As we go `name` is converted to `newPath` which
 will be examined in a moment. If `newPath` is a file (`isfile`) we just print
 it, otherwise (`else`) it is a directory and we print it with `"/"` to
-make it stand out. Moreover we go inside of it with `printCatalogTree`
+make it stand out. Moreover, we go inside of it with `printCatalogTree`
 (recursive call) to print its contents. For every nesting of `printCatalogTree`
 we update the padding `newPad` by increasing the indentation with `* " "`. We
 conclude with another version of `printCatalogTree`, the method will make the
