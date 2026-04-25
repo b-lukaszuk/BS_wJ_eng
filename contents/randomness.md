@@ -13,8 +13,8 @@ sc(s2)
 Still, once you read the problem description you may decide to do otherwise.
 
 I recommend you try to solve the task on your own first. Once you finish you may
-compare your own solution with the one in this chapter (with explanations) or
-with [the code
+compare your solution with the one in this chapter (with explanations) or with
+[the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/randomness)
 (without explanations).
 
@@ -25,7 +25,7 @@ A reminder of how to deal with packages and \*.toml files can be found
 
 Random numbers are the numbers that occur, well, at random. Anyway, they are
 quite useful for programming. Chances are you will use them to solve some
-problems like those in @sec:birthday_problem or @sec:logo_problem.
+problems like those in @sec:the_doors_problem or @sec:logo_problem.
 
 But how do computers generate them. Surprise, they don't. But then how could a
 Julia's `Random.jl` (part of the standard library) generate one. Hmm, it's
@@ -40,7 +40,7 @@ Ready, here we go.
 getRand()
 ```
 
-The number was seven. Did you guess it? If so, congrats. The popular psychology
+The number was seven. Did you guess it? If so, congrats! The popular psychology
 claims that for the said range people most often choose 7 and 3 so I wonder just
 how many of you, the readers, succeeded. Anyway, let me try again, I will use
 [comprehensions](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_repetition.html#sec:julia_language_comprehensions)
@@ -51,7 +51,7 @@ to generate 10 random numbers and you will try to guess the next one, ready.
 ```
 
 ```
-[ 8, 9, 10, 1, 2, 3, 4, 5, 6, 7]
+[8, 9, 10, 1, 2, 3, 4, 5, 6, 7]
 ```
 
 OK, what's the next number?
@@ -178,9 +178,10 @@ for a human brain alone.
 
 Still, the numbers are unwieldy and look quite odd. How can we transform them
 into a function that returns `Float64` from the range `[0-1)`? The key is the
-modulo operator (`%` equivalent to `rem` function) in `getRandFromLCG` which is
-a reminder after division. It has an interesting property, the remainder of `i`
-divided by `m` is always in the range 0 to `m-1`, see the example below.
+modulo operator (`%` equivalent to `rem` function) in `getRandFromLCG`. All it
+is is just a reminder after a division. It has an interesting property, the
+remainder of `i` divided by `m` is always in the range 0 to `m-1`, see the
+example below.
 
 ```jl
 s = """
@@ -221,7 +222,7 @@ end
 sc(s)
 ```
 
-Time, for a test. If we did our job right we should get a sequence of random
+Time for a test. If we did our job right we should get a sequence of random
 values each equally likely to occur (`getCounts` was developed and explained
 [here](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_prob_theor_practice.html)).
 
@@ -241,7 +242,7 @@ setSeed!(1111) # for reproducibility
 sco(s)
 ```
 
-Yep, roughly equal counts. One, more swing with a different range.
+Yep, roughly equal counts. One more swing with a different range.
 
 ```jl
 s = """
@@ -251,8 +252,8 @@ setSeed!(1111) # for reproducibility
 sco(s)
 ```
 
-Ladies and gentlemen, we got it. Now, time to tweak it a bit so that we can get
-an integer in the desired range.
+Ladies and gentlemen, we got it. Now, let's tweak it a bit so that we can get an
+integer in the desired range.
 
 ```jl
 s = """

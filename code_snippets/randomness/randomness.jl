@@ -7,6 +7,7 @@ import Statistics as St
 const Flt = Float64
 const Vec = Vector
 
+# https://en.wikipedia.org/wiki/Linear_congruential_generator#Parameters_in_common_use
 # global variables: a, c, m, seed
 a = 1664525
 c = 1013904223
