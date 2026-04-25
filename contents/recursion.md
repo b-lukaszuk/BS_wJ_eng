@@ -5,8 +5,8 @@ problem description you may decide to do otherwise. In that case don't let me
 stop you.
 
 I recommend you try to solve the task on your own first. Once you finish you may
-compare your own solution with the one in this chapter (with explanations) or
-with [the code
+compare your solution with the one in this chapter (with explanations) or with
+[the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/recursion)
 (without explanations).
 
@@ -87,8 +87,8 @@ recSum([1, 2, 3]) # triggers else branch
 6
 ```
 
-Although difficult to imagine `recSum` works equally well for a bit broader range of
-numbers.
+It is difficult to imagine step by step, but `recSum` works equally well for a
+bit broader range of numbers.
 
 ```jl
 s = """
@@ -103,23 +103,23 @@ method](https://www.nctm.org/Publications/TCM-blog/Blog/The-Story-of-Gauss/).
 
 Anyway, usually recursion is not very effective and it can be rewritten with
 loops. Moreover, too big input, e.g. `1:100_000`, will likely cause an error
-with `recSum`, but not with built-in `sum`. Still, for some problems recursion
-is an easy to implement and elegant solution that gets the job done. Therefore,
-it is worth to have this technique in your programming toolbox.
+with `recSum`, but not with the built-in `sum`. Still, for some problems
+recursion is an easy to implement and elegant solution that gets the job
+done. Therefore, it is worth to have this technique in your programming toolbox.
 
-Classical examples of recursive process in action are
-[factorial](https://en.wikipedia.org/wiki/Factorial) and [Fibonacci
-sequence](https://en.wikipedia.org/wiki/Fibonacci_sequence). For this task your
-job is to implement the functions to calculate both the numbers.
+Classical examples of recursive process in action are the
+[factorial](https://en.wikipedia.org/wiki/Factorial) and the [Fibonacci
+sequence](https://en.wikipedia.org/wiki/Fibonacci_sequence) which are your tasks
+for this section.
 
 ## Solution {#sec:recursion_solution}
 
-Factorial is an interesting little function with a set of practical
+A factorial is an interesting little function with a set of practical
 applications, one of them I explained
 [here](https://b-lukaszuk.github.io/RJ_BS_eng/statistics_intro_exercises.html#sec:statistics_intro_exercise2).
 
-Factorial recursive implementation follows closely its mathematical definition
-(see below, where `n!` is a factorial of a number n).
+Its recursive implementation follows closely the mathematical definition (see
+below, where `n!` is a factorial of a number `n`).
 
 $$
 \begin{align*}
@@ -148,12 +148,12 @@ end
 sc(s)
 ```
 
-In general, factorial is well defined for positive integers and it grows very
+In general, a factorial is well defined for positive integers and it grows very
 quickly (n > 20 would produce
 [overflow](https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/#Overflow-behavior),
 to resolve it we could use `BigInt` instead of `Int`) hence the `@assert` line.
-Next, for `n` equal 1 we return 1, otherwise we multiply `n` by
-`recFactorial(n-1)`. Go ahead, follow the execution of the program for small
+Anyway, for `n` equal 1 we return 1 (our base case), otherwise we multiply `n`
+by `recFactorial(n-1)`. Go ahead, follow the execution of the program for small
 inputs like `recFactorial(3)` in your head (similarly to `recSum` from
 @sec:recursion_problem).
 
@@ -189,8 +189,8 @@ so called accumulator (`acc`) that stores the result of a previous calculation
 some programming languages, like
 [Haskell](https://en.wikipedia.org/wiki/Haskell) and
 [Scala](https://en.wikipedia.org/wiki/Scala_(programming_language)), that can
-take advantage of this kind of code to produce (internally) effective function
-implementation.
+take advantage of this kind of code to produce (internally) an effective
+function implementation.
 
 Let's go to the Fibonacci sequence. When I was a student, they said that dinners
 in the student's canteen are like Figonacci numbers, i.e. each dinner is the sum
@@ -208,7 +208,7 @@ fib(n) = \left\{
 \end{align*}
 $$
 
-Which expressed in Julia's language give us:
+Which expressed in Julia gives us:
 
 ```jl
 s = """
@@ -243,7 +243,8 @@ like so:
 s = """
 function recFib!(n::Int, lookup::Dict{Int, Int})::Int
     @assert 0 <= n <= 40 "n must be in range [0-40]"
-    @assert haskey(lookup, 0) && haskey(lookup, 1) "lookup must have base cases"
+    @assert(haskey(lookup, 0) && haskey(lookup, 1),
+		"lookup must have base cases")
     if !haskey(lookup, n)
         lookup[n] = recFib!(n-2, lookup) + recFib!(n-1, lookup)
     end
@@ -269,9 +270,9 @@ recFib!(40, fibs)
 sco(s)
 ```
 
-takes only microseconds on its first execution (like a hundred times
+takes only microseconds on its first execution (hundreds to thousand times
 faster). Interestingly, running `recFib!(40, fibs)` for the second time reduces
-the time to nanoseconds (a million times faster) since there are no
+the time to nanoseconds (million(s) times faster) since there are no
 calculations performed the second time, just reading the number from the
 previously modified `lookup`). Run `recFib(40)` twice to convince yourself that
 it takes roughly the same amount of time every time it runs with the same `n`.

@@ -63,14 +63,15 @@ end
 # more performant definition
 function recFib!(n::Int, lookup::Dict{Int, Int})::Int
     @assert 0 <= n <= 40 "n must be in range [0-40]"
-    @assert haskey(lookup, 0) && haskey(lookup, 1) "lookup must have base cases"
+    @assert(haskey(lookup, 0) && haskey(lookup, 1),
+            "lookup must have base cases")
     if !haskey(lookup, n)
         lookup[n] = recFib!(n-2, lookup) + recFib!(n-1, lookup)
     end
     return lookup[n]
 end
 
-# benchmarks
+# benchmarks (may take some time)
 Bt.@benchmark recFib(40)
 
 # should run calculations during every sub-test
