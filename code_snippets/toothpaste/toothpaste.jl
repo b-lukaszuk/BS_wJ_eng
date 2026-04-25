@@ -1,5 +1,5 @@
-const Vec = Vector
 const Flt = Float64
+const Vec = Vector
 
 # the code in this file is meant to serve as a programming exercise only
 # it may not act correctly
@@ -33,13 +33,13 @@ function getRatios(cylinders::Vec{Cylinder},
 end
 
 ## Scenario 1
-# radius+1, height = const
-getRatios(Cylinder.(1:5, 5), 1, 0)
+# radius+1, height = does not change
+getRatios(Cylinder.(1:5, 5), 1, 0) .* 100
 
 ## Scenario 2
 # radius+1, height-1
-getRatios(Cylinder.(1:5, 5), 1, -1)
+getRatios(Cylinder.(1:5, 5), 1, -1) .* 100
 
 ## Scenario 3
 # radius+1, height-2
-getRatios(Cylinder.(1:5, 5), 1, -2)
+getRatios(Cylinder.(1:5, 5), 1, -2) .* 100
