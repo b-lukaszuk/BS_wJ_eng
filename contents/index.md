@@ -25,8 +25,7 @@ all about.
 This book was generated using [Books.jl](https://github.com/JuliaBooks/Books.jl)
 starting with [BookTemplate](https://github.com/JuliaBooks/BookTemplate).
 
-For now, the book does not have a companion PDF file (maybe I will add it
-later).
+The book is also available as [**PDF**](/BS_wJ_eng_25_04_2026.pdf).
 
 The template for this book can be found
 [here](https://github.com/b-lukaszuk/BS_wJ_eng) and the code snippets for the
