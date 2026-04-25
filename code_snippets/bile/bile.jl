@@ -8,7 +8,7 @@ const Flt = Float64
 
 struct Sphere
     radius::Flt
-    Sphere(r::Flt) = r <= 0 ? error("radius must be > 0") : new(r)
+    Sphere(r::Flt) = (r <= 0) ? error("radius must be > 0") : new(r)
 end
 
 function getVolume(s::Sphere)::Flt
@@ -23,7 +23,7 @@ referenceDroplet = Sphere(10.0)
 
 # fraction - 4/3, p - π, r3 - r^3, v - volume
 Sym.@variables fraction p r3 v
-Sym.symbolic_linear_solve(fraction * p * r3 ~ v, r3)
+Sym.symbolic_linear_solve(fraction * p * r3 ~ v, r3) # may take a moment
 
 # formula equivalent to the one returned by the solver above
 function getSphere(volume::Flt)::Sphere
@@ -49,8 +49,8 @@ ax = Cmk.Axis(fig[1, 1],
               title="Lipid droplet size vs. summaric surface area",
               xlabel="number of lipid droplets",
               ylabel="total surface area [μm²]", xticks=0:13);
-Cmk.scatter!(ax, nDroplets, totalSurfaceAreas, markersize=radii .* 5,
-             color="gold1", strokecolor="black");
+Cmk.scatter!(ax, nDroplets, totalSurfaceAreas,
+             markersize=radii .* 5, color="gold1");
 Cmk.xlims!(ax, -3, 16);
 Cmk.ylims!(ax, 800, 3000);
 Cmk.text!(ax, nDroplets, totalSurfaceAreas .- 150,

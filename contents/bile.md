@@ -13,8 +13,8 @@ sc(s2)
 Still, once you read the problem description you may decide to do otherwise.
 
 I recommend you try to solve the task on your own first. Once you finish you may
-compare your own solution with the one in this chapter (with explanations) or
-with [the code
+compare your solution with the one in this chapter (with explanations) or with
+[the code
 snippets](https://github.com/b-lukaszuk/BS_wJ_eng/tree/main/code_snippets/bile)
 (without explanations).
 
@@ -30,10 +30,10 @@ gallbladder and released to the duodenum (part of the small intestine). As far
 as I remember my biology classes bile facilitates digestion by breaking large
 lipid (fat) droplets into smaller ones. Thanks to that it increases the total
 surface area in contact with digestive enzymes (lipases). So much for the
-theory, but I always wondered if that's true.
+theory, but I always wondered if that is true.
 
 Use Julia to demonstrate that the total surface area of a few small lipid
-droplets is actually greater than the surface area of one big droplet. Of
+droplets is actually greater than the surface area of a one big droplet. Of
 course, the big droplet and small droplets should contain the same volume of
 lipids.
 
@@ -45,19 +45,18 @@ lipids.
 > you could break it. Then continue by calculating the areas and volumes of the
 > big cube and the small cubes.
 
-
 ## Solution {#sec:bile_solution}
 
 To me the shape that resembles the droplet the most is
 [sphere](https://en.wikipedia.org/wiki/Sphere). Luckily, it also got well
-defined formulas for surface area and volume (see the link above), so this is
+defined formulas for surface area and volume (see the link above). So this is
 what we will use in our solution.
 
 ```jl
 s = """
 struct Sphere
     radius::Flt
-    Sphere(r::Flt) = r <= 0 ? error("radius must be > 0") : new(r)
+    Sphere(r::Flt) = (r <= 0) ? error("radius must be > 0") : new(r)
 end
 
 # formula from Wikipedia
@@ -90,7 +89,7 @@ can get a radius from that.
 
 $$ v = \frac{4}{3} * \pi * r^3 $$ {#eq:sphere1}
 
-If a = b, then b = a, so we may swap sides.
+If a = b, then b = a, so we may swap the sides.
 
 $$ \frac{4}{3} * \pi * r^3 = v $$ {#eq:sphere2}
 
@@ -98,7 +97,7 @@ The multiplication is commutative (the order does not matter), i.e. 2 * 3 * 4 is
 the same as 4 * 3 * 2 or 2 * 4 * 3, therefore we can rearrange elements on the
 left side of @eq:sphere2 to:
 
-$$ r^3 * \frac{4}{3} * \pi = v $$ {#eq:sphere3}
+$$ R^3 * \frac{4}{3} * \pi = v $$ {#eq:sphere3}
 
 Now, one by one we can move \*$\frac{4}{3}$ and \*$\pi$ to the right side of
 @eq:sphere3. Of course, we change the mathematical operation to the opposite
@@ -116,9 +115,9 @@ Now, you might wanted to quickly verify the solution using
 `Symbolic.symbolic_linear_solve` we met in @sec:bat_and_ball_solution.
 Unfortunately, we cannot use `r^3` (`r` to the 3rd power) as an argument (and
 solve for `r`), since then it wouldn't be a linear equation (to be linear the
-maximum power must be equal to 1) required by `_linear_solve`. We could have
-used other, more complicated solver, but instead we will keep things simple and
-apply a little trick:
+power must be equal to 1) required by `_linear_solve`. We could use other, more
+complicated solver, but instead we will keep things simple and apply a little
+trick:
 
 ```jl
 s = """
@@ -126,7 +125,7 @@ import Symbolics as Sym
 
 # fraction - 4/3, p - π, r3 - r^3, v - volume
 Sym.@variables fraction p r3 v
-Sym.symbolic_linear_solve(fraction * p * r3 ~ v, r3)
+Sym.symbolic_linear_solve(fraction * p * r3 ~ v, r3) # may take a moment
 """
 sco(s)
 ```
@@ -175,15 +174,14 @@ sc(s)
 
 This seemed like a breeze thanks to the [dot
 operators](https://b-lukaszuk.github.io/RJ_BS_eng/julia_language_repetition.html#sec:julia_language_dot_functions).
-We begin by by defining the `nDroplets`, i.e. the number of droplets that we will
+We begin by defining the `nDroplets`, i.e. the number of droplets that we will
 consider. Next, we divide their `totalVolumes` by their numbers (`nDroplets`) to
 get a volume of an individual droplet (`individualVolumes`). Based on the
-individual volumes we create the `droplets` of the appropriate radius
+individual volumes we create the `droplets` with the appropriate radii
 (`getSphere.(individualVolumes)`). We also extract the `radii` for future use
-(the draw function below). Now, we calculate `individualSurfaceAreas` of our
+(the drawing function below). Now, we calculate `individualSurfaceAreas` of our
 small droplets (`getSurfaceArea.(droplets)`) and then their
-`totalSurfaceAreas`. And we were able to achieve all that in only 7 lines of
-code.
+`totalSurfaceAreas`. We were able to achieve all that in only 7 lines of code.
 
 Anyway, now, we can either examine the vectors (`totalSurfaceAreas`, `radii`,
 `nDroplets`, `individualVolumes`) one by one, or do one better and present them
@@ -199,8 +197,8 @@ ax = Cmk.Axis(fig[1, 1],
               title="Lipid droplet size vs. summaric surface area",
               xlabel="number of lipid droplets",
               ylabel="total surface area [μm²]", xticks=0:13);
-Cmk.scatter!(ax, nDroplets, totalSurfaceAreas, markersize=radii .* 5,
-             color="gold1", strokecolor="black");
+Cmk.scatter!(ax, nDroplets, totalSurfaceAreas,
+             markersize=radii .* 5, color="gold1");
 Cmk.xlims!(ax, -3, 16);
 Cmk.ylims!(ax, 800, 3000);
 Cmk.text!(ax, nDroplets, totalSurfaceAreas .- 150,
@@ -226,5 +224,5 @@ actually true. But only now I can finally see it. Nice.
 
 > **_Note:_** The above was an example of a geometrical property called
 > [surface-to-volume-ratio](https://en.wikipedia.org/wiki/Surface-area-to-volume_ratio)
-> that applies to more than just the spheres and got its implications for many
-> fields of science.
+> that applies to more than just the spheres and got implications in many fields
+> of science.
